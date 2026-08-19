@@ -1,0 +1,46 @@
+# AdsPower Global, headless, as a service.
+#
+# Verified working on WSL Ubuntu 24.04 (2026-08-19) and written to be the same
+# unit a VPS uses — that is the point of rehearsing in WSL.
+#
+# Install:
+#   sudo install -d -m 700 /etc/adspower
+#   printf 'ADS_API_KEY=%s\n' "<key>" | sudo tee /etc/adspower/api.env >/dev/null
+#   sudo chmod 600 /etc/adspower/api.env
+#   sudo cp adspower.service /etc/systemd/system/
+#   sudo systemctl daemon-reload && sudo systemctl enable --now adspower
+#
+# The key is in a root-only EnvironmentFile, NOT in this unit: units are
+# world-readable, and AdsPower echoes its own command line into its log at
+# startup — so the key leaks into ~/adspower/logs/* anyway. Rotate it if that
+# log has ever been shared.
+[Unit]
+Description=AdsPower Global (headless Local API)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=devy
+EnvironmentFile=/etc/adspower/api.env
+
+# Two flags that are NOT optional, both measured:
+#   xvfb-run      Electron needs a display even with --headless=true. Without
+#                 it the app starts and then exits.
+#   --disable-gpu The GPU process cannot initialise under WSL and Chromium
+#                 aborts with "GPU process isn't usable. Goodbye." — the app
+#                 dies ~20s in, having printed nothing that looks fatal.
+ExecStart=/usr/bin/xvfb-run -a --server-args=-screen\x200\x201920x1080x24 \
+  /usr/bin/adspower_global --headless=true --api-key=${ADS_API_KEY} \
+  --api-port=50325 --disable-gpu --disable-software-rasterizer \
+  --no-sandbox --disable-dev-shm-usage
+
+# Without a service, the process dies the moment the last WSL session closes —
+# which looks exactly like a crash but leaves a clean log.
+Restart=on-failure
+RestartSec=10
+KillMode=mixed
+TimeoutStopSec=20
+
+[Install]
+WantedBy=multi-user.target
