@@ -5,7 +5,7 @@
 > questions the endpoint docs cannot: **how the endpoints link**, **what a
 > customer actually buys**, and **how a run flows through the layers**. Written
 > 2026-08-19 as the design; **the design is now implemented** — all four layers
-> built (§3.2), all four operations verified live, 312 offline checks. Where
+> built (§3.2), all four operations verified live, 334 offline checks. Where
 > this doc and `src/` disagree, that is a bug in one of them: fix it in the
 > same commit, the same rule as wire-vs-doc.
 
@@ -246,7 +246,7 @@ so no actor requires another one to be useful.
 
 All four operations are verified live (2026-08-19): shopping end-to-end with 33
 shoppable pins; keywords with real forecasts; moments with the phase gate and
-derived audience; radar's 11 curated records in 2 requests. 312 offline checks
+derived audience; radar's 11 curated records in 2 requests. 334 offline checks
 across five suites. What remains is Phase 4: deployment (network-reachable
 Redis + `apify push`) — see [BUILD-PLAN.md](BUILD-PLAN.md).
 

@@ -34,8 +34,24 @@ record marked `"_demo": true` so you can never mistake one for the other.
 | **`keywords`** | What are people searching for, and is it still growing? | ~14 | 10 |
 | **`moments`** | When does this season actually start? | ~16 | 13 |
 | **`shopping`** | What products are people clicking through to buy? | ~38 | 57 |
+| **`crawl`** | Follow the links, the way you would click them | ~17 | 74 |
 
-Each is a complete answer on its own. None requires the others.
+The first four are complete answers on their own. None requires the others.
+
+**`crawl` is the fifth, and it is different.** The others answer one question
+and stop. Pinterest's own site does not: every screen links to the next — a
+moment to its keywords, a category's "Search queries" chips to the keyword
+page, a keyword to its related terms. `crawl` walks those links for you:
+
+```json
+{ "operation": "crawl", "crawlFrom": "shopping", "crawlDepth": 1 }
+```
+
+That loads the trending-categories page and then follows every category's
+search-query chips into full keyword records — 74 nodes for about 17 requests,
+because it batches each level instead of walking node by node. Every record
+says how it was reached (`_meta.crawl_path`), and the last record is a summary
+telling you whether you got everything or ran out of budget.
 
 ---
 

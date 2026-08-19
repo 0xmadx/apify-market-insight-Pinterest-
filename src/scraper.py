@@ -15,6 +15,7 @@ Rules that are not negotiable (pinterest-trends-coder skill): named parsers
 only, absent is not zero, every relative number carries its normalisation
 scope, and nothing is marked seen until it has been pushed.
 """
+from .crawl import Crawler
 from .keywords import KeywordScraper
 from .moments import MomentScraper
 from .radar import RadarScraper
@@ -29,7 +30,12 @@ KEYWORD_FIELDS = ("wow_change", "mom_change", "yoy_change", "has_forecast",
 MOMENT_FIELDS = ("phase", "next_occurrence_at", "series_points")
 RADAR_FIELDS = ("pct_growth_mom", "keywords", "campaign_start")
 
-OPERATIONS = ("shopping", "keywords", "moments", "radar")
+OPERATIONS = ("shopping", "keywords", "moments", "radar", "crawl")
+
+# The crawl re-emits the other traversals' records, so its movement fields
+# are the union — a node re-emits when ITS numbers move, whatever kind it is.
+CRAWL_FIELDS = tuple(dict.fromkeys(
+    SHOPPING_FIELDS + KEYWORD_FIELDS + MOMENT_FIELDS + RADAR_FIELDS))
 
 
 class UnknownOperation(ValueError):
@@ -52,6 +58,7 @@ def run(ctx, task):
         "keywords": _keywords,
         "moments": _moments,
         "radar": _radar,
+        "crawl": _crawl,
     }[operation]
 
     max_records = int(task.get("maxRecords", 0) or 0)
@@ -156,3 +163,31 @@ def _radar(client, task):
             include_editorial=task.get("includeEditorial", True)):
         yield Record(scope=f"radar:{record['region']}:{record['source']}",
                      id=record["id"], data=record, fields=RADAR_FIELDS)
+
+
+def _crawl(client, task):
+    """Follow Pinterest's own navigation instead of stopping at one page.
+
+    Node ids are namespaced by kind: a crawl mixes categories, moments, trends
+    and keywords in one dataset, and `mascara` the keyword must not collide
+    with `mascara` the category in the seen-set.
+    """
+    crawler = Crawler(
+        client,
+        region=task.get("region", "US"),
+        entry=(task.get("crawlFrom") or "overview").lower(),
+        depth=int(task.get("crawlDepth", 1)),
+        max_requests=int(task.get("maxRequests", 60)),
+        max_nodes_per_level=int(task.get("maxNodesPerLevel", 50)),
+        related_fanout=int(task.get("relatedFanout", 10)),
+        end_date=task.get("endDate") or None,
+        date_range_days=vocab.date_range(task.get("dateRange"), 365),
+        event=task.get("event", "OUTBOUND_CLICK"),
+        enrich_top_n=int(task.get("enrichTopN", 0) or 0),
+    )
+    for record in crawler.run():
+        kind = record["_meta"]["crawl_node_kind"]
+        key = (record.get("term") or record.get("slug")
+               or record.get("category_id") or record.get("id"))
+        yield Record(scope=f"crawl:{record.get('region', '')}:{kind}",
+                     id=f"{kind}:{key}", data=record, fields=CRAWL_FIELDS)

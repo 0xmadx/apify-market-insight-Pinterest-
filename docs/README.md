@@ -19,7 +19,7 @@ Four audiences, four doors. Pick the one that matches why you opened this.
 | File | |
 |---|---|
 | [CUSTOMER-GUIDE.md](CUSTOMER-GUIDE.md) | The tutorial. Four operations in plain language, four worked scenarios, and the section that matters most: **reading the numbers honestly** — why there are no absolute volumes, why `null` is not zero, why the data is 4 days behind, and why audience shifts by action. |
-| [API.md](API.md) | The reference. One endpoint, 40 inputs, full output field tables per operation, errors, measured cost. `tests/test_dispatch.py` asserts this page against the schema and against the records actually emitted, in both directions — so it cannot drift from the code. |
+| [API.md](API.md) | The reference. One endpoint, 45 inputs, full output field tables per operation, errors, measured cost. `tests/test_dispatch.py` asserts this page against the schema and against the records actually emitted, in both directions — so it cannot drift from the code. |
 | `../api_sim.py` | A local Apify-shaped API + browser playground. Runs the real traversals; falls back to committed fixtures when no session is live, labelled `DEMO`. |
 
 ### Build — how it works and how to change it

@@ -416,6 +416,96 @@ def main():
           _v.PHASE_LABELS.get("peaking", "peaking") == "peaking")
 
 
+    print("\nJ - the crawl: following Pinterest's own navigation")
+    from src.crawl import Crawler, ENTRY_POINTS
+    check("every entry point is one of Pinterest's own pages",
+          set(ENTRY_POINTS) == {"overview", "shopping", "search", "moments"})
+    try:
+        drive({"operation": "crawl", "crawlFrom": "nowhere"})
+        check("an unknown entry page is refused", False)
+    except _v.InvalidParam as exc:
+        check("an unknown entry page is refused, listing the real ones",
+              all(e in str(exc) for e in ENTRY_POINTS))
+
+    # depth 0 is the entry page and nothing else - the cheapest useful crawl.
+    recs0, c0 = drive({"operation": "crawl", "crawlFrom": "shopping",
+                       "crawlDepth": 0, "maxRequests": 60})
+    kinds0 = {r.data["_meta"]["crawl_node_kind"] for r in recs0} - {"summary"}
+    check("depth 0 stays on the entry page", kinds0 == {"category"}, kinds0)
+
+    # depth 1 follows the "Search queries" chips a user would click.
+    recs1, c1 = drive({"operation": "crawl", "crawlFrom": "shopping",
+                       "crawlDepth": 1, "maxRequests": 60})
+    kinds1 = {r.data["_meta"]["crawl_node_kind"] for r in recs1} - {"summary"}
+    check("depth 1 follows the category's search-query chips into keywords",
+          kinds1 == {"category", "keyword"}, kinds1)
+    check("...and that is strictly more than depth 0 found",
+          len(recs1) > len(recs0), f"{len(recs0)} -> {len(recs1)}")
+
+    # The bug this test exists for: depth 2 once returned depth 1's result
+    # exactly, because the level was enriched WITHOUT the `related` edges the
+    # next level needed. It reported success and stopped.
+    deep = {}
+    for d in (1, 2):
+        recs, _c = drive({"operation": "crawl", "crawlFrom": "overview",
+                          "crawlDepth": d, "maxRequests": 200})
+        deep[d] = max((r.data["_meta"]["crawl_depth"] for r in recs),
+                      default=0)
+    check("crawlDepth=2 actually reaches depth 2 (it silently did not)",
+          deep[2] > deep[1], deep)
+
+    # Cost must scale with DEPTH, not with node count - the whole design.
+    check("a 74-node crawl costs tens of requests, not hundreds",
+          len(c1.all_calls) < len(recs1),
+          f"{len(recs1)} nodes / {len(c1.all_calls)} requests")
+
+    # A crawl is the one operation that can run away. The budget caps what is
+    # FOLLOWED; the entry page always loads in full, because half an entry page
+    # is a wrong answer rather than a cheap one.
+    recsb, cb = drive({"operation": "crawl", "crawlFrom": "overview",
+                       "crawlDepth": 3, "maxRequests": 8})
+    summary = recsb[-1].data
+    check("the last record of a crawl is always its summary",
+          summary.get("crawl_summary") is True)
+    check("an impossible budget follows NOTHING (entry page only)",
+          summary["nodes_by_kind"].get("keyword") is None,
+          summary["nodes_by_kind"])
+    # This is the point of the summary: a streamed record emitted early cannot
+    # know the crawl was cut short later, so truncation has to be reported
+    # somewhere written at the end.
+    check("...and the summary SAYS the dataset is partial",
+          summary["truncated"] is True)
+    check("...and says how much was left unfollowed",
+          summary["edges_unfollowed"] > 0, summary["edges_unfollowed"])
+    check("the entry page's floor cost is reported, not hidden",
+          summary["entry_cost"] > summary["request_budget"],
+          f"floor {summary['entry_cost']} vs budget {summary['request_budget']}")
+    # A budget that IS enough must not claim truncation.
+    recsok, _c = drive({"operation": "crawl", "crawlFrom": "shopping",
+                        "crawlDepth": 1, "maxRequests": 200})
+    check("a crawl that completed does NOT report truncation",
+          recsok[-1].data["truncated"] is False)
+
+    # Every node has to explain why it is in the dataset.
+    for r in recs1[:-1]:
+        m = r.data["_meta"]
+        if not (m.get("crawl_path") and m.get("crawl_entry")
+                and m.get("crawl_node_kind") is not None):
+            check("every crawled node carries its navigation trail", False,
+                  m.get("crawl_path"))
+            break
+    else:
+        check("every crawled node carries its navigation trail", True)
+    check("the trail names the hops taken",
+          any(" > " in r.data["_meta"]["crawl_path"] for r in recs1[:-1]))
+
+    # Mixed-kind dataset: ids must not collide across kinds.
+    ids = [r.id for r in recs1]
+    check("node ids are namespaced by kind (a keyword != a category)",
+          all(i and ":" in i for i in ids) and len(set(ids)) == len(ids),
+          f"{len(ids)} ids, {len(set(ids))} unique")
+
+
     print("\nthe reference and the form cannot drift either")
     api_md = pathlib.Path("docs/API.md").read_text(encoding="utf-8")
     undocumented = [k for k in schema if "`" + k + "`" not in api_md]
@@ -436,7 +526,11 @@ def main():
         for r in recs:
             emitted |= {k for k in r.data if k not in ("_meta", "_demo")}
             emitted_meta |= set(r.data.get("_meta") or {})
-        body = sections.get(op, "")
+        # `crawl` deliberately RE-EMITS the other operations' record shapes,
+        # so its fields are documented in their own sections. Checking it
+        # against the whole Output chapter still catches a genuinely
+        # undocumented field, without demanding 38 duplicated rows.
+        body = out if op == "crawl" else sections.get(op, "")
         missing = sorted(k for k in emitted if "`" + k + "`" not in body)
         check(f"{op}: every emitted field is in its output table", not missing,
               missing)

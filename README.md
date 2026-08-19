@@ -105,7 +105,7 @@ docs/                      the Pinterest Trends API specs — see docs/README.md
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | ⭐ **start here** — the endpoint graph (nodes, edges, decision points), the 4-actor product, the shared-vault economics |
 | [docs/wire/07-API-REFERENCE.md](docs/wire/07-API-REFERENCE.md) | every endpoint, param, and measured limit |
 | [docs/wire/08-BUILD-GUIDE.md](docs/wire/08-BUILD-GUIDE.md) | call chains, normalisation rules, validation checklist |
-| [docs/API.md](docs/API.md) | ⭐ **the reference** — endpoint, all 40 inputs, every output field, errors, cost |
+| [docs/API.md](docs/API.md) | ⭐ **the reference** — endpoint, all 45 inputs, every output field, errors, cost |
 | [docs/CUSTOMER-GUIDE.md](docs/CUSTOMER-GUIDE.md) | ⭐ **what a buyer reads** — the four questions, worked examples, how to read the numbers honestly |
 | `api_sim.py` | a local Apify-shaped API + browser playground: `python api_sim.py` → http://localhost:8080 |
 | [docs/DEPLOY.md](docs/DEPLOY.md) | the Apify runbook — the one open decision, secrets, measured cost per run, and what a customer must be told |
@@ -118,7 +118,7 @@ docs/                      the Pinterest Trends API specs — see docs/README.md
 **Current state:** all four operations are BUILT and offline-tested —
 `shopping` (verified live end-to-end), `keywords`, `moments`, `radar` — on top of
 the shared graph layer (`transport.py`, `vocab.py`, `parsers.py`) and the
-session + freshness layers. 312 offline checks across five suites, all green — and **all four operations
+session + freshness layers. 334 offline checks across five suites, all green — and **all four operations
 verified live** (2026-08-19): shopping end-to-end with 33 shoppable pins;
 radar's 5 spotlight + 6 editorial with campaign windows; keywords with real
 forecasts and audiences; moments with the phase gate drilling only

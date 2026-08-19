@@ -99,6 +99,57 @@ Async runs, polling and dataset paging are standard Apify platform behaviour —
 | `interestIds` | array | — | Interest ids to break each drilled moment's audience down by. Pinterest's own UI offers only ~7 per moment, but ANY moment x ANY interest works - these are audiences their interface cannot show. Costs one request PER CELL, so keep the list short. Empty = off. |
 | `lookbackDays` | `integer` | `365` | Days of moment history. Max 730. |
 
+#### `crawl` only
+
+The other four operations answer one question and stop. `crawl` follows
+Pinterest's own navigation — the links that are clickable on its screens and
+were, until now, dead ends in our output.
+
+```
+Trends overview ──▶ a spotlight trend ──▶ "commonly search for:" ──▶ keyword
+                └─▶ Moments ──▶ a moment ──▶ its keywords ──────────▶ keyword
+Shopping page   ──▶ a category ──▶ "Search queries" chips ──────────▶ keyword
+                                └─▶ Top products ───────────────────▶ pin
+Keyword page    ──▶ "Related trends" ──▶ another keyword ──▶ … recursive
+```
+
+| Field | Type | Default | Meaning |
+|---|---|---|---|
+| `crawlFrom` | `overview` \| `shopping` \| `search` \| `moments` | `overview` | Which Pinterest page to start from, loaded the way the UI loads it by default. overview = spotlight + editorial + every moment; shopping = Discover trending product categories; search = Discover trending search keywords. |
+| `crawlDepth` | `integer` 0–3 | `1` | 0 = the entry page only. 1 = also follow its keyword links. 2 = also follow those keywords' related terms. |
+| `maxRequests` | `integer` | `60` | Budget for what the crawl **follows**. See the cost note below — the entry page is a floor this cannot reduce. |
+| `maxNodesPerLevel` | `integer` | `50` | Cap on keywords followed per level, so a wide entry page (13 moments × 25 keywords) does not become a level of 325. |
+| `relatedFanout` | `integer` | `10` | How many keywords per level also get their 5 related siblings — the edges the *next* level walks. The crawl's only per-item cost (1 request each, no batch form exists), and only spent when `crawlDepth` is high enough to use it. |
+
+**Why this is cheap.** The crawl is breadth-first and **batched per level**, not
+depth-first per node: one `/metrics/` call answers for a whole level. Cost
+scales with *depth*, not with how many nodes it finds.
+
+| | requests |
+|---|---|
+| depth-first, per node (13 moments × 25 keywords × 3 calls) | ~975 |
+| breadth-first, per level (what this does) | **~17 for 74 nodes** |
+
+**The budget caps following, not the entry page.** The entry page always loads
+in full — half of it would be a wrong answer, not a cheaper one. If the floor
+exceeds your budget the crawl loads the page, follows nothing, and says so.
+
+**Every crawl ends with a `crawl_summary` record.** Records stream as they are
+found, so one emitted early cannot know the crawl was cut short later. The
+summary is written at the end and carries what actually happened:
+
+```json
+{ "crawl_summary": true, "entry": "overview",
+  "depth_requested": 3, "depth_reached": 0,
+  "nodes_total": 24, "nodes_by_kind": {"moment": 13, "trend": 11},
+  "requests_spent": 13, "request_budget": 8, "entry_cost": 13,
+  "truncated": true, "edges_unfollowed": 140 }
+```
+
+`truncated: true` means **the dataset is partial** — raise `maxRequests` or
+lower `crawlDepth`. Without this record a truncated crawl is indistinguishable
+from a complete one.
+
 #### `radar` only
 
 | Field | Type | Default | Meaning |
@@ -258,6 +309,26 @@ One record per row. Every record carries `_meta`.
 | `series` | array | normalised to the trend itself; never compare across trends |
 | `pins` | array | `{pin_id, pin_url, image_url, color, width, height}` |
 
+### `crawl` — a mixed graph
+
+A crawl re-emits the record shapes above — a `moment` record is the same
+`moment` record, a `keyword` record the same `keyword` record — so read the
+relevant section for the body fields. What a crawl adds is **where the node
+came from**, in `_meta`, plus one terminal record.
+
+| Field | Type | Notes |
+|---|---|---|
+| `crawl_summary` | boolean | Present and `true` only on the terminal record |
+| `entry` · `depth_requested` · `depth_reached` | | summary: what was asked and what was reached |
+| `nodes_total` · `nodes_by_kind` | | summary: how many nodes, split by kind |
+| `requests_spent` · `request_budget` · `entry_cost` | | summary: what it cost, and the entry page's floor |
+| `truncated` | boolean | summary: **`true` means the dataset is partial** |
+| `edges_unfollowed` | integer | summary: links left unwalked when it stopped |
+
+Node ids in the dataset are namespaced by kind (`keyword:mascara`,
+`category:1311`) because one crawl mixes categories, moments, trends and
+keywords, and a keyword must not collide with a category of the same name.
+
 ### `_meta` — on every record
 
 | Field | Meaning |
@@ -277,6 +348,11 @@ One record per row. Every record carries `_meta`.
 | `forecast_region_note` | forecasts have only ever been observed in `US` |
 | `regions_covered` | which regions an editorial item ran in — its keywords are this region's list only |
 | `note` | how to read this record's series without over-reading it |
+| `crawl_entry` · `crawl_depth` | which page the crawl started from, and how many hops out this node is |
+| `crawl_path` | **how this node was reached**, e.g. `shopping > keyword`. Without it a crawl dataset is a pile of records with no explanation of why any of them is there |
+| `crawl_node_kind` | `category`, `keyword`, `moment`, `trend` or `summary` |
+| `crawl_requests_spent` | requests used at the moment this record was emitted |
+| `crawl_truncated` | set when the budget had already stopped the crawl. Read the terminal `crawl_summary` record for the authoritative answer — an early record cannot know |
 | `absolute_volume` | always `null`, with `absolute_volume_note` explaining that Pinterest never publishes them |
 
 ---
