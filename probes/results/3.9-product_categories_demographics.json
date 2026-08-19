@@ -7,28 +7,6 @@
     "data": {
       "product_category_distributions": {
         "1408": {
-          "summaries": [
-            {
-              "saves": {
-                "percent_relative_volume": null,
-                "lookback": 2,
-                "total": 0,
-                "percent_growth": 0.63
-              },
-              "outbound_clicks": {
-                "percent_relative_volume": null,
-                "lookback": 2,
-                "total": 0,
-                "percent_growth": 0.84
-              },
-              "engagement": {
-                "percent_relative_volume": null,
-                "lookback": 2,
-                "total": 0,
-                "percent_growth": 0.71
-              }
-            }
-          ],
           "related_search_trends": [
             "fall halloween decor",
             "halloween decor",
@@ -48,13 +26,30 @@
             "xmas decor",
             "halloween fun"
           ],
+          "summaries": [
+            {
+              "outbound_clicks": {
+                "percent_growth": 0.84,
+                "lookback": 2,
+                "total": 0,
+                "percent_relative_volume": null
+              },
+              "saves": {
+                "percent_growth": 0.63,
+                "lookback": 2,
+                "total": 0,
+                "percent_relative_volume": null
+              },
+              "engagement": {
+                "percent_growth": 0.71,
+                "lookback": 2,
+                "total": 0,
+                "percent_relative_volume": null
+              }
+            }
+          ],
           "demographics": [
             {
-              "gender_distribution": {
-                "male": 0.07,
-                "female": 0.82,
-                "unspecified": 0.11
-              },
               "age_distribution": {
                 "18-24": 0.08,
                 "25-34": 0.13,
@@ -63,6 +58,11 @@
                 "50-54": 0.08,
                 "55-64": 0.22,
                 "65+": 0.32
+              },
+              "gender_distribution": {
+                "male": 0.07,
+                "female": 0.82,
+                "unspecified": 0.11
               }
             }
           ]
@@ -88,6 +88,6 @@
       }
     }
   },
-  "request_identifier": "1539770092396366",
+  "request_identifier": "1093513695071245",
   "_client_context": "<stripped: account PII, see strip_pii()>"
 }

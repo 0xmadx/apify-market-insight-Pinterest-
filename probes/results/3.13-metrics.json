@@ -1,11 +1,5 @@
 [
   {
-    "has_prediction": true,
-    "growth_rates": {
-      "mom_change": 0.1,
-      "yoy_change": null,
-      "wow_change": -0.03
-    },
     "counts": [
       {
         "count": 55,
@@ -470,7 +464,13 @@
         "predictedLowerBoundNormalizedCount": 30
       }
     ],
+    "has_prediction": true,
     "term": "nails",
+    "growth_rates": {
+      "yoy_change": null,
+      "mom_change": 0.1,
+      "wow_change": -0.03
+    },
     "hasPrediction": true
   }
 ]
