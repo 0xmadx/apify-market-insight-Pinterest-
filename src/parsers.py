@@ -186,10 +186,17 @@ def parse_top_products(data, region=None):
     for node in _list(data, "top_products"):
         pin_id = _get(node, "pin_id")
         images = _get(node, "images") or {}
+        # The response carries 7 sizes, and they are the SAME image hash with
+        # only the path segment swapped (verified: 75x75 / 236x / … / 1200x all
+        # end `.../08/12/37/081237925c576eee2dfc743b54864496.jpg`). So the
+        # largest url plus the size list is lossless — a consumer builds any
+        # other size by substituting the segment. Carrying all 7 would triple
+        # the record for nothing.
+        # ⚠️ `1200x` is a MAX, not the actual pixel size: it reported 1000x1000.
         best = None
-        for size in ("736x", "564x", "474x", "345x", "236x"):
-            if isinstance(images.get(size), dict):
-                best = images[size].get("url")
+        for size in ("1200x", "736x", "564x", "474x", "345x", "236x", "75x75"):
+            if isinstance(images.get(size), dict) and images[size].get("url"):
+                best = images[size]["url"]
                 break
         products.append({
             "pin_id": pin_id,
@@ -197,6 +204,7 @@ def parse_top_products(data, region=None):
             "merchant_name": _get(node, "merchant_name"),
             "title": _get(node, "title"),
             "image_url": best,
+            "image_sizes": sorted(images) or None,
             "region": region,
             # Known to exist on the pin page, not in this response. Explicitly
             # null so a consumer sees "not fetched", not "no price".

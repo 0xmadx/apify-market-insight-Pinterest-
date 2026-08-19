@@ -20,7 +20,14 @@ because the wire moves and the docs are only a snapshot of it:
 .venv/Scripts/python.exe -m src.status              # vault green?
 .venv/Scripts/python.exe -m probes.probe_endpoints  # all endpoints, structured
 .venv/Scripts/python.exe -m probes.inventory        # every field they returned
+.venv/Scripts/python.exe -m probes.coverage         # fields the parsers DON'T surface
 ```
+
+`coverage` is the one that answers "did we read the output before parsing it":
+it walks every captured response and reports leaves whose VALUE never reaches a
+parser's output — renames and type changes pass, real drops do not. Zero unread
+is the target, and a deliberate drop belongs in its `KNOWN_DROPPED` with the
+reason, never left silent.
 
 Then read the RESPONSES — not just the docs — and diff the two. The docs
 describe what the UI uses; the wire returns more (undocumented fields, ids that

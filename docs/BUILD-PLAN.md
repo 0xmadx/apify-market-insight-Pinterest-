@@ -23,6 +23,7 @@ run endpoints (structured) → capture full responses → inventory every field
 .venv/Scripts/python.exe -m src.status              # vault must be green first
 .venv/Scripts/python.exe -m probes.probe_endpoints  # 16 endpoints, ~30s, 1 profile
 .venv/Scripts/python.exe -m probes.inventory        # every field of every response
+.venv/Scripts/python.exe -m probes.coverage         # what the parsers fail to surface
 ```
 `probe_endpoints` writes full responses to `probes/results/*.json` and a verdict
 table to `probes/RESULTS.md`. `inventory` enumerates **every path** in those
