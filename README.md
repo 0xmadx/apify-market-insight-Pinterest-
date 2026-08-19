@@ -91,7 +91,13 @@ src/scraper.py             ← the Pinterest logic goes here (currently raises)
 src/main.py                actor entrypoint: lease → scrape → dedup → dataset
 src/status.py              vault health check
 tests/test_incremental.py  20 checks over the freshness rules
+docs/                      the Pinterest Trends API specs — see docs/README.md
 ```
+
+The endpoint specs live in [docs/](docs/). Start with
+[07-API-REFERENCE.md](docs/07-API-REFERENCE.md) and
+[08-BUILD-GUIDE.md](docs/08-BUILD-GUIDE.md) — 18 endpoints, params and measured
+limits. `docs/README.md` records which drafts were superseded and why.
 
 ## Not pulling old data
 
