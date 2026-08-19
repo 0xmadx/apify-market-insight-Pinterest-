@@ -48,7 +48,7 @@ the pin's page on `www.pinterest.com` does: manually inspected pin
 `4607745477126792832` (the #1 top product from our `3.10` probe) and found
 merchant `Oriental Trading` (`www.orientaltrading.com`), product title, price
 `$380.99`, rating, a shipping note, and a "Visit site" outbound link. Full
-detail in [07-API-REFERENCE.md §3.19](07-API-REFERENCE.md).
+detail in [07-API-REFERENCE.md §3.19](wire/07-API-REFERENCE.md).
 
 > ⚠️ **Correction to an earlier version of this section.** It previously said
 > the outbound URL "passes through a `/v3/offsite/` call" — true but

@@ -11,8 +11,8 @@ inherited from this project's parent: **a plausible wrong number, not a crash**.
 |---|---|
 | What do I build first, and in what order | `docs/BUILD-PLAN.md` — **Phase 0 (run + mine all endpoints) precedes any code** |
 | How do the 20 endpoints link, what is the product | `docs/ARCHITECTURE.md` |
-| Exact params, limits, measured traps | `docs/07-API-REFERENCE.md` |
-| Call chains + validation checklist | `docs/08-BUILD-GUIDE.md` |
+| Exact params, limits, measured traps | `docs/wire/07-API-REFERENCE.md` |
+| Call chains + validation checklist | `docs/wire/08-BUILD-GUIDE.md` |
 | What "done" means for any code | `docs/TEST-SCENARIOS.md` (scenario ids A1…G2) |
 | Real response shapes | `probes/results/*.json` + `probes/RESULTS.md` |
 | Which spec drafts are superseded and why | `docs/README.md` |

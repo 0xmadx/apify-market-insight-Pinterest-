@@ -516,7 +516,7 @@ JavaScript runs". **That is not the mechanism, and the difference is what unbloc
 **The route through:** install an in-page `fetch`/XHR interceptor on an already-loaded
 page, then force the SPA router to re-fire the query **without a reload** (switch the
 country dropdown, or navigate to another moment and back). Tooling and step-by-step:
-[`probes/captures/`](../probes/captures/README.md).
+[`probes/captures/`](../../probes/captures/README.md).
 
 ⚠️ Also recorded there: the `claude-in-chrome` network tool reports **url/method/status
 only, never request payloads**, so "Copy as cURL" is not available through it. An in-page

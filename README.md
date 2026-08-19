@@ -103,8 +103,8 @@ docs/                      the Pinterest Trends API specs — see docs/README.md
 | Doc | Purpose |
 |---|---|
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | ⭐ **start here** — the endpoint graph (nodes, edges, decision points), the 4-actor product, the shared-vault economics |
-| [docs/07-API-REFERENCE.md](docs/07-API-REFERENCE.md) | every endpoint, param, and measured limit |
-| [docs/08-BUILD-GUIDE.md](docs/08-BUILD-GUIDE.md) | call chains, normalisation rules, validation checklist |
+| [docs/wire/07-API-REFERENCE.md](docs/wire/07-API-REFERENCE.md) | every endpoint, param, and measured limit |
+| [docs/wire/08-BUILD-GUIDE.md](docs/wire/08-BUILD-GUIDE.md) | call chains, normalisation rules, validation checklist |
 | [docs/API.md](docs/API.md) | ⭐ **the reference** — endpoint, all 37 inputs, every output field, errors, cost |
 | [docs/CUSTOMER-GUIDE.md](docs/CUSTOMER-GUIDE.md) | ⭐ **what a buyer reads** — the four questions, worked examples, how to read the numbers honestly |
 | `api_sim.py` | a local Apify-shaped API + browser playground: `python api_sim.py` → http://localhost:8080 |

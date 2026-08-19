@@ -31,16 +31,16 @@ reason, never left silent.
 
 Then read the RESPONSES — not just the docs — and diff the two. The docs
 describe what the UI uses; the wire returns more (undocumented fields, ids that
-bridge to other surfaces, schema that hints at features). Open items are listed in BUILD-PLAN §0.2 — the pin-page merchant read-endpoint
-and the moment GraphQL body both still need a human DevTools capture; `H2`
-(`wow_change.index`) is settled. Anything the wire shows that the docs miss goes
+bridge to other surfaces, schema that hints at features). Both browser captures landed 2026-08-19 (§3.18 moment demographics + interest
+matrix, §3.19 pin price/merchant URL) and `H2` is settled — BUILD-PLAN §0.2 has
+the findings. Nothing is outstanding. Anything the wire shows that the docs miss goes
 INTO the docs in the same commit. 16/16 OK is the entry ticket to changing code.
 
 ## Read alongside, in this order
 
 1. `docs/BUILD-PLAN.md` — the phases and what Phase 0 already found.
 2. `docs/ARCHITECTURE.md` — the endpoint graph, edges, decision nodes, actors.
-3. `docs/07-API-REFERENCE.md` — every param, limit, and measured trap.
+3. `docs/wire/07-API-REFERENCE.md` — every param, limit, and measured trap.
 4. `docs/TEST-SCENARIOS.md` — the definition of done for what you're building.
 5. `probes/results/*.json` + `probes/field_inventory.txt` — the ground truth.
 

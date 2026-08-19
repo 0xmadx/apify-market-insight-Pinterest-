@@ -4,7 +4,7 @@
 > [ARCHITECTURE.md](ARCHITECTURE.md). Every expected value here was either
 > **measured on the wire** (probe run 2026-08-18, raw responses in
 > `../probes/results/`) or comes from a measured claim in
-> [07-API-REFERENCE.md](07-API-REFERENCE.md). Nothing is invented.
+> [07-API-REFERENCE.md](wire/07-API-REFERENCE.md). Nothing is invented.
 >
 > Two kinds of test, and both are required:
 > **[offline]** — runs against fixtures (the probe JSONs) with no network; fast,

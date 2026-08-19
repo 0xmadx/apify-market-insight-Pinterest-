@@ -2,7 +2,7 @@
 
     .venv/Scripts/python.exe -m probes.probe_endpoints
 
-Purpose is verification, not scraping: does each endpoint in docs/07-API-REFERENCE.md
+Purpose is verification, not scraping: does each endpoint in docs/wire/07-API-REFERENCE.md
 still exist, still answer, and still return the shape the doc claims. Every result —
 including the failures — is written to probes/results/ and summarised in
 probes/RESULTS.md.
@@ -323,8 +323,8 @@ def _write_summary(rows, identity):
     lines = [
         "# Endpoint probe — live results",
         "",
-        f"One small call per endpoint in [docs/07-API-REFERENCE.md]"
-        f"(../docs/07-API-REFERENCE.md), run against profile "
+        f"One small call per endpoint in [docs/wire/07-API-REFERENCE.md]"
+        f"(../docs/wire/07-API-REFERENCE.md), run against profile "
         f"`{identity.profile_id}` on {time.strftime('%Y-%m-%d %H:%M')}.",
         "",
         "`OK` = 200 with a non-empty payload. `EMPTY` = 200 but nothing in it, which "

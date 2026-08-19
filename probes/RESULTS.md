@@ -1,6 +1,6 @@
 # Endpoint probe — live results
 
-One small call per endpoint in [docs/07-API-REFERENCE.md](../docs/07-API-REFERENCE.md), run against profile `profile_p5ewxsodn` on 2026-08-18 19:00.
+One small call per endpoint in [docs/wire/07-API-REFERENCE.md](../docs/wire/07-API-REFERENCE.md), run against profile `profile_p5ewxsodn` on 2026-08-18 19:00.
 
 `OK` = 200 with a non-empty payload. `EMPTY` = 200 but nothing in it, which is a real answer and not a failure. `FAIL`/`API ERROR` = the endpoint refused.
 

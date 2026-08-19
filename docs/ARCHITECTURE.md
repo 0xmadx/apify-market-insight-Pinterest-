@@ -1,11 +1,11 @@
 # ARCHITECTURE — the endpoint graph and the product built on it
 
 > This document is the bridge between the wire reference
-> ([07-API-REFERENCE.md](07-API-REFERENCE.md)) and the code — it answers three
+> ([07-API-REFERENCE.md](wire/07-API-REFERENCE.md)) and the code — it answers three
 > questions the endpoint docs cannot: **how the endpoints link**, **what a
 > customer actually buys**, and **how a run flows through the layers**. Written
 > 2026-08-19 as the design; **the design is now implemented** — all four layers
-> built (§3.2), all four operations verified live, 157 offline checks. Where
+> built (§3.2), all four operations verified live, 246 offline checks. Where
 > this doc and `src/` disagree, that is a bug in one of them: fix it in the
 > same commit, the same rule as wire-vs-doc.
 
@@ -130,11 +130,14 @@ editorial for FR                       → 200 + 0 items (region unsupported)
 Each must surface as `unsupported`/`no_data` with the reason — never as `[]`
 that a customer reads as "nothing is trending".
 
-**Moment demographics (the only unreachable data)**
+**Moment demographics — CAPTURED 2026-08-19, now measured**
 ```
-Persisted GraphQL, no REST equivalent. The workaround IS the feature:
-moments → top_trends_filtered?moments=slug → /demographics/ on those terms
-→ aggregate → label the result derived, never measured.
+A persisted GraphQL POST, no REST equivalent — but reproducible from a leased
+session (doc #7 §3.18). audience_basis: "measured".
+Same query answers moment × interest: terms "<moment>:<id>" + category
+"MOMENT_INTEREST", both moving together or you get a silent items:[].
+If the queryHash rotates → StaleQueryHash → fall back to the keyword-aggregate
+and label it derived. The label always reports what actually happened.
 ```
 
 ## 2.4 Normalisation — the #1 correctness trap, restated as a graph rule
@@ -300,8 +303,8 @@ Every actor's output obeys the rules that already govern this codebase:
 # 5. Reading order for the coding agent
 
 1. This file — the graph and the product.
-2. [07-API-REFERENCE.md](07-API-REFERENCE.md) — every param, limit, and trap.
-3. [08-BUILD-GUIDE.md](08-BUILD-GUIDE.md) — call chains + validation checklist.
+2. [07-API-REFERENCE.md](wire/07-API-REFERENCE.md) — every param, limit, and trap.
+3. [08-BUILD-GUIDE.md](wire/08-BUILD-GUIDE.md) — call chains + validation checklist.
 4. [TEST-SCENARIOS.md](TEST-SCENARIOS.md) — what "done" means, scenario by scenario.
 5. [../probes/RESULTS.md](../probes/RESULTS.md) + `../probes/results/*.json` —
    real response shapes to diff parsers against.
