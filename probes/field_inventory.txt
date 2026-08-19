@@ -1,0 +1,231 @@
+
+=== 3.1-latest_available_date.json ===
+  date                                                                     str        2026-08-14
+
+=== 3.10-product_categories_top_products.json ===
+  top_products[]                                                           list(33)   
+  top_products[].images.1200x.height                                       int        1000
+  top_products[].images.1200x.url                                          str        https://i.pinimg.com/1200x/08/12/37/081237925c576eee2dfc743b54864496.jpg
+  top_products[].images.1200x.width                                        int        1000
+  top_products[].images.236x.height                                        int        236
+  top_products[].images.236x.url                                           str        https://i.pinimg.com/236x/08/12/37/081237925c576eee2dfc743b54864496.jpg
+  top_products[].images.236x.width                                         int        236
+  top_products[].images.345x.height                                        int        345
+  top_products[].images.345x.url                                           str        https://i.pinimg.com/345x/08/12/37/081237925c576eee2dfc743b54864496.jpg
+  top_products[].images.345x.width                                         int        345
+  top_products[].images.474x.height                                        int        474
+  top_products[].images.474x.url                                           str        https://i.pinimg.com/474x/08/12/37/081237925c576eee2dfc743b54864496.jpg
+  top_products[].images.474x.width                                         int        474
+  top_products[].images.564x.height                                        int        564
+  top_products[].images.564x.url                                           str        https://i.pinimg.com/564x/08/12/37/081237925c576eee2dfc743b54864496.jpg
+  top_products[].images.564x.width                                         int        564
+  top_products[].images.736x.height                                        int        736
+  top_products[].images.736x.url                                           str        https://i.pinimg.com/736x/08/12/37/081237925c576eee2dfc743b54864496.jpg
+  top_products[].images.736x.width                                         int        736
+  top_products[].images.75x75.height                                       int        75
+  top_products[].images.75x75.url                                          str        https://i.pinimg.com/75x75/08/12/37/081237925c576eee2dfc743b54864496.jpg
+  top_products[].images.75x75.width                                        int        75
+  top_products[].merchant_name                                             str        Oriental Trading
+  top_products[].pin_id                                                    str        4607745477126792832
+  top_products[].title                                                     str        97" Halloween Manor Archway Halloween Prop
+
+=== 3.12-top_trends_filtered.json ===
+  endDate                                                                  str        2026-08-14
+  values[]                                                                 list(10)   
+  values[].affinity                                                        NoneType   None
+  values[].mom_change.index                                                int        10
+  values[].mom_change.value                                                float      100.01
+  values[].normalizedCount                                                 int        11
+  values[].reverseRank                                                     int        10
+  values[].searchCount                                                     int        11
+  values[].seasonality_score                                               float      0.3267289
+  values[].term                                                            str        sterling point tv show
+  values[].wow_change.index                                                int        8
+  values[].wow_change.value                                                int        7
+  values[].yoy_change.index                                                int        10
+  values[].yoy_change.value                                                float      100.01
+
+=== 3.13-metrics.json ===
+  []                                                                       list(1)    
+  [].counts[]                                                              list(66)   
+  [].counts[].count                                                        int        55
+  [].counts[].date                                                         str        2025-08-15
+  [].counts[].normalizedCount                                              int        55
+  [].counts[].predictedLowerBoundNormalizedCount                           NoneType   None
+  [].counts[].predictedUpperBoundNormalizedCount                           NoneType   None
+  [].growth_rates.mom_change                                               float      0.1
+  [].growth_rates.wow_change                                               float      -0.03
+  [].growth_rates.yoy_change                                               NoneType   None
+  [].hasPrediction                                                         bool       True
+  [].has_prediction                                                        bool       True
+  [].term                                                                  str        nails
+
+=== 3.14-demographics.json ===
+  term_distributions.<term>.age_distribution.18-24                         float      0.49
+  term_distributions.<term>.age_distribution.25-34                         float      0.32
+  term_distributions.<term>.age_distribution.35-44                         float      0.12
+  term_distributions.<term>.age_distribution.45-49                         float      0.04
+  term_distributions.<term>.age_distribution.50-54                         float      0.04
+  term_distributions.<term>.age_distribution.55-64                         float      0.04
+  term_distributions.<term>.age_distribution.65+                           float      0.04
+  term_distributions.<term>.gender_distribution.female                     float      0.92
+  term_distributions.<term>.gender_distribution.male                       float      0.04
+  term_distributions.<term>.gender_distribution.unspecified                float      0.06
+
+=== 3.15-related_terms.json ===
+  []                                                                       list(5)    
+  [].counts[]                                                              list(53)   
+  [].hasPrediction                                                         bool       False
+  [].term                                                                  str        family icon
+
+=== 3.16-term_images.json ===
+  family[]                                                                 list(9)    
+
+=== 3.17-prefix_match.json ===
+  []                                                                       list(10)   
+  [].counts[]                                                              list(52)   
+  [].term                                                                  str        hallow
+
+=== 3.2-topics_featured.json ===
+  []                                                                       list(5)    
+  [].description                                                           str        Embroidery gifts are stitching their way into hearts with handmade charm...
+  [].id                                                                    str        2542595742484332416
+  [].interests[]                                                           list(1)    
+  [].is_published                                                          bool       True
+  [].name                                                                  str        Embroidery Gifts
+  [].pct_growth_mom                                                        int        25
+  [].pins[]                                                                list(9)    
+  [].pins[].color                                                          str        #a49080
+  [].pins[].height                                                         int        317
+  [].pins[].id                                                             str        1970393584571434
+  [].pins[].src                                                            str        https://i.pinimg.com/236x/a1/60/71/a16071bf56a543f107b16a952bd5f0c5.jpg
+  [].pins[].vertical_offset                                                NoneType   None
+  [].pins[].width                                                          int        236
+  [].related_search_trends[]                                               list(12)   
+  [].time_series[]                                                         list(13)   
+  [].time_series[].count                                                   int        3
+  [].time_series[].date                                                    str        2026-05-22
+  [].time_series[].normalized_count                                        NoneType   None
+  [].time_series[].normalized_predicted_lower_bound                        NoneType   None
+  [].time_series[].normalized_predicted_upper_bound                        NoneType   None
+
+=== 3.3-moment_available.json ===
+  historical_peaks[]                                                       list(13)   
+  historical_peaks[].peak_length_in_days                                   int        28
+  historical_peaks[].peak_timestamp_millis                                 str        1764288000000
+  historical_peaks[].takeoff_timestamp_millis                              str        1761868800000
+  moment_next_occurrence_timestamps[]                                      list(13)   
+  moments[]                                                                list(13)   
+  peaks[]                                                                  list(13)   
+  peaks[].peak_length_in_days                                              int        28
+  peaks[].peak_timestamp_millis                                            str        1795824000000
+  peaks[].takeoff_timestamp_millis                                         str        1793404800000
+  phase_labels[]                                                           list(13)   
+
+=== 3.4-moment_metrics.json ===
+  moments[]                                                                list(1)    
+  moments[].moment.daily_values[]                                          list(66)   
+  moments[].moment.daily_values[].normal_counts                            int        6
+  moments[].moment.daily_values[].predicted_normalized_lower_bound_count   int        4
+  moments[].moment.daily_values[].predicted_normalized_upper_bound_count   int        7
+  moments[].moment.daily_values[].timestamp                                int        1794528000000
+  moments[].moment.peaks[]                                                 list(1)    
+  moments[].moment.peaks[].peak_length_in_days                             int        98
+  moments[].moment.peaks[].peak_timestamp_millis                           str        1792713600000
+  moments[].moment.peaks[].takeoff_timestamp_millis                        str        1785456000000
+  moments[].moment_interests.<id>.daily_values[]                           list(66)   
+  moments[].moment_interests.<id>.daily_values[].normal_counts             int        6
+  moments[].moment_interests.<id>.daily_values[].predicted_normalized_lower_bound_count int        5
+  moments[].moment_interests.<id>.daily_values[].predicted_normalized_upper_bound_count int        8
+  moments[].moment_interests.<id>.daily_values[].timestamp                 int        1794528000000
+  moments[].moment_interests.<id>.peaks[]                                  EMPTY-LIST 
+  moments[].name                                                           str        halloween
+
+=== 3.5-editorial_content.json ===
+  []                                                                       list(6)    
+  [].body                                                                  str        Could cross stitch be your new favorite hobby? This charming craft is ma...
+  [].end_date                                                              str        
+  [].hide_keyword_percentages                                              bool       False
+  [].id                                                                    str        eaa3b7c5-6930-4c66-aa59-8b81b8ec5b9c
+  [].interests[]                                                           list(1)    
+  [].is_published                                                          bool       True
+  [].is_ready_for_translation                                              bool       True
+  [].keywords.CA[]                                                         list(5)    
+  [].keywords.GB+IE[]                                                      list(5)    
+  [].keywords.US[]                                                         list(5)    
+  [].pins[]                                                                list(6)    
+  [].pins[].color                                                          str        #ad6759
+  [].pins[].height                                                         int        632
+  [].pins[].id                                                             str        1096978421763117039
+  [].pins[].src                                                            str        https://i.pinimg.com/474x/41/ae/66/41ae66cf51cfc28c61261dccdfb3a5eb.jpg
+  [].pins[].vertical_offset                                                int        30
+  [].pins[].width                                                          int        474
+  [].regions[]                                                             list(3)    
+  [].start_date                                                            str        2026-08-01
+  [].title                                                                 str        Can't Stop Cross-Stitching
+  [].trend_type                                                            str        search
+
+=== 3.6-shopping_product_categories.json ===
+  categories.<id>.children[]                                               list(3)    
+  categories.<id>.friendly_name                                            str        Accent tables
+  categories.<id>.l2_product_category_ids[]                                list(1)    
+  categories.<id>.level                                                    int        4
+  categories.<id>.parent_product_category_id                               str        1460
+
+=== 3.7-product_categories_top.json ===
+  ordered_values[]                                                         list(19)   
+  ordered_values[].parent_product_categories[]                             list(1)    
+  ordered_values[].product_category                                        str        1478
+  ordered_values[].related_search_trends[]                                 list(24)   
+  ordered_values[].summary.engagement.lookback                             int        2
+  ordered_values[].summary.engagement.percent_growth                       float      0.04
+  ordered_values[].summary.engagement.percent_relative_volume              int        1
+  ordered_values[].summary.engagement.total                                int        0
+  ordered_values[].summary.outbound_clicks.lookback                        int        2
+  ordered_values[].summary.outbound_clicks.percent_growth                  float      0.1
+  ordered_values[].summary.outbound_clicks.percent_relative_volume         int        1
+  ordered_values[].summary.outbound_clicks.total                           int        0
+  ordered_values[].summary.saves.lookback                                  int        2
+  ordered_values[].summary.saves.percent_growth                            float      -0.04
+  ordered_values[].summary.saves.percent_relative_volume                   int        1
+  ordered_values[].summary.saves.total                                     int        0
+  total_num_product_categories                                             int        19
+
+=== 3.8-product_categories_metrics.json ===
+  values[]                                                                 list(1)    
+  values[].daily_values[]                                                  list(9)    
+  values[].daily_values[].count                                            int        87
+  values[].daily_values[].date                                             str        2026-06-19
+  values[].daily_values[].normalized_predicted_lower_bound                 NoneType   None
+  values[].daily_values[].normalized_predicted_upper_bound                 NoneType   None
+  values[].growth_rates.mom_change                                         NoneType   None
+  values[].growth_rates.wow_change                                         NoneType   None
+  values[].growth_rates.yoy_change                                         NoneType   None
+  values[].term                                                            str        1356
+
+=== 3.9-product_categories_demographics.json ===
+  product_category_distributions.<id>.demographics[]                       list(1)    
+  product_category_distributions.<id>.demographics[].age_distribution.18-24 float      0.08
+  product_category_distributions.<id>.demographics[].age_distribution.25-34 float      0.13
+  product_category_distributions.<id>.demographics[].age_distribution.35-44 float      0.13
+  product_category_distributions.<id>.demographics[].age_distribution.45-49 float      0.07
+  product_category_distributions.<id>.demographics[].age_distribution.50-54 float      0.08
+  product_category_distributions.<id>.demographics[].age_distribution.55-64 float      0.22
+  product_category_distributions.<id>.demographics[].age_distribution.65+  float      0.32
+  product_category_distributions.<id>.demographics[].gender_distribution.female float      0.82
+  product_category_distributions.<id>.demographics[].gender_distribution.male float      0.07
+  product_category_distributions.<id>.demographics[].gender_distribution.unspecified float      0.11
+  product_category_distributions.<id>.related_search_trends[]              list(17)   
+  product_category_distributions.<id>.summaries[]                          list(1)    
+  product_category_distributions.<id>.summaries[].engagement.lookback      int        2
+  product_category_distributions.<id>.summaries[].engagement.percent_growth float      0.71
+  product_category_distributions.<id>.summaries[].engagement.percent_relative_volume NoneType   None
+  product_category_distributions.<id>.summaries[].engagement.total         int        0
+  product_category_distributions.<id>.summaries[].outbound_clicks.lookback int        2
+  product_category_distributions.<id>.summaries[].outbound_clicks.percent_growth float      0.84
+  product_category_distributions.<id>.summaries[].outbound_clicks.percent_relative_volume NoneType   None
+  product_category_distributions.<id>.summaries[].outbound_clicks.total    int        0
+  product_category_distributions.<id>.summaries[].saves.lookback           int        2
+  product_category_distributions.<id>.summaries[].saves.percent_growth     float      0.63
+  product_category_distributions.<id>.summaries[].saves.percent_relative_volume NoneType   None
+  product_category_distributions.<id>.summaries[].saves.total              int        0

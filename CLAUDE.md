@@ -9,7 +9,8 @@ inherited from this project's parent: **a plausible wrong number, not a crash**.
 
 | Question | Read |
 |---|---|
-| How do the 18 endpoints link, what is the product | `docs/ARCHITECTURE.md` — start here |
+| What do I build first, and in what order | `docs/BUILD-PLAN.md` — **Phase 0 (run + mine all endpoints) precedes any code** |
+| How do the 18 endpoints link, what is the product | `docs/ARCHITECTURE.md` |
 | Exact params, limits, measured traps | `docs/07-API-REFERENCE.md` |
 | Call chains + validation checklist | `docs/08-BUILD-GUIDE.md` |
 | What "done" means for any code | `docs/TEST-SCENARIOS.md` (scenario ids A1…G2) |

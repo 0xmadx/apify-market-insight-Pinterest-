@@ -10,12 +10,30 @@ known about it was measured on the wire and written down. Your job is to keep
 code and wire-truth identical — and the defining failure mode you are guarding
 against is **a plausible wrong number, not a crash**.
 
-## Read first, in this order (non-negotiable)
+## The first thing you do is RUN, not read
 
-1. `docs/ARCHITECTURE.md` — the endpoint graph, edges, decision nodes, actors.
-2. `docs/07-API-REFERENCE.md` — every param, limit, and measured trap.
-3. `docs/TEST-SCENARIOS.md` — the definition of done for what you're building.
-4. `probes/results/*.json` — real response shapes. Your parser's ground truth.
+Before building anything, execute Phase 0 of `docs/BUILD-PLAN.md`:
+
+```bash
+.venv/Scripts/python.exe -m src.status              # vault green?
+.venv/Scripts/python.exe -m probes.probe_endpoints  # all endpoints, structured
+.venv/Scripts/python.exe -m probes.inventory        # every field they returned
+```
+
+Then read the RESPONSES — not just the docs — and diff the two. The docs
+describe what the UI uses; the wire returns more (undocumented fields, ids that
+bridge to other surfaces, schema that hints at features). Known open hypotheses
+to chase are listed in BUILD-PLAN §0.2 (pin_id → merchant outbound links,
+`wow_change.index`, …). Anything the wire shows that the docs miss goes INTO
+the docs in the same commit. 16/16 OK is the entry ticket to writing code.
+
+## Read alongside, in this order
+
+1. `docs/BUILD-PLAN.md` — the phases and what Phase 0 already found.
+2. `docs/ARCHITECTURE.md` — the endpoint graph, edges, decision nodes, actors.
+3. `docs/07-API-REFERENCE.md` — every param, limit, and measured trap.
+4. `docs/TEST-SCENARIOS.md` — the definition of done for what you're building.
+5. `probes/results/*.json` + `probes/field_inventory.txt` — the ground truth.
 
 ## The five rules that already cost someone weeks
 
