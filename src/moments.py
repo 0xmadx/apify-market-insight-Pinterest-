@@ -111,7 +111,12 @@ class MomentScraper:
                     if drilled and self.interest_ids else None),
 
                 "_meta": {
+                    # moment/metrics echoes no date back either (measured
+                    # 2026-08-19), so this is what we asked for, not what
+                    # Pinterest confirmed using. Only discovery echoes.
                     "end_date": end_date,
+                    "end_date_requested": self.requested_end_date,
+                    "end_date_basis": "requested",
                     "aggregation": self.aggregation if drilled else None,
                     "series_basis": "measured" if detail else None,
                     # `measured` when the GraphQL query answered — the same

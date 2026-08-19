@@ -127,8 +127,25 @@ class ShoppingScraper:
 
         categories = top["categories"]
         if not categories:
-            # A real answer, not a failure: this vertical has nothing trending.
-            self.log(f"[shopping] {name}: 0 categories (empty, not an error)")
+            # An empty here has TWO causes and they mean opposite things:
+            #   1. no endDate  -> this vertical genuinely has nothing trending
+            #   2. an endDate  -> possibly past the ~257-day floor, where this
+            #      endpoint answers 200 + [] instead of erroring. The cap
+            #      refuses the clearly-out-of-range dates, but the boundary is
+            #      ragged (2025-11-29 empty between two working days), so a
+            #      near-floor date can still land here.
+            # Reading (2) as (1) is "nothing is trending in home decor" — a
+            # plausible wrong answer. Never collapse them into one message.
+            if self.requested_end_date:
+                self.log(f"[shopping] {name}: 0 categories at "
+                         f"endDate={self.requested_end_date} — this vertical "
+                         f"had nothing trending, OR the date is at the edge of "
+                         f"the ~{vocab.HISTORY_LIMIT_DAYS['shopping']}-day "
+                         f"window where Pinterest answers 200 with an empty "
+                         f"list. Re-run without endDate to tell them apart.")
+            else:
+                self.log(f"[shopping] {name}: 0 categories "
+                         f"(empty, not an error)")
             return
         self.log(f"[shopping] {name}: {len(categories)} categories "
                  f"(vertical holds {top['total_in_vertical']})")
@@ -194,13 +211,19 @@ class ShoppingScraper:
     def _metrics(self, ids, end_date):
         if not ids:
             return {}
+        # Same trap as the keyword chart: forecasting forward from a past
+        # end_date is HTTP 500 here too (measured -120d + predicted_days=28).
+        # moment/metrics is the exception and forecasts from the past fine.
+        predicted, self._forecast_note = vocab.forecast_days(
+            self.predicted_days, end_date, self.client.bootstrap(),
+            endpoint="shopping")
         return parsers.parse_category_metrics(self.client.style_a(
             f"/ads/v4/trends/shopping/product_categories/metrics/{self.region}",
             {"product_category_ids": ids,
              "event": self.event,
              "end_date": end_date,
              "days": self.chart_days,
-             "predicted_days": self.predicted_days,
+             "predicted_days": predicted,
              "age_bucket": self.age_buckets,
              "gender": self.genders}, kind="trends"))
 
@@ -276,7 +299,14 @@ class ShoppingScraper:
         """
         chart = metrics.get(cat_id, {})
         return {
-            "end_date": end_date,          # Pinterest's date, not the run's
+            # ⚠️ This endpoint echoes NO date back — measured 2026-08-19, there
+            # is not one date string anywhere in the response. So unlike
+            # keywords, this is the date we ASKED for, and we cannot see
+            # whether Pinterest snapped it to a week boundary. `end_date_basis`
+            # says so, rather than letting it be read as Pinterest's own.
+            "end_date": end_date,
+            "end_date_requested": self.requested_end_date,
+            "end_date_basis": "requested",
             "event": self.event,
             "audience_event": (demo or {}).get("event"),
             "audience_basis": "measured" if demo else None,
@@ -284,6 +314,7 @@ class ShoppingScraper:
             "chart_basis": "measured" if chart.get("series") else None,
             "chart_days": self.chart_days,
             "predicted_days": self.predicted_days,
+            "forecast_suppressed": getattr(self, "_forecast_note", None),
             # Absolute volumes are never exposed by this API — `total` is always
             # 0. Said out loud so nobody reads a missing number as a zero one.
             "absolute_volume": None,

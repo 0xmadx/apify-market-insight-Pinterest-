@@ -368,12 +368,100 @@ def end_date(value):
 #                         codebase exists to prevent, so it is refused here.
 #   /metrics/             future → 400, older than ~1 year → 400.
 #                         Measured: 2026-01-01 ok, 2025-08-01 rejected.
-#   the Style A endpoints tolerate the same window as the data they chart.
+#   moment/metrics        MEASURED 2026-08-19 from the same baseline: -730d
+#                         answers with a full series, -800d → HTTP 500. So 730
+#                         is real here — now measured, not inherited.
+#   shopping top/{region} MEASURED 2026-08-19 — and the old 730 was WRONG. It
+#                         was never probed; it was copied from the `days` /
+#                         `lookback_days` ceiling, which is a *lookback window*
+#                         and a different parameter entirely. Binary-searched:
+#                         -257d (2025-11-30) returns rows, -260d (2025-11-27)
+#                         returns **HTTP 200 with an empty list**. The old cap
+#                         waved ~470 days of silent empties straight through,
+#                         and an empty shopping run reads as "nothing is
+#                         trending in this vertical" — a plausible wrong
+#                         answer, the one failure mode this project exists to
+#                         stop.
+#
+# ⚠️ The shopping boundary is RAGGED, not a clean floor: 2025-11-28 returns
+# rows, 2025-11-29 returns none, 2025-11-30 returns rows again. Well inside the
+# window there are no gaps at all (21 consecutive days across 2026-05 every one
+# answered), so the raggedness is an edge effect. The cap is the last
+# *reliable* day, not the last day that happened to answer.
+#
+# ⚠️ UNDETERMINED: whether shopping's floor is a fixed data-start (~2025-11-28,
+# so the usable window grows a day per day) or a rolling ~257-day window. One
+# observation cannot separate them. The day-count cap is deliberate: if the
+# floor is fixed, this drifts toward refusing dates that would have worked — a
+# visible refusal carrying a reason. The other choice drifts toward silent
+# empties. Re-measure with probes/history_caps.py.
 #
 # Style B returns its 400s with an EMPTY BODY, so a customer who guesses gets no
 # reason at all. Hence refusing here, with the endpoint named.
-HISTORY_LIMIT_DAYS = {"discover": 365, "metrics": 365, "shopping": 730,
+HISTORY_LIMIT_DAYS = {"discover": 365, "metrics": 365, "shopping": 257,
                       "moments": 730}
+
+# Which endpoints can forecast FORWARD from a PAST end_date. Measured
+# 2026-08-19, and this one was a live bug rather than a missing feature: with
+# `endDate` set to anything older than the current week, `/metrics/` and
+# shopping's `product_categories/metrics` answer **HTTP 500** whenever
+# `predicted_days > 0`. Style B carries no error body, so it surfaced as a bare
+# 500 with nothing to explain it.
+#
+#   /metrics/ (keywords)   -0d..-7d ok with predicted_days=91
+#                          -14d and older -> 500 for ANY predicted_days > 0
+#                          -120d with predicted_days=0 -> fine
+#   shopping metrics       -120d + predicted_days=28 -> 500
+#                          -120d + predicted_days=0  -> fine
+#   moment/metrics         -120d + predicted_days=91 -> FINE (26 points)
+#                          Style A, a different service; it forecasts happily
+#                          from the past, so moments needs no special case.
+#
+# It is a sensible thing for Pinterest to refuse — a "forecast" running forward
+# from a historical date is predicting a period that has already happened. We
+# drop the forecast instead of the whole request, and the record says we did.
+FORECAST_FROM_PAST = {"discover": False, "metrics": False,
+                      "shopping": False, "moments": True}
+
+# How close to the newest settled date still counts as "now" for forecasting.
+# Measured: -7d forecasts, -14d does not. Pinterest works in whole weeks.
+FORECAST_CURRENT_WEEK_DAYS = 7
+
+
+def forecast_days(requested, end_date, latest, *, endpoint):
+    """Zero out predicted_days when this endpoint cannot forecast from `end_date`.
+
+    Returns (days, note). `note` is None when nothing was changed, and
+    otherwise explains the drop in the customer's own record — a forecast that
+    silently vanished would read as "Pinterest has no forecast for this term",
+    which is a different and wrong claim (absent is not zero).
+    """
+    import datetime as _dt
+
+    if not requested or FORECAST_FROM_PAST.get(endpoint, True):
+        return requested, None
+    try:
+        asked = _dt.date.fromisoformat(str(end_date))
+        newest = _dt.date.fromisoformat(str(latest))
+    except (ValueError, TypeError):
+        return requested, None
+    back = (newest - asked).days
+    if back <= FORECAST_CURRENT_WEEK_DAYS:
+        return requested, None
+    return 0, (
+        f"forecast not requested: endDate is {back} days before Pinterest's "
+        f"newest settled date ({newest}), and this endpoint returns HTTP 500 "
+        f"for any forecast running forward from a past date. The historical "
+        f"series is unaffected. Omit endDate to get forecasts.")
+
+
+# Does the endpoint echo back the date it actually used? Only discovery does —
+# it is how the week-snapping below was found. Shopping and moment/metrics
+# return NO date anywhere in the response (measured 2026-08-19), so for those
+# the only date we can honestly report is the one we asked for. Every record
+# carries `_meta.end_date_basis` saying which it got.
+ECHOES_END_DATE = {"discover": True, "metrics": True,
+                   "shopping": False, "moments": False}
 
 
 def history_date(value, latest, *, endpoint="discover"):
@@ -406,11 +494,14 @@ def history_date(value, latest, *, endpoint="discover"):
     if cap is not None and (newest - asked).days > cap:
         raise InvalidParam(
             f"endDate={asked} is {(newest - asked).days} days back; the "
-            f"{endpoint} endpoint rejects anything past ~{cap} days and Style B "
-            f"rejects it. Note that discovery answers an out-of-range date "
-            f"with HTTP 200 and an EMPTY LIST rather than an error — which "
-            f"would read as 'nothing was trending', so it is refused here "
-            f"instead.")
+            f"{endpoint} endpoint only carries about {cap} days "
+            f"(back to ~{newest - _dt.timedelta(days=cap)}). Past that it "
+            f"answers with HTTP 200 and an EMPTY LIST rather than an error — "
+            f"which reads as 'nothing was trending', so it is refused here "
+            f"instead of handing you a silent nothing. Measured per endpoint; "
+            f"they differ a lot (shopping "
+            f"{HISTORY_LIMIT_DAYS['shopping']}d vs moments "
+            f"{HISTORY_LIMIT_DAYS['moments']}d).")
     return str(asked)
 
 

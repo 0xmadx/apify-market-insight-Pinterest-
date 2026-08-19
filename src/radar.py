@@ -62,7 +62,11 @@ class RadarScraper:
                 "series": trend["series"],
                 "pins": trend["pins"],
                 "_meta": {
+                    # Neither radar endpoint echoes a date back; this is what
+                    # we asked for. Only discovery confirms what it used.
                     "end_date": end_date,
+                    "end_date_requested": self.requested_end_date,
+                    "end_date_basis": "requested",
                     "basis": "measured",
                     "normalization_scope":
                         f"spotlight:{self.region}:{trend['id']}",
@@ -103,6 +107,8 @@ class RadarScraper:
                 "pins": item["pins"],
                 "_meta": {
                     "end_date": end_date,
+                    "end_date_requested": self.requested_end_date,
+                    "end_date_basis": "requested",
                     "basis": "curated",
                     "regions_covered": item["regions"],
                     "note": "hand-written by Pinterest editors; keywords are "

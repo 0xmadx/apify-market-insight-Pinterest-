@@ -171,13 +171,38 @@ Measured, same query, different dates:
 That is how you plan a season: look at what took off this time last year, and
 you have your calendar.
 
-**Two things about dates.** History reaches **about 365 days** and no further —
-past that Pinterest answers with an empty list rather than an error, so we
-refuse the request and tell you why instead of handing you a silent nothing.
-And Pinterest **snaps your date to its own week boundary** — ask for
-`2026-02-15` and the data is for `2026-02-13`. Records carry both:
-`_meta.end_date` is what Pinterest used, `_meta.end_date_requested` is what you
-asked for.
+**Three things about dates.**
+
+**How far back you can go depends on the operation** — and they are very
+different. Measured, not assumed:
+
+| Operation | Reaches back |
+|---|---|
+| `moments` | ~730 days |
+| `keywords` | ~365 days |
+| `shopping` | **~257 days** |
+
+Past its limit an endpoint does not fail — it answers *successfully with
+nothing*, which reads as "nothing was trending that week". That is worse than
+an error, so out-of-range dates are refused up front with the reason.
+
+**Pinterest snaps your date to its own week boundary** — ask for `2026-02-15`
+and the data is for `2026-02-13`.
+
+**Asking about the past turns the forecast off.** On `keywords` and `shopping`,
+Pinterest refuses to project forward from a historical date — reasonably, since
+that period has already happened. So those runs return the real history with no
+forecast, and `_meta.forecast_suppressed` says exactly that. We spell it out
+because a blank forecast would otherwise read as "Pinterest has no forecast for
+this term", which is a different and wrong claim. `moments` is unaffected.
+
+**Every record carries both dates, plus which one you are looking at.**
+`_meta.end_date_requested` is always your ask. `_meta.end_date_basis` tells you
+what `_meta.end_date` actually is: `echoed` means Pinterest returned the date it
+used, so you can see the snap (only `keywords` does this); `requested` means the
+endpoint returns no date at all, so `end_date` is your own ask passed through
+and any snapping is invisible. We would rather say that than let you read a
+number as confirmed when it is not.
 
 ### "Just tell me what's hot" — zero input
 

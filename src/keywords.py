@@ -166,8 +166,15 @@ class KeywordScraper:
 
                 "_meta": {
                     # What Pinterest used — it snaps to its own week boundary.
+                    # Discovery is the ONLY endpoint that echoes this back, so
+                    # it is the only one whose basis is `echoed` rather than
+                    # `requested`. Asked 2026-02-15 -> answered 2026-02-13.
                     "end_date": effective_end_date,
                     "end_date_requested": self.requested_end_date,
+                    "end_date_basis": "echoed",
+                    # Set when the forecast was dropped because endDate is in
+                    # the past. Absent forecast != "Pinterest has no forecast".
+                    "forecast_suppressed": getattr(self, "_forecast_note", None),
                     "mode": mode,
                     "basis": "measured" if metric else None,
                     # ONE metrics call, group-normalised → every series in this
@@ -181,13 +188,21 @@ class KeywordScraper:
     # ------------------------------------------------------------ the calls
 
     def _metrics(self, term_list, end_date):
+        # A forecast running forward from a PAST end_date is HTTP 500 on this
+        # endpoint (measured: -7d forecasts, -14d does not, at any
+        # predicted_days > 0). Style B sends no error body, so it arrived as a
+        # bare 500 — and it broke `endDate` for keywords entirely. Drop the
+        # forecast, keep the history, and tell the customer in the record.
+        predicted, self._forecast_note = vocab.forecast_days(
+            self.predicted_days, end_date, self.client.bootstrap(),
+            endpoint="metrics")
         return parsers.parse_keyword_metrics(self.client.style_b("/metrics/", {
             "terms": ",".join(term_list),
             "country": self.region,
             "end_date": end_date,
             "days": self.days,
             "aggregation": 2,                      # the only valid value
-            "predicted_days": self.predicted_days,
+            "predicted_days": predicted,
             "normalize_against_group": "true",     # ALWAYS when >1 term
             "shouldMock": "false",
         }, kind="search"))

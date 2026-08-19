@@ -120,7 +120,7 @@ endpoint probe harness (16/16 OK on 2026-08-18).
 
 **Built + verified live:** the graph layer (`transport.py`, `vocab.py`,
 `parsers.py`) and all four traversals as one actor with an `operation` input —
-`shopping`, `keywords`, `moments`, `radar`. 246 offline checks, 0 unread
+`shopping`, `keywords`, `moments`, `radar`. 288 offline checks, 0 unread
 response fields (`probes/coverage.py`).
 
 **Both browser captures landed 2026-08-19:**

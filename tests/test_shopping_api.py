@@ -129,7 +129,10 @@ def main():
     check("fixture 3.6 loaded", tax_raw is not None)
     if tax_raw:
         tax = parsers.parse_taxonomy(tax_raw)
-        check("B2 taxonomy parses 383 categories", len(tax) == 383, len(tax))
+        # 383 on 2026-08-19. Pinterest owns this number and the release
+        # gate refreshes the fixture, so assert the shape, not the snapshot.
+        check("B2 taxonomy parses the full category tree", len(tax) > 300,
+              len(tax))
         levels = {}
         for node in tax.values():
             levels[node["level"]] = levels.get(node["level"], 0) + 1
@@ -147,10 +150,16 @@ def main():
     check("fixture 3.7 loaded", top_raw is not None)
     if top_raw:
         top = parsers.parse_top_categories(top_raw)
-        check("B2 top/ parses rows", len(top["categories"]) == 19,
+        check("B2 top/ parses rows", len(top["categories"]) > 0,
               len(top["categories"]))
-        check("B2 limit=20 -> 19 is the vertical's real size, not truncation",
-              top["total_in_vertical"] == 19)
+        # The real claim is that a short list means the vertical IS short, not
+        # that we truncated it. Assert the RELATIONSHIP rather than the 19
+        # measured on 2026-08-19 — Pinterest owns the count, and the release
+        # gate refreshes this fixture.
+        check("B2 a short list is the vertical's real size, not truncation",
+              len(top["categories"]) == top["total_in_vertical"],
+              f'{len(top["categories"])} rows vs total '
+              f'{top["total_in_vertical"]}')
         row = top["categories"][0]
         check("B2 row carries a category id", bool(row["category_id"]))
         check("B2 row carries search queries", len(row["search_queries"]) > 0)
@@ -187,14 +196,21 @@ def main():
         check("F search queries are IDENTICAL across events — fetch once",
               len(set(queries.values())) == 1)
         check("F search queries are non-empty",
-              len(per_event["SAVE"]["search_queries"]) == 17)
+              len(per_event["SAVE"]["search_queries"]) > 0,
+              len(per_event["SAVE"]["search_queries"]))
 
     # top products
     print("\nGROUP E — products and the bridge off Pinterest")
     prod_raw = fixture("3.10-*.json")
     if prod_raw:
         products = parsers.parse_top_products(prod_raw, region="US")
-        check("B2 top_products parses 33 products", len(products) == 33, len(products))
+        # NOT `== 33`. It was 33 when first captured and 35 on 2026-08-19 —
+        # the number of shoppable pins in a category is Pinterest's to change,
+        # and probes/probe_endpoints.py (the release gate) REFRESHES this
+        # fixture, so pinning the count made the documented release sequence
+        # fail itself. Assert the invariant: the list parses and is usable.
+        check("B2 top_products parses a full product list", len(products) >= 20,
+              len(products))
         first = products[0]
         check("B2 product has pin_id and merchant", first["pin_id"] and first["merchant_name"])
         check("B2 pin_url is constructed",
@@ -232,8 +248,14 @@ def main():
                      "christmas ornament", "mom necklace", "felt garland",
                      "qqzzxx99", "backpack name tag", "embroidery ideas"]
         missing = parsers.missing_terms(requested, parsed)
+        # The claim under test is "absence is reported, never silently
+        # dropped" — not the exact 4/6 split measured on 2026-08-19. Two of
+        # the ten are deliberate nonsense (zzzqqqxyz, qqzzxx99) and must
+        # always be missing; pinning the whole split would fail the moment
+        # Pinterest gained data for a real term, which is not a regression.
         check("B5 dropped terms are reported, not silently lost",
-              len(parsed) == 4 and len(missing) == 6, f"{len(parsed)} got, {len(missing)} missing")
+              len(parsed) + len(missing) == len(requested) and len(missing) >= 2,
+              f"{len(parsed)} got, {len(missing)} missing")
         check("B5 'halloween' is among the dropped (absence != zero volume)",
               "halloween" in missing)
 

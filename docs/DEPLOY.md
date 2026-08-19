@@ -36,7 +36,7 @@ separate namespace, the same shape as an Apify container reaching Upstash.
 **Proven this way on 2026-08-19** (Ubuntu WSL, `REDIS_URL` pointed at
 `172.31.144.1:6379`, never localhost):
 
-- all 246 offline checks pass on Linux — the code had only ever run on Windows
+- all 288 offline checks pass on Linux — the code had only ever run on Windows
 - the actor boots the real Apify SDK, reads `INPUT.json`, and reaches a
   networked Redis
 - with an empty vault it fails **exactly as designed**: `ERROR No leasable
@@ -181,6 +181,7 @@ costs in the system.
 .venv/Scripts/python.exe -m src.status              # vault green
 .venv/Scripts/python.exe -m probes.probe_endpoints  # 16/16 must be OK
 .venv/Scripts/python.exe -m probes.coverage         # 0 unread leaves
+.venv/Scripts/python.exe -m probes.history_caps     # endDate windows still hold
 .venv/Scripts/python.exe -m tests.test_incremental
 .venv/Scripts/python.exe -m tests.test_shopping_api
 .venv/Scripts/python.exe -m tests.test_shopping_traversal
@@ -191,6 +192,20 @@ costs in the system.
 The probe suite is the contract this API does not have. An endpoint dropping to
 FAIL is stop-ship until the docs and parsers are reconciled with the new wire
 truth — see `docs/TEST-SCENARIOS.md` group G.
+
+**Run it in this order.** `probe_endpoints` rewrites `probes/results/*.json`,
+which the test suites read as fixtures — so the tests must run *after* it, on
+the data it just fetched. That is the point: it is the only step that checks
+the suites against today's wire rather than a stored copy. Tests therefore must
+never assert a count Pinterest owns (how many categories a vertical holds, how
+many products a category has); assert the invariant instead, or the release
+sequence fails itself. Two assertions did exactly that and were fixed on
+2026-08-19.
+
+`probes.history_caps` is the other measurement that cannot be a unit test: past
+its window each endpoint answers **HTTP 200 with an empty list**, so a cap that
+has drifted too permissive is invisible in every other check. It reports drift
+in the dangerous direction explicitly.
 
 **One standing maintenance item:** the moment-demographics `queryHash` in
 `src/vocab.py` is a persisted-query hash and rotates when Pinterest redeploys.

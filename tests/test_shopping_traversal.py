@@ -133,7 +133,10 @@ def main():
     drilled = [r for r in records if r["drilled"]]
     check("E2 exactly 2 records drilled", len(drilled) == 2)
     check("E2 drilled record has an audience", bool(drilled[0]["age_distribution"]))
-    check("E2 drilled record has products", len(drilled[0]["top_products"]) == 33)
+    # Lower bound, not an equality — see the note in test_shopping_api.py.
+    check("E2 drilled record has products",
+          len(drilled[0]["top_products"]) >= 20,
+          len(drilled[0]["top_products"]))
     product = drilled[0]["top_products"][0]
     check("E2 product carries a usable pin permalink",
           (product["pin_url"] or "").startswith("https://www.pinterest.com/pin/"))

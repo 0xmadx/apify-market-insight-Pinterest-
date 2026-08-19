@@ -4,9 +4,11 @@ Complete surface. For "what is this and why would I use it", read
 [CUSTOMER-GUIDE.md](CUSTOMER-GUIDE.md) first — this page assumes you already
 know and want the fields.
 
-The parameter tables are **generated from `.actor/input_schema.json`** — the
-same file the Apify form renders and `src/scraper.py` reads. It cannot drift
-from the code; `tests/test_dispatch.py` asserts both directions.
+This page is **checked against the code, not written alongside it.**
+`tests/test_dispatch.py` fails the build if `.actor/input_schema.json` offers an
+input this page does not document, if the code reads one the form does not
+offer, or if any operation emits a field — including any `_meta` key — that is
+missing from its output table below. All four directions, every run.
 
 ---
 
@@ -48,6 +50,7 @@ Async runs, polling and dataset paging are standard Apify platform behaviour —
 | `region` | `string` | `US` | Pinterest region code — 32 accepted (US, CA, GB+IE, DE, FR, BR, MX, AU+NZ, JP, KR, SE+DK+FI+NO, …). '+' is literal. Narrower per feature: top_products and editorial serve US/CA/GB+IE only; JP and IN have no seasonal moments at all. |
 | `maxRecords` | `integer` | `0` | Hard stop on records pushed. 0 = no limit. |
 | `predictedDays` | `integer` | `91` | Days of forecast to request. Max 91 — Pinterest rejects more. Only fills for keywords that have a forecast. |
+| `endDate` | `string` (YYYY-MM-DD) | *newest* | **Ask about the past.** Omit for the newest settled data; set it to see what was trending on that date — `2025-10-15` returns fall nails, halloween nails, fall outfits. History reaches a **different distance per operation** and out-of-range dates are refused before the wire (see *History limits* below). Pinterest snaps the date to its own week boundary. **Forecasts are dropped** for past dates on `keywords` and `shopping` (the endpoints 500 rather than forecast from history); `_meta.forecast_suppressed` says so on the record. |
 | `fullRescan` | `boolean` | `false` | Ignore the seen-set: re-emit records already collected in previous runs. |
 | `forceRefresh` | `boolean` | `false` | Ignore cached responses: hit Pinterest for every request. |
 
@@ -60,6 +63,7 @@ Async runs, polling and dataset paging are standard Apify platform behaviour —
 | `event` | `OUTBOUND_CLICK` \| `ENGAGEMENT` \| `SAVE` | `OUTBOUND_CLICK` | OUTBOUND_CLICK (purchase intent), ENGAGEMENT (broad attention), SAVE (planning). The audience differs materially per event. |
 | `includeProducts` | `boolean` | `true` | Attach the shoppable product list to drilled categories. US, CA and GB+IE only. |
 | `enrichTopN` | `integer` | `0` | Per drilled category, fetch real price, stock, free-shipping threshold and the OUTBOUND MERCHANT URL for this many top products. Costs 1 extra request PER PRODUCT (no batch form exists), so start small. 0 = off. |
+| `chartDays` | `integer` | `180` | Days of history in each category's Performance chart. 90 / 180 / 365 / 730. 180 with a 28-day forecast is what draws the dashed prediction band on Pinterest's own detail page. |
 | `shoppingAges` | array | — | Restrict trending categories to these age bands: 18-24, 25-34, 35-44, 45-49, 50-54, 55-64, 65+, all. Empty = everyone. (Sent as the shopping enum form; the keyword operation uses a different scheme — handled for you.) |
 | `shoppingGenders` | array | — | Restrict trending categories: male, female, unspecified. Empty = everyone. |
 | `rankingMethod` | `GROWTH` \| `HIGH_VOLUME` \| `VIRAL` | `GROWTH` | How Pinterest ranks the categories. Their own UI only ever sends GROWTH — HIGH_VOLUME and VIRAL are real and unexposed, so this reaches rankings their interface cannot show. |
@@ -118,6 +122,35 @@ here instead, with the measured reason in the message.
 | `top_products` and editorial: US, CA, GB+IE only | other regions return 200 with nothing |
 | moments: not JP or IN | those regions have zero seasonal moments |
 
+### History limits — how far back `endDate` reaches
+
+Measured 2026-08-19 by binary search, per operation. **They are not the same**,
+and the differences are large:
+
+| Operation | Reaches back | At the boundary |
+|---|---|---|
+| `shopping` | **~257 days** | −257d returns rows, −260d returns **HTTP 200 with an empty list** |
+| `keywords` | **~365 days** | −365d returns terms, −400d returns **200 + empty list** |
+| `moments` | **~730 days** | −730d returns a full series, −800d returns HTTP 500 |
+| `radar` | n/a | curated, always current |
+
+Past the limit these endpoints do not error — they answer *successfully* with
+nothing, which reads as "nothing was trending that week". That is a plausible
+wrong answer rather than a visible failure, so out-of-range dates are **refused
+here**, with the measured reason in the message.
+
+Two caveats worth knowing:
+
+- **The shopping boundary is ragged.** `2025-11-28` returns rows, `2025-11-29`
+  returns none, `2025-11-30` returns rows again. Well inside the window there
+  are no gaps (21 consecutive days sampled, all answered). So a date near the
+  floor can still come back empty; move a few days later.
+- **Whether shopping's floor is fixed or rolling is undetermined** — one
+  observation cannot tell a data-start date from a rolling window. The cap is
+  enforced as a day count deliberately: if the floor turns out to be fixed, the
+  cap drifts toward *refusing* dates that would have worked, which is visible.
+  The other choice drifts toward silent empties, which is not.
+
 ---
 
 ## Output
@@ -128,6 +161,7 @@ One record per row. Every record carries `_meta`.
 
 | Field | Type | Notes |
 |---|---|---|
+| `region` | string | the region this record was measured in — echoed back so a multi-region collection stays separable |
 | `category_id` | string | Pinterest's id, e.g. `1311` |
 | `category_name` | string | joined from the taxonomy — the API alone returns ids only |
 | `category_level` | number | 2, 3 or 4 |
@@ -160,6 +194,7 @@ One record per row. Every record carries `_meta`.
 
 | Field | Type | Notes |
 |---|---|---|
+| `region` | string | the region this record was measured in |
 | `term` | string | as sent (lowercased) |
 | `status` | string | `ok`, or `no_data` when Pinterest returned nothing for it |
 | `has_forecast` | boolean or null | the 🔮 flag. `null` = the field was absent, not `false` |
@@ -175,6 +210,7 @@ One record per row. Every record carries `_meta`.
 
 | Field | Type | Notes |
 |---|---|---|
+| `region` | string | the region this record was measured in |
 | `slug` | string | wire form, e.g. `fathers day` |
 | `phase` | string | `rising`, `approaching`, `cooldown`, `off_season`, `ended` |
 | `actionable` | boolean | true for `rising` / `approaching` |
@@ -191,10 +227,12 @@ One record per row. Every record carries `_meta`.
 
 | Field | Type | Notes |
 |---|---|---|
+| `region` | string | the region this record was measured in |
 | `source` | string | `spotlight` or `editorial` |
 | `curated_by` | string | always `pinterest` — editorial choice, not organic ranking |
 | `id` · `name` · `description` | string | |
 | `pct_growth_mom` | number | spotlight only |
+| `interests` | array | the interest ids this trend sits under — join to the same 24 ids `interests` and `interestIds` take |
 | `keywords` | array | editorial: **this region's list only** |
 | `campaign_start` · `campaign_end` | string or null | editorial only — when the push began |
 | `series` | array | normalised to the trend itself; never compare across trends |
@@ -204,12 +242,21 @@ One record per row. Every record carries `_meta`.
 
 | Field | Meaning |
 |---|---|
-| `end_date` | **Pinterest's settled date, not the run date.** Data lags ~4 days. When you pass `endDate`, this is the date Pinterest **actually used** — it snaps to its own week boundary (asked `2026-02-15` → answered `2026-02-13`) |
-| `end_date_requested` | what you asked for, when it differs from the above |
+| `end_date` | The settled date this record describes, **not the run date** — data lags ~4 days. Read it together with `end_date_basis` below |
+| `end_date_requested` | The date you asked for. On every record, so you can always see the ask next to the answer |
+| `end_date_basis` | `echoed` = Pinterest returned the date it used, so `end_date` is *its* answer and may differ from your ask (it snaps to a week boundary: asked `2026-02-15` → answered `2026-02-13`). `keywords` is the only operation that does this. `requested` = the endpoint returns **no date at all** (measured: shopping and moment/metrics contain no date anywhere in the response), so `end_date` is your ask passed through and any snapping is invisible to us. We do not claim it is Pinterest's |
 | `normalization_scope` | what the relative numbers are relative to. **Different scope ⇒ not comparable** |
 | `basis` · `audience_basis` · `chart_basis` · `series_basis` | `measured`, `derived`, `curated`, or `null` (not fetched) |
 | `audience_event` | which action the audience was measured under — the same category has a very different audience under `OUTBOUND_CLICK` vs `SAVE` |
 | `audience_note` | why a derived value is derived, when it is |
+| `event` | which action the trending ranking itself was measured under (shopping) |
+| `mode` | which keyword mode produced the record — `discover`, `seed` or `exact` |
+| `aggregation` | the resolution of a moment's series: `daily`, `weekly`, `monthly` |
+| `chart_days` · `predicted_days` | the history and forecast windows actually requested |
+| `forecast_suppressed` | `null` normally. When you pass a past `endDate`, a string explaining that the **forecast was not requested** — the keyword and shopping chart endpoints return HTTP 500 for any forecast running forward from a historical date. The history is unaffected. This is stated rather than left blank, because a missing forecast otherwise reads as "Pinterest has no forecast for this term", which is a different claim. `moments` is unaffected and keeps its forecast |
+| `forecast_region_note` | forecasts have only ever been observed in `US` |
+| `regions_covered` | which regions an editorial item ran in — its keywords are this region's list only |
+| `note` | how to read this record's series without over-reading it |
 | `absolute_volume` | always `null`, with `absolute_volume_note` explaining that Pinterest never publishes them |
 
 ---

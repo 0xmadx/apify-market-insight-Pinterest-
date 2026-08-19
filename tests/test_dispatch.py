@@ -261,6 +261,104 @@ def main():
     check("every input the form offers is read by the code",
           not (set(schema) - reads), sorted(set(schema) - reads))
 
+    print("\nH - history caps and date provenance (measured 2026-08-19)")
+    # The shopping cap was 730 for the project's whole life. It was never
+    # probed; it was copied from the `days`/`lookback_days` ceiling, which is a
+    # different parameter. Measured: -257d returns rows, -260d returns HTTP 200
+    # with an EMPTY LIST. The old value waved ~470 days of silent empties
+    # through, and an empty shopping run reads as "nothing is trending here".
+    check("shopping history cap is the measured 257, not the inherited 730",
+          _v.HISTORY_LIMIT_DAYS["shopping"] == 257,
+          _v.HISTORY_LIMIT_DAYS["shopping"])
+    check("moments cap 730 is now measured (-730d ok, -800d -> HTTP 500)",
+          _v.HISTORY_LIMIT_DAYS["moments"] == 730)
+    try:
+        _v.history_date("2025-07-10", "2026-08-14", endpoint="shopping")
+        check("shopping -400d refused before the wire", False)
+    except _v.InvalidParam as exc:
+        check("shopping -400d refused before the wire, with the reason",
+              "empty" in str(exc).lower(), str(exc)[:70])
+    # ...but the same date is fine for moments. The caps genuinely DIFFER;
+    # one constant standing in for all four endpoints is what caused this.
+    check("moments still reaches -400d (the caps genuinely differ)",
+          _v.history_date("2025-07-10", "2026-08-14", endpoint="moments")
+          == "2025-07-10")
+
+    # Only discovery echoes the date it used. Shopping and moment/metrics
+    # return no date anywhere in the response, so reporting their end_date as
+    # "Pinterest's date" was a claim we could not support.
+    check("only discovery echoes its end_date back",
+          _v.ECHOES_END_DATE["discover"] and not _v.ECHOES_END_DATE["shopping"]
+          and not _v.ECHOES_END_DATE["moments"])
+    for op in OPERATIONS:
+        recs, _c = drive({"operation": op, "endDate": "2026-06-10"})
+        if not recs:
+            continue
+        m = recs[0].data["_meta"]
+        check(f"{op}: _meta carries end_date_requested (the guide promises it)",
+              m.get("end_date_requested") == "2026-06-10",
+              m.get("end_date_requested"))
+        check(f"{op}: _meta says whether the date was echoed or only requested",
+              m.get("end_date_basis") in ("echoed", "requested"),
+              m.get("end_date_basis"))
+
+    # A forecast running forward from a PAST endDate is HTTP 500 on the keyword
+    # and shopping chart endpoints. This was a LIVE BUG, not a missing feature:
+    # `endDate` shipped and crashed both operations for every historical date,
+    # because the only thing verified at the time was the discovery call.
+    check("keyword metrics cannot forecast from the past",
+          _v.FORECAST_FROM_PAST["metrics"] is False)
+    check("shopping metrics cannot forecast from the past",
+          _v.FORECAST_FROM_PAST["shopping"] is False)
+    check("moment metrics CAN — measured, so it keeps its forecast",
+          _v.FORECAST_FROM_PAST["moments"] is True)
+    days, note = _v.forecast_days(91, "2026-08-14", "2026-08-14",
+                                  endpoint="metrics")
+    check("no endDate -> forecast untouched", days == 91 and note is None)
+    days, note = _v.forecast_days(91, "2026-08-10", "2026-08-14",
+                                  endpoint="metrics")
+    check("inside the current week -> forecast still requested", days == 91)
+    days, note = _v.forecast_days(91, "2025-10-15", "2026-08-14",
+                                  endpoint="metrics")
+    check("past endDate -> forecast dropped rather than a 500", days == 0)
+    check("...and the drop is EXPLAINED, not silent (absent != no forecast)",
+          bool(note) and "500" in note, (note or "")[:60])
+    days, note = _v.forecast_days(91, "2025-10-15", "2026-08-14",
+                                  endpoint="moments")
+    check("moments keeps its forecast at the same past date",
+          days == 91 and note is None)
+
+
+    print("\nthe reference and the form cannot drift either")
+    api_md = pathlib.Path("docs/API.md").read_text(encoding="utf-8")
+    undocumented = [k for k in schema if "`" + k + "`" not in api_md]
+    check("every input the form offers is documented in docs/API.md",
+          not undocumented, undocumented)
+
+    # Same guard pointing the other way. Every field we EMIT has to appear in
+    # its operation's output table — an undocumented field is one a customer
+    # never reads, so the work that produced it was wasted.
+    out = api_md[api_md.index("## Output"):]
+    sections = {}
+    for chunk in re.split(r"\n### ", out)[1:]:
+        sections[chunk.split("\n", 1)[0].strip().split(" ")[0].strip("`")] = chunk
+    meta_section = sections.get("_meta", "")
+    for op in OPERATIONS:
+        recs, _c = drive({"operation": op})
+        emitted, emitted_meta = set(), set()
+        for r in recs:
+            emitted |= {k for k in r.data if k not in ("_meta", "_demo")}
+            emitted_meta |= set(r.data.get("_meta") or {})
+        body = sections.get(op, "")
+        missing = sorted(k for k in emitted if "`" + k + "`" not in body)
+        check(f"{op}: every emitted field is in its output table", not missing,
+              missing)
+        missing_meta = sorted(k for k in emitted_meta
+                              if "`" + k + "`" not in meta_section)
+        check(f"{op}: every _meta key is in the _meta table", not missing_meta,
+              missing_meta)
+
+
     print("\ncost of a zero-input run (customers pay per request)")
     for op in OPERATIONS:
         recs, c = drive({"operation": op})
