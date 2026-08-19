@@ -1,0 +1,29 @@
+{
+  "title": "Pinterest Scraper input",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "queries": {
+      "title": "Search terms",
+      "type": "array",
+      "description": "Terms to look up. What is done with them is defined by the endpoint layer.",
+      "editor": "stringList",
+      "prefill": []
+    },
+    "maxRecords": {
+      "title": "Max records",
+      "type": "integer",
+      "description": "Hard stop on records pushed to the dataset. 0 means no limit.",
+      "default": 0,
+      "minimum": 0
+    },
+    "vaultPlatform": {
+      "title": "Vault platform key",
+      "type": "string",
+      "description": "Which pool of sessions to draw from. Leave as 'pinterest' unless you keep several.",
+      "default": "pinterest",
+      "editor": "textfield"
+    }
+  },
+  "required": []
+}

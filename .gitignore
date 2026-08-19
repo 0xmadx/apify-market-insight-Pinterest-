@@ -1,0 +1,6 @@
+.env
+.venv/
+storage/
+apify_storage/
+__pycache__/
+*.pyc
