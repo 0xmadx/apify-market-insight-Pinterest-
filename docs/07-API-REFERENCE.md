@@ -716,6 +716,14 @@ Root is `resource_response.data`:
 ⚠️ **Tracking params in `.link` are kept verbatim.** Stripping them changes where the click
 is attributed, which is not ours to decide.
 
+### ✅ Verified from code 2026-08-19
+
+Replayed through a leased vault session on Linux — not just captured in a
+browser. Beauty → Mascaras returned Amazon.com **$14.85**, Thrive Causemetics
+**$46.80**, Target **$8.00**, each with its full outbound merchant URL. The
+`www` host accepted the reproducible headers; `X-Pinterest-Platform-BID` and
+`X-APP-VERSION` (the two opaque ids we refused to fabricate) proved unnecessary.
+
 ### The cost, and why enrichment is off by default
 
 There is **no batch form**: this is `1 + N` requests for an N-row strip, and a drilled

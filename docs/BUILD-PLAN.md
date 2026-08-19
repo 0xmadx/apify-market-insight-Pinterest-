@@ -66,10 +66,13 @@ page-specific handler `www/pin/[id].js`. Implemented in
 `ShoppingScraper(enrich_top_n=…)` and OFF by default — 1 request per pin, no
 batch form. Paths and procedure: `probes/captures/pin_closeup.md`.
 
-⚠️ **Still unverified server-side:** the offline tests prove the parser reads
-the captured shape, but the call has not yet been replayed from a leased
-session. `www.pinterest.com` is a stricter host than `trends.pinterest.com`,
-so a refusal there is plausible until proven otherwise.
+✅ **Verified server-side 2026-08-19.** Replayed from a leased vault session
+through the real actor on Linux: Mascaras → Amazon.com $14.85, Thrive
+Causemetics $46.80, Target $8.00, each with its full outbound merchant URL.
+The `www` host accepted the reproducible browser headers (route context,
+Referer/Origin, generated B3 trace ids); the two opaque ids we deliberately
+did NOT fake — `X-Pinterest-Platform-BID`, `X-APP-VERSION` — turned out not to
+be required.
 
 **F2 — `merchant_name` is competitive intel the docs shrug at.**
 33 top products for one category each carry the selling merchant's name. Grouped,

@@ -42,13 +42,23 @@ Each record: `{ friendly_name, level, parent_product_category_id, children[], l2
 | `1489` | Vehicles & parts | — none | yes |
 | `1500` | Wedding | — none | yes |
 
-> ⚠️ **CONTRADICTS doc #7 §4.3 — believe §4.3.** This table says only 3 verticals have
-> trend data; §4.3 records **7**, with measured row counts: Fashion 19, Home decor 9,
-> Beauty 6, and four the UI never shows — DIY 3, Arts & entertainment 2, Wedding 2,
-> Media 1. Three of those counts were re-verified live on 2026-08-19 (19/9/6, exact),
-> so §4.3 is the better-evidenced side and `src/vocab.py` follows it. The four hidden
-> verticals have NOT been re-verified independently; if a `top/` call on 1148/1016/
-> 1500/1315 returns 0 rows, this table is right and §4.3 is stale — record which.
+> 🚨 **THIS TABLE'S "Trend data?" COLUMN IS WRONG — SETTLED ON THE WIRE 2026-08-19.**
+> It claims only 3 verticals carry trend data. **Seven do.** Every count in doc #7
+> §4.3 was re-measured live and matched exactly:
+>
+> | vertical | this table | §4.3 | measured |
+> |---|---|---|---|
+> | 1181 Fashion | ✅ | 19 | **19** |
+> | 1250 Home decor | ✅ | 9 | **9** |
+> | 1042 Beauty | ✅ | 6 | **6** |
+> | 1148 DIY | — none | 3 | **3** |
+> | 1016 Arts & entertainment | — none | 2 | **2** |
+> | 1500 Wedding | — none | 2 | **2** |
+> | 1315 Media | — none | 1 | **1** |
+>
+> The four marked "none" here are simply **hidden from the UI** — they are served by
+> the API and are exactly the categories a competitor reading Pinterest's interface
+> will never find. `src/vocab.py` follows §4.3.
 >
 > Only **Fashion / Home decor / Beauty** appear in the "Top vertical"
 > filter. The other 11 exist in the taxonomy and as "All categories" browse chips only.

@@ -31,7 +31,7 @@ one-vertical-per-call, the double-spelled `has_prediction`). It is not advisory.
 .venv/Scripts/python.exe -m tests.test_shopping_api       # 54
 .venv/Scripts/python.exe -m tests.test_shopping_traversal # 33
 .venv/Scripts/python.exe -m tests.test_full_project       # 95
-.venv/Scripts/python.exe -m tests.test_dispatch           # 25 — zero-input + input plumbing
+.venv/Scripts/python.exe -m tests.test_dispatch           # 44 — zero-input + input plumbing
 ```
 
 Everything is a module run from the repo root. The venv is local to this repo.
@@ -88,9 +88,10 @@ Everything is a module run from the repo root. The venv is local to this repo.
 - Shopping `top/`+`metrics/` take `age_bucket`/`gender` in the **enum** form
   (`AGE_25_34`/`FEMALE`) while keyword discovery takes numeric codes for the
   same bands — one customer input, two wire schemes (scenario C6).
-- ⚠️ Docs #5 and #7 §4.3 disagree on how many verticals carry trend data (3 vs
-  7). §4.3 wins: it has measured row counts and 3 of them were re-verified live.
-  The 4 hidden ones remain unverified independently.
+- **7 verticals carry trend data, not 3** — settled on the wire 2026-08-19, all
+  seven counts exact (19/9/6/3/2/2/1). Doc #5's table says 3 and is WRONG; #7
+  §4.3 is right. The four extra (DIY, Arts & entertainment, Wedding, Media) are
+  hidden from Pinterest's UI — exactly what a UI-reading competitor cannot see.
 - Moment Age/Gender IS reachable (§3.18, captured): a persisted GraphQL POST
   with `queryHash` + `X-Pinterest-GraphQL-Name`, handler `trends/moments/
   [momentId].js` — page-specific, NOT the global `trends/index.js`. The hash
@@ -112,7 +113,7 @@ endpoint probe harness (16/16 OK on 2026-08-18).
 
 **Built + verified live:** the graph layer (`transport.py`, `vocab.py`,
 `parsers.py`) and all four traversals as one actor with an `operation` input —
-`shopping`, `keywords`, `moments`, `radar`. 202 offline checks, 0 unread
+`shopping`, `keywords`, `moments`, `radar`. 246 offline checks, 0 unread
 response fields (`probes/coverage.py`).
 
 **Both browser captures landed 2026-08-19:**
@@ -120,11 +121,16 @@ response fields (`probes/coverage.py`).
   `measured`, not derived. The SAME query answers **moment × interest**, and
   Pinterest's ~7-per-moment dropdown is UI curation, not a data limit.
 - §3.19 `PinResource` on `www.pinterest.com` — price + outbound merchant URL.
-  ⚠️ Implemented and offline-tested but **not yet replayed from a leased
-  session**; that host is stricter than `trends.`
+  ✅ Verified live: Mascaras → Amazon $14.85 / Thrive $46.80 / Target $8.00
+  with outbound URLs. `enrichTopN` caps it; unenriched products keep
+  `price: None` ("not fetched"), never 0.
 
-**Remaining:** Phase 4 deploy — needs a network-reachable Redis
-(`docs/DEPLOY.md`). Everything else is done.
+**Verified end-to-end 2026-08-19** via `./run_local.sh` — the real Apify SDK
+on Linux 3.12 against a NON-localhost Redis (the Upstash shape), exit 0,
+records on disk. Nothing in the project is unverified any more.
+
+**Remaining:** only the Apify cloud itself, which needs a network-reachable
+Redis (`docs/DEPLOY.md`). The operator is running local for now.
 
 ## Working style that has paid off
 

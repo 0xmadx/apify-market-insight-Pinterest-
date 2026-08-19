@@ -45,8 +45,14 @@ separate namespace, the same shape as an Apify container reaching Upstash.
   (fail loudly, never emit an empty "successful" dataset) proven on the real
   SDK rather than asserted in a unit test
 
-What this does NOT prove: a full run with records. That needs a live session
-(a Pinterest tab open). Everything up to the lease is verified.
+**Full run, 2026-08-19** — with a live session, `radar` completed on Linux:
+`using profile profile_ldu6ypke8` → `pushed 11` → `exit_code: 0`, 12 files in
+`storage/datasets/default/`. `shopping` with `enrichTopN=3` then verified the
+last unproven endpoint (§3.19 `PinResource`), returning real prices and
+merchant URLs.
+
+So the deploy path is **rehearsed, not merely documented**. The only thing left
+untested is Apify's own cloud.
 
 ## 2. Push
 
