@@ -36,7 +36,103 @@ REGIONS = [
 
 # Regions with NO seasonal moments at all — a real answer, not a failure.
 # Worth naming so a `moments` run against them is explained rather than empty.
-REGIONS_WITHOUT_MOMENTS = {"JP", "IN"}
+#
+# ⚠️ MEASURED 2026-08-19 across all 32 regions: this set held only JP and IN,
+# and the true count is FIFTEEN. Thirteen regions therefore ran, returned
+# nothing, and said nothing — the silent empty this project exists to refuse.
+# 17 regions have moments (US and AU+NZ 13 each, down to MX/ES/NL+BE+LU at 8).
+REGIONS_WITHOUT_MOMENTS = {
+    "JP", "IN", "KR", "TR", "TH", "PH", "MY", "ID", "SA", "EG",
+    "PL+RO+HU+SK+CZ", "CY+CZ+GR+HU+MT+PL+RO+SK", "CR+DO+EC+GT+PE",
+    "AE+SA+KW+QA+OM+BH+EG+IQ+DZ", "IL+NG+PK+ZA+TR+MA+IN",
+}
+
+# Measured moment counts per region, same sweep. Seasonal calendars differ by
+# market — a customer asking why FR has 11 and the US 13 is asking a real
+# question, not reporting a bug.
+MOMENT_COUNTS = {
+    "US": 13, "AU+NZ": 13, "CA": 12, "DE": 12, "DE+AT+CH": 12,
+    "FR": 11, "GB+IE": 11, "CO": 10, "MX+AR+CO+CL": 10,
+    "IT": 9, "IT+ES+PT+GR+MT": 9, "AR": 9, "BR": 9,
+    "ES": 8, "SE+DK+FI+NO": 8, "NL+BE+LU": 8, "MX": 8,
+}
+
+# Pinterest's "Date range" dropdown, which appears on the keyword detail page,
+# the product-category page and the moment view — the SAME control every time.
+# The wire spells it three different ways (`days`, `days`, `lookback_days`)
+# reached through three of our inputs (`days`, `chartDays`, `lookbackDays`), so
+# a customer wanting "past 1 year" had to know which operation renamed it.
+# `dateRange` is the one control; the per-operation inputs still work and win
+# when both are given.
+#
+# All four values verified live on all three surfaces 2026-08-19:
+#   keywords  90->13   180->26   365->53   730->105 points
+#   shopping  90->17   180->30   365->57   730->109 points
+#   moments   90->26   180->39   365->66   730->118 points
+DATE_RANGES = {
+    "past_3_months": 90, "past_6_months": 180,
+    "past_1_year": 365, "past_2_years": 730,
+    # what the dropdown reads on screen, accepted verbatim
+    "past 3 months": 90, "past 6 months": 180,
+    "past 1 year": 365, "past 2 years": 730,
+    "3m": 90, "6m": 180, "1y": 365, "2y": 730,
+}
+
+
+def date_range(value, default, *, explicit=None):
+    """Pinterest's Date-range dropdown -> a day count. Refuses anything else.
+
+    `explicit` is the operation's own input (days / chartDays / lookbackDays)
+    when the customer actually set it. It WINS: the specific instruction beats
+    the general one, which is what the schema promises. Passing the resolved
+    default here instead would silently invert that, and the customer would see
+    their own `days: 90` ignored with nothing to explain it.
+
+    A raw integer passes through so the per-operation inputs keep working, but
+    it is still ceiling-checked: `days` over 730 is a 400 with no body.
+    """
+    if explicit is not None:
+        return ceiling("days", int(explicit))
+    if value in (None, ""):
+        return default
+    key = str(value).strip().lower().replace("-", "_")
+    if key in DATE_RANGES:
+        return DATE_RANGES[key]
+    try:
+        as_int = int(value)
+    except (TypeError, ValueError):
+        raise InvalidParam(
+            f"dateRange={value!r} — use one of "
+            f"past_3_months / past_6_months / past_1_year / past_2_years "
+            f"(Pinterest's own dropdown), or a day count up to "
+            f"{LIMITS['days']}.") from None
+    # Over the ceiling raises from ceiling() with ITS message, which names the
+    # real limit. Catching it here would blame the dropdown for a problem that
+    # is actually "730 is the max and 731 is a 400 with no body".
+    return ceiling("days", as_int)
+
+
+# The wire's `phase_labels` values, and the words Pinterest's own UI shows for
+# them. Records carry the WIRE value — it is the stable one — but a customer
+# comparing our output against the Trends screen sees different words, so the
+# mapping has to be written down somewhere.
+#
+# Measured across all 32 regions 2026-08-19: ended (77), approaching (63),
+# off_season (17), cooldown (14), rising (1). Those five are everything the
+# wire produced.
+#
+# ⚠️ Pinterest's UI groups its table under "Peaking, Cooling, and Frozen", so a
+# `peaking` phase is implied — but it appeared in NO region in that sweep. It
+# is not claimed here as nonexistent, only as never observed: if it shows up it
+# will fall through `PHASE_LABELS` as an unknown, which is why the lookup keeps
+# the raw value instead of defaulting to something plausible.
+PHASE_LABELS = {
+    "rising": "Rising",
+    "approaching": "Approaching",
+    "cooldown": "Cooling",
+    "off_season": "Frozen",
+    "ended": "Frozen",
+}
 
 # Regions where these actually return data. Everything else answers 200 with an
 # empty payload — a silent no, not an error.

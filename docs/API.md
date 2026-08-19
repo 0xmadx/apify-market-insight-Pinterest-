@@ -51,6 +51,7 @@ Async runs, polling and dataset paging are standard Apify platform behaviour —
 | `maxRecords` | `integer` | `0` | Hard stop on records pushed. 0 = no limit. |
 | `predictedDays` | `integer` | `91` | Days of forecast to request. Max 91 — Pinterest rejects more. Only fills for keywords that have a forecast. |
 | `endDate` | `string` (YYYY-MM-DD) | *newest* | **Ask about the past.** Omit for the newest settled data; set it to see what was trending on that date — `2025-10-15` returns fall nails, halloween nails, fall outfits. History reaches a **different distance per operation** and out-of-range dates are refused before the wire (see *History limits* below). Pinterest snaps the date to its own week boundary. **Forecasts are dropped** for past dates on `keywords` and `shopping` (the endpoints 500 rather than forecast from history); `_meta.forecast_suppressed` says so on the record. |
+| `dateRange` | `past_3_months` \| `past_6_months` \| `past_1_year` \| `past_2_years` | *per operation* | **Pinterest's own "Date range" dropdown** — how much HISTORY the chart covers. This is a *window length*; `endDate` is *which date you are looking at*. They compose. Pinterest shows this same control on the keyword page, the product-category page and the moment view, so one input drives all three here. The per-operation inputs below (`days`, `chartDays`, `lookbackDays`) still work and **override** this when you set them explicitly. |
 | `fullRescan` | `boolean` | `false` | Ignore the seen-set: re-emit records already collected in previous runs. |
 | `forceRefresh` | `boolean` | `false` | Ignore cached responses: hit Pinterest for every request. |
 
@@ -121,6 +122,24 @@ here instead, with the measured reason in the message.
 | `shoppingAges` takes band names (`25-34`) | shopping wants `AGE_25_34`, keyword discovery wants `4` — same input, two wire forms, mapped for you |
 | `top_products` and editorial: US, CA, GB+IE only | other regions return 200 with nothing |
 | moments: not JP or IN | those regions have zero seasonal moments |
+
+### The two time controls — they are different
+
+Pinterest's interface has two, and mixing them up is the most common way to
+get an answer to a question you did not ask:
+
+| | Control | Question it answers |
+|---|---|---|
+| **`endDate`** | *End date* picker | **Which date** am I looking at? Move it to see what was trending last October |
+| **`dateRange`** | *Date range* dropdown | **How much history** does the chart show? 3 months / 6 months / 1 year / 2 years |
+
+They compose: `{"endDate": "2025-10-15", "dateRange": "past_1_year"}` is "the
+year of history ending last October".
+
+Their limits are also independent. Shopping's `endDate` only reaches ~257 days
+back, but its **chart** reaches a full 2 years from whatever end date you pick
+— measured 109 points at `past_2_years`. A short `endDate` window does not mean
+a short chart.
 
 ### History limits — how far back `endDate` reaches
 
@@ -211,6 +230,7 @@ One record per row. Every record carries `_meta`.
 | Field | Type | Notes |
 |---|---|---|
 | `region` | string | the region this record was measured in |
+| `phase_label` | string | The word **Pinterest's own screen** shows for `phase`: `cooldown` → `Cooling`, and both `off_season` and `ended` → `Frozen`. `phase` stays the authoritative wire value; this is here so you can reconcile against the Trends UI. An unrecognised phase passes through unchanged rather than being bucketed |
 | `slug` | string | wire form, e.g. `fathers day` |
 | `phase` | string | `rising`, `approaching`, `cooldown`, `off_season`, `ended` |
 | `actionable` | boolean | true for `rising` / `approaching` |

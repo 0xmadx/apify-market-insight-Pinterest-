@@ -263,7 +263,7 @@ logged as opportunities; vanished keys that a parser reads are failures.
 
 ## COVERAGE LEDGER (updated 2026-08-19 — the build is done)
 
-288 checks across five suites, every one tagged with its scenario id:
+312 checks across five suites, every one tagged with its scenario id:
 
 | Suite | Checks | Covers |
 |---|---|---|

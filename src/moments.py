@@ -94,6 +94,14 @@ class MomentScraper:
                 "slug": moment["slug"],
                 "region": self.region,
                 "phase": moment["phase"],
+                # The word Pinterest's own screen shows for this phase. The
+                # wire value above stays authoritative; this exists so a
+                # customer can reconcile our output with the Trends UI, where
+                # `cooldown` reads "Cooling" and both `off_season` and `ended`
+                # read "Frozen". Unknown phases pass through unchanged rather
+                # than being guessed into a bucket.
+                "phase_label": vocab.PHASE_LABELS.get(moment["phase"],
+                                                      moment["phase"]),
                 "actionable": moment["actionable"],
                 "next_peak": moment["next_peak"],
                 "last_peak": moment["last_peak"],

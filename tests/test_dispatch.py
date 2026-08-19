@@ -329,6 +329,93 @@ def main():
           days == 91 and note is None)
 
 
+    print("\nI - the Date range dropdown, and the moment regions")
+    # Pinterest shows ONE "Date range" control on the keyword page, the
+    # product-category page and the moment view. We exposed it as three
+    # differently-named inputs, so "past 1 year" meant knowing which operation
+    # renamed it. `dateRange` is that one control.
+    for label, expected in [("past_3_months", 90), ("past_6_months", 180),
+                            ("past_1_year", 365), ("past_2_years", 730)]:
+        check(f"dateRange {label} -> {expected} days",
+              _v.date_range(label, 0) == expected)
+    check("the on-screen wording is accepted verbatim",
+          _v.date_range("Past 2 years", 0) == 730)
+    check("a raw day count still works (per-operation inputs unaffected)",
+          _v.date_range(365, 0) == 365)
+    try:
+        _v.date_range(2000, 0)
+        check("over the ceiling is refused before the wire", False)
+    except _v.InvalidParam as exc:
+        # The message must name the CEILING, not the dropdown - 2000 is a
+        # perfectly well-formed day count, it is just past 730.
+        check("over the ceiling is refused, naming the real limit",
+              "730" in str(exc) and "dropdown" not in str(exc), str(exc)[:70])
+    try:
+        _v.date_range("last week", 180)
+        check("a bad range is refused", False)
+    except _v.InvalidParam as exc:
+        check("a bad range is refused, listing the real options",
+              "past_1_year" in str(exc))
+    # It has to reach all three traversals, not just the one it was written on.
+    # Asserted on what is SENT, not on the record: the fake client replays a
+    # fixed fixture, so a series length here would prove nothing either way.
+    for op, extra, path, key in [
+            ("keywords", {"mode": "exact", "queries": ["mascara"],
+                          "includeRelated": False, "includeImages": False},
+             "/metrics/", "days"),
+            ("shopping", {"verticals": ["1042"], "drillTopN": 0,
+                          "includeProducts": False},
+             "product_categories/metrics", "days"),
+            ("moments", {"aggregation": "weekly"},
+             "moment/metrics", "lookback_days")]:
+        task = {"operation": op, "dateRange": "past_2_years"}
+        task.update(extra)
+        _recs, c = drive(task)
+        sent = [v for pth, v in c.all_calls if path in pth]
+        check(f"{op}: dateRange reaches the wire as {key}=730",
+              bool(sent) and sent[0].get(key) == 730,
+              sent[0].get(key) if sent else "endpoint never called")
+
+    # The per-operation input is the more specific instruction and must win.
+    _recs, c = drive({"operation": "keywords", "mode": "exact",
+                      "queries": ["mascara"], "dateRange": "past_2_years",
+                      "days": 90, "includeRelated": False,
+                      "includeImages": False})
+    sent = next(v for pth, v in c.all_calls if pth == "/metrics/")
+    check("an explicit days= overrides dateRange", sent["days"] == 90,
+          sent["days"])
+
+    # 13 regions ran, returned nothing, and said nothing.
+    check("every region with zero moments is declared (15, measured)",
+          len(_v.REGIONS_WITHOUT_MOMENTS) == 15,
+          len(_v.REGIONS_WITHOUT_MOMENTS))
+    check("...and the 17 that DO have moments account for the rest",
+          len(_v.MOMENT_COUNTS) + len(_v.REGIONS_WITHOUT_MOMENTS)
+          == len(_v.REGIONS))
+    for region in ("KR", "TR", "TH", "PH", "SA"):
+        try:
+            _v.region(region, capability="moments")
+            check(f"{region} moments refused rather than silently empty", False)
+        except _v.InvalidParam:
+            check(f"{region} moments refused rather than silently empty", True)
+    check("US and AU+NZ still allowed (17 regions do have moments)",
+          _v.region("US", capability="moments") == "US"
+          and _v.region("AU+NZ", capability="moments") == "AU+NZ")
+
+    # Our records carry the wire value; Pinterest's screen shows another word.
+    check("cooldown reads 'Cooling' on Pinterest's own screen",
+          _v.PHASE_LABELS["cooldown"] == "Cooling")
+    check("off_season and ended BOTH read 'Frozen'",
+          _v.PHASE_LABELS["off_season"] == "Frozen"
+          and _v.PHASE_LABELS["ended"] == "Frozen")
+    mrecs, _c = drive({"operation": "moments", "drill": False})
+    check("every moment carries both the wire phase and the UI label",
+          all(r.data.get("phase") and r.data.get("phase_label")
+              for r in mrecs), len(mrecs))
+    check("an unknown phase passes through instead of being guessed",
+          _v.PHASE_LABELS.get("peaking", "peaking") == "peaking")
+
+
     print("\nthe reference and the form cannot drift either")
     api_md = pathlib.Path("docs/API.md").read_text(encoding="utf-8")
     undocumented = [k for k in schema if "`" + k + "`" not in api_md]

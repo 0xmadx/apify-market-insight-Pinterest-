@@ -189,6 +189,23 @@ an error, so out-of-range dates are refused up front with the reason.
 **Pinterest snaps your date to its own week boundary** — ask for `2026-02-15`
 and the data is for `2026-02-13`.
 
+**`endDate` and `dateRange` are different controls.** Pinterest's interface has
+both, and they answer different questions:
+
+| Control | Question |
+|---|---|
+| `endDate` | **Which date** am I looking at? |
+| `dateRange` | **How much history** does the chart show — 3 months, 6 months, 1 year, 2 years? |
+
+They combine: `{"endDate": "2025-10-15", "dateRange": "past_1_year"}` is "the
+year of history ending last October". `dateRange` is one input for all three
+operations, because Pinterest shows that same dropdown on the keyword page, the
+product-category page and the moment view.
+
+Their limits are independent, which surprises people. Shopping's `endDate` only
+reaches ~257 days back, but its **chart** still covers a full 2 years from
+whichever end date you pick. A short end-date window is not a short chart.
+
 **Asking about the past turns the forecast off.** On `keywords` and `shopping`,
 Pinterest refuses to project forward from a historical date — reasonably, since
 that period has already happened. So those runs return the real history with no
@@ -275,9 +292,12 @@ nothing"*, which would be a lie. Nothing is wrong with your input.
 data for. Measured: 10 requested, 4 returned, and `halloween` was among the
 dropped. Absence is not a verdict on the term.
 
-**Empty result for a region** — several features are narrower than the rest:
-`top_products` and editorial serve **US / CA / GB+IE** only, and **JP and IN
-have no seasonal moments at all**. Those are refused up front with the reason
+**Empty result for a region** — several features are narrower than the rest.
+`top_products` and editorial serve **US / CA / GB+IE** only. Seasonal moments
+exist in **17 of the 32 regions**; the other 15 (including JP, IN, KR, TR, TH,
+PH, MY, ID, SA, EG and several groupings) have none at all. Counts differ where
+they do exist — US and AU+NZ have 13, France 11, Mexico 8 — because seasonal
+calendars differ by market. All of these are refused up front with the reason
 rather than returning a confusing empty run.
 
 **Everything looks identical to last run** — that is the point. Records are only

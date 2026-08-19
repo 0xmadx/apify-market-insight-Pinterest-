@@ -18,7 +18,7 @@
     "region": {
       "title": "Region",
       "type": "string",
-      "description": "Pinterest region code — 32 accepted (US, CA, GB+IE, DE, FR, BR, MX, AU+NZ, JP, KR, SE+DK+FI+NO, …). '+' is literal. Narrower per feature: top_products and editorial serve US/CA/GB+IE only; JP and IN have no seasonal moments at all.",
+      "description": "Pinterest region code \u2014 32 accepted (US, CA, GB+IE, DE, FR, BR, MX, AU+NZ, JP, KR, SE+DK+FI+NO, \u2026). '+' is literal. Narrower per feature: top_products and editorial serve US/CA/GB+IE only; JP and IN have no seasonal moments at all.",
       "default": "US",
       "editor": "textfield"
     },
@@ -33,13 +33,34 @@
       "title": "Point in time",
       "type": "string",
       "editor": "textfield",
-      "description": "YYYY-MM-DD. Ask what things looked like on a PAST date instead of now — 'what was trending last October'. Empty = Pinterest's newest settled data (which already lags ~4 days). How far back you can go differs by operation: keyword DISCOVERY reaches years back, but keyword enrichment, shopping and moments reject roughly a year or more and return that rejection with an empty body, so it is refused here with the reason instead."
+      "description": "YYYY-MM-DD. Ask what things looked like on a PAST date instead of now \u2014 'what was trending last October'. Empty = Pinterest's newest settled data (which already lags ~4 days). How far back you can go differs by operation: keyword DISCOVERY reaches years back, but keyword enrichment, shopping and moments reject roughly a year or more and return that rejection with an empty body, so it is refused here with the reason instead."
+    },
+    "dateRange": {
+      "title": "Date range (history window)",
+      "type": "string",
+      "editor": "select",
+      "enum": [
+        "",
+        "past_3_months",
+        "past_6_months",
+        "past_1_year",
+        "past_2_years"
+      ],
+      "enumTitles": [
+        "(operation default)",
+        "Past 3 months",
+        "Past 6 months",
+        "Past 1 year",
+        "Past 2 years"
+      ],
+      "default": "",
+      "description": "Pinterest's own 'Date range' dropdown \u2014 how much HISTORY each chart covers. Distinct from endDate, which picks WHICH DATE you are looking at. Applies to whichever operation you run: it sets the keyword chart, the product-category performance chart and the moment curve alike. The per-operation inputs (days / chartDays / lookbackDays) still work and override this when both are given."
     },
     "verticals": {
       "title": "[shopping] Verticals",
       "type": "array",
       "editor": "stringList",
-      "description": "L1 vertical ids (1181 Fashion, 1250 Home decor, 1042 Beauty, 1148 DIY, 1016 Arts & entertainment, 1500 Wedding, 1315 Media). Leave empty for the three Pinterest's own UI shows (Fashion, Home decor, Beauty) — the cheap default. Pass all seven explicitly to include the four hidden ones, which Pinterest serves but never displays."
+      "description": "L1 vertical ids (1181 Fashion, 1250 Home decor, 1042 Beauty, 1148 DIY, 1016 Arts & entertainment, 1500 Wedding, 1315 Media). Leave empty for the three Pinterest's own UI shows (Fashion, Home decor, Beauty) \u2014 the cheap default. Pass all seven explicitly to include the four hidden ones, which Pinterest serves but never displays."
     },
     "drillTopN": {
       "title": "[shopping] Drill top N",
@@ -82,7 +103,7 @@
       "title": "[shopping] Age filter",
       "type": "array",
       "editor": "stringList",
-      "description": "Restrict trending categories to these age bands: 18-24, 25-34, 35-44, 45-49, 50-54, 55-64, 65+, all. Empty = everyone. (Sent as the shopping enum form; the keyword operation uses a different scheme — handled for you.)"
+      "description": "Restrict trending categories to these age bands: 18-24, 25-34, 35-44, 45-49, 50-54, 55-64, 65+, all. Empty = everyone. (Sent as the shopping enum form; the keyword operation uses a different scheme \u2014 handled for you.)"
     },
     "shoppingGenders": {
       "title": "[shopping] Gender filter",
@@ -99,7 +120,7 @@
         "HIGH_VOLUME",
         "VIRAL"
       ],
-      "description": "How Pinterest ranks the categories. Their own UI only ever sends GROWTH — HIGH_VOLUME and VIRAL are real and unexposed, so this reaches rankings their interface cannot show."
+      "description": "How Pinterest ranks the categories. Their own UI only ever sends GROWTH \u2014 HIGH_VOLUME and VIRAL are real and unexposed, so this reaches rankings their interface cannot show."
     },
     "orderBy": {
       "title": "[shopping] Sort by",
@@ -168,7 +189,7 @@
       "title": "[keywords] Moment filter",
       "type": "array",
       "editor": "stringList",
-      "description": "Only keywords tied to these seasonal moments. Type them however Pinterest displays them — \"Father's Day\" is normalised to the wire form (lowercase, spaces kept, apostrophes stripped) automatically; the raw form is a 400. Slugs are REGION-SPECIFIC: 25 exist globally, 13 in the US."
+      "description": "Only keywords tied to these seasonal moments. Type them however Pinterest displays them \u2014 \"Father's Day\" is normalised to the wire form (lowercase, spaces kept, apostrophes stripped) automatically; the raw form is a 400. Slugs are REGION-SPECIFIC: 25 exist globally, 13 in the US."
     },
     "ageBuckets": {
       "title": "[keywords] Age filter",
@@ -194,7 +215,7 @@
       "default": 91,
       "minimum": 0,
       "maximum": 91,
-      "description": "Days of forecast to request. Max 91 — Pinterest rejects more. Only fills for keywords that have a forecast."
+      "description": "Days of forecast to request. Max 91 \u2014 Pinterest rejects more. Only fills for keywords that have a forecast."
     },
     "includeRelated": {
       "title": "[keywords] Include related terms",
@@ -238,7 +259,7 @@
     "includeAudience": {
       "title": "[moments] Derived audience",
       "type": "boolean",
-      "description": "Age + gender for each drilled moment — the same figures Pinterest's own \"Who's driving this moment\" chart draws (measured). If their persisted query rotates, this falls back to an aggregate of the moment's keyword audiences and the record says so in _meta.audience_basis.",
+      "description": "Age + gender for each drilled moment \u2014 the same figures Pinterest's own \"Who's driving this moment\" chart draws (measured). If their persisted query rotates, this falls back to an aggregate of the moment's keyword audiences and the record says so in _meta.audience_basis.",
       "default": true
     },
     "interestIds": {
