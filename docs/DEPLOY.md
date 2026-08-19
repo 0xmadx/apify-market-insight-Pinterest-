@@ -1,0 +1,127 @@
+# DEPLOY — getting this onto Apify
+
+Everything here is ready to run; one decision is yours (§1). Nothing below has
+been executed yet — this is the runbook, not a record.
+
+---
+
+## 1. The one blocker: a reachable Redis
+
+The actor runs in Apify's cloud. Your vault is a Docker container on your desk.
+`localhost` inside an Apify container means **that container**, so the actor
+would find an empty vault and fail with `VaultEmpty` — correctly, but uselessly.
+
+| Option | Cost | What changes |
+|---|---|---|
+| **Upstash Redis** (recommended) | free tier covers this | sign up, take the `rediss://` URL, point the Go cookie server at it, set the same URL as an Apify secret. Nothing in `src/` changes. |
+| VPS running the vault | ~$5/mo | you already have the compose file; needs firewall + `requirepass` + TLS. More control, more upkeep. |
+| Tunnel from this machine | free | fragile — the actor fails whenever your desk machine sleeps. Fine for a demo, not for a listing. |
+
+The extension and the Go server keep working exactly as they do now; only the
+Redis address moves.
+
+## 2. Push
+
+```bash
+npm i -g apify-cli
+apify login
+cd /c/Users/0xdevy/Desktop/pinterest-apify
+apify push
+```
+
+## 3. Secrets — set in the Apify console, never in `actor.json`
+
+| Variable | Value | Secret? |
+|---|---|---|
+| `REDIS_URL` | the `rediss://…` from §1 | **yes** — it carries the vault password |
+| `VAULT_PLATFORM` | `pinterest` | no |
+| `PROFILE_MAX_AGE` | `900` | no |
+| `LEASE_TTL` | `900` | no |
+
+## 4. Smoke the deployed actor
+
+Run `radar` first — 2 requests, 11 records, the cheapest possible proof that the
+cloud actor can reach the vault and Pinterest:
+
+```json
+{ "operation": "radar", "region": "US" }
+```
+
+Then `shopping` with a small cap:
+
+```json
+{ "operation": "shopping", "verticals": ["1042"], "drillTopN": 1, "maxRecords": 10 }
+```
+
+---
+
+## What a customer must understand before buying
+
+These are product facts, not deployment details, and they belong in the listing
+description rather than being discovered mid-run.
+
+**Runs draw on the operator's Pinterest session.** Concurrency is capped by the
+number of live profiles in the vault — one beaming Chrome is one concurrent run.
+The lease enforces it; a second run waits, then fails with a readable message
+rather than hanging or emitting an empty dataset.
+
+**A run needs a live session to exist at all.** If the vault is empty the actor
+fails fast (`VaultEmpty` after `WAIT_TIMEOUT`) instead of returning zero rows —
+deliberate, because an empty dataset reads as "Pinterest has nothing", which
+would be a lie.
+
+**Data lags ~4 days.** Every record carries `_meta.end_date`, which is
+Pinterest's settled date, not the run date. Customers comparing to "today" will
+otherwise think the data is stale when it is simply how Pinterest publishes.
+
+**No absolute volumes exist anywhere.** Every count is peak-normalised within
+its own response, and `_meta.normalization_scope` names the scope. Two records
+with different scopes are not comparable; the field makes that checkable rather
+than a footnote.
+
+**Price/merchant enrichment is opt-in and costs 1 request per pin.**
+`enrichTopN` defaults to 0. A category returns up to 33 products, so enriching
+everything across seven verticals is hundreds of requests on a shared session.
+
+---
+
+## Cost per run, measured
+
+| Operation | Requests | Records |
+|---|---|---|
+| `radar` | **2** | 11 |
+| `shopping`, 1 vertical, drill 2 | **6** | 19 |
+| `shopping`, 3 verticals, drill 2 | 10 | 34 |
+| `keywords`, 10 terms, no related | **4** | 10 |
+| `keywords`, 10 terms + related | 14 | 10 |
+| `moments`, weekly, 2 drilled | ~17 | 13 |
+| `+ enrichTopN=5` | +5 per drilled category | — |
+
+Batching is why these are low: `metrics` and `demographics` take arrays, so N
+categories or N keywords cost one call each, not N. `top_products`,
+`related_terms` and `PinResource` have no batch form and are the only per-item
+costs in the system.
+
+---
+
+## Before every release
+
+```bash
+.venv/Scripts/python.exe -m src.status              # vault green
+.venv/Scripts/python.exe -m probes.probe_endpoints  # 16/16 must be OK
+.venv/Scripts/python.exe -m probes.coverage         # 0 unread leaves
+.venv/Scripts/python.exe -m tests.test_incremental
+.venv/Scripts/python.exe -m tests.test_shopping_api
+.venv/Scripts/python.exe -m tests.test_shopping_traversal
+.venv/Scripts/python.exe -m tests.test_full_project
+```
+
+The probe suite is the contract this API does not have. An endpoint dropping to
+FAIL is stop-ship until the docs and parsers are reconciled with the new wire
+truth — see `docs/TEST-SCENARIOS.md` group G.
+
+**One standing maintenance item:** the moment-demographics `queryHash` in
+`src/vocab.py` is a persisted-query hash and rotates when Pinterest redeploys.
+When it does, `StaleQueryHash` fires, moments degrade to the `derived` audience,
+and the fix is a re-capture — the procedure is in `probes/captures/README.md`.
+Never guess a hash.

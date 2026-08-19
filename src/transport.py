@@ -21,6 +21,7 @@ Style B the wire will not tell you what you got wrong.
 """
 import json
 import time
+import uuid
 
 from .session import classify
 
@@ -215,11 +216,34 @@ class TrendsClient:
 
         payload = self._cached(kind, url, params)
         if payload is None:
+            # The browser capture listed 12 headers on this call. The ones below
+            # are every one we can produce *correctly*; the rest are omitted on
+            # purpose rather than faked:
+            #   X-Pinterest-Platform-BID — an opaque build/session id. A made-up
+            #     value is worse than no value: it is a wrong claim about who we
+            #     are, and it would be checkable.
+            #   X-APP-VERSION — same reasoning; it pins a specific web build.
+            # B3 trace ids ARE generated fresh per request, which is exactly
+            # what a browser does with them (they are distributed-tracing ids,
+            # not identity), so producing our own is honest, not spoofing.
+            trace = uuid.uuid4().hex[:16]
+            span = uuid.uuid4().hex[:16]
             response = self._request(
                 "GET", url, params=params, endpoint="/resource/PinResource/get/",
                 headers={"X-Pinterest-PWS-Handler": "www/pin/[id].js",
                          "X-Requested-With": "XMLHttpRequest",
-                         "Accept": "application/json"})
+                         "Accept": "application/json",
+                         # Route context — the www host is stricter than trends
+                         # and this is the page the call legitimately came from.
+                         "X-Pinterest-Source-Url": f"/pin/{pin_id}/",
+                         "X-Pinterest-AppState": "active",
+                         "screen-dpr": "2",
+                         "X-B3-TraceId": trace,
+                         "X-B3-SpanId": span,
+                         "X-B3-ParentSpanId": trace,
+                         "X-B3-Flags": "0",
+                         "Referer": f"{WWW}/pin/{pin_id}/",
+                         "Origin": WWW})
             payload = self._json(response, "/resource/PinResource/get/")
             self._store(kind, url, response, params)
 
