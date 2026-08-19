@@ -41,7 +41,8 @@ class RadarScraper:
             data["interests"] = [self.interest]
 
         trends = parsers.parse_spotlight(self.client.style_a(
-            f"/ads/v4/trends/topics/featured/{self.region}/SAVE", data))
+            f"/ads/v4/trends/topics/featured/{self.region}/SAVE", data,
+            kind="trends"))
         self.log(f"[radar] spotlight: {len(trends)} trends")
 
         for trend in trends:
@@ -79,7 +80,8 @@ class RadarScraper:
             return
 
         items = parsers.parse_editorial(self.client.style_a(
-            f"/ads/v4/trends/editorial/content/{self.region}"), self.region)
+            f"/ads/v4/trends/editorial/content/{self.region}",
+            kind="trends"), self.region)
         self.log(f"[radar] editorial: {len(items)} items")
 
         for item in items:

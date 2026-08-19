@@ -55,7 +55,8 @@ class ShoppingScraper:
         only — without this join every record is unreadable to a human."""
         if self._taxonomy is None:
             self._taxonomy = parsers.parse_taxonomy(
-                self.client.style_a("/ads/v4/trends/shopping/product_categories"))
+                self.client.style_a("/ads/v4/trends/shopping/product_categories",
+                                    kind="taxonomy"))
             self.log(f"[shopping] taxonomy: {len(self._taxonomy)} categories")
         return self._taxonomy
 
@@ -92,7 +93,7 @@ class ShoppingScraper:
              "parent_product_categories": vocab.verticals_one_per_call([vertical_id]),
              "limit": vocab.ceiling("top_limit", 100),
              "order_by": "RELATIVE_VOLUME",
-             "order": "DESC"}))
+             "order": "DESC"}, kind="trends"))
 
         categories = top["categories"]
         if not categories:
@@ -168,14 +169,14 @@ class ShoppingScraper:
              "end_date": end_date,
              "days": self.chart_days,
              "predicted_days": self.predicted_days,
-             "age_bucket": [], "gender": []}))
+             "age_bucket": [], "gender": []}, kind="trends"))
 
     def _demographics(self, ids, end_date):
         return parsers.parse_category_demographics(self.client.style_a(
             f"/ads/v4/trends/shopping/product_categories/demographics/{self.region}",
             {"product_category_ids": ids,
              "event": self.event,
-             "end_date": end_date}), self.event)
+             "end_date": end_date}, kind="trends"), self.event)
 
     def _products(self, cat_id):
         """top_products takes no array and only works in 3 regions with one
@@ -189,7 +190,7 @@ class ShoppingScraper:
         return parsers.parse_top_products(self.client.style_a(
             "/ads/v4/trends/shopping/product_categories/top_products",
             {"product_category_id": cat_id, "region": self.region,
-             "event": event}), region=self.region)
+             "event": event}, kind="detail"), region=self.region)
 
     # ------------------------------------------------------------ provenance
 

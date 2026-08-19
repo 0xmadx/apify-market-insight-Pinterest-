@@ -57,7 +57,8 @@ class MomentScraper:
         end_date = self.client.bootstrap()
 
         moments = parsers.parse_moments_list(self.client.style_a(
-            f"/ads/v4/trends/moment/available/{self.region}"))
+            f"/ads/v4/trends/moment/available/{self.region}",
+            kind="trends"))
         if not moments:
             # JP and IN genuinely have zero moments — a real answer.
             self.log(f"[moments] {self.region}: no moments for this region "
@@ -120,7 +121,7 @@ class MomentScraper:
              "lookback_days": self.lookback_days,
              "predicted_days": self.predicted_days,
              "interest_limit": vocab.ceiling("interest_limit", 6),
-             "normalize_against_group": False}))
+             "normalize_against_group": False}, kind="trends"))
         return data.get(slug)
 
     def _keywords(self, slug, end_date):
@@ -130,7 +131,7 @@ class MomentScraper:
                 {"country": self.region, "endDate": end_date,
                  "moments": slug, "trendsPreset": 1,
                  "numTermsToReturn": self.keywords_per_moment,
-                 "shouldMock": "false"}))
+                 "shouldMock": "false"}, kind="search"))
             return found["terms"]
         except TrendsAPIError as exc:
             self.log(f"[moments] keywords for {slug} failed: {exc}")
@@ -143,7 +144,8 @@ class MomentScraper:
             per_term = parsers.parse_keyword_demographics(self.client.style_b(
                 "/demographics/", {"terms": ",".join(terms[:25]),
                                    "country": self.region,
-                                   "end_date": end_date, "days": 90}))
+                                   "end_date": end_date, "days": 90},
+                kind="detail"))
         except TrendsAPIError:
             return None
         if not per_term:

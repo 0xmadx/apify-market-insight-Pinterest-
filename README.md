@@ -87,8 +87,12 @@ src/state.py               seen-set + watermark — never re-pull what we hold
 src/cache.py               response cache, TTL per endpoint kind
 src/context.py             what the scraper is handed (ctx.get, ctx.seen)
 src/records.py             the Record the scraper yields
-src/scraper.py             ← the Pinterest logic goes here (currently raises)
+src/scraper.py             dispatch: operation -> traversal -> Records
 src/main.py                actor entrypoint: lease → scrape → dedup → dataset
+src/transport.py           the two call styles + cache + blind backoff
+src/vocab.py               measured ceilings/enums, refused before the wire
+src/parsers.py             one named parser per endpoint
+src/shopping.py  keywords.py  moments.py  radar.py   the four traversals
 src/status.py              vault health check
 tests/test_incremental.py  20 checks over the freshness rules
 docs/                      the Pinterest Trends API specs — see docs/README.md

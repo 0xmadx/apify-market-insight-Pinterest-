@@ -12,7 +12,9 @@ against is **a plausible wrong number, not a crash**.
 
 ## The first thing you do is RUN, not read
 
-Before building anything, execute Phase 0 of `docs/BUILD-PLAN.md`:
+Phase 0 is complete and all four operations are built (`shopping`, `keywords`,
+`moments`, `radar`) — but the loop below still runs before you change anything,
+because the wire moves and the docs are only a snapshot of it:
 
 ```bash
 .venv/Scripts/python.exe -m src.status              # vault green?
@@ -22,10 +24,10 @@ Before building anything, execute Phase 0 of `docs/BUILD-PLAN.md`:
 
 Then read the RESPONSES — not just the docs — and diff the two. The docs
 describe what the UI uses; the wire returns more (undocumented fields, ids that
-bridge to other surfaces, schema that hints at features). Known open hypotheses
-to chase are listed in BUILD-PLAN §0.2 (pin_id → merchant outbound links,
-`wow_change.index`, …). Anything the wire shows that the docs miss goes INTO
-the docs in the same commit. 16/16 OK is the entry ticket to writing code.
+bridge to other surfaces, schema that hints at features). Open items are listed in BUILD-PLAN §0.2 — the pin-page merchant read-endpoint
+and the moment GraphQL body both still need a human DevTools capture; `H2`
+(`wow_change.index`) is settled. Anything the wire shows that the docs miss goes
+INTO the docs in the same commit. 16/16 OK is the entry ticket to changing code.
 
 ## Read alongside, in this order
 
@@ -86,9 +88,15 @@ the docs in the same commit. 16/16 OK is the entry ticket to writing code.
   headless browsers, ever — the operator's real browser holds the session; the
   code only replays it (curl_cffi, Chrome-impersonated TLS).
 - The freshness layer (`src/state.py`, `src/cache.py`, `src/context.py`) is
-  built and tested — plug into `ctx.get()` / `ctx.seen()` / `Record`; don't
-  reinvent it. Records are marked seen only AFTER the dataset push (main.py owns
-  this; keep it there).
+  built and tested — but **built and tested is not wired in**. It was orphaned
+  once already: every traversal called `TrendsClient` directly, so the cache
+  served nothing, the 383-row taxonomy was refetched every run, and
+  `forceRefresh` did nothing — while 20 cache tests stayed green, because they
+  tested the cache in isolation and nothing tested that anyone *used* it.
+  **Every new fetch must pass a `kind=` to `style_a`/`style_b`** (that is what
+  selects the TTL and enables caching), and a test must assert on wire traffic,
+  not just output. See `tests/test_full_project.py` GROUP F3. Records are marked
+  seen only AFTER the dataset push (main.py owns this; keep it there).
 - New scraping logic yields `Record(scope, id, data, fields)` — pick `fields`
   as the metric keys so changed numbers re-emit but reordered noise doesn't.
 

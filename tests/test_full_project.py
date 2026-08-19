@@ -55,7 +55,7 @@ class FakeClient:
     def bootstrap(self):
         return "2026-08-14"
 
-    def style_a(self, path, data=None, source_url=None):
+    def style_a(self, path, data=None, source_url=None, kind=None):
         self.calls.append((path, data or {}))
         if "moment/available" in path:
             return self.moments_list
@@ -71,7 +71,8 @@ class FakeClient:
             return self.editorial
         raise AssertionError(f"unexpected A path {path}")
 
-    def style_b(self, path, params=None, method="GET", json_body=None):
+    def style_b(self, path, params=None, method="GET", json_body=None,
+                kind=None):
         self.calls.append((path, params or json_body or {}))
         if path == "/top_trends_filtered/":
             return self.discover10
@@ -274,6 +275,77 @@ def main():
           "never a silent []",
           len(r_de) == 5
           and not any("editorial" in p for p, _ in client4.calls))
+
+    print("\nGROUP F3 - the response cache is actually WIRED IN")
+    # This group exists because the cache was built, tested, and used by
+    # nothing: every traversal called TrendsClient directly, so the taxonomy
+    # was refetched every run and forceRefresh did nothing. Output-only tests
+    # could never catch that — these assert on the wire traffic.
+    from src.transport import TrendsClient
+    from src.config import Config
+    from src.cache import ResponseCache
+    from dataclasses import replace
+
+    cfg = replace(Config(), PLATFORM="__test_cachewire")
+    cache = ResponseCache(cfg)
+    cache.clear()
+
+    class CountingSession:
+        """Returns a real captured payload and counts wire hits."""
+        def __init__(self, payload):
+            self.payload = payload
+            self.hits = 0
+
+        def get(self, url, params=None, headers=None):
+            self.hits += 1
+            return self
+
+        status_code = 200
+        headers = {}
+
+        @property
+        def text(self):
+            return json.dumps(self.payload)
+
+        def json(self):
+            return self.payload
+
+    raw_tax = json.load(open(glob.glob("probes/results/3.6-*.json")[0],
+                             encoding="utf-8"))
+    sess = CountingSession(raw_tax)
+
+    c1 = TrendsClient(sess, cache=cache, delay=0)
+    first = c1.style_a("/ads/v4/trends/shopping/product_categories", kind="taxonomy")
+    check("F3 first call goes to the wire", sess.hits == 1 and first is not None)
+
+    c2 = TrendsClient(sess, cache=cache, delay=0)
+    second = c2.style_a("/ads/v4/trends/shopping/product_categories", kind="taxonomy")
+    check("F3 a SECOND client (new run) is served from cache — 0 extra wire hits",
+          sess.hits == 1, f"hits={sess.hits}")
+    check("F3 the cached payload is identical, not a stub",
+          json.dumps(second, sort_keys=True) == json.dumps(first, sort_keys=True))
+    check("F3 cache_hits counter reflects it", c2.cache_hits == 1)
+
+    c3 = TrendsClient(sess, cache=cache, delay=0, force_refresh=True)
+    c3.style_a("/ads/v4/trends/shopping/product_categories", kind="taxonomy")
+    check("F3 forceRefresh actually bypasses the cache",
+          sess.hits == 2, f"hits={sess.hits}")
+
+    c4 = TrendsClient(sess, cache=cache, delay=0)
+    c4.style_a("/ads/v4/trends/shopping/product_categories")   # no kind
+    check("F3 an untagged call is never cached (kind=None)",
+          sess.hits == 3, f"hits={sess.hits}")
+
+    # every traversal must tag its calls, or the cache silently does nothing
+    import src.shopping, src.keywords, src.moments, src.radar, inspect
+    for mod in (src.shopping, src.keywords, src.moments, src.radar):
+        source = inspect.getsource(mod)
+        calls = source.count("style_a(") + source.count("style_b(")
+        tagged = source.count('kind="')
+        check(f"F3 {mod.__name__.split('.')[-1]}: all "
+              f"{calls} calls tagged with a cache kind",
+              tagged >= calls - 1, f"{tagged} tagged of {calls}")
+    cache.clear()
 
     failed = [n for n, ok in checks if not ok]
     print(f"\n{len(checks) - len(failed)}/{len(checks)} checks passed")

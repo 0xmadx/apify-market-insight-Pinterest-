@@ -48,7 +48,7 @@ class FakeClient:
     def bootstrap(self):
         return "2026-08-14"
 
-    def style_a(self, path, data=None, source_url=None):
+    def style_a(self, path, data=None, source_url=None, kind=None):
         self.calls.append((path, data or {}))
         data = data or {}
         if path.endswith("product_categories"):

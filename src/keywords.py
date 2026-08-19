@@ -66,13 +66,13 @@ class KeywordScraper:
             params["keywordsToInclude"] = ",".join(
                 vocab.keyword(k) for k in keywords_to_include)
         return parsers.parse_discover(
-            self.client.style_b("/top_trends_filtered/", params))
+            self.client.style_b("/top_trends_filtered/", params, kind="search"))
 
     def seed(self, stem):
         """/prefix_match/ — the discovery primitive. Whole keyword space."""
         return parsers.parse_prefix_match(self.client.style_b(
             "/prefix_match/", {"query": vocab.keyword(stem),
-                               "country": self.region}))
+                               "country": self.region}, kind="search"))
 
     # ------------------------------------------------------------- the walk
 
@@ -166,14 +166,15 @@ class KeywordScraper:
             "predicted_days": self.predicted_days,
             "normalize_against_group": "true",     # ALWAYS when >1 term
             "shouldMock": "false",
-        }))
+        }, kind="search"))
 
     def _demographics(self, term_list, end_date):
         try:
             return parsers.parse_keyword_demographics(self.client.style_b(
                 "/demographics/", {"terms": ",".join(term_list),
                                    "country": self.region,
-                                   "end_date": end_date, "days": self.days}))
+                                   "end_date": end_date, "days": self.days},
+                                  kind="detail"))
         except TrendsAPIError as exc:
             self.log(f"[keywords] demographics failed ({exc}) — records will "
                      f"carry null audiences, not zeros")
@@ -185,7 +186,8 @@ class KeywordScraper:
                 "/related_terms/", {"requestTerm": term, "country": self.region,
                                     "endDate": end_date, "aggregation": 2,
                                     "lookback": self.days,
-                                    "shouldMock": "false"}))
+                                    "shouldMock": "false"},
+                kind="detail"))
         except TrendsAPIError:
             return []
 

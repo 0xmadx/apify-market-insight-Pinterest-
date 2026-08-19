@@ -41,7 +41,11 @@ def run(ctx, task):
         raise UnknownOperation(
             f"operation={operation!r} — available: {', '.join(OPERATIONS)}")
 
-    client = TrendsClient(ctx.session)
+    # The cache is the actor's shared asset: the taxonomy is 383 rows that
+    # every run and every vertical needs, and two customers asking the same
+    # question inside a TTL should cost Pinterest one request, not two.
+    client = TrendsClient(ctx.session, cache=ctx.cache,
+                          force_refresh=ctx.force_refresh)
     handler = {
         "shopping": _shopping,
         "keywords": _keywords,

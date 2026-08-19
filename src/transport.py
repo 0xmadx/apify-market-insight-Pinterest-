@@ -44,11 +44,18 @@ class TrendsAPIError(RuntimeError):
 
 
 class TrendsClient:
-    def __init__(self, session, delay=0.4):
+    def __init__(self, session, cache=None, delay=0.4, force_refresh=False):
         self.session = session
+        # The response cache (src/cache.py). Optional so tests and probes can
+        # run without Redis, but the actor ALWAYS passes one: without it the
+        # 383-row taxonomy is re-fetched on every run and two customers asking
+        # the same question in the same hour cost Pinterest two requests.
+        self.cache = cache
+        self.force_refresh = force_refresh
         self.delay = delay        # courtesy gap; the vault session is shared
         self.end_date = None
         self.request_count = 0
+        self.cache_hits = 0
 
     # ------------------------------------------------------------ bootstrap
 
@@ -64,20 +71,26 @@ class TrendsClient:
 
     # --------------------------------------------------------------- styles
 
-    def style_a(self, path, data=None, source_url=None):
+    def style_a(self, path, data=None, source_url=None, kind=None):
         """The ApiResource wrapper — every /ads/v4/trends/... endpoint.
 
         `source_url` and the `_` cachebuster are optional and their values are
         irrelevant (verified), so they are omitted entirely.
+
+        `kind` selects the cache TTL (see Config.CACHE_TTLS). Omit it to bypass
+        the cache for anything whose response is only valid once.
         """
         body = {"options": {"url": path, "data": data or {}}, "context": {}}
         params = {"data": json.dumps(body, separators=(",", ":"))}
         if source_url:
             params["source_url"] = source_url
 
-        response = self._request("GET", f"{BASE}/resource/ApiResource/get/",
-                                 params=params, endpoint=path)
-        payload = self._json(response, path)
+        url = f"{BASE}/resource/ApiResource/get/"
+        payload = self._cached(kind, url, params)
+        if payload is None:
+            response = self._request("GET", url, params=params, endpoint=path)
+            payload = self._json(response, path)
+            self._store(kind, url, response, params)
         wrapper = payload.get("resource_response") or {}
 
         error = wrapper.get("error")
@@ -91,11 +104,46 @@ class TrendsClient:
         # returned to a caller and never stored — see probes/probe_endpoints.py.
         return wrapper.get("data")
 
-    def style_b(self, path, params=None, method="GET", json_body=None):
+    def style_b(self, path, params=None, method="GET", json_body=None,
+                kind=None):
         """Plain GET/POST — no envelope, JSON returned directly."""
-        response = self._request(method, f"{BASE}{path}", params=params,
+        url = f"{BASE}{path}"
+        # POSTs are never served from cache: their bodies are not part of the
+        # cache key, so a hit could return another request's answer.
+        cache_key = params if method == "GET" else None
+        if method == "GET":
+            payload = self._cached(kind, url, cache_key)
+            if payload is not None:
+                return payload
+
+        response = self._request(method, url, params=params,
                                  json_body=json_body, endpoint=path)
-        return self._json(response, path)
+        payload = self._json(response, path)
+        if method == "GET":
+            self._store(kind, url, response, cache_key)
+        return payload
+
+    # ----------------------------------------------------------- cache glue
+
+    def _cached(self, kind, url, params):
+        """A hit returns the parsed payload; None means 'go to the wire'."""
+        if not (self.cache and kind) or self.force_refresh:
+            return None
+        hit = self.cache.get(kind, url, params)
+        if hit is None:
+            return None
+        try:
+            payload = hit.json()
+        except Exception:
+            return None          # unusable entry — refetch rather than guess
+        self.cache_hits += 1
+        return payload
+
+    def _store(self, kind, url, response, params):
+        """Only usable 200s are stored — cache.put() enforces that itself, so a
+        403 or an empty body can never be replayed for a whole TTL."""
+        if self.cache and kind:
+            self.cache.put(kind, url, response, params)
 
     # -------------------------------------------------------------- plumbing
 
