@@ -94,10 +94,22 @@ tests/test_incremental.py  20 checks over the freshness rules
 docs/                      the Pinterest Trends API specs — see docs/README.md
 ```
 
-The endpoint specs live in [docs/](docs/). Start with
-[07-API-REFERENCE.md](docs/07-API-REFERENCE.md) and
-[08-BUILD-GUIDE.md](docs/08-BUILD-GUIDE.md) — 18 endpoints, params and measured
-limits. `docs/README.md` records which drafts were superseded and why.
+## Where everything is
+
+| Doc | Purpose |
+|---|---|
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | ⭐ **start here** — the endpoint graph (nodes, edges, decision points), the 4-actor product, the shared-vault economics |
+| [docs/07-API-REFERENCE.md](docs/07-API-REFERENCE.md) | every endpoint, param, and measured limit |
+| [docs/08-BUILD-GUIDE.md](docs/08-BUILD-GUIDE.md) | call chains, normalisation rules, validation checklist |
+| [docs/TEST-SCENARIOS.md](docs/TEST-SCENARIOS.md) | acceptance scenarios (A1…G2) — the definition of done for the coding agent |
+| [probes/RESULTS.md](probes/RESULTS.md) | live probe: 16/16 endpoints verified, raw responses in `probes/results/` |
+| [CLAUDE.md](CLAUDE.md) | working rules for any agent in this repo |
+| `.claude/skills/pinterest-trends-coder/` | the enforced coding skill — invoked before writing any code |
+| [docs/README.md](docs/README.md) | which spec drafts were superseded and why |
+
+**Current state:** session + freshness layers built and tested; all 16 probeable
+endpoints verified live; product architecture and test scenarios documented. The
+graph layer and the four actors are documented but deliberately not yet coded.
 
 ## Not pulling old data
 
