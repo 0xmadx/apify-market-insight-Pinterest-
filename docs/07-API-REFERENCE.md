@@ -493,14 +493,38 @@ either. **By elimination, the GraphQL POST is the source.**
 > on a moment page. You cannot identify what this call does by its URL alone. Status is
 > "not reproducible" (no REST equivalent), not "impossible to ever capture" (see below).
 
-### Why the body could not be captured (by automation)
+### One POST, not several — confirmed 2026-08-19
 
-Capturing a POST body requires replacing `window.fetch` **before the page's own JavaScript
-runs**. Five workarounds were attempted and all failed:
+A cold navigation to `/moments/halloween/?country=US` with capture armed **beforehand**
+produced **exactly one** POST to `/_/graphql/`, status 200. So on this page there is no
+disambiguation problem at all: that single request carries the moment payload, age/gender
+included. (The `/shopping` sighting noted above is a different page, hence a different
+payload — which is the point.)
+
+### Why the body has not been captured yet — corrected diagnosis
+
+An earlier version of this section said a hook must be installed "before the page's own
+JavaScript runs". **That is not the mechanism, and the difference is what unblocks it:**
+
+- The POST fires **once, during hydration**. Everything after is served from **Apollo's
+  in-memory JS cache**.
+- Therefore DevTools' **"Disable cache" does nothing** — the cache hiding the request is
+  not the HTTP cache.
+- A hard reload *does* re-fire it, but a reload also **wipes any console patch**. That
+  catch-22 — not a timing mistake — is what the five attempts below actually hit.
+
+**The route through:** install an in-page `fetch`/XHR interceptor on an already-loaded
+page, then force the SPA router to re-fire the query **without a reload** (switch the
+country dropdown, or navigate to another moment and back). Tooling and step-by-step:
+[`probes/captures/`](../probes/captures/README.md).
+
+⚠️ Also recorded there: the `claude-in-chrome` network tool reports **url/method/status
+only, never request payloads**, so "Copy as cURL" is not available through it. An in-page
+interceptor is the only route to the body.
 
 | Attempt | Result |
 |---------|--------|
-| Client-side SPA navigation with hook pre-armed | GraphQL did not re-fire (cached) |
+| Client-side SPA navigation with hook pre-armed | GraphQL did not re-fire (Apollo cache) |
 | Scroll to lazy-load the chart | chart rendered, **0 requests** |
 | Relay globals (`__PWS_RELAY_SSR_REQUESTS__`) | already consumed / empty |
 | Server-rendered HTML | no `age_distribution` in 118 KB of SSR HTML |
