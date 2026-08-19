@@ -138,6 +138,20 @@
   builder input (e.g. `age="25-34"`) must map to the right scheme per endpoint;
   a test feeds each endpoint and asserts the emitted wire params differ correctly.
 
+**C7. `event` is never mapped by UI label, and audience is always event-stamped [offline]**
+- The detail page labels `ENGAGEMENT` as **"All"**; the shopping table labels the
+  same value **"Engagement"**. A builder fed the label `"All"` must emit
+  `event=ENGAGEMENT`; fed `"Engagement"` from the table context, also
+  `ENGAGEMENT`. Any label→enum map that produces a different value for the two
+  is a failing test. (Doc #7 §3.9, doc #3 §C4a.)
+- Every demographics record carries the `event` it was measured under. Measured:
+  category `1408` gives 65+ = **32%** under `OUTBOUND_CLICK` but **19%** under
+  `SAVE`. A record stating an age/gender split without its `event` is a failing
+  test — "the audience for this category" is not a well-formed fact.
+- Conversely `related_search_trends` is identical across all three events (17
+  terms, same order — verified). A planner that requests keywords once per event
+  is a failing test; it must request them once total.
+
 ---
 
 ## GROUP D — Decision nodes (the traversal logic)

@@ -255,6 +255,11 @@ Table uses `days:60, predicted_days:0`; detail page uses `days:180, predicted_da
 > **not** give you the chart. Building the Performance tab needs both calls; §3.9 alone is
 > enough for the Demographics tab and the Search-queries chips.
 
+**Date-range control on the detail page** sends `90D` / `180D` / `365D` / `730D` ("Past 3
+months / 6 months / 1 year / 2 years") → becomes `days` here. Detail page defaults to
+`days:180, predicted_days:28` (the table uses `days:60, predicted_days:0`) — the
+`predicted_days:28` is what produces the dashed "Predicted median" + shaded bounds.
+
 ## 3.9 `…/product_categories/demographics/{region}` — ⭐ 3 sections in one call
 ```jsonc
 {"product_category_ids":["1408"],"event":"OUTBOUND_CLICK","end_date":"2026-08-14"}
@@ -286,6 +291,31 @@ events — verified). Don't re-request keywords per event.
 >
 > A full category drill-down page therefore costs **3 calls minimum**
 > (§3.9 + §3.8 + §3.10), not one.
+
+### ⚠️ The "Engagement" filter on the detail page — three traps (detail in doc #3 §C4)
+
+**1. The dropdown appears TWICE, independently.** Both the Performance chart (§3.8) and the
+Demographics block (§3.9) have their own "Engagement" dropdown. They are not linked — the
+page can be showing demographics for one `event` and the chart for another. A client
+modelling one page-level `event` will silently mismatch the UI.
+
+**2. The labels do NOT match the shopping table's labels — never map by label.**
+
+| Dropdown label (detail page) | `event` value sent |
+|---|---|
+| **All** | `ENGAGEMENT` |
+| **Outbound clicks** (default here) | `OUTBOUND_CLICK` |
+| **Pin saves** | `SAVE` |
+
+The shopping table (§3.7) calls the same `ENGAGEMENT` value **"Engagement"**; here it is
+**"All"**. Same enum, different wording, same page family.
+
+**3. `event` changes demographics a LOT, and `related_search_trends` not at all.** Measured on
+category `1408` across all three events — the keyword chips were byte-identical (17 terms,
+same order), but the audience moved materially: 65+ was **32% of outbound clicks vs 19% of
+saves**; 25-34 was **23% of saves vs 13% of clicks**. So: request the keywords once, but never
+cache demographics across events — and label which `event` any audience figure came from,
+because "the audience for this category" is meaningless without it.
 
 ## 3.10 `…/product_categories/top_products` — Top products (the one that works)
 **No path params.** `{"product_category_id":"1408","region":"US","event":"OUTBOUND_CLICK"}`
