@@ -593,7 +593,54 @@ This approximates moment-level demographics from its constituent keywords. **Lab
 `derived`** (see ARCHITECTURE.md §2.3, scenario D4) — it will not match Pinterest's own chart
 exactly.
 
-### To upgrade this to measured
+### ⭐ The interest filter — SAME query, two variables that move together
+
+Pinterest's "Filter by relevant interest" dropdown is not a separate query. It
+reuses the identical `queryHash`; **two variables change as a pair**:
+
+```jsonc
+{"queryHash":"85bfe810…","variables":{
+  "terms":["halloween:925056443165"],      // "<moment>:<interestId>", colon-joined
+  "region":"US","endDate":"2026-08-14","event":null,
+  "category":"MOMENT_INTEREST"}}           // NOT "MOMENT"
+```
+
+Move one without the other and you get **HTTP 200 with `items: []`** — no error.
+`vocab.moment_terms()` returns both or neither so no call site can desynchronise
+them.
+
+**The dropdown is UI CURATION, not a data constraint.** Each moment offers ~7
+"relevant" interests; that list is cosmetic. halloween × **Food and Drinks**
+(`918530398158`) is *not* offered and returns a full valid distribution:
+
+| halloween × interest | 18-24 | female |
+|---|---|---|
+| *(no filter)* | 0.43 | 0.87 |
+| DIY and Crafts | 0.23 | 0.86 |
+| Entertainment | 0.51 | 0.84 |
+| **Food and Drinks — not in the UI** | **0.19** | 0.86 |
+
+So the real surface is **any moment × any interest** — 13 × 24 in the US, where
+the UI shows ~7 per moment. It generalises across moments (`christmas:961238559656`
+works too). ⚠️ Pinterest may curate the list because un-offered pairs are thin;
+cells are labelled `offered_in_ui: null` rather than claimed equivalent.
+
+### Failure modes — two of three return HTTP 200
+
+| input | result |
+|---|---|
+| unknown interest id (`halloween:111111111111`) | **200, `items: []`** |
+| terms/category out of sync | **200, `items: []`** |
+| malformed variables (`event:"x"`, bad `category` enum) | `{"data":null,"errors":[{"message":"CLIENT GRAPHQL ERROR"}]}` |
+| **an UNKNOWN variable added** (`interests:[…]`, `interestId:…`) | **silently ignored — response byte-identical to baseline** |
+
+That last row is the trap: unknown variables against a persisted query do not
+error, they vanish. A plausible-looking response is not evidence the variable
+worked — diff against a baseline. (Recorded because it was guessed wrong first:
+`interests`, `interestId` and `category:"<id>"` were all tried before the
+colon-join was found.)
+
+### To re-capture when the hash rotates
 
 Capture the live request from browser DevTools: Network → filter `graphql` → right-click the
 POST → **Copy as cURL**. The `operationName`/query hash + `variables` are sufficient to

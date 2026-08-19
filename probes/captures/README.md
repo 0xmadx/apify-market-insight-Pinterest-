@@ -56,14 +56,78 @@ Confirmed against a second moment (christmas / US), same `queryHash`, different 
 | `category` | `"MOMENT"` | |
 
 Age buckets: `18-24, 25-34, 35-44, 45-49, 50-54, 55-64, 65+`. Note **45-49 and 50-54 are
-split** rather than a single 45-54 — don't assume decade buckets. Gender is a flat object
-(`male`/`female`/`unspecified`), *not* a bucket array like age.
+split** rather than a single 45-54 — don't assume decade buckets. Values are fractions
+summing to ~1.0. Gender is a flat object (`male`/`female`/`unspecified`), *not* a bucket
+array like age.
 
-⚠️ **Correction (verified 2026-08-19): the fractions do NOT reliably sum to 1.0.** They are
-rounded to 2dp and small buckets round up off a 0.04 floor. The halloween payload above sums
-to **1.07** — four buckets sit at 0.04. christmas, thanksgiving and hanukkah all sum to 1.00,
-and gender reaches 1.01 on thanksgiving. `parse_moment_demographics` passes them through
-unnormalised deliberately; rescaling would invent precision Pinterest never published.
+---
+
+## The interest filter — same query, two changes
+
+The "Filter by relevant interest" dropdown feeds **the same `queryHash`**. It is not a
+separate variable and not a separate query. Two things change together:
+
+```json
+{"queryHash":"85bfe810f1f9a895ec901e57dcbb9b193bfade5c8504299d645ca89053b31a50","variables":{"terms":["halloween:925056443165"],"region":"US","endDate":"2026-08-14","event":null,"category":"MOMENT_INTEREST"}}
+```
+
+- `terms` becomes **`"<moment>:<interestId>"`** — colon-joined, still a single-element array
+- `category` becomes **`"MOMENT_INTEREST"`**
+
+Both must move together. `"halloween:961238559656"` with `category:"MOMENT"` returns
+`{"data":{"trendsDemographicsRead":{"items":[]}}}` — empty items, HTTP 200, no error.
+
+### Things that do NOT work
+
+Guessed a separate interest variable first; all of it was wrong, recorded so nobody
+retries it:
+
+| attempt | result |
+|---|---|
+| `interests:["<id>"]` added to variables | **silently ignored** — response byte-identical to baseline |
+| `interestId:"<id>"` added to variables | **silently ignored** — byte-identical |
+| `category:"<id>"` | `CLIENT GRAPHQL ERROR` |
+| `category` set to `INTEREST` / `KEYWORD` / `TERM` / `ALL` | `CLIENT GRAPHQL ERROR` (enum; `MOMENT` and `MOMENT_INTEREST` are the two known-good values) |
+| `event:"<id>"` or `event:"halloween"` | `CLIENT GRAPHQL ERROR` — `event` must stay `null` |
+
+The silent-ignore case is the trap: unknown variables against a persisted query don't
+error, they vanish. An identical-looking response is the signal you guessed wrong, so
+diff against a baseline rather than eyeballing for plausibility.
+
+### The dropdown list is UI curation, not a data constraint
+
+Each moment's dropdown offers ~7 "relevant" interests. That list is cosmetic. Querying
+halloween against **Food and Drinks** (`918530398158`, which appears on thanksgiving's
+menu but not halloween's) returns a full valid distribution:
+
+| halloween x interest | 18-24 | female |
+|---|---|---|
+| *(no filter)* | 0.43 | 0.87 |
+| Animals `925056443165` | 0.44 | 0.87 |
+| Art `961238559656` | 0.45 | 0.84 |
+| Beauty `935541271955` | 0.45 | 0.89 |
+| DIY and Crafts `934876475639` | 0.23 | 0.86 |
+| Entertainment `953061268473` | 0.51 | 0.84 |
+| Event Planning `941870572865` | 0.32 | 0.87 |
+| Food and Drinks `918530398158` **(not offered in UI)** | 0.19 | 0.86 |
+
+So the real matrix is **any moment x any interest**, not just the pairs Pinterest
+surfaces. `christmas:961238559656` works too (18-24 at 0.38) — it generalises across
+moments. Whether the un-offered pairs are *reliable* is a separate question; Pinterest
+may curate the list because the others are thin. Spot-check sample sizes before trusting
+a cell you can't reach from the UI.
+
+### Failure modes
+
+Both bad-input cases return **HTTP 200 with `items: []`**, not an error:
+
+- unknown interest id (`halloween:111111111111`)
+- term/category shape mismatch
+
+Only malformed *variables* produce `{"data":null,"errors":[{"message":"CLIENT GRAPHQL ERROR"}]}`.
+So `items: []` is the case to handle loudly — it's indistinguishable from "no data" at
+the HTTP layer.
+
 
 ---
 
@@ -102,16 +166,20 @@ what Capture 2 is for.
 
 ## Procedural notes worth keeping
 
-**The Region `<select>` is not a usable trigger.** It's a controlled component that
-reverts. Three approaches all failed to make it refetch — the MCP `form_input` tool
-(set, then snapped back to `US`), the React-native-setter trick
+**Synthetic events do not drive the `<select>`s — a real click does.** Three synthetic
+approaches all failed to make the Region select refetch: the MCP `form_input` tool (set,
+then snapped back to `US`), the React-native-setter trick
 (`Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype,'value').set` + dispatched
-`input`/`change`), and real keyboard `ArrowDown` on the focused select. Zero requests
-fired in all three cases.
+`input`/`change`), and `ArrowDown` on a JS-`focus()`ed select. Zero requests fired.
 
-What *does* work: `document.querySelector('a[href*="christmas"]').click()` on a moment
-link in the nav strip. That's a client-side route change — refires the query and leaves
-the patch installed.
+What works is a **real** click through the MCP `computer` tool on the combobox ref,
+then `ArrowDown`, then `Return`. That fires the request. The difference is event
+trustedness, not the component — an earlier note here claimed the select was simply
+unusable and that clicking a moment link was the only trigger. That was wrong, and it's
+what made the interest filter look inaccessible for longer than it should have.
+
+Clicking a moment link in the nav strip (`a[href*="christmas"]`) also works and is
+cheaper when you just need *a* request to fire (e.g. to stash init for replay).
 
 **`clone().text()` deadlocks; consume and rebuild instead.** The first interceptor left
 every capture at `response: null` indefinitely. Cloned bodies are tee'd streams, and this
@@ -144,6 +212,9 @@ Nothing in `src/` changes. `moments.py` already labels the audience `derived` vi
 
 Two things to decide when wiring it up:
 
+- Interest ids look stable and global (the same id works across moments), but they are
+  Pinterest-internal — worth pinning the id->name map at capture time rather than
+  assuming it holds.
 - `queryHash` is a persisted-query hash and will rotate when Pinterest redeploys. Worth a
   loud failure mode rather than a silent empty chart — if the response comes back without
   `trendsDemographicsRead`, treat it as "hash is stale, re-capture" rather than "no data".

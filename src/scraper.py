@@ -83,6 +83,7 @@ def _keywords(client, task):
         region=task.get("region", "US"),
         days=int(task.get("days", 365)),
         predicted_days=int(task.get("predictedDays", 91)),
+        interest_ids=task.get("interestIds") or None,
     )
     mode = task.get("mode", "discover")
     for record in scraper.run(
@@ -114,6 +115,7 @@ def _moments(client, task):
         aggregation=task.get("aggregation", "daily"),
         lookback_days=int(task.get("lookbackDays", 365)),
         predicted_days=int(task.get("predictedDays", 91)),
+        interest_ids=task.get("interestIds") or None,
     )
     for record in scraper.run(
             phases=tuple(task.get("phases") or ("rising", "approaching")),

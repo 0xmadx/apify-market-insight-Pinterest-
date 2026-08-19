@@ -99,6 +99,25 @@ EVENT_LABELS = {
     "pin saves": "SAVE", "saves": "SAVE",
 }
 
+# The 24 interest ids (doc #7 §4.2). Pinterest-internal and not derivable — the
+# API never returns this list, so it is pinned here from a capture. Used by
+# `l1interests` on keyword discovery AND by the moment x interest audience
+# matrix (§3.18).
+INTERESTS = {
+    "925056443165": "Animals",            "909983286710": "Gardening",
+    "918105274631": "Architecture",       "898620064290": "Health",
+    "961238559656": "Art",                "935249274030": "Home Decor",
+    "935541271955": "Beauty",             "924581335376": "Men's Fashion",
+    "903733943146": "Children's Fashion", "920236059316": "Parenting",
+    "902065567321": "Design",             "948192800438": "Quotes",
+    "934876475639": "DIY and Crafts",     "919812032692": "Sport",
+    "922134410098": "Education",          "908182459161": "Travel",
+    "960887632144": "Electronics",        "918093243960": "Vehicles",
+    "953061268473": "Entertainment",      "903260720461": "Wedding",
+    "941870572865": "Event Planning",     "948967005229": "Women's Fashion",
+    "913207199297": "Finance",            "918530398158": "Food and Drinks",
+}
+
 # ---- the persisted GraphQL query (doc #7 §3.18) ----------------------
 # Captured live 2026-08-19 via an in-page interceptor; see
 # probes/captures/README.md for the procedure and the verbatim body.
@@ -113,6 +132,31 @@ MOMENT_DEMOGRAPHICS = {
     # NOT the global trends/index.js — this query is bound to the moment page.
     "handler": "trends/moments/[momentId].js",
 }
+
+# The interest filter is the SAME persisted query. Two variables move TOGETHER:
+#   terms     "<moment>"  ->  "<moment>:<interestId>"   (colon-joined)
+#   category  "MOMENT"    ->  "MOMENT_INTEREST"
+# Moving one without the other returns HTTP 200 with items:[] — a silent empty,
+# not an error. Hence `moment_terms()` below, which cannot produce a half-move.
+MOMENT_CATEGORIES = {"base": "MOMENT", "interest": "MOMENT_INTEREST"}
+
+
+def moment_terms(slug, interest_id=None):
+    """Build (terms, category) for the §3.18 query as one atomic pair.
+
+    Verified: `halloween:961238559656` with `category:"MOMENT"` returns
+    `items: []` — HTTP 200, no error. The two fields are a single decision, so
+    this returns both or neither and no call site can desynchronise them.
+    """
+    if interest_id is None:
+        return [slug], MOMENT_CATEGORIES["base"]
+    key = str(interest_id)
+    if key not in INTERESTS:
+        raise InvalidParam(
+            f"interest id {key!r} is not one of the 24 known ids (§4.2). An "
+            f"unknown id returns HTTP 200 with items:[] — a silent empty that "
+            f"is indistinguishable from 'no data'.")
+    return [f"{slug}:{key}"], MOMENT_CATEGORIES["interest"]
 
 # Measured ceilings. The value is the maximum that WORKS.
 LIMITS = {

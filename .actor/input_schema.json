@@ -124,6 +124,12 @@
       "description": "Aggregate the moment's keyword audiences (labelled derived - Pinterest's own moment chart is not reachable via REST).",
       "default": true
     },
+    "interestIds": {
+      "title": "[moments] Interest breakdown",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Interest ids to break each drilled moment's audience down by. Pinterest's own UI offers only ~7 per moment, but ANY moment x ANY interest works - these are audiences their interface cannot show. Costs one request PER CELL, so keep the list short. Empty = off."
+    },
     "interest": {
       "title": "[radar] Interest filter",
       "type": "string",

@@ -139,3 +139,55 @@
 
   console.log('%c[cap] installed. Now click a different moment in the nav strip, then run __findDemo()', 'color:#0a0;font-weight:bold');
 })();
+
+/* ============================================================================
+   REPLAY HELPER
+   ----------------------------------------------------------------------------
+   Once any real /_/graphql/ request has passed through the patch above, its
+   init (headers incl. X-CSRFToken) is reusable. That lets you fire arbitrary
+   variable sets without touching the UI. Credentials are reused, never read.
+
+     __demo('halloween')                        -> whole-moment audience
+     __demo('halloween', '925056443165')        -> moment x interest
+     __demo('christmas', '918530398158', 'CA')  -> + region
+
+   Returns a promise resolving to the parsed response.
+   ========================================================================== */
+(() => {
+  const HASH = '85bfe810f1f9a895ec901e57dcbb9b193bfade5c8504299d645ca89053b31a50';
+
+  window.__lastInit = window.__lastInit || null;
+  const origFetch2 = window.fetch;
+  window.fetch = function (input, init) {
+    try {
+      const u = typeof input === 'string' ? input : (input && input.url) || '';
+      if (/graphql/i.test(u) && init) { window.__lastInit = init; window.__gqlUrl = u; }
+    } catch (e) {}
+    return origFetch2.apply(this, arguments);
+  };
+
+  window.__demo = (moment, interestId, region, endDate) => {
+    if (!window.__lastInit) { console.warn('[cap] no init stashed yet -- click a moment link first'); return Promise.resolve(null); }
+    const variables = {
+      terms: [interestId ? `${moment}:${interestId}` : moment],
+      region: region || 'US',
+      endDate: endDate || new Date(Date.now() - 5 * 864e5).toISOString().slice(0, 10),
+      event: null,
+      category: interestId ? 'MOMENT_INTEREST' : 'MOMENT',
+    };
+    return origFetch2(window.__gqlUrl, {
+      method: 'POST',
+      headers: window.__lastInit.headers,
+      credentials: 'include',
+      body: JSON.stringify({ queryHash: HASH, variables }),
+    })
+      .then(r => r.json())
+      .then(j => {
+        const items = j && j.data && j.data.trendsDemographicsRead && j.data.trendsDemographicsRead.items;
+        if (!items || !items.length) console.warn('[cap] empty items -- bad interest id, or category/term shape mismatch');
+        return j;
+      });
+  };
+
+  console.log('%c[cap] __demo(moment, interestId?, region?, endDate?) ready', 'color:#0a0');
+})();

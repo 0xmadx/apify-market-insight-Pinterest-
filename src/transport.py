@@ -172,13 +172,25 @@ class TrendsClient:
             payload = self._json(response, "/_/graphql/")
             self._store(kind, url, response, body)
 
+        # THREE outcomes, only one an HTTP-level failure. Telling them apart is
+        # the whole job:
+        #   data:null + errors[]    malformed variables ("CLIENT GRAPHQL
+        #                           ERROR") or a rotated hash -> raise
+        #   data...items: []        HTTP 200, no error: unknown interest id,
+        #                           terms/category out of sync, or a genuinely
+        #                           empty cell. Returned; the CALLER decides.
+        #   data with items         the answer
+        # And the silent one: an unknown variable added to a persisted query is
+        # IGNORED, returning a byte-identical baseline response. No single
+        # response reveals that — diff against a known baseline.
+        errors = (payload or {}).get("errors")
         data = (payload or {}).get("data")
-        if not data:
+        if errors or not data:
             raise StaleQueryHash(
                 f"/_/graphql/ returned no `data` for {operation_name}. The "
                 f"persisted queryHash has almost certainly rotated — re-capture "
                 f"it (probes/captures/README.md), do NOT read this as an empty "
-                f"result. errors={(payload or {}).get('errors')}")
+                f"result. errors={errors}")
         return data
 
     def pin_resource(self, pin_id, kind="detail"):

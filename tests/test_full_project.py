@@ -83,7 +83,16 @@ class FakeClient:
         gq = json.load(open(
             "probes/results/graphql/3.18-moment_demographics-halloween.json",
             encoding="utf-8"))
-        return gq["data"]
+        data = gq["data"]
+        # An interest query returns DIFFERENT numbers - measured: halloween
+        # unfiltered is 18-24=0.43, x Food and Drinks is 0.19. Echo that so the
+        # test cannot pass by accidentally reusing the base distribution.
+        if variables.get("category") == "MOMENT_INTEREST":
+            import copy
+            data = copy.deepcopy(data)
+            items = data["trendsDemographicsRead"]["items"][0]
+            items["ageDistribution"][0]["value"] = 0.19
+        return data
 
     def style_b(self, path, params=None, method="GET", json_body=None,
                 kind=None):
@@ -361,6 +370,42 @@ def main():
           and vocab.MOMENT_DEMOGRAPHICS["handler"] == "trends/moments/[momentId].js")
     check("D4 the GraphQL handler is NOT the global trends/index.js",
           vocab.MOMENT_DEMOGRAPHICS["handler"] != "trends/index.js")
+
+    print("\nGROUP D4b - the moment x interest matrix")
+    ci = FakeClient()
+    FOOD = "918530398158"          # Food and Drinks - NOT offered on halloween
+    mi = list(MomentScraper(ci, region="US", interest_ids=[FOOD],
+                            log=lambda *a: None).run())
+    drilled_i = [m for m in mi if m["drilled"]]
+    check("D4b interest matrix attached to drilled moments",
+          bool(drilled_i and drilled_i[0]["audience_by_interest"]))
+    if drilled_i and drilled_i[0]["audience_by_interest"]:
+        cell = drilled_i[0]["audience_by_interest"][FOOD]
+        check("D4b cell carries the interest NAME, not just the id",
+              cell["interest_name"] == "Food and Drinks")
+        check("D4b cell is measured", cell["basis"] == "measured")
+        check("D4b un-offered pairs are flagged unknown, not claimed equivalent",
+              cell["offered_in_ui"] is None)
+        check("D4b the filtered distribution really differs from unfiltered",
+              cell["age_distribution"]["18-24"] == 0.19
+              and drilled_i[0]["audience"]["age_distribution"]["18-24"] == 0.43)
+    gq_calls = [v for p_, v in ci.calls if p_ == "/_/graphql/"]
+    interest_calls = [v for v in gq_calls if v["category"] == "MOMENT_INTEREST"]
+    check("D4b terms and category move TOGETHER (colon-join + MOMENT_INTEREST)",
+          bool(interest_calls)
+          and interest_calls[0]["terms"][0].endswith(f":{FOOD}"))
+    check("D4b a base query still uses MOMENT with a bare slug",
+          any(v["category"] == "MOMENT" and ":" not in v["terms"][0]
+              for v in gq_calls))
+    check("D4b the matrix is OFF unless interest_ids given",
+          MomentScraper(FakeClient(), log=lambda *a: None).interest_ids == [])
+    try:
+        vocab.moment_terms("halloween", "111111111111")
+        check("D4b an unknown interest id is refused before the wire", False)
+    except vocab.InvalidParam as exc:
+        check("D4b an unknown interest id is refused, citing the silent empty",
+              "items:[]" in str(exc) or "items: []" in str(exc))
+    check("D4b all 24 interest ids pinned", len(vocab.INTERESTS) == 24)
 
     print("\nGROUP E2b - pin commerce data (S3.19 captured)")
     pin = json.load(open("probes/results/graphql/3.19-pin_closeup.json",
