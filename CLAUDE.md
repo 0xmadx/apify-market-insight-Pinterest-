@@ -31,6 +31,7 @@ one-vertical-per-call, the double-spelled `has_prediction`). It is not advisory.
 .venv/Scripts/python.exe -m tests.test_shopping_api       # 54
 .venv/Scripts/python.exe -m tests.test_shopping_traversal # 33
 .venv/Scripts/python.exe -m tests.test_full_project       # 95
+.venv/Scripts/python.exe -m tests.test_dispatch           # 25 — zero-input + input plumbing
 ```
 
 Everything is a module run from the repo root. The venv is local to this repo.

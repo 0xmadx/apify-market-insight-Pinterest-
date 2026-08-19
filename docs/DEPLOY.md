@@ -130,6 +130,7 @@ costs in the system.
 .venv/Scripts/python.exe -m tests.test_shopping_api
 .venv/Scripts/python.exe -m tests.test_shopping_traversal
 .venv/Scripts/python.exe -m tests.test_full_project
+.venv/Scripts/python.exe -m tests.test_dispatch     # the customer-facing path
 ```
 
 The probe suite is the contract this API does not have. An endpoint dropping to
