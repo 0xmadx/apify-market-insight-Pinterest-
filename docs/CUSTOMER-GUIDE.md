@@ -259,6 +259,16 @@ requests. Start somewhere else by changing one field:
 | `search` | trending search keywords | each keyword's related terms |
 | `moments` | every seasonal moment | each moment's keywords |
 
+**The entry page keeps its own filters.** Crawling from `shopping` still takes
+`verticals`, `drillTopN`, `enrichTopN` and `event`:
+
+```json
+{ "operation": "crawl", "crawlFrom": "shopping",
+  "verticals": ["1042"], "crawlDepth": 1 }
+```
+
+is "Beauty only, then follow its search-query chips" — 14 nodes, 7 requests.
+
 **Why it is not slow.** It walks a whole level at once rather than node by
 node, and the keyword endpoints accept batches — so cost grows with `crawlDepth`,
 not with how many things it finds. Node-by-node would be roughly 975 requests

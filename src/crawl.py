@@ -114,7 +114,8 @@ class Crawler:
     def __init__(self, client, region="US", entry="overview", depth=1,
                  max_requests=60, max_nodes_per_level=DEFAULT_LEVEL_CAP,
                  end_date=None, date_range_days=365, event="OUTBOUND_CLICK",
-                 enrich_top_n=0, related_fanout=10, log=print):
+                 enrich_top_n=0, related_fanout=10, verticals=None,
+                 drill_top_n=3, log=print):
         if entry not in ENTRY_POINTS:
             raise vocab.InvalidParam(
                 f"crawlFrom={entry!r} — one of {', '.join(sorted(ENTRY_POINTS))}. "
@@ -133,6 +134,12 @@ class Crawler:
         # How many keywords per level get their `related` siblings fetched.
         # 1 request each, so this is the crawl's only linear cost.
         self.related_fanout = related_fanout
+        # A crawl still honours the seed page's own filters. These were
+        # hardcoded, so `verticals: ["1042"]` on a crawl was accepted and
+        # silently ignored — the customer got all three UI verticals and no
+        # indication their input had been dropped.
+        self.verticals = [str(v) for v in (verticals or [])] or None
+        self.drill_top_n = drill_top_n
         self.budget = CrawlBudget(client, max_requests)
         self.log = log
         # (kind, key) -> the depth it was first reached at. Identity is the
@@ -297,12 +304,13 @@ class Crawler:
     def _seed_shopping(self):
         scraper = ShoppingScraper(
             self.client, region=self.region, event=self.event,
-            drill_top_n=3, chart_days=self.date_range_days,
+            drill_top_n=self.drill_top_n, chart_days=self.date_range_days,
             enrich_top_n=self.enrich_top_n, end_date=self.end_date,
             log=self.log)
         try:
-            for rec in scraper.run(verticals=sorted(vocab.UI_VISIBLE_VERTICALS),
-                                   with_products=bool(self.enrich_top_n)):
+            for rec in scraper.run(
+                    verticals=self.verticals or sorted(vocab.UI_VISIBLE_VERTICALS),
+                    with_products=bool(self.enrich_top_n)):
                 # The "Search queries" chips — clickable on Pinterest's own
                 # page, and until now a dead end here.
                 edges = [{"kind": "keyword", "key": q}

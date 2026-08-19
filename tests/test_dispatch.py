@@ -497,6 +497,16 @@ def main():
     check("a crawl that completed does NOT report truncation",
           recsok[-1].data["truncated"] is False)
 
+    # A crawl still honours the seed page's own filters. These were hardcoded,
+    # so `verticals: ["1042"]` was accepted and silently ignored.
+    recsv, _c = drive({"operation": "crawl", "crawlFrom": "shopping",
+                       "crawlDepth": 0, "verticals": ["1042"],
+                       "maxRequests": 60})
+    vids = {r.data.get("vertical_id") for r in recsv
+            if r.data["_meta"]["crawl_node_kind"] == "category"}
+    check("a crawl honours `verticals` instead of silently ignoring it",
+          vids == {"1042"}, vids)
+
     # Every node has to explain why it is in the dataset.
     for r in recs1[:-1]:
         m = r.data["_meta"]

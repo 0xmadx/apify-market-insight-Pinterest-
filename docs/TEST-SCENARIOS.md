@@ -285,7 +285,7 @@ shipped:
 
 ## COVERAGE LEDGER (updated 2026-08-19 — the build is done)
 
-334 checks across five suites, every one tagged with its scenario id:
+335 checks across five suites, every one tagged with its scenario id:
 
 | Suite | Checks | Covers |
 |---|---|---|
@@ -293,7 +293,7 @@ shipped:
 | `tests/test_shopping_api.py` | 54 | B1–B5, C1–C5, C7, C2b (vertical-name guard), F (event/demographics) |
 | `tests/test_shopping_traversal.py` | 33 | E2 end-to-end incl. budget, A4, D3–D5 |
 | `tests/test_full_project.py` | 95 | B1–B6, C4, D1–D5, D4/D4b (§3.18 + interest matrix), E1–E4, E2b (§3.19 commerce), F1/F3/F6 (incl. cache wiring), H2/H3 |
-| `tests/test_dispatch.py` | 132 | the customer-facing path: schema↔code↔docs drift (all four directions), C6, H (history caps + date provenance), I (the Date-range control, moment regions, phase labels), J (the crawl) |
+| `tests/test_dispatch.py` | 133 | the customer-facing path: schema↔code↔docs drift (all four directions), C6, H (history caps + date provenance), I (the Date-range control, moment regions, phase labels), J (the crawl) |
 
 **Covered live instead of offline:** A3 (the PWS-handler 403 → `malformed`) and
 A5's no-rate-limit-headers fact are exercised by `probes/probe_endpoints.py` and

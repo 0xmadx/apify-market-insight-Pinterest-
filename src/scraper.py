@@ -180,6 +180,8 @@ def _crawl(client, task):
         max_requests=int(task.get("maxRequests", 60)),
         max_nodes_per_level=int(task.get("maxNodesPerLevel", 50)),
         related_fanout=int(task.get("relatedFanout", 10)),
+        verticals=task.get("verticals") or None,
+        drill_top_n=int(task.get("drillTopN", 3)),
         end_date=task.get("endDate") or None,
         date_range_days=vocab.date_range(task.get("dateRange"), 365),
         event=task.get("event", "OUTBOUND_CLICK"),

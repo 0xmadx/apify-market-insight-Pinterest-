@@ -36,7 +36,7 @@ separate namespace, the same shape as an Apify container reaching Upstash.
 **Proven this way on 2026-08-19** (Ubuntu WSL, `REDIS_URL` pointed at
 `172.31.144.1:6379`, never localhost):
 
-- all 334 offline checks pass on Linux — the code had only ever run on Windows
+- all 335 offline checks pass on Linux — the code had only ever run on Windows
 - the actor boots the real Apify SDK, reads `INPUT.json`, and reaches a
   networked Redis
 - with an empty vault it fails **exactly as designed**: `ERROR No leasable
@@ -189,7 +189,7 @@ costs in the system.
 .venv/Scripts/python.exe -m tests.test_dispatch     # the customer-facing path
 ```
 
-334 checks total. `test_dispatch` also guards the docs: it fails if
+335 checks total. `test_dispatch` also guards the docs: it fails if
 `.actor/input_schema.json` and `docs/API.md` disagree in either direction, or
 if any operation emits a field its output table does not document.
 

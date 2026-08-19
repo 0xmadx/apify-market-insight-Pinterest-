@@ -119,6 +119,7 @@ Keyword page    ──▶ "Related trends" ──▶ another keyword ──▶ �
 | `crawlDepth` | `integer` 0–3 | `1` | 0 = the entry page only. 1 = also follow its keyword links. 2 = also follow those keywords' related terms. |
 | `maxRequests` | `integer` | `60` | Budget for what the crawl **follows**. See the cost note below — the entry page is a floor this cannot reduce. |
 | `maxNodesPerLevel` | `integer` | `50` | Cap on keywords followed per level, so a wide entry page (13 moments × 25 keywords) does not become a level of 325. |
+| `verticals` · `drillTopN` · `enrichTopN` · `event` | | | The `shopping` inputs above apply when `crawlFrom` is `shopping` — a crawl still honours the entry page's own filters. |
 | `relatedFanout` | `integer` | `10` | How many keywords per level also get their 5 related siblings — the edges the *next* level walks. The crawl's only per-item cost (1 request each, no batch form exists), and only spent when `crawlDepth` is high enough to use it. |
 
 **Why this is cheap.** The crawl is breadth-first and **batched per level**, not

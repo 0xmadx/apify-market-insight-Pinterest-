@@ -112,7 +112,7 @@ src/parsers.py             one named parser per endpoint
 src/shopping.py  keywords.py  moments.py  radar.py   the four traversals
 src/crawl.py               the fifth: follows the links between them
 src/status.py              vault health check
-tests/                     5 suites, 334 offline checks — see below
+tests/                     5 suites, 335 offline checks — see below
 probes/                    live wire probes; probe_endpoints is the release gate
 docs/                      product docs + the reverse-engineering corpus
 ```
@@ -143,14 +143,14 @@ Both of Pinterest's time controls are wired: `endDate` (which date am I looking
 at) and `dateRange` (how much history the chart shows). They are different
 questions and compose.
 
-Run everything offline — **334 checks, no network**:
+Run everything offline — **335 checks, no network**:
 
 ```bash
 .venv/Scripts/python.exe -m tests.test_incremental          #  20 — freshness layer
 .venv/Scripts/python.exe -m tests.test_shopping_api         #  54 — vocab + parsers
 .venv/Scripts/python.exe -m tests.test_shopping_traversal   #  33 — shopping walk
 .venv/Scripts/python.exe -m tests.test_full_project         #  95 — keywords/moments/radar
-.venv/Scripts/python.exe -m tests.test_dispatch             # 132 — the customer-facing path
+.venv/Scripts/python.exe -m tests.test_dispatch             # 133 — the customer-facing path
 ```
 
 ## Not pulling old data
