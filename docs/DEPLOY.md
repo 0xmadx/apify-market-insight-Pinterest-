@@ -54,6 +54,27 @@ merchant URLs.
 So the deploy path is **rehearsed, not merely documented**. The only thing left
 untested is Apify's own cloud.
 
+## 1c. Show it to someone — `api_sim.py`
+
+```bash
+.venv/Scripts/python.exe api_sim.py     # → http://localhost:8080
+```
+
+A browser playground plus the real Apify endpoint shape
+(`POST /v2/acts/pinterest-trends/run-sync-get-dataset-items`), running the same
+`src/scraper.py` the actor runs. An integrator writes that exact call and only
+changes the host when you go live.
+
+Falls back to the committed fixtures when no session is in the vault, labelled
+`DEMO` on the page and `"_demo": true` on every record — so the product can be
+demonstrated at any time without a customer ever mistaking replayed data for
+fresh data.
+
+Verified LIVE 2026-08-19: `shopping` with `enrichTopN=2` returned Mascaras
+(Beauty > Makeup > Eye makeup > Mascaras), 25 search queries, audience stamped
+`OUTBOUND_CLICK`, and Amazon $14.85 / Thrive $46.80 with outbound URLs — 8
+requests.
+
 ## 2. Push
 
 ```bash
