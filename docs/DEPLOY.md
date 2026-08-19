@@ -87,6 +87,22 @@ everything across seven verticals is hundreds of requests on a shared session.
 
 ## Cost per run, measured
 
+**Zero-input runs** — a customer who presses Run with nothing filled in:
+
+| Operation | Requests | Records | What they get |
+|---|---|---|---|
+| `radar` | **2** | 11 | Pinterest's curated spotlight + Editors' Picks |
+| `keywords` | **14** | 10 | the growing keywords, enriched with forecast + audience |
+| `moments` | **16** | 13 | every seasonal moment, phases + curves for the live ones |
+| `shopping` | **38** | 57 | trending categories across the 3 UI-visible verticals |
+
+No operation requires input. `shopping` defaults to the three verticals
+Pinterest's own UI exposes rather than all seven — all-seven with the default
+drill depth is ~86 requests before the customer has expressed any preference,
+on a session every customer shares.
+
+**With customer input:**
+
 | Operation | Requests | Records |
 |---|---|---|
 | `radar` | **2** | 11 |

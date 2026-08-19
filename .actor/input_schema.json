@@ -33,7 +33,7 @@
       "title": "[shopping] Verticals",
       "type": "array",
       "editor": "stringList",
-      "description": "L1 vertical ids (1181 Fashion, 1250 Home decor, 1042 Beauty, 1148 DIY, 1016 Arts & entertainment, 1500 Wedding, 1315 Media). Empty = all seven."
+      "description": "L1 vertical ids (1181 Fashion, 1250 Home decor, 1042 Beauty, 1148 DIY, 1016 Arts & entertainment, 1500 Wedding, 1315 Media). Leave empty for the three Pinterest's own UI shows (Fashion, Home decor, Beauty) — the cheap default. Pass all seven explicitly to include the four hidden ones, which Pinterest serves but never displays."
     },
     "drillTopN": {
       "title": "[shopping] Drill top N",

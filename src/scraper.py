@@ -18,6 +18,7 @@ scope, and nothing is marked seen until it has been pushed.
 from .keywords import KeywordScraper
 from .moments import MomentScraper
 from .radar import RadarScraper
+from . import vocab
 from .records import Record
 from .shopping import ShoppingScraper
 from .transport import TrendsClient
@@ -70,7 +71,14 @@ def _shopping(client, task):
         drill_top_n=int(task.get("drillTopN", 3)),
         enrich_top_n=int(task.get("enrichTopN", 0) or 0),
     )
-    for record in scraper.run(verticals=task.get("verticals") or None,
+    # A zero-input run must be CHEAP. All 7 verticals x drillTopN=3 is ~86
+    # requests before the customer has expressed any preference at all — on a
+    # session shared by every customer. Default to the 3 verticals Pinterest's
+    # own UI exposes; `verticals: []` in the input still means all 7.
+    verticals = task.get("verticals")
+    if not verticals:
+        verticals = sorted(vocab.UI_VISIBLE_VERTICALS)
+    for record in scraper.run(verticals=verticals,
                               with_products=task.get("includeProducts", True)):
         yield Record(
             scope=f"shopping:{record['region']}:{record['vertical_id']}",
@@ -83,7 +91,6 @@ def _keywords(client, task):
         region=task.get("region", "US"),
         days=int(task.get("days", 365)),
         predicted_days=int(task.get("predictedDays", 91)),
-        interest_ids=task.get("interestIds") or None,
     )
     mode = task.get("mode", "discover")
     for record in scraper.run(
