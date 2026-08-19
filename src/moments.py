@@ -17,7 +17,7 @@ Budget: 1 + actionable×3 requests. Cooled/frozen moments cost zero extra calls
 — they are still emitted (phase + dates are real data) but never drilled.
 """
 from . import parsers, vocab
-from .transport import TrendsAPIError
+from .transport import StaleQueryHash, TrendsAPIError
 
 ACTIONABLE = ("rising", "approaching")
 
@@ -73,10 +73,10 @@ class MomentScraper:
             drilled = drill and moment["phase"] in wanted
             detail = self._metrics(moment["slug"], end_date) if drilled else None
             keywords = self._keywords(moment["slug"], end_date) if drilled else None
-            audience = None
-            if drilled and with_audience and keywords:
-                audience = self._derived_audience(
-                    [k["term"] for k in keywords], end_date)
+            audience, audience_basis, audience_note = None, None, None
+            if drilled and with_audience:
+                audience, audience_basis, audience_note = self._audience(
+                    moment["slug"], keywords, end_date)
 
             yield {
                 "slug": moment["slug"],
@@ -98,14 +98,12 @@ class MomentScraper:
                     "end_date": end_date,
                     "aggregation": self.aggregation if drilled else None,
                     "series_basis": "measured" if detail else None,
-                    # The one derived number in the whole record, labelled as
-                    # such at the point it appears (D4).
-                    "audience_basis": "derived" if audience else None,
-                    "audience_note": (
-                        "aggregated from the audiences of this moment's top "
-                        "keywords — Pinterest's own moment chart is not "
-                        "reachable via REST (doc #7 §3.18)"
-                        if audience else None),
+                    # `measured` when the GraphQL query answered — the same
+                    # numbers Pinterest's own chart draws. `derived` when it did
+                    # not and the keyword-aggregate fallback ran. The label is
+                    # never assumed; it reports what actually happened (D4).
+                    "audience_basis": audience_basis,
+                    "audience_note": audience_note,
                     "normalization_scope":
                         f"moment:{self.region}:{moment['slug']}:{end_date}",
                 },
@@ -136,6 +134,44 @@ class MomentScraper:
         except TrendsAPIError as exc:
             self.log(f"[moments] keywords for {slug} failed: {exc}")
             return None
+
+    def _audience(self, slug, keywords, end_date):
+        """Measured first, derived second. Returns (audience, basis, note).
+
+        The GraphQL query is what Pinterest's own "Who's driving this moment"
+        chart uses, so it is the real answer. The keyword aggregate is a decent
+        approximation and stays as the fallback — but the two are never mixed
+        and never mislabelled.
+        """
+        try:
+            data = self.client.graphql(
+                query_hash=vocab.MOMENT_DEMOGRAPHICS["query_hash"],
+                variables={"terms": [slug], "region": self.region,
+                           "endDate": end_date, "event": None,
+                           "category": "MOMENT"},
+                operation_name=vocab.MOMENT_DEMOGRAPHICS["operation"],
+                handler=vocab.MOMENT_DEMOGRAPHICS["handler"],
+                kind="trends")
+            measured = parsers.parse_moment_demographics(data)
+            if measured and measured.get("age_distribution"):
+                return measured, "measured", None
+        except StaleQueryHash as exc:
+            # Loud, and specific: this is a maintenance task, not missing data.
+            self.log(f"[moments] ⚠️ persisted queryHash is stale — re-capture it "
+                     f"(probes/captures/README.md). Falling back to derived. {exc}")
+        except TrendsAPIError as exc:
+            self.log(f"[moments] measured audience unavailable for {slug} "
+                     f"({exc}); falling back to derived")
+
+        if not keywords:
+            return None, None, None
+        derived = self._derived_audience([k["term"] for k in keywords], end_date)
+        if not derived:
+            return None, None, None
+        return derived, "derived", (
+            "aggregated from the audiences of this moment's top keywords — "
+            "Pinterest's own figures were not reachable on this run "
+            "(doc #7 §3.18)")
 
     def _derived_audience(self, terms, end_date):
         """Mean the per-term distributions. Terms the API drops contribute

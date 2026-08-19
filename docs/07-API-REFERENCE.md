@@ -113,7 +113,7 @@ information — you must back off blindly.
 | 16 | `/related_terms/` | B GET | §3.15 |
 | 17 | `/term_images/` | **B POST** | §3.16 |
 | 18 | `/prefix_match/` | B GET | §3.17 |
-| — | `POST /_/graphql/` | GraphQL | §3.18 (not reproducible — no REST equivalent; capturable via manual DevTools, not yet done) |
+| 19 | `POST /_/graphql/` | **C GraphQL** | §3.18 ✅ captured + reproduced — moment Age/Gender |
 | — | `www.pinterest.com/pin/{pin_id}/` | not Trends API | §3.19 — bonus: merchant/price data exists here; read-endpoint not yet captured |
 
 **No endpoint exists for:** Pinterest Predicts (static in JS bundle), CSV Export (client-side
@@ -465,7 +465,7 @@ GET /prefix_match/?query=hallow&country=US
 Searches the **whole keyword space** (unlike `keywordsToInclude`, which only filters the
 trending set) — works for non-trending terms. No `hasPrediction` field.
 
-## 3.18 `POST /_/graphql/` — moment page Age/Gender (NOT REPRODUCIBLE, status confirmed by elimination)
+## 3.18 `POST /_/graphql/` — moment page Age/Gender ✅ **CAPTURED AND REPRODUCED** (2026-08-19)
 
 The `/moments/{slug}` page's **"Who's driving this moment"** Age+Gender charts are the one
 dataset with no reachable REST endpoint.
@@ -535,7 +535,55 @@ interceptor is the only route to the body.
 - `/demographics/?moments=…` → **400**
 - `moment/metrics` with `include_demographics` → silently ignored
 
-### ✅ Workaround (derived, not measured)
+### ✅ THE CAPTURE — reproduced through a vault session
+
+```
+POST https://trends.pinterest.com/_/graphql/
+X-Pinterest-GraphQL-Name: useGetMomentDemographicsAdsQuery
+X-Pinterest-PWS-Handler: trends/moments/[momentId].js     ← NOT trends/index.js
+X-CSRFToken: <csrftoken cookie, echoed>                    ← session-bound
+Content-Type: application/json
+```
+```jsonc
+{"queryHash":"85bfe810f1f9a895ec901e57dcbb9b193bfade5c8504299d645ca89053b31a50",
+ "variables":{"terms":["halloween"],"region":"US","endDate":"2026-08-14",
+              "event":null,"category":"MOMENT"}}
+```
+```jsonc
+{"data":{"trendsDemographicsRead":{"items":[{
+  "ageDistribution":[{"key":"18-24","value":0.43},…],        // an ARRAY
+  "genderDistribution":{"male":0.05,"female":0.87,…}}]}}}    // an OBJECT
+```
+
+Four things here are **not guessable**, and each would have been wrong:
+
+| | |
+|---|---|
+| **Handler** | `trends/moments/[momentId].js`, page-specific. The global `trends/index.js` does not serve this query. |
+| **`queryHash`, not `doc_id`** | and there is **no `operationName` in the body at all** — it lives in the `X-Pinterest-GraphQL-Name` header. Grepping bodies for an operation name finds nothing. |
+| **Two different shapes** | age is an array of `{key,value}`; gender is a flat object. `parse_moment_demographics` flattens age to the same dict the REST endpoints return, so consumers see one shape. |
+| **Buckets are not decades** | `45-49` and `50-54` are split. |
+
+⚠️ **The fractions do NOT reliably sum to 1** — rounded to 2dp, small buckets round up off a
+0.04 floor. Halloween sums to **1.07**; christmas/thanksgiving/hanukkah to 1.00; gender to
+1.01 on thanksgiving. Passed through unnormalised: rescaling would invent precision
+Pinterest never published.
+
+⚠️ **`queryHash` is a deploy artefact and WILL rotate.** A rotated hash returns HTTP 200
+with no `data` — which a naive client reports as "this moment has no audience". Transport
+raises `StaleQueryHash` for exactly that case, and `moments.py` degrades to the derived
+workaround below rather than emitting nothing. When it rotates, re-capture
+(`probes/captures/README.md`); never guess.
+
+✅ **`endDate` resolved:** the capture's `2026-08-14` was five days behind the capture date,
+and it is confirmed to be `/latest_available_date/`'s value — the settled data date, not a
+client clock read. Bootstrap already supplies it.
+
+Verified live 2026-08-19 through a leased vault session: halloween and christmas both
+replayed **byte-identical** to the browser capture, and the moments traversal now emits
+`_meta.audience_basis: "measured"`.
+
+### The workaround, now the FALLBACK (derived, not measured)
 ```
 1. GET /top_trends_filtered/?country={r}&moments=<slug>&trendsPreset=1&numTermsToReturn=25
 2. GET /demographics/?terms=<those terms>&country={r}&end_date=…&days=90

@@ -43,6 +43,16 @@ class TrendsAPIError(RuntimeError):
         self.endpoint = endpoint
 
 
+class StaleQueryHash(TrendsAPIError):
+    """The persisted GraphQL hash no longer resolves.
+
+    Its own type because the alternative is catastrophic and silent: a rotated
+    hash returns 200 with no `data`, which a generic handler reports as "this
+    moment has no audience" — a plausible wrong number of exactly the kind this
+    codebase exists to prevent.
+    """
+
+
 class TrendsClient:
     def __init__(self, session, cache=None, delay=0.4, force_refresh=False):
         self.session = session
@@ -123,6 +133,48 @@ class TrendsClient:
             self._store(kind, url, response, cache_key)
         return payload
 
+    def graphql(self, query_hash, variables, operation_name, handler, kind=None):
+        """Style C — the persisted-query GraphQL POST. One endpoint, §3.18.
+
+        Three things here differ from every other call, all captured live and
+        none of them guessable:
+
+        1. The PWS handler is **per page**, not the global `trends/index.js`.
+           The moment demographics query needs `trends/moments/[momentId].js`.
+        2. The body carries `queryHash`, NOT `doc_id`, and has **no
+           `operationName` field at all** — the operation name travels in the
+           `X-Pinterest-GraphQL-Name` header. Anything grepping bodies for an
+           operation name finds nothing.
+        3. `queryHash` is a persisted-query hash: it **rotates when Pinterest
+           redeploys**. `StaleQueryHash` is raised for that case specifically,
+           so a rotation reads as "re-capture the hash", never as "no data".
+        """
+        url = f"{BASE}/_/graphql/"
+        body = {"queryHash": query_hash, "variables": variables}
+
+        payload = self._cached(kind, url, body)
+        if payload is None:
+            headers = {
+                "X-Pinterest-GraphQL-Name": operation_name,
+                "X-Pinterest-PWS-Handler": handler,
+                "X-Requested-With": "XMLHttpRequest",
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            }
+            response = self._request("POST", url, json_body=body,
+                                     endpoint="/_/graphql/", headers=headers)
+            payload = self._json(response, "/_/graphql/")
+            self._store(kind, url, response, body)
+
+        data = (payload or {}).get("data")
+        if not data:
+            raise StaleQueryHash(
+                f"/_/graphql/ returned no `data` for {operation_name}. The "
+                f"persisted queryHash has almost certainly rotated — re-capture "
+                f"it (probes/captures/README.md), do NOT read this as an empty "
+                f"result. errors={(payload or {}).get('errors')}")
+        return data
+
     # ----------------------------------------------------------- cache glue
 
     def _cached(self, kind, url, params):
@@ -147,7 +199,8 @@ class TrendsClient:
 
     # -------------------------------------------------------------- plumbing
 
-    def _request(self, method, url, params=None, json_body=None, endpoint=None):
+    def _request(self, method, url, params=None, json_body=None, endpoint=None,
+                 headers=None):
         """One request, with blind backoff. There are NO rate-limit headers on
         this API — no x-ratelimit-*, no retry-after — so a 429 tells you nothing
         about the budget and backing off blindly is the only correct response."""
@@ -156,10 +209,15 @@ class TrendsClient:
                 time.sleep(self.delay)
             self.request_count += 1
 
+            # HANDLER is the default; `headers` overrides it for the GraphQL
+            # call, whose handler is page-specific.
+            sent = dict(HANDLER)
+            if headers:
+                sent.update(headers)
             if method == "POST":
-                response = self.session.post(url, json=json_body, headers=HANDLER)
+                response = self.session.post(url, json=json_body, headers=sent)
             else:
-                response = self.session.get(url, params=params, headers=HANDLER)
+                response = self.session.get(url, params=params, headers=sent)
 
             verdict = classify(response)
             if verdict == "rate_limited":

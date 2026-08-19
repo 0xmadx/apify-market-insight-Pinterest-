@@ -99,6 +99,21 @@ EVENT_LABELS = {
     "pin saves": "SAVE", "saves": "SAVE",
 }
 
+# ---- the persisted GraphQL query (doc #7 §3.18) ----------------------
+# Captured live 2026-08-19 via an in-page interceptor; see
+# probes/captures/README.md for the procedure and the verbatim body.
+#
+# ⚠️ A persisted-query hash is a DEPLOY ARTEFACT. Pinterest rotates it whenever
+# they ship, and a rotated hash returns HTTP 200 with no `data` — which is why
+# transport raises StaleQueryHash rather than reporting an empty audience.
+# When it rotates, re-capture; do not guess.
+MOMENT_DEMOGRAPHICS = {
+    "query_hash": "85bfe810f1f9a895ec901e57dcbb9b193bfade5c8504299d645ca89053b31a50",
+    "operation": "useGetMomentDemographicsAdsQuery",
+    # NOT the global trends/index.js — this query is bound to the moment page.
+    "handler": "trends/moments/[momentId].js",
+}
+
 # Measured ceilings. The value is the maximum that WORKS.
 LIMITS = {
     "top_limit": 522,          # 1000 → 400 "'limit' is too large: 1000 > 522"

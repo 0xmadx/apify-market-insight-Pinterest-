@@ -345,6 +345,51 @@ def parse_term_images(data):
             if isinstance(urls, list)}
 
 
+def parse_moment_demographics(data):
+    """§3.18 GraphQL → {age_distribution, gender_distribution}, MEASURED.
+
+    ⚠️ The two distributions arrive in **different shapes**, and this is the
+    whole reason the parser exists:
+
+        ageDistribution     [{"key": "18-24", "value": 0.43}, …]   an ARRAY
+        genderDistribution  {"male": 0.05, "female": 0.87, …}      an OBJECT
+
+    Age is flattened to the same `{bucket: fraction}` dict the REST endpoints
+    (§3.9/§3.14) return, so a consumer never learns there were two shapes and
+    the `derived` → `measured` upgrade needs no schema change.
+
+    ⚠️ Buckets are NOT decades: `45-49` and `50-54` are split, not `45-54`.
+    Anything that assumes ten-year bands silently mis-buckets two of seven.
+
+    ⚠️ **The fractions do NOT reliably sum to 1.** They are rounded to 2dp, and
+    small buckets round UP off a 0.04 floor. Measured: halloween sums to
+    **1.07** (four buckets at 0.04), christmas/thanksgiving/hanukkah to 1.00,
+    and gender to 1.01 on thanksgiving. So a consumer computing "X% of the
+    audience" is off by up to 7% on the worst case.
+
+    They are passed through **unnormalised on purpose**. Rescaling to sum to 1
+    would invent precision Pinterest did not publish, and this codebase reports
+    what the wire said. Normalise at the point of use, and only if the use
+    actually requires a closed distribution.
+    """
+    items = ((data or {}).get("trendsDemographicsRead") or {}).get("items") or []
+    if not items:
+        return None
+    first = items[0] or {}
+
+    ages = {}
+    for bucket in first.get("ageDistribution") or []:
+        key = bucket.get("key")
+        if key is not None:
+            ages[key] = bucket.get("value")
+
+    gender = first.get("genderDistribution")
+    return {
+        "age_distribution": ages or None,
+        "gender_distribution": gender if isinstance(gender, dict) else None,
+    }
+
+
 # ---------------------------------------------------------------- moments
 
 def _epoch_ms(value):

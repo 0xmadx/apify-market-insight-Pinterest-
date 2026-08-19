@@ -1,0 +1,66 @@
+{
+  "_source": "captured live 2026-08-19 via probes/captures/graphql_interceptor.js",
+  "_request": {
+    "url": "https://trends.pinterest.com/_/graphql/",
+    "method": "POST",
+    "headers": {
+      "X-Pinterest-GraphQL-Name": "useGetMomentDemographicsAdsQuery",
+      "X-Pinterest-PWS-Handler": "trends/moments/[momentId].js"
+    },
+    "body": {
+      "queryHash": "85bfe810f1f9a895ec901e57dcbb9b193bfade5c8504299d645ca89053b31a50",
+      "variables": {
+        "terms": [
+          "halloween"
+        ],
+        "region": "US",
+        "endDate": "2026-08-14",
+        "event": null,
+        "category": "MOMENT"
+      }
+    }
+  },
+  "data": {
+    "trendsDemographicsRead": {
+      "items": [
+        {
+          "ageDistribution": [
+            {
+              "key": "18-24",
+              "value": 0.43
+            },
+            {
+              "key": "25-34",
+              "value": 0.33
+            },
+            {
+              "key": "35-44",
+              "value": 0.15
+            },
+            {
+              "key": "45-49",
+              "value": 0.04
+            },
+            {
+              "key": "50-54",
+              "value": 0.04
+            },
+            {
+              "key": "55-64",
+              "value": 0.04
+            },
+            {
+              "key": "65+",
+              "value": 0.04
+            }
+          ],
+          "genderDistribution": {
+            "male": 0.05,
+            "female": 0.87,
+            "unspecified": 0.08
+          }
+        }
+      ]
+    }
+  }
+}

@@ -71,6 +71,20 @@ class FakeClient:
             return self.editorial
         raise AssertionError(f"unexpected A path {path}")
 
+    # Set False to simulate a rotated persisted hash and prove the traversal
+    # falls back to `derived` rather than emitting an empty audience.
+    graphql_works = True
+
+    def graphql(self, query_hash, variables, operation_name, handler, kind=None):
+        self.calls.append(("/_/graphql/", dict(variables)))
+        if not self.graphql_works:
+            from src.transport import StaleQueryHash
+            raise StaleQueryHash("simulated rotation - re-capture the hash")
+        gq = json.load(open(
+            "probes/results/graphql/3.18-moment_demographics-halloween.json",
+            encoding="utf-8"))
+        return gq["data"]
+
     def style_b(self, path, params=None, method="GET", json_body=None,
                 kind=None):
         self.calls.append((path, params or json_body or {}))
@@ -234,12 +248,34 @@ def main():
     if drilled:
         d0 = drilled[0]
         check("E3 drilled moment has a series", d0["series_points"] > 0)
-        check("D4 audience labelled derived, with the reason",
-              d0["_meta"]["audience_basis"] == "derived"
-              and "GraphQL" in (d0["_meta"]["audience_note"] or "")
-              or "REST" in (d0["_meta"]["audience_note"] or ""))
-        check("E3 derived audience aggregates fractions",
-              0 < d0["audience"]["gender_distribution"]["female"] <= 1)
+        check("D4 audience is MEASURED when the GraphQL query answers",
+              d0["_meta"]["audience_basis"] == "measured",
+              d0["_meta"]["audience_basis"])
+        check("D4 no fallback note when the real figures were used",
+              d0["_meta"]["audience_note"] is None)
+        check("E3 measured audience carries Pinterest's own fractions",
+              d0["audience"]["gender_distribution"]["female"] == 0.87)
+        check("D4 the GraphQL call was actually made",
+              any(p == "/_/graphql/" for p, _ in client2.calls))
+        gq_vars = next(v for p, v in client2.calls if p == "/_/graphql/")
+        check("D4 GraphQL variables carry the slug and category MOMENT",
+              gq_vars["category"] == "MOMENT" and gq_vars["terms"][0] == d0["slug"])
+
+    # And the other branch: a rotated hash must DEGRADE to derived, not vanish.
+    client2b = FakeClient()
+    client2b.graphql_works = False
+    fallback = [m for m in MomentScraper(client2b, region="US",
+                                         log=lambda *a: None).run()
+                if m["drilled"]]
+    if fallback:
+        f0 = fallback[0]
+        check("D4 a stale hash falls back to DERIVED, never to nothing",
+              f0["_meta"]["audience_basis"] == "derived",
+              f0["_meta"]["audience_basis"])
+        check("D4 the fallback says why, citing S3.18",
+              "3.18" in (f0["_meta"]["audience_note"] or ""))
+        check("D4 the derived audience still has real fractions",
+              0 < f0["audience"]["gender_distribution"]["female"] <= 1)
     if gated:
         check("B3 gated moment carries phase data but null series",
               gated[0]["series"] is None and gated[0]["phase"])
@@ -275,6 +311,56 @@ def main():
           "never a silent []",
           len(r_de) == 5
           and not any("editorial" in p for p, _ in client4.calls))
+
+    print("\nGROUP D4 - moment demographics, now MEASURED (S3.18 captured)")
+    gq = json.load(open("probes/results/graphql/3.18-moment_demographics-halloween.json",
+                        encoding="utf-8"))
+    demo = parsers.parse_moment_demographics(gq["data"])
+    check("D4 GraphQL demographics parse", demo is not None)
+    check("D4 ageDistribution ARRAY flattened to the same dict shape as REST",
+          demo["age_distribution"]["18-24"] == 0.43
+          and demo["age_distribution"]["65+"] == 0.04)
+    check("D4 all 7 buckets kept - 45-49 and 50-54 are SPLIT, not decades",
+          set(demo["age_distribution"]) ==
+          {"18-24", "25-34", "35-44", "45-49", "50-54", "55-64", "65+"})
+    check("D4 gender stays a flat object (it is NOT a bucket array)",
+          demo["gender_distribution"]["female"] == 0.87)
+    # Measured: halloween's buckets sum to 1.07 — four of them sit on the 0.04
+    # rounding floor. christmas/thanksgiving/hanukkah sum to 1.00, gender hits
+    # 1.01 on thanksgiving. So "it's a distribution, it sums to 1" is FALSE.
+    age_sum = sum(demo["age_distribution"].values())
+    check("D4 fractions are rounded and need NOT sum to 1 (halloween = 1.07)",
+          abs(age_sum - 1.07) < 0.005, age_sum)
+    check("D4 the parser passes them through UNNORMALISED — rescaling would "
+          "invent precision Pinterest did not publish", age_sum > 1.0)
+    check("D4 empty items -> None, never an empty audience",
+          parsers.parse_moment_demographics({"trendsDemographicsRead": {"items": []}}) is None)
+
+    # A rotated persisted hash returns 200 with no `data`. That MUST raise, not
+    # read as "this moment has no audience" - the whole point of the type.
+    from src.transport import StaleQueryHash, TrendsClient as _TC
+
+    class NoDataSession:
+        status_code = 200
+        headers = {}
+        text = '{"errors":[{"message":"persisted query not found"}]}'
+        def post(self, url, json=None, headers=None):
+            return self
+        def json(self):
+            return {"errors": [{"message": "persisted query not found"}]}
+
+    try:
+        _TC(NoDataSession(), delay=0).graphql("deadhash", {}, "op", "handler")
+        check("D4 a rotated queryHash RAISES StaleQueryHash", False)
+    except StaleQueryHash as exc:
+        check("D4 a rotated queryHash RAISES StaleQueryHash, saying re-capture",
+              "re-capture" in str(exc))
+
+    check("D4 the captured hash is pinned in vocab with its operation+handler",
+          vocab.MOMENT_DEMOGRAPHICS["query_hash"].startswith("85bfe810")
+          and vocab.MOMENT_DEMOGRAPHICS["handler"] == "trends/moments/[momentId].js")
+    check("D4 the GraphQL handler is NOT the global trends/index.js",
+          vocab.MOMENT_DEMOGRAPHICS["handler"] != "trends/index.js")
 
     print("\nGROUP F3 - the response cache is actually WIRED IN")
     # This group exists because the cache was built, tested, and used by
