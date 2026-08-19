@@ -82,7 +82,15 @@ Everything is a module run from the repo root. The venv is local to this repo.
   form is a 400. `vocab.moment_slug()` does it; never pass a raw name.
 - **`ageBuckets` 18-24 maps to TWO codes (`2,3`)** — 7 UI options send 8 codes.
   Sending only `2` narrows the band silently, with no error.
-- `lookbackWindow` and `rankingMethod` are INERT (measured) — never sent.
+- `lookbackWindow` and `rankingMethod` are INERT **on keyword discovery** — never
+  sent there. `ranking_method` on shopping `top/` is a REAL param (GROWTH /
+  HIGH_VOLUME / VIRAL); the UI only ever sends GROWTH.
+- Shopping `top/`+`metrics/` take `age_bucket`/`gender` in the **enum** form
+  (`AGE_25_34`/`FEMALE`) while keyword discovery takes numeric codes for the
+  same bands — one customer input, two wire schemes (scenario C6).
+- ⚠️ Docs #5 and #7 §4.3 disagree on how many verticals carry trend data (3 vs
+  7). §4.3 wins: it has measured row counts and 3 of them were re-verified live.
+  The 4 hidden ones remain unverified independently.
 - Moment Age/Gender IS reachable (§3.18, captured): a persisted GraphQL POST
   with `queryHash` + `X-Pinterest-GraphQL-Name`, handler `trends/moments/
   [momentId].js` — page-specific, NOT the global `trends/index.js`. The hash

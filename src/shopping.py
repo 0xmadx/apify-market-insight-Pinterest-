@@ -37,7 +37,9 @@ class ShoppingScraper:
 
     def __init__(self, client, region="US", event="OUTBOUND_CLICK",
                  drill_top_n=3, chart_days=180, predicted_days=28,
-                 enrich_top_n=0, log=print):
+                 enrich_top_n=0, age_buckets=None, genders=None,
+                 ranking_method="GROWTH", order_by="RELATIVE_VOLUME",
+                 log=print):
         self.client = client
         self.region = vocab.region(region)
         self.event = vocab.event(event)
@@ -52,6 +54,22 @@ class ShoppingScraper:
         # vertical would be hundreds of requests against a session shared by all
         # customers. Opt in, capped, and the cap is per category.
         self.enrich_top_n = enrich_top_n
+        # The demographic filters the UI's Age/Gender chips drive. Empty = all,
+        # which is what the page sends when nothing is selected. These use the
+        # ENUM scheme (AGE_25_34/FEMALE), NOT the numeric codes the keyword
+        # endpoints take — same customer input, two wire forms (C6).
+        self.age_buckets = vocab.age_buckets_shopping(age_buckets)
+        self.genders = vocab.genders_shopping(genders)
+        if ranking_method not in vocab.RANKING_METHODS:
+            raise vocab.InvalidParam(
+                f"ranking_method={ranking_method!r} — one of "
+                f"{sorted(vocab.RANKING_METHODS)}. The UI only ever sends GROWTH; "
+                f"HIGH_VOLUME and VIRAL are real but unexposed.")
+        if order_by not in vocab.ORDER_BY:
+            raise vocab.InvalidParam(
+                f"order_by={order_by!r} — one of {sorted(vocab.ORDER_BY)}")
+        self.ranking_method = ranking_method
+        self.order_by = order_by
         self.log = log
         self._taxonomy = None
 
@@ -95,12 +113,14 @@ class ShoppingScraper:
         top = parsers.parse_top_categories(self.client.style_a(
             f"/ads/v4/trends/shopping/product_categories/top/{self.region}",
             {"event": self.event,
-             "ranking_method": "GROWTH",
+             "ranking_method": self.ranking_method,
              "end_date": vocab.end_date(end_date),
              "parent_product_categories": vocab.verticals_one_per_call([vertical_id]),
              "limit": vocab.ceiling("top_limit", 100),
-             "order_by": "RELATIVE_VOLUME",
-             "order": "DESC"}, kind="trends"))
+             "order_by": self.order_by,
+             "order": "DESC",
+             "age_bucket": self.age_buckets,
+             "gender": self.genders}, kind="trends"))
 
         categories = top["categories"]
         if not categories:
@@ -178,7 +198,8 @@ class ShoppingScraper:
              "end_date": end_date,
              "days": self.chart_days,
              "predicted_days": self.predicted_days,
-             "age_bucket": [], "gender": []}, kind="trends"))
+             "age_bucket": self.age_buckets,
+             "gender": self.genders}, kind="trends"))
 
     def _demographics(self, ids, end_date):
         return parsers.parse_category_demographics(self.client.style_a(

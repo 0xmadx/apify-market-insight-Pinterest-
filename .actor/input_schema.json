@@ -66,6 +66,40 @@
       "minimum": 0,
       "description": "Per drilled category, fetch real price, stock, free-shipping threshold and the OUTBOUND MERCHANT URL for this many top products. Costs 1 extra request PER PRODUCT (no batch form exists), so start small. 0 = off."
     },
+    "shoppingAges": {
+      "title": "[shopping] Age filter",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Restrict trending categories to these age bands: 18-24, 25-34, 35-44, 45-49, 50-54, 55-64, 65+, all. Empty = everyone. (Sent as the shopping enum form; the keyword operation uses a different scheme — handled for you.)"
+    },
+    "shoppingGenders": {
+      "title": "[shopping] Gender filter",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Restrict trending categories: male, female, unspecified. Empty = everyone."
+    },
+    "rankingMethod": {
+      "title": "[shopping] Ranking method",
+      "type": "string",
+      "default": "GROWTH",
+      "enum": [
+        "GROWTH",
+        "HIGH_VOLUME",
+        "VIRAL"
+      ],
+      "description": "How Pinterest ranks the categories. Their own UI only ever sends GROWTH — HIGH_VOLUME and VIRAL are real and unexposed, so this reaches rankings their interface cannot show."
+    },
+    "orderBy": {
+      "title": "[shopping] Sort by",
+      "type": "string",
+      "default": "RELATIVE_VOLUME",
+      "enum": [
+        "RELATIVE_VOLUME",
+        "TREND_RANK",
+        "PCT_CHANGE_MOM"
+      ],
+      "description": "Which column sorts the table. RELATIVE_VOLUME is the UI default; PCT_CHANGE_MOM surfaces fastest-moving instead of biggest."
+    },
     "mode": {
       "title": "[keywords] Mode",
       "type": "string",

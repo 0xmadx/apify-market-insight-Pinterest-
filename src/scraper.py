@@ -70,6 +70,10 @@ def _shopping(client, task):
         event=task.get("event", "OUTBOUND_CLICK"),
         drill_top_n=int(task.get("drillTopN", 3)),
         enrich_top_n=int(task.get("enrichTopN", 0) or 0),
+        age_buckets=task.get("shoppingAges") or None,
+        genders=task.get("shoppingGenders") or None,
+        ranking_method=task.get("rankingMethod", "GROWTH"),
+        order_by=task.get("orderBy", "RELATIVE_VOLUME"),
     )
     # A zero-input run must be CHEAP. All 7 verticals x drillTopN=3 is ~86
     # requests before the customer has expressed any preference at all — on a

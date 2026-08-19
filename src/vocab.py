@@ -104,6 +104,48 @@ GENDERS = ["MALE", "FEMALE", "UNSPECIFIED"]
 # no error to notice. Values are LISTS for that reason.
 AGE_CODES_KEYWORD = {"18-24": [2, 3], "25-34": [4], "35-44": [5], "45-49": [6],
                      "50-54": [7], "55-64": [8], "65+": [9]}
+# The SAME customer input maps to two different schemes. Keyword endpoints take
+# numeric codes (above); shopping endpoints take these enums. One shared input
+# ("25-34") must never leak the wrong form into the wrong endpoint — that is
+# scenario C6, and these two maps are why it cannot.
+AGE_ENUMS_SHOPPING = {"18-24": "AGE_18_24", "25-34": "AGE_25_34",
+                      "35-44": "AGE_35_44", "45-49": "AGE_45_49",
+                      "50-54": "AGE_50_54", "55-64": "AGE_55_64",
+                      "65+": "AGE_65_PLUS", "all": "AGE_ALL"}
+GENDER_ENUMS_SHOPPING = {"male": "MALE", "female": "FEMALE",
+                         "unspecified": "UNSPECIFIED"}
+
+
+def age_buckets_shopping(values):
+    """Customer age bands -> the shopping enum form. Unknown -> refused."""
+    out = []
+    for v in values or []:
+        key = str(v).strip().lower()
+        if key in AGE_ENUMS_SHOPPING:
+            out.append(AGE_ENUMS_SHOPPING[key])
+        elif str(v).upper() in set(AGE_BUCKETS):
+            out.append(str(v).upper())
+        else:
+            raise InvalidParam(
+                f"age band {v!r} unknown — use one of {sorted(AGE_ENUMS_SHOPPING)}")
+    return out
+
+
+def genders_shopping(values):
+    """Customer genders -> the shopping enum form. Unknown -> refused."""
+    out = []
+    for v in values or []:
+        key = str(v).strip().lower()
+        if key in GENDER_ENUMS_SHOPPING:
+            out.append(GENDER_ENUMS_SHOPPING[key])
+        elif str(v).upper() in set(GENDERS):
+            out.append(str(v).upper())
+        else:
+            raise InvalidParam(
+                f"gender {v!r} unknown — use male, female or unspecified")
+    return out
+
+
 GENDER_CODES_KEYWORD = {"male": 0, "female": 1, "unspecified": 2}
 
 # The detail page labels ENGAGEMENT as "All"; the shopping table labels the same

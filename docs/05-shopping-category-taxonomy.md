@@ -42,7 +42,15 @@ Each record: `{ friendly_name, level, parent_product_category_id, children[], l2
 | `1489` | Vehicles & parts | — none | yes |
 | `1500` | Wedding | — none | yes |
 
-> Only **Fashion / Home decor / Beauty** have trending data and appear in the "Top vertical"
+> ⚠️ **CONTRADICTS doc #7 §4.3 — believe §4.3.** This table says only 3 verticals have
+> trend data; §4.3 records **7**, with measured row counts: Fashion 19, Home decor 9,
+> Beauty 6, and four the UI never shows — DIY 3, Arts & entertainment 2, Wedding 2,
+> Media 1. Three of those counts were re-verified live on 2026-08-19 (19/9/6, exact),
+> so §4.3 is the better-evidenced side and `src/vocab.py` follows it. The four hidden
+> verticals have NOT been re-verified independently; if a `top/` call on 1148/1016/
+> 1500/1315 returns 0 rows, this table is right and §4.3 is stale — record which.
+>
+> Only **Fashion / Home decor / Beauty** appear in the "Top vertical"
 > filter. The other 11 exist in the taxonomy and as "All categories" browse chips only.
 > `1241` (Plumbing's parent) has no UI chip at all.
 

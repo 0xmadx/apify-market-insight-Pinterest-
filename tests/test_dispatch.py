@@ -171,6 +171,31 @@ def main():
     check("inert params never sent (lookbackWindow, rankingMethod)",
           "lookbackWindow" not in da and "rankingMethod" not in da)
 
+    print("\nC6 - one customer input, TWO wire schemes")
+    _, cs = drive({"operation": "shopping", "verticals": ["1042"], "drillTopN": 0,
+                   "shoppingAges": ["25-34", "65+"], "shoppingGenders": ["female"],
+                   "rankingMethod": "VIRAL", "orderBy": "PCT_CHANGE_MOM"})
+    ts = next(v for p_, v in cs.all_calls if "/top/" in p_)
+    check("C6 shopping age uses the ENUM form, not the numeric codes",
+          ts["age_bucket"] == ["AGE_25_34", "AGE_65_PLUS"], ts["age_bucket"])
+    check("C6 shopping gender likewise", ts["gender"] == ["FEMALE"], ts["gender"])
+    check("same band, two wire forms: keywords numeric vs shopping enum",
+          "AGE_" in ts["age_bucket"][0] and da["ageBuckets"][0].isdigit())
+    check("ranking_method reaches the wire (UI only ever sends GROWTH)",
+          ts["ranking_method"] == "VIRAL")
+    check("order_by reaches the wire", ts["order_by"] == "PCT_CHANGE_MOM")
+    try:
+        from src.shopping import ShoppingScraper as _SS
+        _SS(None, ranking_method="NOPE")
+        check("an invalid ranking_method is refused", False)
+    except vocab.InvalidParam:
+        check("an invalid ranking_method is refused before the wire", True)
+    try:
+        vocab.age_buckets_shopping(["25 to 34"])
+        check("an unknown age band is refused", False)
+    except vocab.InvalidParam:
+        check("an unknown age band is refused, listing the valid ones", True)
+
     print("\nthe form and the code cannot drift")
     schema = json.loads(pathlib.Path(".actor/input_schema.json")
                         .read_text(encoding="utf-8"))["properties"]
