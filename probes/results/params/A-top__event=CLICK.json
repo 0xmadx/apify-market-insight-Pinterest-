@@ -1,0 +1,36 @@
+{
+  "resource_response": {
+    "error": {
+      "status": "failure",
+      "http_status": 500,
+      "code": 12,
+      "message": "Something went wrong on our end. Sorry about that.",
+      "api_error_code": 12
+    },
+    "data": {
+      "request_id": "1628456658438794"
+    }
+  },
+  "resource": {
+    "name": "ApiResource",
+    "options": {
+      "bookmarks": [
+        "-end-"
+      ],
+      "url": "/ads/v4/trends/shopping/product_categories/top/US",
+      "data": {
+        "event": "CLICK",
+        "ranking_method": "GROWTH",
+        "end_date": "2026-08-14",
+        "parent_product_categories": [
+          "1181"
+        ],
+        "limit": 5,
+        "order_by": "RELATIVE_VOLUME",
+        "order": "DESC"
+      }
+    }
+  },
+  "request_identifier": "1628456658438794",
+  "_client_context": "<stripped: account PII, see strip_pii()>"
+}

@@ -1,0 +1,23 @@
+{
+  "resource_response": {
+    "status": "success",
+    "code": 0,
+    "message": "ok",
+    "endpoint_name": "get_trends_editorial_content_handler",
+    "data": [],
+    "x_pinterest_sli_endpoint_name": "get_trends_editorial_content_handler",
+    "http_status": 200
+  },
+  "resource": {
+    "name": "ApiResource",
+    "options": {
+      "bookmarks": [
+        "-end-"
+      ],
+      "url": "/ads/v4/trends/editorial/content/FR",
+      "data": {}
+    }
+  },
+  "request_identifier": "1574211905481562",
+  "_client_context": "<stripped: account PII, see strip_pii()>"
+}

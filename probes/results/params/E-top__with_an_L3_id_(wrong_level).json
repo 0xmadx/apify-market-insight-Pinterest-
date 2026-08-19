@@ -1,0 +1,36 @@
+{
+  "resource_response": {
+    "status": "success",
+    "code": 0,
+    "message": "ok",
+    "endpoint_name": "get_filtered_product_categories",
+    "data": {
+      "total_num_product_categories": 0,
+      "ordered_values": []
+    },
+    "x_pinterest_sli_endpoint_name": "get_filtered_product_categories",
+    "http_status": 200
+  },
+  "resource": {
+    "name": "ApiResource",
+    "options": {
+      "bookmarks": [
+        "-end-"
+      ],
+      "url": "/ads/v4/trends/shopping/product_categories/top/US",
+      "data": {
+        "event": "OUTBOUND_CLICK",
+        "ranking_method": "GROWTH",
+        "end_date": "2026-08-14",
+        "parent_product_categories": [
+          "1311"
+        ],
+        "limit": 20,
+        "order_by": "RELATIVE_VOLUME",
+        "order": "DESC"
+      }
+    }
+  },
+  "request_identifier": "1345826400173151",
+  "_client_context": "<stripped: account PII, see strip_pii()>"
+}

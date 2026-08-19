@@ -1,0 +1,29 @@
+{
+  "resource_response": {
+    "status": "success",
+    "code": 0,
+    "message": "ok",
+    "endpoint_name": "get_trends_top_products",
+    "data": {
+      "top_products": []
+    },
+    "x_pinterest_sli_endpoint_name": "get_trends_top_products",
+    "http_status": 200
+  },
+  "resource": {
+    "name": "ApiResource",
+    "options": {
+      "bookmarks": [
+        "-end-"
+      ],
+      "url": "/ads/v4/trends/shopping/product_categories/top_products",
+      "data": {
+        "product_category_id": "1408",
+        "region": "US",
+        "event": "SAVE"
+      }
+    }
+  },
+  "request_identifier": "3978695280262992",
+  "_client_context": "<stripped: account PII, see strip_pii()>"
+}

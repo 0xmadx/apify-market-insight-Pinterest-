@@ -1,0 +1,303 @@
+{
+  "resource_response": {
+    "status": "success",
+    "code": 0,
+    "message": "ok",
+    "endpoint_name": "get_filtered_product_categories",
+    "data": {
+      "ordered_values": [
+        {
+          "parent_product_categories": [
+            "1104"
+          ],
+          "summary": {
+            "saves": {
+              "total": 0,
+              "percent_growth": -0.04,
+              "lookback": 2,
+              "percent_relative_volume": 1
+            },
+            "engagement": {
+              "total": 0,
+              "percent_growth": 0.04,
+              "lookback": 2,
+              "percent_relative_volume": 1
+            },
+            "outbound_clicks": {
+              "total": 0,
+              "percent_growth": 0.1,
+              "lookback": 2,
+              "percent_relative_volume": 1
+            }
+          },
+          "product_category": "1478",
+          "related_search_trends": [
+            "funny shirts",
+            "tee shirts",
+            "blusas",
+            "pullover",
+            "casual",
+            "shirt ideas",
+            "tops for women",
+            "t-shirt ideas",
+            "crop",
+            "blouse",
+            "knit",
+            "tank top",
+            "outfit inspo",
+            "cute tops",
+            "knitted",
+            "outfit ideas",
+            "graphic tee",
+            "shirts for women",
+            "women tops",
+            "summer tops",
+            "men clothing",
+            "t-shirt",
+            "shirt",
+            "tee"
+          ]
+        },
+        {
+          "parent_product_categories": [
+            "1104"
+          ],
+          "summary": {
+            "saves": {
+              "total": 0,
+              "percent_growth": 0.05,
+              "lookback": 2,
+              "percent_relative_volume": 0.24
+            },
+            "engagement": {
+              "total": 0,
+              "percent_growth": 0.1,
+              "lookback": 2,
+              "percent_relative_volume": 0.31
+            },
+            "outbound_clicks": {
+              "total": 0,
+              "percent_growth": 0.1,
+              "lookback": 2,
+              "percent_relative_volume": 0.33
+            }
+          },
+          "product_category": "1356",
+          "related_search_trends": [
+            "wide leg jeans",
+            "linen pants",
+            "lounge pants",
+            "sweatpants",
+            "barrel jeans",
+            "work pants",
+            "casual pants",
+            "casual outfits",
+            "casual",
+            "joggers",
+            "senior painted jeans",
+            "denim pants",
+            "leggings",
+            "painted jeans",
+            "jeans for women",
+            "jeans women",
+            "flare jeans",
+            "capri pants",
+            "pants for women",
+            "palazzo pants",
+            "cute jeans",
+            "denim",
+            "bootcut jeans",
+            "cargo",
+            "baggy jeans"
+          ]
+        },
+        {
+          "parent_product_categories": [
+            "1104",
+            "1350"
+          ],
+          "summary": {
+            "saves": {
+              "total": 0,
+              "percent_growth": 0.12,
+              "lookback": 2,
+              "percent_relative_volume": 0.16
+            },
+            "engagement": {
+              "total": 0,
+              "percent_growth": 0.3,
+              "lookback": 2,
+              "percent_relative_volume": 0.16
+            },
+            "outbound_clicks": {
+              "total": 0,
+              "percent_growth": 0.43,
+              "lookback": 2,
+              "percent_relative_volume": 0.15
+            }
+          },
+          "product_category": "1108",
+          "related_search_trends": [
+            "winter fashion",
+            "leather jacket",
+            "jackets for women",
+            "fall outfits",
+            "trench coat",
+            "coat",
+            "fleece jacket",
+            "puffer jacket",
+            "carhartt",
+            "chaquetas",
+            "winter coats",
+            "puffer",
+            "bomber jacket",
+            "jacket men",
+            "suit",
+            "mens jackets",
+            "jacket",
+            "long coat",
+            "abrigos",
+            "biker jacket",
+            "timothee chalamet",
+            "winter outfits",
+            "quilted jacket",
+            "jean jacket",
+            "leather coat"
+          ]
+        },
+        {
+          "parent_product_categories": [
+            "1104"
+          ],
+          "summary": {
+            "saves": {
+              "total": 0,
+              "percent_growth": 0.12,
+              "lookback": 2,
+              "percent_relative_volume": 0.16
+            },
+            "engagement": {
+              "total": 0,
+              "percent_growth": 0.3,
+              "lookback": 2,
+              "percent_relative_volume": 0.16
+            },
+            "outbound_clicks": {
+              "total": 0,
+              "percent_growth": 0.43,
+              "lookback": 2,
+              "percent_relative_volume": 0.15
+            }
+          },
+          "product_category": "1350",
+          "related_search_trends": [
+            "winter fashion",
+            "leather jacket",
+            "jackets for women",
+            "fall outfits",
+            "trench coat",
+            "coat",
+            "fleece jacket",
+            "puffer jacket",
+            "carhartt",
+            "chaquetas",
+            "winter coats",
+            "puffer",
+            "bomber jacket",
+            "jacket men",
+            "suit",
+            "mens jackets",
+            "jacket",
+            "long coat",
+            "abrigos",
+            "biker jacket",
+            "timothee chalamet",
+            "winter outfits",
+            "quilted jacket",
+            "jean jacket",
+            "leather coat"
+          ]
+        },
+        {
+          "parent_product_categories": [
+            "1478",
+            "1104"
+          ],
+          "summary": {
+            "saves": {
+              "total": 0,
+              "percent_growth": 0.08,
+              "lookback": 2,
+              "percent_relative_volume": 0.11
+            },
+            "engagement": {
+              "total": 0,
+              "percent_growth": 0.22,
+              "lookback": 2,
+              "percent_relative_volume": 0.1
+            },
+            "outbound_clicks": {
+              "total": 0,
+              "percent_growth": 0.39,
+              "lookback": 2,
+              "percent_relative_volume": 0.11
+            }
+          },
+          "product_category": "1452",
+          "related_search_trends": [
+            "crochet clothes",
+            "tricot",
+            "fall fashion",
+            "cropped cardigan",
+            "outfit",
+            "knit top",
+            "knitted sweater",
+            "knit",
+            "casual outfits",
+            "knit cardigan",
+            "crocheted",
+            "yarn",
+            "sweater pattern",
+            "cardigan pattern",
+            "pullover",
+            "winter outfits",
+            "crochet clothing",
+            "cable knit sweater",
+            "oversized sweater",
+            "knitted",
+            "sweaters for women",
+            "women's sweaters",
+            "striped sweater",
+            "fall outfits",
+            "winter fashion"
+          ]
+        }
+      ],
+      "total_num_product_categories": 19
+    },
+    "x_pinterest_sli_endpoint_name": "get_filtered_product_categories",
+    "http_status": 200
+  },
+  "resource": {
+    "name": "ApiResource",
+    "options": {
+      "bookmarks": [
+        "-end-"
+      ],
+      "url": "/ads/v4/trends/shopping/product_categories/top/US",
+      "data": {
+        "event": "OUTBOUND_CLICK",
+        "ranking_method": "GROWTH",
+        "end_date": "2026-08-14",
+        "parent_product_categories": [
+          "1181"
+        ],
+        "limit": 5,
+        "order_by": "RELATIVE_VOLUME",
+        "order": "DESC"
+      }
+    }
+  },
+  "request_identifier": "1352029583439265",
+  "_client_context": "<stripped: account PII, see strip_pii()>"
+}

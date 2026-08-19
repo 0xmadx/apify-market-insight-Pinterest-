@@ -1,0 +1,41 @@
+{
+  "resource_response": {
+    "error": {
+      "status": "failure",
+      "http_status": 400,
+      "code": 1,
+      "message": "Invalid parameters.",
+      "message_detail": "'limit' is too large: 1000 > 522",
+      "api_error_code": 1,
+      "extra_data": {
+        "message": "'limit' is too large: 1000 > 522"
+      }
+    },
+    "data": {
+      "param_name": "limit",
+      "param_value": "1000"
+    }
+  },
+  "resource": {
+    "name": "ApiResource",
+    "options": {
+      "bookmarks": [
+        "-end-"
+      ],
+      "url": "/ads/v4/trends/shopping/product_categories/top/US",
+      "data": {
+        "event": "OUTBOUND_CLICK",
+        "ranking_method": "GROWTH",
+        "end_date": "2026-08-14",
+        "parent_product_categories": [
+          "1181"
+        ],
+        "limit": 1000,
+        "order_by": "RELATIVE_VOLUME",
+        "order": "DESC"
+      }
+    }
+  },
+  "request_identifier": "1604668783411191",
+  "_client_context": "<stripped: account PII, see strip_pii()>"
+}

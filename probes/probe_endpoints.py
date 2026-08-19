@@ -56,6 +56,25 @@ def style_b(session, path, params=None, method="GET", json_body=None):
 
 # ----------------------------------------------------------------- shaping
 
+def strip_pii(payload):
+    """Remove `client_context` before ANYTHING is written to disk or logged.
+
+    Style A responses carry a `client_context` block describing the logged-in
+    advertiser account: id, owner_user_id, and the owner's full_name, username,
+    email, country and last_login. None of it is data we asked for, all of it is
+    the operator's real identity, and these files are committed to git.
+
+    This existed as a rule in the coder skill ("Drop client_context (account
+    PII) before anything is stored or logged") before it existed as code — the
+    first probe sweep wrote 27 files carrying it. Enforced here so the rule
+    cannot be forgotten at a call site.
+    """
+    if isinstance(payload, dict) and "client_context" in payload:
+        payload = {k: v for k, v in payload.items() if k != "client_context"}
+        payload["_client_context"] = "<stripped: account PII, see strip_pii()>"
+    return payload
+
+
 def unwrap(payload, style):
     """Style A hides the real payload under resource_response.data."""
     if style != "A" or not isinstance(payload, dict):
@@ -262,7 +281,7 @@ def main():
         })
         print(f"  3.1  {'OK' if date else 'FAIL'}  latest_available_date -> {date}")
         (OUT / "3.1-latest_available_date.json").write_text(
-            json.dumps(_safe_json(r), indent=2), encoding="utf-8")
+            json.dumps(strip_pii(_safe_json(r)), indent=2), encoding="utf-8")
 
         if not date:
             print("\nNo date — every other call needs it. Stopping.")
@@ -282,7 +301,7 @@ def main():
             if raw is not None:
                 slug = name.split(" —")[0].replace("/", "_").strip()
                 (OUT / f"{probe_id}-{slug}.json").write_text(
-                    json.dumps(raw, indent=2)[:400000], encoding="utf-8")
+                    json.dumps(strip_pii(raw), indent=2)[:400000], encoding="utf-8")
             time.sleep(DELAY)
 
     _write_summary(rows, identity)
