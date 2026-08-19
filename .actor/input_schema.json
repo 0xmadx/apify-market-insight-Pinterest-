@@ -53,6 +53,19 @@
       ],
       "default": "OUTBOUND_CLICK"
     },
+    "includeProducts": {
+      "title": "[shopping] Include top products",
+      "type": "boolean",
+      "default": true,
+      "description": "Attach the shoppable product list to drilled categories. US, CA and GB+IE only."
+    },
+    "enrichTopN": {
+      "title": "[shopping] Fetch price + merchant link",
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "description": "Per drilled category, fetch real price, stock, free-shipping threshold and the OUTBOUND MERCHANT URL for this many top products. Costs 1 extra request PER PRODUCT (no batch form exists), so start small. 0 = off."
+    },
     "mode": {
       "title": "[keywords] Mode",
       "type": "string",
@@ -78,12 +91,64 @@
       "minimum": 1,
       "maximum": 4
     },
+    "numTerms": {
+      "title": "[keywords] Discover how many",
+      "type": "integer",
+      "default": 100,
+      "minimum": 1,
+      "maximum": 100,
+      "description": "Keywords to pull from discovery before enrichment. Max 100 (Pinterest's ceiling)."
+    },
     "maxTerms": {
       "title": "[keywords] Max terms to enrich",
       "type": "integer",
       "description": "Cap on terms sent through the pipeline. 0 = all discovered (up to 100).",
       "default": 0,
       "minimum": 0
+    },
+    "keywordsToInclude": {
+      "title": "[keywords] Must contain",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Only keep discovered keywords containing one of these. OR logic, substring match, lowercase enforced (uppercase silently returns nothing). This is how you scope discovery to YOUR niche."
+    },
+    "interests": {
+      "title": "[keywords] Interest filter",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Interest ids to scope discovery to (24 exist; see docs 07 4.2). Empty = all interests."
+    },
+    "moments": {
+      "title": "[keywords] Moment filter",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Only keywords tied to these seasonal moments (e.g. halloween, christmas). Slugs are region-specific."
+    },
+    "ageBuckets": {
+      "title": "[keywords] Age filter",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Restrict discovery to age bands: 18-24, 25-34, 35-44, 45-49, 50-54, 55-64, 65+."
+    },
+    "genders": {
+      "title": "[keywords] Gender filter",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Restrict discovery: male, female, unspecified."
+    },
+    "days": {
+      "title": "[keywords] History window",
+      "type": "integer",
+      "default": 365,
+      "description": "Days of history per keyword chart. 90 / 180 / 365 / 730."
+    },
+    "predictedDays": {
+      "title": "Forecast horizon (days)",
+      "type": "integer",
+      "default": 91,
+      "minimum": 0,
+      "maximum": 91,
+      "description": "Days of forecast to request. Max 91 — Pinterest rejects more. Only fills for keywords that have a forecast."
     },
     "includeRelated": {
       "title": "[keywords] Include related terms",
@@ -118,6 +183,12 @@
         "approaching"
       ]
     },
+    "drill": {
+      "title": "[moments] Drill at all",
+      "type": "boolean",
+      "default": true,
+      "description": "Off = list every moment with its phase and peak dates only, no per-moment calls. Cheapest possible run."
+    },
     "includeAudience": {
       "title": "[moments] Derived audience",
       "type": "boolean",
@@ -130,11 +201,29 @@
       "editor": "stringList",
       "description": "Interest ids to break each drilled moment's audience down by. Pinterest's own UI offers only ~7 per moment, but ANY moment x ANY interest works - these are audiences their interface cannot show. Costs one request PER CELL, so keep the list short. Empty = off."
     },
+    "lookbackDays": {
+      "title": "[moments] History window",
+      "type": "integer",
+      "default": 365,
+      "description": "Days of moment history. Max 730."
+    },
     "interest": {
       "title": "[radar] Interest filter",
       "type": "string",
       "editor": "textfield",
       "description": "One interest id to scope the spotlight, or empty for all."
+    },
+    "includeSpotlight": {
+      "title": "[radar] Include spotlight",
+      "type": "boolean",
+      "default": true,
+      "description": "Pinterest's 5 curated homepage trends."
+    },
+    "includeEditorial": {
+      "title": "[radar] Include Editors' Picks",
+      "type": "boolean",
+      "default": true,
+      "description": "6 hand-written editorial trends with campaign windows. US, CA and GB+IE only."
     },
     "fullRescan": {
       "title": "Full rescan",
