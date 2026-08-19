@@ -18,7 +18,7 @@
     "region": {
       "title": "Region",
       "type": "string",
-      "description": "Pinterest region code. top_products and editorial only return data for US, CA, GB+IE.",
+      "description": "Pinterest region code — 32 accepted (US, CA, GB+IE, DE, FR, BR, MX, AU+NZ, JP, KR, SE+DK+FI+NO, …). '+' is literal. Narrower per feature: top_products and editorial serve US/CA/GB+IE only; JP and IN have no seasonal moments at all.",
       "default": "US",
       "editor": "textfield"
     },
@@ -122,13 +122,13 @@
       "title": "[keywords] Moment filter",
       "type": "array",
       "editor": "stringList",
-      "description": "Only keywords tied to these seasonal moments (e.g. halloween, christmas). Slugs are region-specific."
+      "description": "Only keywords tied to these seasonal moments. Type them however Pinterest displays them — \"Father's Day\" is normalised to the wire form (lowercase, spaces kept, apostrophes stripped) automatically; the raw form is a 400. Slugs are REGION-SPECIFIC: 25 exist globally, 13 in the US."
     },
     "ageBuckets": {
       "title": "[keywords] Age filter",
       "type": "array",
       "editor": "stringList",
-      "description": "Restrict discovery to age bands: 18-24, 25-34, 35-44, 45-49, 50-54, 55-64, 65+."
+      "description": "Restrict discovery to age bands: 18-24, 25-34, 35-44, 45-49, 50-54, 55-64, 65+. (18-24 maps to two internal codes; handled for you.)"
     },
     "genders": {
       "title": "[keywords] Gender filter",

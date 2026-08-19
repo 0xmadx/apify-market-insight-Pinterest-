@@ -143,6 +143,34 @@ def main():
     met = next(v for p, v in c4.all_calls if "moment/metrics" in p)
     check("their granularity honoured", met["aggregation_level"] == "weekly")
 
+    print("\nCORNERS - things the docs record and a first pass missed")
+    from src import vocab
+    check("all 32 API regions accepted, not the 10 on the doc's first line",
+          len(vocab.REGIONS) == 32, len(vocab.REGIONS))
+    for r in ("BR", "JP", "AU+NZ", "KR", "SE+DK+FI+NO"):
+        check(f"region {r} is accepted", vocab.region(r) == r)
+    check("18-24 expands to BOTH codes (7 UI options send 8 codes)",
+          vocab.AGE_CODES_KEYWORD["18-24"] == [2, 3])
+    _, ca = drive({"operation": "keywords", "mode": "discover",
+                   "ageBuckets": ["18-24", "65+"], "genders": ["female"],
+                   "moments": ["Father's Day"], "includeRelated": False,
+                   "includeImages": False})
+    da = next(v for p_, v in ca.all_calls if p_ == "/top_trends_filtered/")
+    check("...and reaches the wire as 2,3 - narrowing it is silent otherwise",
+          da["ageBuckets"] == "2,3,9", da["ageBuckets"])
+    check("moment slug normalised: apostrophe stripped, spaces kept, lowered",
+          da["moments"] == "fathers day", da["moments"])
+    check("non-ASCII slugs survive intact (IT carnevale)",
+          vocab.moment_slug("Carnevale Martedi Grasso") == "carnevale martedi grasso")
+    try:
+        vocab.region("JP", capability="moments")
+        check("JP/IN moments refused with the reason", False)
+    except vocab.InvalidParam as exc:
+        check("JP/IN moments refused - 0 moments is real, not an outage",
+              "no seasonal moments" in str(exc))
+    check("inert params never sent (lookbackWindow, rankingMethod)",
+          "lookbackWindow" not in da and "rankingMethod" not in da)
+
     print("\nthe form and the code cannot drift")
     schema = json.loads(pathlib.Path(".actor/input_schema.json")
                         .read_text(encoding="utf-8"))["properties"]

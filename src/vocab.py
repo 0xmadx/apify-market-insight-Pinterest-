@@ -21,10 +21,22 @@ class InvalidParam(ValueError):
 
 # --------------------------------------------------------------- vocabulary
 
+# All 32 regions the API accepts (doc #7 §4.1). The UI exposes 26.
+# ⚠️ An earlier version of this list held only the FIRST LINE of the doc's
+# wrapped code block — 10 of 32 — which silently refused BR, JP, AU+NZ, KR and
+# 18 others that Pinterest serves perfectly well. `+` is literal in paths.
 REGIONS = [
     "US", "CA", "DE", "FR", "ES", "IT", "DE+AT+CH", "GB+IE",
-    "IT+ES+PT+GR+MT", "PL+RO+HU+SK+CZ",
+    "IT+ES+PT+GR+MT", "PL+RO+HU+SK+CZ", "SE+DK+FI+NO", "NL+BE+LU",
+    "AR", "BR", "CO", "MX", "MX+AR+CO+CL", "AU+NZ", "JP", "IN", "ID", "MY",
+    "PH", "TH", "SA", "EG", "AE+SA+KW+QA+OM+BH+EG+IQ+DZ",
+    "IL+NG+PK+ZA+TR+MA+IN", "CR+DO+EC+GT+PE",
+    "CY+CZ+GR+HU+MT+PL+RO+SK", "TR", "KR",
 ]
+
+# Regions with NO seasonal moments at all — a real answer, not a failure.
+# Worth naming so a `moments` run against them is explained rather than empty.
+REGIONS_WITHOUT_MOMENTS = {"JP", "IN"}
 
 # Regions where these actually return data. Everything else answers 200 with an
 # empty payload — a silent no, not an error.
@@ -87,8 +99,11 @@ GENDERS = ["MALE", "FEMALE", "UNSPECIFIED"]
 
 # ⚠️ The keyword endpoints use a DIFFERENT scheme for the same concepts.
 # Never let one leak into the other.
-AGE_CODES_KEYWORD = {"18-24": 2, "25-34": 4, "35-44": 5, "45-49": 6,
-                     "50-54": 7, "55-64": 8, "65+": 9}
+# ⚠️ 18-24 maps to TWO codes — that is why 7 UI options send 8 codes. Sending
+# only `2` silently narrows the band and returns a different keyword set, with
+# no error to notice. Values are LISTS for that reason.
+AGE_CODES_KEYWORD = {"18-24": [2, 3], "25-34": [4], "35-44": [5], "45-49": [6],
+                     "50-54": [7], "55-64": [8], "65+": [9]}
 GENDER_CODES_KEYWORD = {"male": 0, "female": 1, "unspecified": 2}
 
 # The detail page labels ENGAGEMENT as "All"; the shopping table labels the same
@@ -222,6 +237,34 @@ def verticals_one_per_call(values):
     return [vertical(ids[0])]
 
 
+def moment_slug(value):
+    """Normalise a moment name to the wire form. Wrong form → 400.
+
+    The rule, measured: **lowercase, spaces KEPT, apostrophes stripped** —
+    `Father's Day` → `fathers day`. A customer typing the name as it appears in
+    Pinterest's own UI would otherwise get a 400 they cannot diagnose.
+
+    Non-ASCII slugs exist (`carnevale martedì grasso`, IT) and are left intact —
+    the transport URL-encodes them; stripping accents would produce a slug that
+    does not exist.
+    """
+    if value is None or not str(value).strip():
+        raise InvalidParam("empty moment slug")
+    return str(value).strip().lower().replace("'", "").replace("’", "")
+
+
+def moments_for(region_code):
+    """None means 'not known here — fetch moment/available for this region'.
+
+    Slugs are REGION-SPECIFIC (25 globally, 13 in the US), so the only reliable
+    source is that region's own list. This exists to answer the one question
+    that has a static answer.
+    """
+    if region_code in REGIONS_WITHOUT_MOMENTS:
+        return []
+    return None
+
+
 def region(value, *, capability=None):
     """Region, optionally checked against an endpoint's capability set."""
     if value not in REGIONS:
@@ -230,6 +273,10 @@ def region(value, *, capability=None):
         raise InvalidParam(
             f"top_products returns data only for {sorted(TOP_PRODUCTS_REGIONS)}; "
             f"{value} answers 200 with an empty list.")
+    if capability == "moments" and value in REGIONS_WITHOUT_MOMENTS:
+        raise InvalidParam(
+            f"{value} has no seasonal moments at all (measured) — a moments run "
+            f"there returns nothing. That is a real answer, not an outage.")
     if capability == "editorial" and value not in EDITORIAL_REGIONS:
         raise InvalidParam(
             f"editorial/content returns data only for {sorted(EDITORIAL_REGIONS)}; "

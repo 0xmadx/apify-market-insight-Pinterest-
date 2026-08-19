@@ -75,6 +75,14 @@ Everything is a module run from the repo root. The venv is local to this repo.
   days 730 · interest_limit 24 · aggregation=2 only (except moment/metrics:
   the API's ONLY daily-granularity endpoint).
 - Multi-term responses silently drop no-data terms — match by term, not index.
+- **32 regions**, not the 10 on the first line of §4.1's wrapped code block.
+  `top_products`/`editorial` = US/CA/GB+IE only; **JP and IN have 0 moments**.
+- **Moment slugs are region-specific** (25 globally, 13 US) and must be
+  lowercase with apostrophes stripped — `Father's Day` → `fathers day`, wrong
+  form is a 400. `vocab.moment_slug()` does it; never pass a raw name.
+- **`ageBuckets` 18-24 maps to TWO codes (`2,3`)** — 7 UI options send 8 codes.
+  Sending only `2` narrows the band silently, with no error.
+- `lookbackWindow` and `rankingMethod` are INERT (measured) — never sent.
 - Moment Age/Gender IS reachable (§3.18, captured): a persisted GraphQL POST
   with `queryHash` + `X-Pinterest-GraphQL-Name`, handler `trends/moments/
   [momentId].js` — page-specific, NOT the global `trends/index.js`. The hash

@@ -32,7 +32,7 @@ class MomentScraper:
                  lookback_days=365, predicted_days=91, keywords_per_moment=25,
                  interest_ids=None, log=print):
         self.client = client
-        self.region = vocab.region(region)
+        self.region = vocab.region(region, capability="moments")
         if aggregation not in ("daily", "weekly", "monthly"):
             raise vocab.InvalidParam(
                 f"aggregation_level={aggregation!r} — daily|weekly|monthly "
@@ -140,7 +140,7 @@ class MomentScraper:
             found = parsers.parse_discover(self.client.style_b(
                 "/top_trends_filtered/",
                 {"country": self.region, "endDate": end_date,
-                 "moments": slug, "trendsPreset": 1,
+                 "moments": vocab.moment_slug(slug), "trendsPreset": 1,
                  "numTermsToReturn": self.keywords_per_moment,
                  "shouldMock": "false"}, kind="search"))
             return found["terms"]

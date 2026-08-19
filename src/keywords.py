@@ -51,15 +51,20 @@ class KeywordScraper:
         if l1interests:
             params["l1interests"] = ",".join(str(i) for i in l1interests)
         if moments:
-            params["moments"] = ",".join(moments)
+            # Normalised, not passed through: "Father's Day" is a 400 on the
+            # wire and the customer types it the way Pinterest displays it.
+            params["moments"] = ",".join(vocab.moment_slug(m) for m in moments)
         if age_buckets:
-            params["ageBuckets"] = ",".join(
-                str(vocab.AGE_CODES_KEYWORD[a]) if a in vocab.AGE_CODES_KEYWORD
-                else str(a) for a in age_buckets)
+            # 18-24 expands to TWO codes (2,3). Flattening a list-valued map is
+            # the whole point — sending only `2` silently narrows the band.
+            codes = []
+            for a in age_buckets:
+                mapped = vocab.AGE_CODES_KEYWORD.get(a)
+                codes.extend(mapped if mapped else [a])
+            params["ageBuckets"] = ",".join(str(c) for c in codes)
         if genders:
             params["gender"] = ",".join(
-                str(vocab.GENDER_CODES_KEYWORD[g]) if g in vocab.GENDER_CODES_KEYWORD
-                else str(g) for g in genders)
+                str(vocab.GENDER_CODES_KEYWORD.get(g, g)) for g in genders)
         if keywords_to_include:
             # OR logic, substring match, lowercase only — uppercase is a
             # silent empty.
