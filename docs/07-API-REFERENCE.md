@@ -113,7 +113,7 @@ information — you must back off blindly.
 | 16 | `/related_terms/` | B GET | §3.15 |
 | 17 | `/term_images/` | **B POST** | §3.16 |
 | 18 | `/prefix_match/` | B GET | §3.17 |
-| — | `POST /_/graphql/` | GraphQL | §3.18 (not reproducible) |
+| — | `POST /_/graphql/` | GraphQL | §3.18 (unresolved — needs a manual capture) |
 
 **No endpoint exists for:** Pinterest Predicts (static in JS bundle), CSV Export (client-side
 papaparse), region list, interest list (both hardcoded in bundle).
@@ -393,7 +393,7 @@ GET /prefix_match/?query=hallow&country=US
 Searches the **whole keyword space** (unlike `keywordsToInclude`, which only filters the
 trending set) — works for non-trending terms. No `hasPrediction` field.
 
-## 3.18 `POST /_/graphql/` — moment page Age/Gender (NOT REPRODUCIBLE)
+## 3.18 `POST /_/graphql/` — moment page Age/Gender (STATUS: UNRESOLVED, not disproven)
 The `/moments/{slug}` page's **"Who's driving this moment"** Age+Gender charts are fed by a
 GraphQL POST using a **persisted query** — the query body is not present in any JS bundle and
 could not be extracted.
@@ -401,11 +401,30 @@ could not be extracted.
 **No REST equivalent exists.** Probed and rejected:
 - `/ads/v4/trends/moment/demographics/{region}` → **404 API method not found**
 - `/demographics/?moments=…` → **400**
-- `moment/metrics` with `include_demographics` → ignored
+- `moment/metrics` with `include_demographics` → ignored — and a fresh capture of a cold
+  load of a moment page (41 requests, 2026-08-19) re-confirmed `moment/metrics` carries no
+  age/gender fields at all. GraphQL remains the only unaccounted-for candidate.
 
-**Workaround for an API client:** take the moment's top keywords from
-`/top_trends_filtered/?moments=<slug>` (§3.12), then call `/demographics/` (§3.14) on those
-terms and aggregate. Approximate, but it's the only REST path to moment-level demographics.
+> ⚠️ **Investigation history, kept so this isn't re-litigated with worse information.**
+> An earlier pass tentatively reversed the "not reproducible" call after seeing the generic
+> `/_/graphql/` endpoint also fire on `/shopping` — a page with no age chart — and called that
+> "decisive". **That reasoning does not hold**: one generic GraphQL endpoint can carry a
+> different persisted query and a different payload per page. Seeing it fire elsewhere proves
+> nothing about what it returns on a moment page. Status reverted to unresolved.
+
+**Why it can't be captured by automation.** To read a POST body you must hook
+`window.fetch`/XHR *before* the page's own JS runs and fires the request. Five automated
+approaches were tried and all failed for that reason: client-side SPA navigation, a
+scroll-triggered lazy load, reading Relay's client-side globals, the server-rendered HTML,
+and React fiber-tree traversal. None of them run early enough. **This genuinely needs a
+human**: DevTools → Network → filter `graphql`, open the moment page fresh (or hard-reload
+with the panel already open), right-click the POST → **Copy as cURL**.
+
+**Workaround for an API client, still the fallback until the capture lands:** take the
+moment's top keywords from `/top_trends_filtered/?moments=<slug>` (§3.12), then call
+`/demographics/` (§3.14) on those terms and aggregate. Approximate — label it `derived`,
+never `measured` (see ARCHITECTURE.md §2.3, scenario D4) — but it's the only REST path to
+moment-level demographics until the real request is in hand.
 
 ---
 

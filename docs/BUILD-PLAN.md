@@ -39,24 +39,28 @@ These came out of reading the inventory against the docs. Each is either a
 the probe that settles it. Chasing the hypotheses IS Phase 0 work — budget ~10
 live requests total.
 
-**F1 — `pin_id` is the bridge out of the Trends walled garden.**
-`top_products[].pin_id`, `topics[].pins[].id`, `editorial[].pins[].id` are real
-pin ids. The trends responses contain **no merchant/Amazon/Etsy URLs** —
-verified: the only URLs anywhere in all 16 responses are `i.pinimg.com` images.
-But every pin has a public page (`https://www.pinterest.com/pin/{pin_id}/`), and
-product pins carry an **outbound link to the merchant's product page** there.
+**F1 — `pin_id` is the bridge out of the Trends walled garden. CONFIRMED
+2026-08-19.** `top_products[].pin_id`, `topics[].pins[].id`,
+`editorial[].pins[].id` are real pin ids. The trends responses themselves
+contain no merchant URLs (only `i.pinimg.com` images), but the pin's page on
+`www.pinterest.com` does: manually inspected pin `4607745477126792832` (the #1
+top product from our `3.10` probe) and found merchant `Oriental Trading`
+(`www.orientaltrading.com`), product title, price `$380.99`, a shipping note,
+and a "Visit site" outbound link. **The outbound URL passes through a
+`/v3/offsite/` call as an input param** on `www.pinterest.com` — a different,
+more defended surface than `trends.pinterest.com`, so this was verified by
+manual DevTools capture rather than an automated probe.
 
-**H1 (high value): the pin's outbound merchant URL is retrievable with our
-session.** If true, the shopping actor can emit *actual product-page links*
-(Amazon, Etsy, orientaltrading.com, …) per trending category — a feature no
-Trends UI shows. Probe: take one `pin_id` from `3.10-…top_products.json`, fetch
-the pin page / pin resource on `www.pinterest.com` with a leased identity (the
-vault cookies are `.pinterest.com`-scoped, so the same session applies), and
-look for the outbound/`link` field. ⚠️ `www.pinterest.com` is a different, more
-defended surface than `trends.pinterest.com` — one probe, read the result,
-do not build a crawler until it's proven. If it works, record the endpoint +
-payload in a new doc `09-pin-outbound-links.md`; if blocked, record that too
-and ship `pin_url` (constructed) instead.
+**Not yet captured: the raw request.** What exists so far is a description of
+the fields (host, price, shipping, link), not the actual HTTP request/response
+needed to replay it in code — URL, method, headers, exact param/response keys.
+**Action before building the shopping actor's outbound-link field:** get a
+"Copy as cURL" or HAR export of the `/v3/offsite/` call (and whichever resource
+call on the pin page carries merchant_name/price/host) from DevTools →
+Network on that pin page, save it under `probes/captures/`, then replay it
+through a leased session to confirm it works outside a live browser tab before
+it becomes a doc (`09-pin-outbound-links.md`) or code. Until that replay
+succeeds, treat the shape as known but the endpoint as unverified server-side.
 
 **F2 — `merchant_name` is competitive intel the docs shrug at.**
 33 top products for one category each carry the selling merchant's name. Grouped,
