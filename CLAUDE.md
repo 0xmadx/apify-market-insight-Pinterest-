@@ -10,7 +10,7 @@ inherited from this project's parent: **a plausible wrong number, not a crash**.
 | Question | Read |
 |---|---|
 | What do I build first, and in what order | `docs/BUILD-PLAN.md` — **Phase 0 (run + mine all endpoints) precedes any code** |
-| How do the 18 endpoints link, what is the product | `docs/ARCHITECTURE.md` |
+| How do the 20 endpoints link, what is the product | `docs/ARCHITECTURE.md` |
 | Exact params, limits, measured traps | `docs/07-API-REFERENCE.md` |
 | Call chains + validation checklist | `docs/08-BUILD-GUIDE.md` |
 | What "done" means for any code | `docs/TEST-SCENARIOS.md` (scenario ids A1…G2) |
@@ -74,9 +74,17 @@ Everything is a module run from the repo root. The venv is local to this repo.
   days 730 · interest_limit 24 · aggregation=2 only (except moment/metrics:
   the API's ONLY daily-granularity endpoint).
 - Multi-term responses silently drop no-data terms — match by term, not index.
-- Not reproducible: moment Age/Gender (persisted GraphQL — use the
-  moments→keywords→/demographics/ workaround, label it `derived`), merchant
-  endpoints (need a catalog), `publish_state=DRAFT`.
+- Moment Age/Gender IS reachable (§3.18, captured): a persisted GraphQL POST
+  with `queryHash` + `X-Pinterest-GraphQL-Name`, handler `trends/moments/
+  [momentId].js` — page-specific, NOT the global `trends/index.js`. The hash
+  rotates on Pinterest deploys → `StaleQueryHash`, then re-capture. Same query
+  does moment × interest via `terms:"<moment>:<id>"` + `category:
+  "MOMENT_INTEREST"` — both move together or you get a silent `items:[]`.
+- Price/outbound URL live only on `www.pinterest.com` (§3.19 `PinResource`,
+  `field_set_key: auth_web_main_pin`, handler `www/pin/[id].js`). 1 request per
+  pin, no batch form.
+- Still not reproducible: merchant endpoints (need a catalog),
+  `publish_state=DRAFT` (permission-gated).
 
 ## State of the build
 
