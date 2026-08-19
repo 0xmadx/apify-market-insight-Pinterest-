@@ -1,0 +1,37 @@
+{
+  "_source": "paths captured live 2026-08-19 via the XHR interceptor; see pin_closeup.md",
+  "resource_response": {
+    "data": {
+      "link": "https://www.orientaltrading.com/halloween-manor-archway-a2-14105893.fltr?cm_mmc=pinterest-_-organic-_-x-_-x&utm_source=pinterest",
+      "link_domain": {
+        "id": "www.orientaltrading.com"
+      },
+      "closeup_attribution": {
+        "full_name": "Oriental Trading",
+        "first_name": "Oriental",
+        "username": "orientaltrading",
+        "domain_url": "orientaltrading.com",
+        "website_url": "http://www.orientaltrading.com"
+      },
+      "rich_summary": {
+        "display_name": "97\" Halloween Manor Archway Halloween Prop",
+        "site_name": "Oriental Trading",
+        "products": [
+          {
+            "offer_summary": {
+              "price": "$380.99",
+              "price_val": 380.99,
+              "currency": "USD",
+              "in_stock": 1,
+              "availability": 1
+            },
+            "shipping_info": {
+              "free_shipping_price": "$25",
+              "free_shipping_value": 25
+            }
+          }
+        ]
+      }
+    }
+  }
+}

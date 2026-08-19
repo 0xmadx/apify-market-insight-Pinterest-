@@ -114,7 +114,7 @@ information — you must back off blindly.
 | 17 | `/term_images/` | **B POST** | §3.16 |
 | 18 | `/prefix_match/` | B GET | §3.17 |
 | 19 | `POST /_/graphql/` | **C GraphQL** | §3.18 ✅ captured + reproduced — moment Age/Gender |
-| — | `www.pinterest.com/pin/{pin_id}/` | not Trends API | §3.19 — bonus: merchant/price data exists here; read-endpoint not yet captured |
+| 20 | `GET www.pinterest.com/resource/PinResource/get/` | A (www host) | §3.19 ✅ captured — price, outbound URL, merchant |
 
 **No endpoint exists for:** Pinterest Predicts (static in JS bundle), CSV Export (client-side
 papaparse), region list, interest list (both hardcoded in bundle).
@@ -635,17 +635,64 @@ merchant record back.
 > ⚠️ Different host (`www.pinterest.com`, not `trends.pinterest.com`) → different PWS handler
 > (`www/index.js`) and a cross-origin boundary. Treat as a separate client.
 
-### ⚠️ STILL OPEN: which call actually returns merchant_name / price / host
+### ✅ CAPTURED 2026-08-19 — `GET www.pinterest.com/resource/PinResource/get/`
 
-The table above is confirmed to exist on the rendered pin page (manual inspection), but the
-**specific resource call that returns it has not yet been captured** — `/v3/offsite/` was the
-first candidate checked and is confirmed to be the wrong one (input, not output). The likely
-source is a pin-detail `ApiResource` call (a "PinResource"-style GET) fired on page load,
-analogous to how `top_products` wraps its own payload — but this needs its own DevTools
-capture on `www.pinterest.com/pin/{pin_id}/` (filter Network for `resource/`, look for the
-merchant/price fields in the response, Copy as cURL) before it can be built against. Until
-then, treat "which endpoint returns this" as unverified even though "this data exists on the
-page" is confirmed.
+```
+GET https://www.pinterest.com/resource/PinResource/get/
+  ?source_url=/pin/<pinId>/
+  &data={"options":{"id":"<pinId>","field_set_key":"auth_web_main_pin",…},"context":{}}
+X-Pinterest-PWS-Handler: www/pin/[id].js      ← page-specific, like the moment page
+```
+
+**GET, not POST**, and it travels as XHR — everything is in the query string, there is no
+body. `field_set_key: "auth_web_main_pin"` is the load-bearing option: it is what pulls in
+the `rich_summary` subtree where commerce data lives.
+
+Root is `resource_response.data`:
+
+| field | path | value |
+|---|---|---|
+| **outbound URL** | `.link` | full merchant URL **including their `utm_*` / `cm_mmc` tracking** |
+| merchant domain | `.link_domain.id` | `www.orientaltrading.com` |
+| merchant name | `.closeup_attribution.full_name` | `Oriental Trading` |
+| merchant handle | `.closeup_attribution.username` | `orientaltrading` |
+| product name | `.rich_summary.display_name` | |
+| **price** | `.rich_summary.products[0].offer_summary.price` | `"$380.99"` |
+| price numeric | `…offer_summary.price_val` | `380.99` |
+| currency | `…offer_summary.currency` | `USD` |
+| stock | `…offer_summary.in_stock` / `.availability` | |
+| free shipping | `…shipping_info.free_shipping_price` / `_value` | `"$25"` / `25` |
+
+⚠️ `rich_metadata` mirrors `rich_summary` field-for-field in the captured response. Read
+**one** — reading whichever happens to be populated is how two sources silently disagree.
+
+⚠️ **Tracking params in `.link` are kept verbatim.** Stripping them changes where the click
+is attributed, which is not ours to decide.
+
+### The cost, and why enrichment is off by default
+
+There is **no batch form**: this is `1 + N` requests for an N-row strip, and a drilled
+category returns up to 33 products. Enriching every product of every category across seven
+verticals would be hundreds of requests against a session shared by every customer. So
+`ShoppingScraper(enrich_top_n=0)` is the default, the cap is **per category**, and a failure
+leaves the fields `None` rather than taking the category down.
+
+`noCache: true` appears in the observed options — whether these are cacheable per pin is
+worth measuring before any wide sweep.
+
+### Q1 answered: the trends surface does not have this, at all
+
+Checked directly rather than assumed. On `/shopping/1408/?country=US`, "Explore top
+products" lists 33 rows with an external-link icon each — and:
+
+- **210 anchors on the page, zero external.** The icon is an `<a>` to
+  `https://www.pinterest.com/pin/<id>/`, not to the merchant.
+- The panel **fires no request**; it renders the `top_products` payload already fetched.
+- That payload has exactly four fields: `pin_id`, `merchant_name`, `title`, `images`. No
+  `link`, no price, no domain. `merchant_name` is a display string, not a URL.
+
+So there is nothing to grep for on the trends side. Resolving each `pin_id` individually is
+the only route.
 
 **Chain once the read-endpoint is captured:** `product_categories/top` → category →
 `top_products` → `pin_id` → the pin's resource call → merchant + price + outbound URL. This

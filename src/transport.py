@@ -25,6 +25,11 @@ import time
 from .session import classify
 
 BASE = "https://trends.pinterest.com"
+# A SECOND host. Pin commerce data (merchant, price, outbound link) lives only
+# here — the trends surface never carries it in any form. Same `.pinterest.com`
+# cookie scope, so one vault session covers both, but it is a different and
+# more defended property with its own page-specific PWS handlers.
+WWW = "https://www.pinterest.com"
 
 # Exact-match allowlist, not a presence check. Every other value — including the
 # empty string and omitting the header — returns 403 "Invalid Resource Request".
@@ -174,6 +179,58 @@ class TrendsClient:
                 f"it (probes/captures/README.md), do NOT read this as an empty "
                 f"result. errors={(payload or {}).get('errors')}")
         return data
+
+    def pin_resource(self, pin_id, kind="detail"):
+        """`www.pinterest.com/resource/PinResource/get/` — one pin's commerce data.
+
+        Captured live 2026-08-19 (probes/captures/pin_closeup.md). This is the
+        ONLY source of price and the outbound merchant URL: the whole trends
+        surface — including `top_products`, which powers the very strip these
+        pins come from — carries `pin_id`, `merchant_name`, `title` and images,
+        and nothing else. Verified: 210 anchors on the shopping page, zero
+        external.
+
+        Two things are load-bearing and neither is guessable:
+          * `field_set_key: "auth_web_main_pin"` — what pulls in the
+            `rich_summary` subtree where price lives. Other field sets omit it.
+          * the handler is `www/pin/[id].js`, page-specific like the moment
+            page's. There is no global value that works everywhere.
+
+        ⚠️ Costs one request PER PIN — there is no batch form. See
+        `ShoppingScraper(enrich_top_n=...)`, which caps it deliberately.
+        """
+        options = {
+            "id": str(pin_id),
+            "field_set_key": "auth_web_main_pin",
+            "noCache": True,
+            "fetch_visual_search_objects": False,
+            "get_page_metadata": False,
+        }
+        params = {
+            "source_url": f"/pin/{pin_id}/",
+            "data": json.dumps({"options": options, "context": {}},
+                               separators=(",", ":")),
+        }
+        url = f"{WWW}/resource/PinResource/get/"
+
+        payload = self._cached(kind, url, params)
+        if payload is None:
+            response = self._request(
+                "GET", url, params=params, endpoint="/resource/PinResource/get/",
+                headers={"X-Pinterest-PWS-Handler": "www/pin/[id].js",
+                         "X-Requested-With": "XMLHttpRequest",
+                         "Accept": "application/json"})
+            payload = self._json(response, "/resource/PinResource/get/")
+            self._store(kind, url, response, params)
+
+        wrapper = payload.get("resource_response") or {}
+        error = wrapper.get("error")
+        if error:
+            raise TrendsAPIError(
+                error.get("message_detail") or error.get("message") or "unknown",
+                status=error.get("http_status"),
+                endpoint="/resource/PinResource/get/")
+        return wrapper.get("data")
 
     # ----------------------------------------------------------- cache glue
 

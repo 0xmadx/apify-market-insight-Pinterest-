@@ -178,9 +178,15 @@ def parse_category_demographics(data, event):
 def parse_top_products(data, region=None):
     """§3.10 → shoppable products. `pin_id` is the bridge off Pinterest.
 
-    The response carries image URLs at 7 sizes but **no merchant URL or price** —
-    those live on the pin page (§3.19) behind a call not yet captured. The pin
-    permalink is constructed here so a record always has one linkable field.
+    The response carries image URLs at 7 sizes but **no merchant URL or price**.
+    Verified, not assumed: the whole trends surface lacks them — the shopping
+    page has 210 anchors and zero external links, and its "external-link" icon
+    points back to pinterest.com/pin/. They come from `PinResource` on
+    www.pinterest.com (§3.19), one request per pin, wired in
+    `ShoppingScraper(enrich_top_n=...)` and OFF by default.
+
+    `price`/`merchant_url` are emitted as None here so the field exists and
+    reads as "not fetched" rather than "no price".
     """
     products = []
     for node in _list(data, "top_products"):
@@ -212,6 +218,57 @@ def parse_top_products(data, region=None):
             "merchant_url": None,
         })
     return products
+
+
+def parse_pin_closeup(data):
+    """PinResource → the commerce fields the trends API does not have.
+
+    Paths captured live 2026-08-19 (probes/captures/pin_closeup.md):
+
+        .link                                        outbound merchant URL
+        .link_domain.id                              merchant domain
+        .closeup_attribution.full_name / .username   merchant name / handle
+        .rich_summary.display_name                   product name
+        .rich_summary.products[0].offer_summary      price / price_val / currency
+        .rich_summary.products[0].shipping_info      free-shipping threshold
+
+    ⚠️ `.link` carries the merchant's own tracking parameters (`utm_*`,
+    `cm_mmc`, …). Kept verbatim — stripping them would change where the click
+    is attributed, which is not ours to decide.
+
+    ⚠️ `rich_metadata` mirrors `rich_summary` field-for-field in the captured
+    response. Only `rich_summary` is read, because reading whichever happens to
+    be populated is how two sources silently disagree later.
+
+    Every field is None when absent — a pin with no offer is not a pin priced 0.
+    """
+    if not isinstance(data, dict):
+        return None
+
+    attribution = _get(data, "closeup_attribution") or {}
+    summary = _get(data, "rich_summary") or {}
+    products = _list(summary, "products")
+    product = products[0] if products else {}
+    offer = _get(product, "offer_summary") or {}
+    shipping = _get(product, "shipping_info") or {}
+
+    return {
+        "outbound_url": _get(data, "link"),
+        "merchant_domain": _get(_get(data, "link_domain") or {}, "id"),
+        "merchant_name": _get(attribution, "full_name"),
+        "merchant_handle": _get(attribution, "username"),
+        "product_name": _get(summary, "display_name"),
+        # Display string ("$380.99") and the numeric both kept: the string
+        # carries the currency symbol the site rendered, the number is what you
+        # can compare. Neither is derived from the other here.
+        "price": _get(offer, "price"),
+        "price_value": _get(offer, "price_val"),
+        "currency": _get(offer, "currency"),
+        "in_stock": _get(offer, "in_stock"),
+        "availability": _get(offer, "availability"),
+        "free_shipping_over": _get(shipping, "free_shipping_price"),
+        "free_shipping_over_value": _get(shipping, "free_shipping_value"),
+    }
 
 
 # ------------------------------------------------- keyword pipeline (shared)

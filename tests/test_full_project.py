@@ -362,6 +362,35 @@ def main():
     check("D4 the GraphQL handler is NOT the global trends/index.js",
           vocab.MOMENT_DEMOGRAPHICS["handler"] != "trends/index.js")
 
+    print("\nGROUP E2b - pin commerce data (S3.19 captured)")
+    pin = json.load(open("probes/results/graphql/3.19-pin_closeup.json",
+                         encoding="utf-8"))["resource_response"]["data"]
+    d = parsers.parse_pin_closeup(pin)
+    check("E2b price parsed as BOTH display string and number",
+          d["price"] == "$380.99" and d["price_value"] == 380.99)
+    check("E2b currency kept separately", d["currency"] == "USD")
+    check("E2b outbound merchant URL captured",
+          (d["outbound_url"] or "").startswith("https://www.orientaltrading.com"))
+    check("E2b merchant tracking params kept verbatim, not stripped",
+          "utm_source" in (d["outbound_url"] or ""))
+    check("E2b merchant domain + canonical name",
+          d["merchant_domain"] == "www.orientaltrading.com"
+          and d["merchant_name"] == "Oriental Trading")
+    check("E2b free-shipping threshold, string and numeric",
+          d["free_shipping_over"] == "$25" and d["free_shipping_over_value"] == 25)
+    check("E2b a pin with NO offer yields None, never 0",
+          all(v is None for v in parsers.parse_pin_closeup(
+              {"link": "x"}).values() if v != "x"))
+
+    # The cost guard: enrichment is off by default and capped when on.
+    from src.shopping import ShoppingScraper as _SS
+    class _C:
+        def bootstrap(self): return "2026-08-14"
+    check("E2b enrichment is OFF unless asked for",
+          _SS(_C(), log=lambda *a: None).enrich_top_n == 0)
+    check("E2b the cap is per category, not global",
+          _SS(_C(), enrich_top_n=5, log=lambda *a: None).enrich_top_n == 5)
+
     print("\nGROUP F3 - the response cache is actually WIRED IN")
     # This group exists because the cache was built, tested, and used by
     # nothing: every traversal called TrendsClient directly, so the taxonomy

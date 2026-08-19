@@ -36,7 +36,8 @@ class ShoppingScraper:
     """
 
     def __init__(self, client, region="US", event="OUTBOUND_CLICK",
-                 drill_top_n=3, chart_days=180, predicted_days=28, log=print):
+                 drill_top_n=3, chart_days=180, predicted_days=28,
+                 enrich_top_n=0, log=print):
         self.client = client
         self.region = vocab.region(region)
         self.event = vocab.event(event)
@@ -45,6 +46,12 @@ class ShoppingScraper:
         # what produces the dashed prediction band. The table uses 60/0.
         self.chart_days = vocab.ceiling("days", chart_days)
         self.predicted_days = vocab.ceiling("predicted_days", predicted_days)
+        # Price + outbound merchant URL cost ONE REQUEST PER PIN — there is no
+        # batch form, and a drilled category returns up to 33 products. Left OFF
+        # by default: enriching every product of every category in every
+        # vertical would be hundreds of requests against a session shared by all
+        # customers. Opt in, capped, and the cap is per category.
+        self.enrich_top_n = enrich_top_n
         self.log = log
         self._taxonomy = None
 
@@ -119,6 +126,8 @@ class ShoppingScraper:
             products = []
             if with_products and cat_id in drilled:
                 products = self._products(cat_id)
+                if self.enrich_top_n:
+                    self._enrich(products[:self.enrich_top_n])
 
             yield {
                 # identity
@@ -191,6 +200,45 @@ class ShoppingScraper:
             "/ads/v4/trends/shopping/product_categories/top_products",
             {"product_category_id": cat_id, "region": self.region,
              "event": event}, kind="detail"), region=self.region)
+
+    def _enrich(self, products):
+        """Fill price / outbound_url / merchant domain from each pin's own page.
+
+        The trends surface genuinely does not have this: verified by capture,
+        `top_products` returns four fields, and the shopping page's 210 anchors
+        include zero external links — its "external-link" icon points back to
+        pinterest.com/pin/. So this is a second host, one request per pin.
+
+        A failure enriches nothing and leaves the fields None. It must never
+        take the whole category down, and a pin without an offer is a pin with
+        no price, not a pin priced 0.
+        """
+        for product in products:
+            pin_id = product.get("pin_id")
+            if not pin_id:
+                continue
+            try:
+                detail = parsers.parse_pin_closeup(
+                    self.client.pin_resource(pin_id))
+            except TrendsAPIError as exc:
+                self.log(f"[shopping] pin {pin_id} not enriched: {exc}")
+                continue
+            if not detail:
+                continue
+            product.update({
+                "price": detail["price"],
+                "price_value": detail["price_value"],
+                "currency": detail["currency"],
+                "merchant_url": detail["outbound_url"],
+                "merchant_domain": detail["merchant_domain"],
+                "in_stock": detail["in_stock"],
+                "free_shipping_over": detail["free_shipping_over"],
+                # The canonical merchant name from the pin itself. top_products'
+                # `merchant_name` is a display string; keep both rather than
+                # overwrite, since they can differ.
+                "merchant_name_canonical": detail["merchant_name"],
+                "enriched": True,
+            })
 
     # ------------------------------------------------------------ provenance
 

@@ -68,6 +68,7 @@ def _shopping(client, task):
         region=task.get("region", "US"),
         event=task.get("event", "OUTBOUND_CLICK"),
         drill_top_n=int(task.get("drillTopN", 3)),
+        enrich_top_n=int(task.get("enrichTopN", 0) or 0),
     )
     for record in scraper.run(verticals=task.get("verticals") or None,
                               with_products=task.get("includeProducts", True)):
