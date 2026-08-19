@@ -248,6 +248,12 @@ normalized_predicted_lower_bound,normalized_predicted_upper_bound}]}]}`.
 Table uses `days:60, predicted_days:0`; detail page uses `days:180, predicted_days:28`.
 **Limits:** `days` ≤ **730** (1095 → 400); `predicted_days` ≤ **91** (180 → 400).
 
+> **This is the ONLY source of the actual sparkline/chart series** (`daily_values`, despite
+> the name — weekly-stepped, see §4). §3.9's `summaries` block gives you the *headline*
+> growth numbers for the same "Performance" UI section (percent_growth snapshot) — it does
+> **not** give you the chart. Building the Performance tab needs both calls; §3.9 alone is
+> enough for the Demographics tab and the Search-queries chips.
+
 ## 3.9 `…/product_categories/demographics/{region}` — ⭐ 3 sections in one call
 ```jsonc
 {"product_category_ids":["1408"],"event":"OUTBOUND_CLICK","end_date":"2026-08-14"}
@@ -266,6 +272,19 @@ the "Key metric changes" header, **and** the "Search queries" chips.
 events — verified). Don't re-request keywords per event.
 
 ⚠️ **Different endpoint from §3.14** despite the name.
+
+> **Three UI sections, three data sources — do not assume one call covers the drill-down
+> page.** All three sit under the same category id, all three take `event` + `end_date`, but
+> they answer different questions:
+> | UI section | Endpoint | What it returns here |
+> |---|---|---|
+> | **Demographics** (age/gender charts, Search-queries chips) | §3.9 (this one) | everything, in one call |
+> | **Performance** (the "Key metric changes" headline numbers) | §3.9's `summaries` block | comes free with the call above |
+> | **Performance** (the actual sparkline/chart) | §3.8 `metrics/` | a **separate** call — §3.9 has no time series |
+> | **Top products on Pinterest** | §3.10 `top_products` | a **separate** call, `event` must be `OUTBOUND_CLICK` or it silently returns `[]` |
+>
+> A full category drill-down page therefore costs **3 calls minimum**
+> (§3.9 + §3.8 + §3.10), not one.
 
 ## 3.10 `…/product_categories/top_products` — Top products (the one that works)
 **No path params.** `{"product_category_id":"1408","region":"US","event":"OUTBOUND_CLICK"}`

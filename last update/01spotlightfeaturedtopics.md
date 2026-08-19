@@ -261,3 +261,44 @@ You get 5 trends per query. You control two dials:
   need a separate query path, not the normal interest-ID call.
 - Numbers refresh over time (weekly cadence in the series), so treat any pulled snapshot
   as dated — re-pull for current values.
+
+---
+
+## PART C — Clicking a trend (the "detail / drill-in" view)
+
+When you **click one of the 5 trend cards**, the page opens a bigger detail view for that
+single trend — larger chart, full description, all the search-term chips, and a full grid
+of example Pins, with a **"Go back"** button. It stays on the **same region + interest** you
+already selected.
+
+### ⚠️ Key finding for the CODE agent: this is NOT a new endpoint.
+
+Clicking a card fires **no new `/ads/` data request.** The only network calls that fire are
+analytics/logging pings (`/resource/ApiSResource/create/`, `/resource/ApiCResource/create/`)
+— they carry no trend data and can be ignored.
+
+**Everything in the detail view is already inside the trend object from the original
+`/ads/v4/trends/topics/featured/{REGION}/SAVE` response.** The list view just shows a
+*subset*; the detail view renders the *full* record. Mapping:
+
+| Detail-view element | Field in the trend object (already fetched) |
+|---------------------|---------------------------------------------|
+| Big title | `name` |
+| Paragraph blurb | `description` |
+| "Pin saves vs. last month ↑ 6,500%" | `pct_growth_mom` |
+| "Pin saves over time" chart (Indexed 0–100) | `time_series` (`date` + `count`, peak = 100) |
+| "Pinners engaging with this trend commonly search for:" chips | `related_search_trends` |
+| The grid of example images | `pins` (`src`, `width`, `height`, `color`) |
+
+### What this means in practice
+
+- **Code agent:** to reproduce the drill-in, you do NOT call anything again. Take the trend
+  object you already have from the list response and render/return all of its fields. One
+  call to `featured/{REGION}/SAVE` gives you both the summary list AND every detail card.
+- **Marketer agent:** "clicking in for more detail" doesn't give you *new* data — it just
+  surfaces the full description, the complete search-term list, all the example Pins, and
+  the full 0–100 trend curve that were already attached to that trend. So when you query a
+  region + interest, you already have everything the detail page shows for all 5 trends.
+
+> Note: the search-term chips in the detail view are clickable and link out to Pinterest's
+> **trending searches** explorer (a separate feature/endpoint — documented separately).

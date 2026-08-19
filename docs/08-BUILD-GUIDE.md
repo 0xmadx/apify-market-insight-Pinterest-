@@ -83,12 +83,19 @@ A  product_categories/metrics/{region} {product_category_ids:[…]}      → spa
        │
        │ drill into one category:
 A  product_categories/demographics/{region} {product_category_ids:[id]}
-       │   → age/gender + related_search_trends + 3-metric summary  (3 UI sections, 1 call)
+       │   → age/gender + related_search_trends + Performance's HEADLINE numbers,
+       │     all 3 in ONE call — but NOT the Performance chart, see below
 A  product_categories/top_products {product_category_id:id, region, event:OUTBOUND_CLICK}
        │   → real products (US/CA/GB+IE only)
        └─► related_search_trends ─► KEYWORD PIPELINE (§2.6)
 ```
 ⚠️ One vertical per `top/` call — never combine (normalisation, Doc #7 §3.7).
+
+⚠️ **The full category drill-down page is 3 calls minimum, not the 1 implied above.**
+`demographics/` covers the Demographics tab and the Performance headline numbers in one
+call, but the Performance **chart itself** is the `metrics/` call already made earlier in
+this chain (its `product_category_ids` should include the drilled-into category), and
+`top_products` is always separate. See Doc #7 §3.9 for the full three-endpoint table.
 
 ### 2.5 Keyword discovery (search)
 ```

@@ -45,8 +45,46 @@ No envelope — JSON returned directly.
 ```
 X-Pinterest-PWS-Handler: trends/index.js
 ```
-Without it, Style A returns **403 `Invalid Resource Request`**. `X-Requested-With` alone is not
-enough. This single header is the only auth-ish requirement observed.
+⚠️ **The value must be EXACTLY `trends/index.js`.** Verified — every other value 403s:
+
+| Header value | Result |
+|--------------|--------|
+| `trends/index.js` | ✅ **200** |
+| `www/index.js` | ❌ 403 |
+| any other string | ❌ 403 |
+| empty string | ❌ 403 |
+| header omitted | ❌ 403 |
+
+It is an exact-match allowlist, not a presence check.
+
+### ✅ `source_url` and `_` are OPTIONAL — big client simplification
+
+Verified on Style A: **the `source_url` value is irrelevant and the param can be omitted
+entirely.**
+
+| Variant | Result |
+|---------|--------|
+| `source_url=/` | 200 |
+| `source_url=/shopping/` | 200 |
+| `source_url=/totally/bogus/path` | 200 |
+| `source_url=` (empty) | 200 |
+| **`source_url` omitted** | **200** |
+| **`_` cachebuster omitted** | **200** |
+
+→ A minimal Style A request is just:
+```
+GET /resource/ApiResource/get/?data=<encoded>
+    with header X-Pinterest-PWS-Handler: trends/index.js
+```
+`context` is always `{}` in the UI and can stay empty.
+
+### Response headers — no rate-limit signalling
+
+Observed headers include `cache-control: private`, `pragma: no-cache`,
+`x-pinterest-rid` (request ID — log it for debugging), `x-envoy-upstream-service-time` (ms).
+
+⚠️ **There are NO `x-ratelimit-*` or `retry-after` headers.** A 429 gives you no budget
+information — you must back off blindly.
 
 > ⚠️ **Not verified logged-out.** All testing ran inside an authenticated session with an
 > advertiser account. Whether these endpoints work anonymously is **untested**.
@@ -128,7 +166,22 @@ Timestamps are **epoch ms as strings**.
 {"moments":["halloween"],"end_date":"2026-08-14","aggregation_level":"weekly",
  "lookback_days":365,"predicted_days":91,"interest_limit":6,"normalize_against_group":false}
 ```
-Returns `data.moments[0]`: `name`, `moment.daily_values[]` (`timestamp`, `normal_counts`,
+| Param | Valid | Notes |
+|-------|-------|-------|
+| `moments` | array of slugs | **multi supported** — 2 slugs → 2 objects returned |
+| **`aggregation_level`** | **`daily` \| `weekly` \| `monthly`** | ⭐ **DAILY WORKS HERE** — 456 points vs 66 weekly. Case-insensitive (`DAILY` ok). `hourly` → 400 |
+| `lookback_days` | ≤ **730** | 90→26pts, 365→66, 730→118 (weekly). 1095 → 400 `too large: 1095 > 730` |
+| `predicted_days` | 0–**91** | 180/365 → 400 `too large: 180 > 91` |
+| `interest_limit` | 0–**24** | 0 → no `moment_interests`; 50 → 400 `too large: 50 > 24` |
+| `normalize_against_group` | bool | accepted; no visible effect on single-moment calls |
+
+> ⚠️ **`monthly` + `predicted_days=91` → 400** (`91 predicted days do not evenly divide into
+> monthly agg`). Predicted days must divide evenly into the aggregation unit.
+
+> ⭐ **This is the ONLY endpoint in the whole API that exposes daily granularity.** Every other
+> time series is weekly. If you need day-level resolution, it must come from here.
+
+Returns `data.moments[]`: `name`, `moment.daily_values[]` (`timestamp`, `normal_counts`,
 `predicted_normalized_lower/upper_bound_count`), `moment.peaks[]`, and `moment_interests{}`
 keyed by interest ID (each with its own `daily_values`).
 
@@ -174,7 +227,8 @@ Call once, cache; every shopping endpoint returns IDs only, never names.
 | `age_bucket` | `AGE_18_24,AGE_25_34,AGE_35_44,AGE_45_49,AGE_50_54,AGE_55_64,AGE_65_PLUS,AGE_ALL` |
 | `gender` | `MALE,FEMALE,UNSPECIFIED` |
 | `parent_product_categories` | **L1 vertical IDs only** — L2/L3 return **200 with 0 rows (silent)** |
-| `limit` | works; UI sends 20, use **100** |
+| `limit` | max **522** (1000 → 400 `too large: 1000 > 522`). UI sends 20; use 100+ |
+| `order` | `DESC` / `ASC` (`bogus` → 400) |
 
 Returns `{total_num_product_categories, ordered_values:[{product_category (ID only),
 parent_product_categories[], related_search_trends[] (~24), summary:{engagement,saves,
@@ -192,6 +246,7 @@ Only 7 of 14 verticals return data (§4.3).
 Returns `{values:[{term (=category ID), growth_rates:{wow,mom,yoy}, daily_values:[{date,count,
 normalized_predicted_lower_bound,normalized_predicted_upper_bound}]}]}`.
 Table uses `days:60, predicted_days:0`; detail page uses `days:180, predicted_days:28`.
+**Limits:** `days` ≤ **730** (1095 → 400); `predicted_days` ≤ **91** (180 → 400).
 
 ## 3.9 `…/product_categories/demographics/{region}` — ⭐ 3 sections in one call
 ```jsonc
@@ -270,7 +325,7 @@ GET /metrics/?terms=nails&country=US&end_date=2026-08-14&days=365
 |-------|--------|
 | `terms` | 1..N comma-separated. 10 requested → **9 returned** (silently drops no-data terms) |
 | `days` | 90/180/365/730 |
-| **`aggregation`** | **`2` ONLY** (weekly, 7-day step). 0/1/3/4 → 400. **No daily data exists** |
+| **`aggregation`** | **`2` ONLY** (weekly, 7-day step). 0/1/3/4 and string values → 400. ⚠️ No daily for KEYWORDS — but **moments DO support daily**, see §3.4 |
 | **`predicted_days`** | **0–91**. Points = `predicted_days÷7`. 180/365 → 400 |
 | **`normalize_against_group`** | 🚨 `true` = shared scale (comparable). `false` = each term self-normalised to 100 (**not comparable**) |
 | **`shouldMock`** | ⚠️ **`true` returns FAKE 2019 data, count 0, HTTP 200.** Always `false` |
@@ -333,18 +388,98 @@ Searches the **whole keyword space** (unlike `keywordsToInclude`, which only fil
 trending set) — works for non-trending terms. No `hasPrediction` field.
 
 ## 3.18 `POST /_/graphql/` — moment page Age/Gender (NOT REPRODUCIBLE)
-The `/moments/{slug}` page's **"Who's driving this moment"** Age+Gender charts are fed by a
-GraphQL POST using a **persisted query** — the query body is not present in any JS bundle and
-could not be extracted.
 
-**No REST equivalent exists.** Probed and rejected:
+The `/moments/{slug}` page's **"Who's driving this moment"** Age+Gender charts are the one
+dataset with no reachable REST endpoint.
+
+### What was proven
+
+A **complete cold-load capture** of a moment page (41 requests) shows only these
+trends-related calls:
+```
+GET  /latest_available_date/
+A    /ads/v4/trends/moment/available/{region}
+A    /ads/v4/trends/moment/metrics/{region}
+GET  /top_trends_filtered/?...&moments=<slug>
+POST /_/graphql/            ← the only unaccounted-for call
+```
+`moment/metrics` was re-inspected in full: **zero** matches for `age`, `gender`, `female`, or
+`distribution` anywhere in its 64 KB response. None of the other calls carry demographics
+either. **By elimination, the GraphQL POST is the source.**
+
+> ⚠️ Note: `/_/graphql/` also fires on `/shopping` (which has no demographics chart), so it is a
+> shared/generic endpoint. That does **not** rule it out — one endpoint can carry different
+> payloads per page — but it means you cannot identify it by URL alone.
+
+### Why the body could not be captured
+
+Capturing a POST body requires replacing `window.fetch` **before the page's own JavaScript
+runs**. Five workarounds were attempted and all failed:
+
+| Attempt | Result |
+|---------|--------|
+| Client-side SPA navigation with hook pre-armed | GraphQL did not re-fire (cached) |
+| Scroll to lazy-load the chart | chart rendered, **0 requests** |
+| Relay globals (`__PWS_RELAY_SSR_REQUESTS__`) | already consumed / empty |
+| Server-rendered HTML | no `age_distribution` in 118 KB of SSR HTML |
+| React fiber traversal from the chart node | no demographic props found |
+
+### REST alternatives — all rejected
 - `/ads/v4/trends/moment/demographics/{region}` → **404 API method not found**
 - `/demographics/?moments=…` → **400**
-- `moment/metrics` with `include_demographics` → ignored
+- `moment/metrics` with `include_demographics` → silently ignored
 
-**Workaround for an API client:** take the moment's top keywords from
-`/top_trends_filtered/?moments=<slug>` (§3.12), then call `/demographics/` (§3.14) on those
-terms and aggregate. Approximate, but it's the only REST path to moment-level demographics.
+### ✅ Workaround (derived, not measured)
+```
+1. GET /top_trends_filtered/?country={r}&moments=<slug>&trendsPreset=1&numTermsToReturn=25
+2. GET /demographics/?terms=<those terms>&country={r}&end_date=…&days=90
+3. Aggregate the per-term age/gender distributions
+```
+This approximates moment-level demographics from its constituent keywords. **Label it derived**
+— it will not match Pinterest's own chart exactly.
+
+### To upgrade this to measured
+Capture the live request from browser DevTools: Network → filter `graphql` → right-click the
+POST → **Copy as cURL**. The `operationName`/query hash + `variables` are sufficient to replay
+it. Browser automation cannot do this (it can't hook before page scripts run).
+
+---
+
+## 3.19 PRODUCT / MERCHANT DATA — `www.pinterest.com/pin/{pin_id}/`
+
+⭐ Not part of the Trends API, but it completes the shopping chain. `top_products` (§3.10)
+returns `pin_id` but **no merchant URL or price**. Both are available from the pin page.
+
+### What a pin page exposes
+For pin `4607745477126792832` (the #1 top-product for *Seasonal & holiday decorations*):
+
+| Field | Value |
+|-------|-------|
+| Merchant | **Oriental Trading** |
+| Outbound host | **`www.orientaltrading.com`** |
+| Product title | 97" Halloween Manor Archway Halloween Prop |
+| **Price** | **$380.99** |
+| Rating | 2.0 (1 review) |
+| Shipping | Free shipping with $25+ |
+| CTA | "Visit site" |
+
+### The outbound-link endpoint
+```jsonc
+// via the ApiResource wrapper, on www.pinterest.com
+{"options":{"url":"/v3/offsite/",
+ "data":{"check_only":true,"client_tracking_params":"…","pin_id":"…","url":"<MERCHANT URL>"}}}
+```
+⚠️ **The merchant `url` is an INPUT to this call, not an output** — the client already has it
+from the pin object. `/v3/offsite/` is a click-tracking/validation hop, not a lookup.
+It fires **on interaction**, not on page load.
+
+> ⚠️ Different host (`www.pinterest.com`, not `trends.pinterest.com`) → different PWS handler
+> (`www/index.js`) and a cross-origin boundary. Treat as a separate client.
+
+**Chain:** `product_categories/top` → category → `top_products` → `pin_id` →
+`pinterest.com/pin/{pin_id}/` → merchant + price + outbound URL.
+This yields **real, linkable product pages per trending category** — something the Trends UI
+never shows.
 
 ---
 
@@ -456,3 +591,154 @@ Wrong form → **400**.
 | **"Predict the future" toggle** | Client-side show/hide of data already in §3.13. |
 | **"All categories" tab** | Rendered from cached §3.6 taxonomy. |
 | **"Other product categories"** | Taxonomy siblings, computed client-side. |
+
+---
+
+# 7. NEGATIVE RESULTS — endpoints that do NOT exist
+
+Probed by sibling-pattern guessing against the known-good control
+(`topics/featured/US/SAVE` → 200). **All returned `404 API method not found`:**
+
+```
+/ads/v4/trends/topics/{region}                      404
+/ads/v4/trends/topics/metrics/{region}              404
+/ads/v4/trends/topics/demographics/{region}         404
+/ads/v4/trends/keywords/{region}                    404
+/ads/v4/trends/search/{region}                      404
+/ads/v4/trends/interests                            404
+/ads/v4/trends/interests/{region}                   404
+/ads/v4/trends/regions                              404
+/ads/v4/trends/shopping/product_categories/related/{region}   404
+/ads/v4/trends/shopping/brands/{region}             404
+/ads/v4/trends/moment/keywords/{region}             404
+/ads/v4/trends/moment/demographics/{region}         404
+/ads/v4/trends/editorial/content   (no region)      405 Method not allowed
+```
+
+**Conclusions:**
+- There is **no endpoint for the interest list or region list** — hardcode them (§4.1, §4.2).
+- There is **no moment-level demographics endpoint** (§3.18).
+- There is **no topic-level metrics or demographics endpoint** — the spotlight response is
+  self-contained.
+- The `/ads/v4/trends/` namespace is **exactly the 12 endpoints in §2**, nothing hidden.
+
+> Method note: `editorial/content` without a region returns **405**, not 404 — the route exists
+> but requires the `{region}` segment.
+
+---
+
+# 8. ROUTE MAP (UI URLs, for deep-linking)
+
+Only **5 routes** exist:
+
+| Route | Purpose | Params |
+|-------|---------|--------|
+| `/` | Trends overview (spotlight, moments, shopping, editorial, predicts) | `?country=US&topicInterestIds=<interestId>` |
+| `/shopping` | Shopping trends table | `?country=US` |
+| `/shopping/{category_id}/` | Product-category detail | `?country=US` |
+| `/search` | Keyword discovery | `?country=US` |
+| `/detail/` | Keyword dashboard | `?country=US&terms=<kw>&dateRange=90D` |
+| `/moments/{slug}/` | Moment detail | `?country=US` |
+
+⚠️ **Moment slugs are URL-encoded in paths** — spaces become `%20`:
+`/moments/new%20years%20eve`, `/moments/st%20patricks%20day`, `/moments/valentines%20day`.
+
+External hand-offs: `ads.pinterest.com/automated/ads/create/` ("Create campaign"),
+`ads.pinterest.com/advertiser/{id}/media_planner/plan` ("Create media plan").
+
+---
+
+# 9. UNIVERSAL LIMITS (verified via explicit API error messages)
+
+The API returns precise ceilings — these are not guesses:
+
+| Limit | Value | Error text |
+|-------|-------|------------|
+| Forecast horizon | **91 days** | `'predicted_days' is too large: 180 > 91` |
+| History window | **730 days** | `'lookback_days' is too large: 1095 > 730` / `'days' is too large: 1095 > 730` |
+| Shopping `top/` rows | **522** | `'limit' is too large: 1000 > 522` |
+| Moment interests | **24** | `'interest_limit' is too large: 50 > 24` |
+| Keyword rows | **100** | 500 → 400 |
+| Typeahead | **10** | `limit` ignored |
+
+**Granularity:** weekly everywhere **except** `moment/metrics`, which uniquely supports
+`daily` / `weekly` / `monthly` (§3.4).
+
+---
+
+# 10. NAV → ENDPOINT MAP (what each sidebar destination actually loads)
+
+The left sidebar has exactly **3 parent destinations**. Captured from a cold load of each:
+
+## 10.1 🏠 "Trend overview" → `/` — **11 endpoints** (the heaviest page)
+
+```
+B  /latest_available_date/                                    ← bootstrap
+A  /ads/v4/trends/topics/featured/US/SAVE                     → "Trends in the spotlight"
+A  /ads/v4/trends/moment/available/US                         → "Moments"
+A  /ads/v4/trends/shopping/product_categories                 → taxonomy (for names)
+A  /ads/v4/trends/shopping/product_categories/top/US          → "Shopping trends"
+A  /ads/v4/trends/shopping/product_categories/metrics/US      → shopping sparklines
+A  /ads/v4/trends/shopping/product_categories/recommendations/{merchant}/US   → (empty w/o catalog)
+B  /top_trends_filtered/                                      → "Search trends" preview ⭐
+B  /metrics/                                                  → preview sparklines
+B  /term_images/  (POST)                                      → preview thumbnails
+A  /ads/v4/trends/editorial/content/US                        → "Editors' Picks"
+```
+
+> ⭐ **The homepage contains a "Search trends" PREVIEW section** (a keyword table ending in
+> *"View the full list ›"*) that is not part of the `/search` page. It uses the same
+> `/top_trends_filtered/` + `/metrics/` + `/term_images/` trio. Easy to miss when mapping by UI.
+
+**Pinterest Predicts 2026** appears on this page but fires **nothing** — static bundle data (§6).
+
+## 10.2 🛒 "Shopping trends" → `/shopping` — **5 endpoints**
+
+```
+B  /latest_available_date/
+A  /ads/v4/trends/shopping/product_categories                 → taxonomy
+A  /ads/v4/trends/shopping/product_categories/top/US          → the table
+A  /ads/v4/trends/shopping/product_categories/metrics/US      → sparklines
+A  …/product_categories/recommendations/{merchant}/US         → (empty w/o catalog)
+```
+Child route `/shopping/{category_id}/` additionally fires
+`…/demographics/{region}` + `…/top_products` (+ a merchant-scoped `top_products` that returns null).
+
+## 10.3 🔍 "Search trends" → `/search` — **5 endpoints**
+
+```
+B  /latest_available_date/
+A  /ads/v4/trends/moment/available/US        ← ⚠️ populates the MOMENTS FILTER dropdown
+B  /top_trends_filtered/                     → the keyword table
+B  /metrics/                                 → row sparklines
+B  /term_images/  (POST)                     → row thumbnails
+```
+
+> ⚠️ **Dependency worth knowing:** `/search` calls `moment/available/{region}` **not** to show
+> moments, but to populate its **Moments filter options**. This is why the valid `moments=`
+> slugs on `/top_trends_filtered/` are region-specific (§4.4) — the filter list is fetched
+> per-region at page load.
+
+## 10.4 Cross-route summary
+
+| Endpoint | Overview | Shopping | Search |
+|----------|:--------:|:--------:|:------:|
+| `latest_available_date` | ✅ | ✅ | ✅ |
+| `topics/featured` | ✅ | — | — |
+| `moment/available` | ✅ | — | ✅ *(filter)* |
+| `product_categories` (taxonomy) | ✅ | ✅ | — |
+| `product_categories/top` | ✅ | ✅ | — |
+| `product_categories/metrics` | ✅ | ✅ | — |
+| `product_categories/recommendations` | ✅ | ✅ | — |
+| `editorial/content` | ✅ | — | — |
+| `top_trends_filtered` | ✅ *(preview)* | — | ✅ |
+| `metrics` | ✅ | — | ✅ |
+| `term_images` | ✅ | — | ✅ |
+
+**Only `/latest_available_date/` is universal.** Everything else is route-specific — which is
+why a UI-first reading of this API misleads: the *overview* page alone touches 6 of the 7
+datasets.
+
+**Endpoints reachable ONLY by interaction (never on a parent route load):**
+`product_categories/demographics`, `product_categories/top_products`, `moment/metrics`,
+`demographics`, `related_terms`, `prefix_match`.

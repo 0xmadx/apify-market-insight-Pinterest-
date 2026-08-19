@@ -162,8 +162,12 @@ Payload: `{"options":{"url":"/ads/v4/trends/shopping/product_categories","data":
 | **Home decor** | `1250` | 14 | Bathroom accessories, Bedding, Furniture, Household appliances… |
 | **Beauty** | `1042` | 9 | Bath & body, Fragrance, Hair, Makeup, Nails, Skincare… |
 
-**Why separate — measured proof.** `limit:20` is applied to the *merged* result, so combining
-verticals silently truncates the smaller ones. Same params, only the vertical changed:
+> ⚠️ **CORRECTION (see §C9):** an earlier version of this doc said combining is capped at 20.
+> That was the `limit:20` the UI sends — raising `limit` DOES return all rows. The real reason
+> to keep verticals separate is **relative-volume normalization**, proven in §C9.3.
+
+**Why separate — measured proof.** With the UI's `limit:20`, combining verticals truncates the
+smaller ones. Same params, only the vertical changed:
 
 | Vertical (alone) | `OUTBOUND_CLICK` | `ENGAGEMENT` | `SAVE` |
 |------------------|------------------|--------------|--------|
@@ -630,3 +634,184 @@ Shopping table  →  /shopping/{category_id}/     (category: products, curve, de
 ```
 Each hop narrows the audience — and the numbers change at every hop. Always re-pull
 demographics at the level you're acting on.
+
+---
+
+## C8. Category DEPTH — L2 vs L3 vs L4 behaviour (clicking "Bath & body")
+
+Clicking **Bath & body** from the "All categories" browse list goes to **`/shopping/1030/`** —
+`1030` is an **L2** (main category), whereas Pants (`1356`) and Seasonal & holiday decorations
+(`1408`) are **L3**. Verified: **every level behaves identically on the detail endpoints.**
+
+### Same page, same 4 calls, any level
+
+| | **L2** `1030` Bath & body | **L3** `1356` Pants | **L4** `1064` Body moisturizers / `1311` Mascaras |
+|---|---|---|---|
+| `demographics/US` | ✅ 200 | ✅ 200 | ✅ 200 |
+| `top_products` | ✅ 32 products | ✅ 39 products | ✅ 50 products |
+| `metrics/US` | ✅ 26 points | ✅ 30 points | ✅ |
+| `related_search_trends` | 25 keywords | 25 keywords | 25 keywords |
+| Forecast present? | ❌ **no** | ✅ **yes** | — |
+| Breadcrumb shown | `Beauty` | `Fashion > Clothing` | — |
+
+→ **The code agent can request ANY category ID at ANY level** on `demographics`,
+`top_products` and `metrics`. No special handling for depth.
+
+### 🚨 BUT: `parent_product_categories` on `top/` accepts **L1 ONLY** — and fails SILENTLY
+
+| `parent_product_categories` value | Level | Result |
+|-----------------------------------|-------|--------|
+| `["1042"]` (Beauty) | **L1** | ✅ 200, **6 rows** |
+| `["1030"]` (Bath & body) | L2 | ⚠️ **200, 0 rows** |
+| `["1356"]` (Pants) | L3 | ⚠️ **200, 0 rows** |
+
+**This returns HTTP 200 with an empty `ordered_values` array — not a 400, not an error
+message.** An agent that passes an L2/L3 ID here will silently get "no trending categories"
+and may wrongly conclude the category has no data.
+
+> **Rule: `top/` takes L1 verticals only** (`1181` Fashion, `1250` Home decor, `1042` Beauty).
+> Everything else — `demographics`, `top_products`, `metrics`, and the `/shopping/{id}/` page —
+> takes **any** level. Always validate the level against the taxonomy (Doc #5) before calling.
+
+### Breadcrumb construction
+
+The header breadcrumb is the **ancestor chain excluding the category itself**:
+- L2 `1030` Bath & body → parent `1042` → **"Beauty"** (just the vertical)
+- L3 `1356` Pants → `1104` Clothing → `1181` Fashion → **"Fashion > Clothing"**
+
+Walk `parent_product_category_id` up until the ID is absent from `categories` — that final ID
+is the L1 vertical, whose name must come from the hardcoded table (Doc #5).
+
+### "Other product categories" = SIBLINGS at the same level
+
+On the L2 page for Bath & body it showed: **Hair, Skincare, Beauty supplements, Teeth
+whitening, Fragrance, Makeup** — all L2 siblings under Beauty (`1042`). On the L3 page for
+Seasonal & holiday decorations it showed L3 siblings under Home accessories (`1249`).
+Same rule at every level, computed client-side from the taxonomy — **no API call**.
+
+### ⚠️ Two data-shape reminders confirmed here
+
+1. **Growth can be NEGATIVE.** Bath & body showed **Pin saves ↓8%** (`saves.percent_growth:
+   -0.08`) while outbound clicks were **↑26%**. Don't assume `percent_growth >= 0`, and don't
+   render a "↑" unconditionally — the three metrics can move in opposite directions for the
+   same category.
+2. **Forecast availability is per-category.** Bath & body returned **no** prediction points
+   even with `predicted_days: 28`; Pants did. Same as the keyword-level `has_prediction` issue
+   (Doc #4 §A1) — check whether `normalized_predicted_upper_bound` is non-null before drawing
+   a forecast band.
+
+### Marketer note
+
+Depth = specificity, and the numbers change with it. `Bath & body` (L2) is a broad view;
+`Body moisturizers` (L4) is a precise one. Because **all three metrics are returned at every
+level**, you can drill from vertical → main → sub → sub-sub and watch where growth actually
+concentrates — a flat L2 can hide a fast-growing L4 inside it. Note also that a category can be
+**up on clicks and down on saves at the same time** (Bath & body: clicks +26%, saves −8%),
+which usually means demand is converting now rather than being planned for later.
+
+---
+
+## C9. ⭐⭐ THE INJECTION TEST — unlocking verticals the UI hides
+
+**The test:** the "Top vertical" filter only offers Fashion / Home decor / Beauty. What happens
+if you inject a vertical ID the UI never lets you pick — e.g. Electronics `1161` — straight into
+`parent_product_categories`?
+
+**Result: the API is NOT restricted to the 3 UI verticals.** Four hidden verticals return real
+trending data. Others return empty. Full sweep of all 14 L1 IDs (`limit:20`, US, OUTBOUND_CLICK):
+
+| L1 ID | Vertical | In UI filter? | Rows returned |
+|-------|----------|---------------|---------------|
+| `1181` | Fashion | ✅ yes | **19** |
+| `1250` | Home decor | ✅ yes | **9** |
+| `1042` | Beauty | ✅ yes | **6** |
+| `1148` | **DIY** | ❌ **no** | **3** ⭐ |
+| `1016` | **Arts & entertainment** | ❌ **no** | **2** ⭐ |
+| `1500` | **Wedding** | ❌ **no** | **2** ⭐ |
+| `1315` | **Media** | ❌ **no** | **1** ⭐ |
+| `1161` | Electronics | ❌ no | 0 |
+| `1007` | Animals & pet supplies | ❌ no | 0 |
+| `1194` | Food & beverages | ❌ no | 0 |
+| `1241` | Hardware | ❌ no | 0 |
+| `1436` | Sporting goods | ❌ no | 0 |
+| `1481` | Toys & games | ❌ no | 0 |
+| `1489` | Vehicles & parts | ❌ no | 0 |
+
+> **Electronics specifically returns 0** — so the trick doesn't unlock *everything*. But
+> **7 verticals have data, not 3.** The UI shows you fewer than half.
+
+### C9.1 The hidden data is real, and some of it is the most interesting on the site
+
+| Vertical | Category | ID | Outbound-clicks growth |
+|----------|----------|-----|------------------------|
+| DIY | **Drills & screwdrivers** | `1155` | **+367% MoM** 🔥 |
+| DIY | Tools | `1477` | +20% |
+| DIY | Woodworking plans | `1518` | +10% |
+| Arts & entertainment | **Hobbies & creative arts** | `1248` | **+181%** |
+| Arts & entertainment | Wedding ceremony decor | `1502` | +10% |
+| Wedding | Groom & groomsmen suits | `1219` | +16% |
+| Wedding | Wedding ceremony decor | `1502` | +10% |
+| Media | DVDs & videos | `1159` | +32% |
+
+**+367% on Drills & screwdrivers is the single fastest-growing category found anywhere on the
+site — and it is completely invisible in the UI.**
+
+### C9.2 Hidden categories are FULLY drillable
+
+`1155` Drills & screwdrivers behaves like any normal category:
+- `demographics` → 200, **25 keywords** ("toolbox", "antique hand tools", "vintage hand tools",
+  "gadgets", "cool tools")
+- `top_products` → **49 products** (The Home Depot, Walmart, SANRICO)
+- Gender: **34% male / 58% female** — versus the 82–89% female typical of the UI-exposed
+  categories. Hiding these verticals hides Pinterest's entire male-skewing audience.
+
+So the hidden verticals are not half-built — they're complete. The gate is UI-only.
+
+### C9.3 🚨 PROOF that verticals must be queried separately
+
+Injecting also let me settle *why*. `percent_relative_volume` is **normalized within each
+response**, not globally. Same Beauty categories, two calls, `limit:100` both times:
+
+| Category | ID | **Beauty alone** | **Beauty + Fashion + Home decor** |
+|----------|-----|------------------|-----------------------------------|
+| Mascaras | `1311` | **1.00** | **0.01** |
+| Facial cleansers | `1178` | **0.70** | **0.01** |
+| Beauty supplements | `1043` | **0.45** | **0.00** |
+| Nail care | `1321` | 0.38 | 0.00 |
+| Makeup tools | `1309` | 0.31 | 0.00 |
+| Skincare masks & peels | `1421` | 0.12 | 0.00 |
+
+**Beauty's #1 category collapses from 1.00 to 0.01 when Fashion is in the same call.** The
+volume bar is relative to the largest row *in that response*, so mixing verticals flattens the
+smaller ones to zero. **This is the real reason to query one vertical per call** — not the
+`limit`.
+
+### C9.4 `limit` corrections
+
+`limit` **does** work on `top/` (unlike `top_products`, where it is ignored — §C5):
+
+| Verticals | `limit` | Rows |
+|-----------|---------|------|
+| 3 UI verticals | 20 | 20 *(truncated)* |
+| 3 UI verticals | 100 | **34** = 19+9+6 ✓ |
+| Fashion alone | 100 | 19 |
+| All 14 | 100 | **40** |
+| All 14 | 500 | **40** *(ceiling — 40 is the true universe)* |
+
+→ Across every vertical and every level there are only **40 trending categories** in US right
+now. The default view shows 20 of them, drawn from 3 verticals.
+
+### C9.5 What this means
+
+**Code agent:**
+- Sweep all 14 L1 IDs, not the 3 the UI offers — 4 extra verticals have data.
+- Still **one vertical per call** (§C9.3), then merge client-side. If you must compare across
+  verticals, compare `percent_growth` (an absolute %) — never `percent_relative_volume`.
+- Use `limit: 100`; the UI's 20 truncates.
+- Expect empty results for the other 7 verticals and handle `ordered_values: []` as normal.
+
+**Marketer:**
+- There is trending data for **DIY, Arts & crafts, Wedding and Media** that no one using the
+  Pinterest Trends UI can see. That includes the fastest-growing category on the platform
+  (Drills & screwdrivers, +367%) and a genuinely male-skewing audience (34% male) that the
+  three default verticals completely hide.

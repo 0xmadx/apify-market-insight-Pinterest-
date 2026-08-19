@@ -125,14 +125,12 @@ A  editorial/content/{region}    → 6 curated trends (US/CA/GB+IE only)
 BASE = "https://trends.pinterest.com"
 HEADERS = {"X-Pinterest-PWS-Handler": "trends/index.js"}   # REQUIRED, both styles
 
-def wrapped(path, data=None, source_url="/"):
-    """Style A — /ads/v4/trends/... endpoints"""
+def wrapped(path, data=None):
+    """Style A — /ads/v4/trends/... endpoints.
+       source_url and _ are OPTIONAL and their values are irrelevant (verified)."""
     payload = {"options": {"url": path, "data": data or {}}, "context": {}}
-    r = GET(f"{BASE}/resource/ApiResource/get/", headers=HEADERS, params={
-        "source_url": source_url,
-        "data": json.dumps(payload),
-        "_": int(time.time()*1000),
-    })
+    r = GET(f"{BASE}/resource/ApiResource/get/", headers=HEADERS,
+            params={"data": json.dumps(payload)})
     body = r.json()["resource_response"]
     if body.get("error"):
         raise PinterestTrendsError(body["error"].get("message_detail"))
@@ -261,7 +259,8 @@ client.editors_picks(region)                        # US/CA/GB+IE only
 Before trusting a client, assert:
 
 - [ ] `end_date` comes from `/latest_available_date/`, never `today()`
-- [ ] `X-Pinterest-PWS-Handler: trends/index.js` on **every** request
+- [ ] `X-Pinterest-PWS-Handler: trends/index.js` on **every** request — value must match EXACTLY (any other string → 403)
+- [ ] `source_url` / `_` omitted (optional; values irrelevant)
 - [ ] payload read from `resource_response.data` (Style A) and errors from `resource_response.error`
 - [ ] all keyword input lowercased
 - [ ] `aggregation=2`, `predicted_days<=91`, `shouldMock=false`
@@ -270,7 +269,8 @@ Before trusting a client, assert:
 - [ ] category IDs joined to the taxonomy for names; L1 names hardcoded
 - [ ] moment slugs validated **against that region's list**, apostrophes stripped
 - [ ] empty arrays handled as "no data", not errors
-- [ ] 429 backoff on `/metrics/`
+- [ ] 429 backoff on `/metrics/` — **no rate-limit headers exist**, back off blindly
+- [ ] `x-pinterest-rid` logged for debugging
 - [ ] multi-term responses matched **by term**, not by index
 
 ---
@@ -279,7 +279,7 @@ Before trusting a client, assert:
 
 | Limit | Value |
 |-------|-------|
-| Granularity | **Weekly only** (`aggregation=2`) |
+| Granularity | **Weekly everywhere** — EXCEPT `moment/metrics`, the only endpoint supporting `daily`/`monthly` |
 | Forecast horizon | **91 days** max |
 | Keyword rows | **100** max per `top_trends_filtered` call |
 | Typeahead | **10** results, `limit` ignored |
@@ -287,8 +287,8 @@ Before trusting a client, assert:
 | Spotlight | **5** trends |
 | Editorial | **6** items |
 | Top products | server-decided (33–50), `limit` ignored |
-| Trending categories | **40** total across all verticals (US) |
-| History | ~1 year back for `/metrics/`; further back OK on `top_trends_filtered` |
+| Trending categories | **40** total across all verticals (US); `limit` ceiling 522 |
+| History | **730 days** max window; `/metrics/` `end_date` limited to ~1 yr back (future → 400); `top_trends_filtered` accepts far-past `endDate` |
 | Pagination | **none anywhere** — all endpoints use `limit`-style caps |
 | Absolute volumes | **never exposed** — `total` is always 0 |
 

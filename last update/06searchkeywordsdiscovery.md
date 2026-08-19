@@ -273,6 +273,14 @@ Comma-separated **slugs**. Works on all 4 presets:
 | 3 Growing | spider man halloween costume, genie halloween costumes, unique… |
 | 4 Seasonal | toddler halloween costumes boy, creative halloween makeup |
 
+
+> 🚨 **CORRECTION (see Doc #7 §4.4): moment slugs are REGION-SPECIFIC.** The 13 below are the
+> **US** set. Other regions differ — CA adds `superbowl`/`canada day`/`diwali`/`lunar new year`,
+> DE adds `oktoberfest`/`karneval`/`spring`, FR adds `mardi gras`, IT adds
+> `carnevale martedì grasso` (non-ASCII!), BR adds `carnaval`, GB+IE adds `prom`.
+> **25 distinct slugs exist globally. JP and IN return ZERO moments.**
+> Always fetch the region's own list from `moment/available/{region}` — do not hardcode the US 13.
+
 ### The 13 valid slugs — all verified 200 ✅
 ```
 christmas · easter · fathers day · halloween · hanukkah · independence day ·
@@ -550,3 +558,172 @@ appears when you deliberately ask for it.
 - Age and gender change the *keyword list itself*, not just the ranking — this is a different
   question from the per-keyword demographics in Doc #4 (which tells you who searches a keyword
   you already picked).
+
+---
+---
+
+# ADDENDUM 4 — `keywordsToInclude` (the "Include keyword" box) in depth
+
+## G1. Multiple keywords = comma-separated
+
+Typing three keywords in the UI sends:
+```
+keywordsToInclude=mom,kid,family
+```
+Plain comma-separated in one param. **No practical limit** — 3, 8, 20 and 50 keywords all
+returned 200 with full results.
+
+## G2. ✅ Logic is OR, not AND
+
+Verified on all 50 returned rows for `mom,kid,family`:
+
+| Check | Count |
+|-------|-------|
+| rows matching **at least one** keyword | **50 / 50** |
+| rows matching **all three** | **0** |
+| rows matching **none** | **0** |
+
+→ **OR.** Every row contains at least one of your keywords. You cannot AND them in a single
+call — to AND, filter the results client-side.
+
+Sample for `mom,kid,family`: *stray kids · dinner ideas for family · family · mothers day
+crafts for kids · family photo outfits · fathers day crafts for kids · kids braided hairstyles*
+
+## G3. ⚠️ It is SUBSTRING matching, not word matching
+
+`mom` returns **`momo`** (the K-pop/character term) alongside *mom* and *gifts for mom*.
+`kid` returns **`stray kids`** (the band). The filter matches anywhere inside the term, so
+short keywords pull in unrelated results.
+
+→ Use longer, more distinctive stems (`nails` not `nail`; `family` not `fam`) if precision matters.
+
+## G4. 🚨 CASE SENSITIVE — lowercase only
+
+This is the biggest trap on this endpoint:
+
+| Input | Rows |
+|-------|------|
+| `nails` | **100** ✅ |
+| `Nails` | **0** ❌ |
+| `NAILS` | **0** ❌ |
+| `nAiLs` | **0** ❌ |
+
+**All non-lowercase forms return HTTP 200 with `values: []`** — no error, no warning, just an
+empty result that looks exactly like "no matching trends".
+
+> **Code agent: ALWAYS `.toLowerCase()` the keyword input before sending.** If you pass user
+> input verbatim, a user typing "Nails" gets a silent empty result and will conclude the
+> keyword isn't trending. This is a silent-failure bug waiting to happen.
+
+## G5. Other accepted forms
+
+| Input | Behaviour |
+|-------|-----------|
+| `dinner ideas` (phrase with space) | ✅ works — *dinner ideas, easy dinner ideas, quick dinner ideas* |
+| `mom, kid` (space after comma) | ✅ works — spaces around commas are trimmed |
+| `mom,` (trailing comma) | ✅ works — ignored |
+| `zzzqqq` (no match) | 200, `values: []` — **not** an error |
+
+## G6. Scope reminder
+
+`keywordsToInclude` filters **within the current preset's trending universe** — it is not a
+general keyword search. `drill` returns nothing on the default view because "drill" isn't in
+the US trending set, even though `drill` has real search volume (see Doc #3 §C9: Drills &
+screwdrivers is a top-growing *shopping* category).
+
+**For an arbitrary keyword, use `/metrics/` (Doc #4) instead** — that works for any term,
+trending or not.
+
+## G7. Quick reference
+
+```
+keywordsToInclude=mom,kid,family
+  • comma-separated, no count limit found (50 tested OK)
+  • OR logic (matches ANY)
+  • substring match (mom → momo)
+  • MUST be lowercase (case-sensitive, silent empty result otherwise)
+  • phrases with spaces allowed
+  • filters within the preset's trending set only
+```
+
+---
+---
+
+# ADDENDUM 5 — 🔮 The CRYSTAL BALL icon (predicted peaks)
+
+The page subtitle says *"Click the crystal ball for predicted peaks."* In the results table
+**some rows show a crystal-ball icon next to the sparkline and some don't.**
+
+## H1. ✅ What the icon means — proven
+
+**The crystal ball = that keyword has a forecast available** (`has_prediction: true` on
+`/metrics/`). Verified by cross-checking 9 keywords from one result page against `/metrics/`:
+
+| Keyword | Icon in table | `/metrics/` `has_prediction` |
+|---------|---------------|------------------------------|
+| family | 🔮 yes | **true** |
+| mothers day crafts for kids | 🔮 yes | **true** |
+| kids braided hairstyles | 🔮 yes | **true** |
+| crafts for kids | 🔮 yes | **true** |
+| stray kids | — no | **false** |
+| dinner ideas for family | — no | **false** |
+| fathers day crafts for kids | — no | **false** |
+| family photoshoot | — no | **false** |
+| kids hairstyles | — no | **false** |
+
+**9/9 correlation.** The icon is a 1:1 visual marker for `has_prediction`.
+
+## H2. Clicking it → the keyword dashboard with the forecast already on
+
+Clicking the crystal ball navigates to **`/detail/?terms=<keyword>`** (Doc #4) and lands with:
+- the **"Predict the future"** button present (it is absent for non-forecast keywords),
+- the chart already drawing **Historical volume** + dashed **Predicted median** + shaded
+  **Prediction bounds**, extending ~3 months past the end date,
+- the keyword chip itself carrying the crystal-ball icon,
+- Date range defaulted to **Past 1 year**.
+
+Disclaimer shown: *"Predictive trend ranges are estimates which utilize historical data to
+produce future forecasts. Trend predictions are not guaranteed…"*
+
+## H3. 🚨 The gap for the code agent
+
+**`/top_trends_filtered/` does NOT return the prediction flag.** Its rows contain only:
+```
+term · searchCount · normalizedCount · reverseRank · seasonality_score ·
+wow_change · mom_change · yoy_change · affinity
+```
+There is **no** `has_prediction` / `hasPrediction` field. The UI must be resolving it per row
+from another source.
+
+**And there is no server-side filter for it.** I probed `hasPrediction`, `withPrediction`,
+`predictionOnly`, `showPredicted`, `hasPredictions`, `predicted` — **all six were silently
+ignored** (identical results to baseline, 200 each). Unknown params don't error, they're
+dropped.
+
+### So to reproduce the crystal ball you must:
+```
+1. GET /top_trends_filtered/?…            → N keywords
+2. For each keyword:
+   GET /metrics/?terms=<kw>&…&predicted_days=91   → read has_prediction
+3. Keyword has a forecast ⇔ has_prediction === true
+```
+That's **1 + N requests**. Batch where possible (`/metrics/` accepts multiple `terms`) and
+respect rate limits — **`/metrics/` returned 429 under heavy probing.**
+
+> Related: the same `has_prediction` flag governs whether the "Predict the future" button
+> renders at all on `/detail/` (Doc #4 §A1). Requesting `predicted_days` does **not**
+> guarantee a forecast.
+
+## H4. For the MARKETER agent
+
+The crystal ball marks keywords Pinterest is willing to **forecast forward ~3 months**. That's
+the most valuable subset on the page: not just "this is trending now", but "here is where it's
+going and when it will peak."
+
+Practical use:
+- Scan the results for crystal-ball rows first — those are the ones you can plan a launch date
+  around.
+- Click through to see the predicted peak and its uncertainty band.
+- A keyword **without** a crystal ball isn't worse — Pinterest just has no reliable forecast for
+  it (often too new, too noisy, or non-seasonal). Judge those on WoW/MoM/YoY change instead.
+- Treat the band as a range, not a promise — Pinterest explicitly disclaims accuracy.

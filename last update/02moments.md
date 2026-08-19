@@ -10,7 +10,13 @@ Same two-audience split as before:
 
 There are **three** endpoints involved:
 
-1. **List** — `moment/available/{REGION}` → the 13 moments with their phase + peak dates.
+1. **List** — `moment/available/{REGION}` → that region's moments with their phase + peak dates.
+
+> 🚨 **CORRECTION (Doc #7 §4.4): moment lists are REGION-SPECIFIC.** US has 13; CA 12 (adds
+> `superbowl`, `canada day`, `diwali`, `lunar new year`), DE 12 (adds `oktoberfest`, `karneval`,
+> `spring`), FR 11 (adds `mardi gras`), IT 9 (adds `carnevale martedì grasso` — non-ASCII),
+> BR 9 (adds `carnaval`), GB+IE 11 (adds `prom`), AU+NZ 13, ES 8, MX 8.
+> **25 distinct slugs globally. JP and IN return ZERO.** Never hardcode the US list.
 2. **Metrics** — `moment/metrics/{REGION}` → one moment's demand curve + audience breakdown.
 3. **Keywords** — `/top_trends_filtered/` → the search terms driving that moment.
 
