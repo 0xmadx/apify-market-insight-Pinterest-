@@ -363,7 +363,7 @@ GET /top_trends_filtered/?country=US&endDate=2026-08-14&trendsPreset=3
 | `keywordsToInclude` | comma list, **OR** logic, **substring**, **lowercase only** |
 | **`lookbackWindow`** | ⚠️ **INERT — no effect** (7 values → identical results) |
 | **`rankingMethod`** | ⚠️ **INERT — no effect** (even `"abc"` returns 200 + same rows) |
-| `endDate` | accepts **far-past** dates (unlike §3.13) — this is the seasonal time machine |
+| `endDate` | reaches **~365 days back** — the seasonal time machine, but a bounded one. ⚠️ **CORRECTED 2026-08-19**: this row previously said "far-past". Binary-searched from a 2026-08-14 baseline: **-365d returns terms, -400d returns HTTP 200 with an EMPTY LIST** — not a 400. A silent empty reads as "nothing was trending that week", so `vocab.history_date()` refuses beyond the cap instead. ⚠️ Pinterest also **SNAPS the date to its own week boundary** and reports the snapped value in the response: asked `2026-02-15` → answered `2026-02-13`; asked `2025-12-01` → answered `2025-11-28`. Read `endDate` off the RESPONSE, not your request. |
 
 Returns `{endDate, values:[{term, searchCount, normalizedCount, reverseRank,
 seasonality_score, wow_change:{value,index}, mom_change, yoy_change, affinity}]}`
@@ -845,7 +845,7 @@ Wrong form → **400**.
 | 5 | **Silent empty ≠ error** | L2/L3 in `parent_product_categories`; `SAVE` on `top_products`; wrong-case keywords — all 200 with empty payloads |
 | 6 | **Two `demographics` endpoints** | §3.9 (category) vs §3.14 (keyword) — same field names, opposite answers |
 | 7 | **`shouldMock=true` = fake data** | 2019 dates, all zeros, HTTP 200 |
-| 8 | **`end_date` bounds vary** | `/metrics/` rejects future + >1yr past; `/top_trends_filtered/` accepts far-past |
+| 8 | **`end_date` bounds vary, and one fails silently** | `/metrics/` rejects future + >1yr past with a 400; `/top_trends_filtered/` also stops at ~365d but answers **200 + empty list**, and snaps your date to its week boundary |
 | 9 | **Everything is indexed** | `count`, `searchCount`, `normalizedCount`, `normal_counts` are peak-normalised, **not volumes**. `total` is 0 |
 | 10 | **Rate limiting** | `/metrics/` returned **429** under load. Back off; batch `terms` |
 | 11 | **Multi-term shrinkage** | 10 terms → 9 returned; order not preserved. Never assume `len(resp)==len(terms)` |

@@ -69,6 +69,9 @@ def _shopping(client, task):
         region=task.get("region", "US"),
         event=task.get("event", "OUTBOUND_CLICK"),
         drill_top_n=int(task.get("drillTopN", 3)),
+        end_date=task.get("endDate") or None,
+        chart_days=int(task.get("chartDays", 180)),
+        predicted_days=int(task.get("predictedDays", 28)),
         enrich_top_n=int(task.get("enrichTopN", 0) or 0),
         age_buckets=task.get("shoppingAges") or None,
         genders=task.get("shoppingGenders") or None,
@@ -95,6 +98,7 @@ def _keywords(client, task):
         region=task.get("region", "US"),
         days=int(task.get("days", 365)),
         predicted_days=int(task.get("predictedDays", 91)),
+        end_date=task.get("endDate") or None,
     )
     mode = task.get("mode", "discover")
     for record in scraper.run(
@@ -127,6 +131,7 @@ def _moments(client, task):
         lookback_days=int(task.get("lookbackDays", 365)),
         predicted_days=int(task.get("predictedDays", 91)),
         interest_ids=task.get("interestIds") or None,
+        end_date=task.get("endDate") or None,
     )
     for record in scraper.run(
             phases=tuple(task.get("phases") or ("rising", "approaching")),
@@ -141,6 +146,7 @@ def _radar(client, task):
         client,
         region=task.get("region", "US"),
         interest=task.get("interest") or None,
+        end_date=task.get("endDate") or None,
     )
     for record in scraper.run(
             include_spotlight=task.get("includeSpotlight", True),

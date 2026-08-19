@@ -196,6 +196,59 @@ def main():
     except vocab.InvalidParam:
         check("an unknown age band is refused, listing the valid ones", True)
 
+    print("\nTIME TRAVEL - asking about a PAST date")
+    from src import vocab as _v
+    _, ct = drive({"operation": "keywords", "mode": "discover",
+                   "endDate": "2025-10-01", "includeRelated": False,
+                   "includeImages": False})
+    disc = next(v for p_, v in ct.all_calls if p_ == "/top_trends_filtered/")
+    check("customer endDate reaches discovery (the seasonal time machine)",
+          disc["endDate"] == "2025-10-01", disc["endDate"])
+    _, cs2 = drive({"operation": "shopping", "verticals": ["1042"],
+                    "drillTopN": 0, "endDate": "2026-06-01", "chartDays": 60})
+    ts2 = next(v for p_, v in cs2.all_calls if "/top/" in p_)
+    check("shopping honours a past endDate", ts2["end_date"] == "2026-06-01")
+    m2 = next(v for p_, v in cs2.all_calls if "/metrics/" in p_)
+    check("chartDays is no longer hardcoded at 180", m2["days"] == 60, m2["days"])
+    recs, _ = drive({"operation": "radar", "endDate": "2026-07-01"})
+    check("the record's _meta.end_date reports the date ASKED for",
+          recs[0].data["_meta"]["end_date"] == "2026-07-01")
+    check("omitting endDate still uses Pinterest's newest settled date",
+          drive({"operation": "radar"})[0][0].data["_meta"]["end_date"] == "2026-08-14")
+    for bad, ep, why in [("2026-12-01", "discover", "after the newest settled date"),
+                         ("2024-01-01", "metrics", "past the ~1 year limit"),
+                         ("01/10/2025", "discover", "not YYYY-MM-DD")]:
+        try:
+            _v.history_date(bad, "2026-08-14", endpoint=ep)
+            check(f"endDate {bad} refused ({why})", False)
+        except _v.InvalidParam:
+            check(f"endDate {bad} refused - {why}", True)
+    # Measured 2026-08-19, correcting doc S3.12's "far-past" claim: -365d
+    # returns terms, -400d returns 200 with an EMPTY LIST. A silent empty reads
+    # as "nothing was trending", so the cap is enforced rather than discovered.
+    check("history reaches ~365d everywhere - discovery is NOT unbounded",
+          _v.HISTORY_LIMIT_DAYS["discover"] == 365
+          and _v.HISTORY_LIMIT_DAYS["metrics"] == 365)
+    check("-365d is allowed",
+          _v.history_date("2025-08-14", "2026-08-14", endpoint="discover")
+          == "2025-08-14")
+    try:
+        _v.history_date("2025-07-09", "2026-08-14", endpoint="discover")
+        check("-400d refused BEFORE the wire (it would answer 200 + empty)", False)
+    except _v.InvalidParam as exc:
+        check("-400d refused before the wire, naming the silent-empty risk",
+              "EMPTY LIST" in str(exc) or "empty" in str(exc).lower())
+    _, csnap = drive({"operation": "keywords", "mode": "discover",
+                      "endDate": "2026-08-01", "includeRelated": False,
+                      "includeImages": False})
+    rsnap = [r for r in drive({"operation": "keywords", "mode": "discover",
+                               "endDate": "2026-08-01", "includeRelated": False,
+                               "includeImages": False})[0]]
+    if rsnap:
+        m = rsnap[0].data["_meta"]
+        check("records carry BOTH the date asked for and the one Pinterest used",
+              m.get("end_date_requested") == "2026-08-01" and "end_date" in m)
+
     print("\nthe form and the code cannot drift")
     schema = json.loads(pathlib.Path(".actor/input_schema.json")
                         .read_text(encoding="utf-8"))["properties"]

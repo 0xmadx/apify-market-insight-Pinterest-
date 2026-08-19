@@ -17,14 +17,17 @@ from .transport import TrendsAPIError
 
 
 class RadarScraper:
-    def __init__(self, client, region="US", interest=None, log=print):
+    def __init__(self, client, region="US", interest=None, end_date=None,
+                 log=print):
         self.client = client
         self.region = vocab.region(region)
         self.interest = str(interest) if interest else None
+        self.requested_end_date = end_date
         self.log = log
 
     def run(self, include_spotlight=True, include_editorial=True):
-        end_date = self.client.bootstrap()
+        end_date = vocab.history_date(self.requested_end_date,
+                                      self.client.bootstrap())
 
         if include_spotlight:
             yield from self._spotlight(end_date)

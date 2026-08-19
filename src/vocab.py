@@ -353,3 +353,68 @@ def end_date(value):
             "end_date is required and must come from /latest_available_date/. "
             "today() is a bug: the data lags and future dates 400.")
     return value
+
+
+# How far back each endpoint will actually look. These DIFFER, which is the
+# whole reason this is a function and not one constant:
+#
+#   top_trends_filtered   ~365 days. ⚠️ MEASURED 2026-08-19, and it CORRECTS
+#                         doc #7 §3.12, which calls this "far-past" and "the
+#                         seasonal time machine". Binary-searched from a
+#                         2026-08-14 baseline: -365d returns terms, -400d
+#                         returns **HTTP 200 with an empty list**. Not an
+#                         error — a silent empty, which reads as "nothing was
+#                         trending that week". Exactly the failure this
+#                         codebase exists to prevent, so it is refused here.
+#   /metrics/             future → 400, older than ~1 year → 400.
+#                         Measured: 2026-01-01 ok, 2025-08-01 rejected.
+#   the Style A endpoints tolerate the same window as the data they chart.
+#
+# Style B returns its 400s with an EMPTY BODY, so a customer who guesses gets no
+# reason at all. Hence refusing here, with the endpoint named.
+HISTORY_LIMIT_DAYS = {"discover": 365, "metrics": 365, "shopping": 730,
+                      "moments": 730}
+
+
+def history_date(value, latest, *, endpoint="discover"):
+    """Validate a customer-supplied endDate against one endpoint's real window.
+
+    `latest` is /latest_available_date/ — the newest settled date. Anything
+    after it is a future date to Pinterest even if it is in your past.
+    """
+    import datetime as _dt
+
+    if not value:
+        return latest
+    try:
+        asked = _dt.date.fromisoformat(str(value))
+    except ValueError:
+        raise InvalidParam(
+            f"endDate={value!r} must be YYYY-MM-DD") from None
+    try:
+        newest = _dt.date.fromisoformat(str(latest))
+    except (ValueError, TypeError):
+        return str(value)
+
+    if asked > newest:
+        raise InvalidParam(
+            f"endDate={asked} is after Pinterest's newest settled date "
+            f"({newest}) — a future date returns 400. Their data lags a few "
+            f"days; omit endDate to get the newest.")
+
+    cap = HISTORY_LIMIT_DAYS.get(endpoint)
+    if cap is not None and (newest - asked).days > cap:
+        raise InvalidParam(
+            f"endDate={asked} is {(newest - asked).days} days back; the "
+            f"{endpoint} endpoint rejects anything past ~{cap} days and Style B "
+            f"rejects it. Note that discovery answers an out-of-range date "
+            f"with HTTP 200 and an EMPTY LIST rather than an error — which "
+            f"would read as 'nothing was trending', so it is refused here "
+            f"instead.")
+    return str(asked)
+
+
+# ⚠️ Pinterest SNAPS a requested date to its own week boundary and reports the
+# snapped value back. Measured: asked 2026-02-15 → answered 2026-02-13; asked
+# 2025-12-01 → answered 2025-11-28. So the date in the data is not necessarily
+# the date you asked for, and records carry both.

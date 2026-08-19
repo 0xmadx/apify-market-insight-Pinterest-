@@ -29,6 +29,12 @@
       "default": 0,
       "minimum": 0
     },
+    "endDate": {
+      "title": "Point in time",
+      "type": "string",
+      "editor": "textfield",
+      "description": "YYYY-MM-DD. Ask what things looked like on a PAST date instead of now — 'what was trending last October'. Empty = Pinterest's newest settled data (which already lags ~4 days). How far back you can go differs by operation: keyword DISCOVERY reaches years back, but keyword enrichment, shopping and moments reject roughly a year or more and return that rejection with an empty body, so it is refused here with the reason instead."
+    },
     "verticals": {
       "title": "[shopping] Verticals",
       "type": "array",
@@ -65,6 +71,12 @@
       "default": 0,
       "minimum": 0,
       "description": "Per drilled category, fetch real price, stock, free-shipping threshold and the OUTBOUND MERCHANT URL for this many top products. Costs 1 extra request PER PRODUCT (no batch form exists), so start small. 0 = off."
+    },
+    "chartDays": {
+      "title": "[shopping] Chart window (days)",
+      "type": "integer",
+      "default": 180,
+      "description": "How much history each category's performance chart covers. 60 matches Pinterest's table, 180 their detail page. Max 730."
     },
     "shoppingAges": {
       "title": "[shopping] Age filter",

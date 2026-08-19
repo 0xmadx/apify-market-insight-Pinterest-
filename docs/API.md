@@ -204,7 +204,8 @@ One record per row. Every record carries `_meta`.
 
 | Field | Meaning |
 |---|---|
-| `end_date` | **Pinterest's settled date, not the run date.** Data lags ~4 days |
+| `end_date` | **Pinterest's settled date, not the run date.** Data lags ~4 days. When you pass `endDate`, this is the date Pinterest **actually used** — it snaps to its own week boundary (asked `2026-02-15` → answered `2026-02-13`) |
+| `end_date_requested` | what you asked for, when it differs from the above |
 | `normalization_scope` | what the relative numbers are relative to. **Different scope ⇒ not comparable** |
 | `basis` · `audience_basis` · `chart_basis` · `series_basis` | `measured`, `derived`, `curated`, or `null` (not fetched) |
 | `audience_event` | which action the audience was measured under — the same category has a very different audience under `OUTBOUND_CLICK` vs `SAVE` |
@@ -248,7 +249,6 @@ cost grows linearly with your request:
 ---
 
 ## Stability
-
 This sits on a reverse-engineered wire with no contract. Two moving parts:
 
 - **`queryHash`** (moment demographics) is a persisted-query hash and rotates

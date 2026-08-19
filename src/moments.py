@@ -30,7 +30,7 @@ ACTIONABLE = ("rising", "approaching")
 class MomentScraper:
     def __init__(self, client, region="US", aggregation="daily",
                  lookback_days=365, predicted_days=91, keywords_per_moment=25,
-                 interest_ids=None, log=print):
+                 interest_ids=None, end_date=None, log=print):
         self.client = client
         self.region = vocab.region(region, capability="moments")
         if aggregation not in ("daily", "weekly", "monthly"):
@@ -58,12 +58,15 @@ class MomentScraper:
         # cell, and 13 moments x 24 interests is 312 calls on a shared
         # session.
         self.interest_ids = [str(i) for i in (interest_ids or [])]
+        self.requested_end_date = end_date
         self.log = log
 
     # ------------------------------------------------------------- the walk
 
     def run(self, phases=ACTIONABLE, drill=True, with_audience=True):
-        end_date = self.client.bootstrap()
+        end_date = vocab.history_date(self.requested_end_date,
+                                      self.client.bootstrap(),
+                                      endpoint="moments")
 
         moments = parsers.parse_moments_list(self.client.style_a(
             f"/ads/v4/trends/moment/available/{self.region}",

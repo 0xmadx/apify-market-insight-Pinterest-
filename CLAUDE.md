@@ -75,6 +75,13 @@ Everything is a module run from the repo root. The venv is local to this repo.
   days 730 · interest_limit 24 · aggregation=2 only (except moment/metrics:
   the API's ONLY daily-granularity endpoint).
 - Multi-term responses silently drop no-data terms — match by term, not index.
+- **History reaches ~365 days and no further** — measured, and it corrects doc
+  #7 §3.12's "far-past" claim. Past that, discovery returns **200 + an empty
+  list**, not a 400: a silent empty that reads as "nothing was trending".
+  `vocab.history_date()` refuses it with the reason.
+- **Pinterest snaps `endDate` to its own week boundary** and reports the snapped
+  value: asked 2026-02-15 → answered 2026-02-13. Records carry `_meta.end_date`
+  (what Pinterest used) and `_meta.end_date_requested` (what was asked).
 - **32 regions**, not the 10 on the first line of §4.1's wrapped code block.
   `top_products`/`editorial` = US/CA/GB+IE only; **JP and IN have 0 moments**.
 - **Moment slugs are region-specific** (25 globally, 13 US) and must be

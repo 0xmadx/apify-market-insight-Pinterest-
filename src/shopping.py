@@ -37,7 +37,7 @@ class ShoppingScraper:
 
     def __init__(self, client, region="US", event="OUTBOUND_CLICK",
                  drill_top_n=3, chart_days=180, predicted_days=28,
-                 enrich_top_n=0, age_buckets=None, genders=None,
+                 enrich_top_n=0, end_date=None, age_buckets=None, genders=None,
                  ranking_method="GROWTH", order_by="RELATIVE_VOLUME",
                  log=print):
         self.client = client
@@ -46,6 +46,7 @@ class ShoppingScraper:
         self.drill_top_n = drill_top_n
         # The detail page's own defaults: 180 days with a 28-day forecast is
         # what produces the dashed prediction band. The table uses 60/0.
+        self.requested_end_date = end_date
         self.chart_days = vocab.ceiling("days", chart_days)
         self.predicted_days = vocab.ceiling("predicted_days", predicted_days)
         # Price + outbound merchant URL cost ONE REQUEST PER PIN — there is no
@@ -93,7 +94,9 @@ class ShoppingScraper:
         Each record is self-contained: a customer can act on it without
         re-joining anything.
         """
-        end_date = self.client.bootstrap()
+        end_date = vocab.history_date(self.requested_end_date,
+                                      self.client.bootstrap(),
+                                      endpoint="shopping")
         taxonomy = self.taxonomy()
         targets = [str(v) for v in (verticals or vocab.VERTICALS)]
 

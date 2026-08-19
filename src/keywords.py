@@ -25,10 +25,14 @@ from .transport import TrendsAPIError
 
 class KeywordScraper:
     def __init__(self, client, region="US", days=365, predicted_days=91,
-                 log=print):
+                 end_date=None, log=print):
         self.client = client
         self.region = vocab.region(region)
         self.days = vocab.ceiling("days", days)
+        # A customer-chosen point in time, or None for "the newest settled
+        # data". Discovery reaches far back; /metrics/ does not, so the two are
+        # validated separately at the point of use.
+        self.requested_end_date = end_date
         self.predicted_days = vocab.ceiling("predicted_days", predicted_days)
         self.log = log
 
@@ -43,7 +47,11 @@ class KeywordScraper:
             raise vocab.InvalidParam(f"trendsPreset={preset} — only 1-4 exist")
         params = {
             "country": self.region,
-            "endDate": vocab.end_date(self.client.bootstrap()),
+            # Discovery is the seasonal time machine — far-past dates work
+            # here and nowhere else.
+            "endDate": vocab.history_date(self.requested_end_date,
+                                          self.client.bootstrap(),
+                                          endpoint="discover"),
             "trendsPreset": preset,
             "numTermsToReturn": vocab.ceiling("num_terms", num_terms),
             "shouldMock": "false",
@@ -84,11 +92,20 @@ class KeywordScraper:
     def run(self, mode="discover", terms=None, include_related=True,
             include_images=True, max_terms=None, **discover_kwargs):
         """Yield one enriched record per keyword."""
-        end_date = self.client.bootstrap()
+        # The enrichment endpoints (/metrics/, /demographics/) reject dates
+        # more than ~1 year back, unlike discovery. Validated here so a customer
+        # asking for 2019 gets a reason instead of an empty 400 body.
+        end_date = vocab.history_date(self.requested_end_date,
+                                      self.client.bootstrap(),
+                                      endpoint="metrics")
 
         discovery_rows = {}
+        # Pinterest snaps a requested date to its week boundary and reports the
+        # snapped value. Carry what it ACTUALLY used, not only what was asked.
+        effective_end_date = end_date
         if mode == "discover":
             found = self.discover(**discover_kwargs)
+            effective_end_date = found.get("end_date") or end_date
             discovery_rows = {r["term"]: r for r in found["terms"]}
             term_list = list(discovery_rows)
         elif mode == "seed":
@@ -148,7 +165,9 @@ class KeywordScraper:
                 "pin_images": images.get(term),
 
                 "_meta": {
-                    "end_date": end_date,
+                    # What Pinterest used — it snaps to its own week boundary.
+                    "end_date": effective_end_date,
+                    "end_date_requested": self.requested_end_date,
                     "mode": mode,
                     "basis": "measured" if metric else None,
                     # ONE metrics call, group-normalised → every series in this

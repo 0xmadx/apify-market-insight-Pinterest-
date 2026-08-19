@@ -151,6 +151,34 @@ down by interest — including combinations Pinterest's own dropdown does not
 offer. Halloween × Food and Drinks is not in their menu and returns a full,
 valid, very different audience (18-24 at 0.19 against 0.43 unfiltered).
 
+### "What was trending last October?" — asking about the past
+
+Every operation takes `endDate`. Leave it out for the newest data; set it to
+look back:
+
+```json
+{ "operation": "keywords", "mode": "discover", "endDate": "2025-10-15" }
+```
+
+Measured, same query, different dates:
+
+| `endDate` | what was growing |
+|---|---|
+| *(omitted — now)* | sterling point tv show · end of august nails |
+| `2025-12-01` | christmas nails · thanksgiving outfit · thanksgiving recipes |
+| `2025-10-15` | fall nails · halloween nails · fall outfits |
+
+That is how you plan a season: look at what took off this time last year, and
+you have your calendar.
+
+**Two things about dates.** History reaches **about 365 days** and no further —
+past that Pinterest answers with an empty list rather than an error, so we
+refuse the request and tell you why instead of handing you a silent nothing.
+And Pinterest **snaps your date to its own week boundary** — ask for
+`2026-02-15` and the data is for `2026-02-13`. Records carry both:
+`_meta.end_date` is what Pinterest used, `_meta.end_date_requested` is what you
+asked for.
+
 ### "Just tell me what's hot" — zero input
 
 ```json
