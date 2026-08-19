@@ -334,6 +334,12 @@ GET /metrics/?terms=nails&country=US&end_date=2026-08-14&days=365
 Returns `[{term, has_prediction, growth_rates:{wow_change,mom_change,yoy_change},
 counts:[{date,count,normalizedCount,predictedUpper/LowerBoundNormalizedCount}]}]`
 
+> ⚠️ **`/metrics/` returns BOTH spellings: `has_prediction` AND `hasPrediction`**, with the
+> same value (verified on the wire 2026-08-18, `terms=nails&country=US`). §3.15 returns only
+> the camelCase `hasPrediction`. Read whichever you like here, but a parser written against
+> §3.15's camelCase will *silently* work on §3.13 and then break the day Pinterest drops the
+> duplicate. Pick one spelling and normalise at the parser.
+
 **`has_prediction`** = the 🔮 crystal ball. Fixed per **(keyword, region)** — never changes with
 date params. **Appears US-only** (CA/GB+IE/DE/FR/ES all false, incl. Canada's own top keywords).
 `yoy_change` is frequently `null`.
