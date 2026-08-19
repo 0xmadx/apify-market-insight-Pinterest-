@@ -129,7 +129,7 @@ docs/                      product docs + the reverse-engineering corpus
 | [docs/API.md](docs/API.md) | ⭐ **the reference** — endpoint, all 45 inputs, every output field, errors, cost |
 | [docs/CUSTOMER-GUIDE.md](docs/CUSTOMER-GUIDE.md) | ⭐ **what a buyer reads** — the four questions, worked examples, how to read the numbers honestly |
 | `api_sim.py` | a local Apify-shaped API + browser playground: `python api_sim.py` → http://localhost:8080 |
-| [docs/DEPLOY.md](docs/DEPLOY.md) | the Apify runbook — the one open decision, secrets, measured cost per run, and what a customer must be told |
+| [docs/DEPLOY.md](docs/DEPLOY.md) | the Apify runbook — the one open decision, secrets, measured cost per run, what a customer must be told, and **§5 the standing update loop** (how a change reaches production, and why `buildTag: latest` means a push is immediate) |
 | [docs/TEST-SCENARIOS.md](docs/TEST-SCENARIOS.md) | acceptance scenarios (A1…G2) — the definition of done for the coding agent |
 | [probes/RESULTS.md](probes/RESULTS.md) | live probe: 16/16 endpoints verified, raw responses in `probes/results/` |
 | [CLAUDE.md](CLAUDE.md) | working rules for any agent in this repo |

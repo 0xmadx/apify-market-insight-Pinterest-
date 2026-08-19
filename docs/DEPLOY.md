@@ -110,6 +110,68 @@ Then `shopping` with a small cap:
 
 ---
 
+## 5. Updating it later — the standing loop
+
+**Deployment goes one direction only.** There is no editing on Apify. This repo
+is the source of truth; the deployed actor is a *snapshot* of it. Every change,
+forever, is the same loop:
+
+```
+edit locally  →  release gate  →  apify push  →  smoke the cloud run
+```
+
+```bash
+apify push        # uploads local source, Apify rebuilds the image
+```
+
+**Never push without running the gate below** (§ Before every release). It is
+the only thing between a local edit and every customer's next run — and because
+of the build tag, that next run may be minutes away.
+
+### The build tag is the part that bites
+
+`.actor/actor.json` carries `"buildTag": "latest"`. That means **every push
+immediately changes what existing customers get**: a saved task pointing at
+`latest` picks up the new build on its next run, with no action from them and
+no notice.
+
+| Change | What to do |
+|---|---|
+| Bug fix, new output field, new optional input | push to `latest` — additive, nothing breaks |
+| **Renamed or removed field, changed default, removed operation** | bump `version` FIRST so customers on the old version keep working |
+
+Additive is the common case and is safe. The test to apply: *could a customer's
+existing code break if this landed silently tonight?* If yes, it is a version
+bump, not a push.
+
+Currently at `version: 1.0`.
+
+### What never travels with the code
+
+`.dockerignore` excludes `.env`, so **`REDIS_URL` is not in the image** —
+verified by listing the built image, not by reading the file. It exists only as
+an Apify secret (§3). The deployed actor and a local run read the same vault,
+but the credential reaches them by different paths, on purpose.
+
+`docs/`, `probes/` and `tests/` are excluded too. The image holds `src/`,
+`.actor/`, `requirements.txt` and the Dockerfile — nothing else.
+
+### The one thing that differs in the cloud
+
+A local run reaches Redis at `localhost:6379`; a Docker run reaches it at
+`host.docker.internal`. **An Apify container can reach neither.** That is the §1
+blocker, and it is the only reason a cloud run can fail while every local check
+passes. If a deployed run hangs or reports an empty vault, suspect `REDIS_URL`
+before suspecting the code.
+
+### After any wire-affecting change
+
+This sits on a reverse-engineered API. If a push changes parsers, `vocab.py`
+ceilings, or anything under `src/transport.py`, re-run the probes as well as the
+tests — the suites read stored fixtures, and only the probes ask Pinterest.
+
+---
+
 ## What a customer must understand before buying
 
 These are product facts, not deployment details, and they belong in the listing

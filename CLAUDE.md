@@ -118,6 +118,27 @@ freshness layer (response cache per-kind TTL, seen-set with content
 fingerprints, mark-after-push ordering) · actor skeleton (`src/main.py`) ·
 endpoint probe harness (16/16 OK on 2026-08-18).
 
+## Shipping a change
+
+Deployment goes **one direction only** — this repo is the source of truth, the
+deployed actor is a snapshot of it, and there is no editing on Apify:
+
+```
+edit locally  →  release gate  →  apify push  →  smoke the cloud run
+```
+
+`.actor/actor.json` carries `buildTag: latest`, so **a push immediately changes
+what existing customers get**. Additive changes (new field, new optional input,
+bug fix) are safe on `latest`; a renamed field, changed default or removed
+operation is a `version` bump first. The test: *could a customer's existing code
+break if this landed silently tonight?*
+
+The gate is `docs/DEPLOY.md` § Before every release — and run it in that order,
+because `probe_endpoints` rewrites the fixtures the suites then read. Full
+reasoning in `docs/DEPLOY.md` §5.
+
+---
+
 **Built + verified live:** the graph layer (`transport.py`, `vocab.py`,
 `parsers.py`) and five traversals as one actor with an `operation` input —
 `shopping`, `keywords`, `moments`, `radar`, and `crawl`, which follows the
