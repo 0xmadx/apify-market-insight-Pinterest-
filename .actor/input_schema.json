@@ -226,7 +226,7 @@
     "includeAudience": {
       "title": "[moments] Derived audience",
       "type": "boolean",
-      "description": "Aggregate the moment's keyword audiences (labelled derived - Pinterest's own moment chart is not reachable via REST).",
+      "description": "Age + gender for each drilled moment — the same figures Pinterest's own \"Who's driving this moment\" chart draws (measured). If their persisted query rotates, this falls back to an aggregate of the moment's keyword audiences and the record says so in _meta.audience_basis.",
       "default": true
     },
     "interestIds": {
