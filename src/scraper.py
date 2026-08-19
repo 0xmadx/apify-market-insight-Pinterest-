@@ -1,58 +1,59 @@
-"""Where the Pinterest logic lands. Deliberately empty.
+"""Dispatch: actor input -> a traversal -> Records.
 
-The operator is supplying the endpoint specs (the API notes and .md files)
-separately. Nothing here should guess at a URL, a parameter name or a response
-key before those arrive — a wrong-but-plausible endpoint costs more than no
-endpoint, because it fails like a site change rather than like a mistake.
-
-The contract the rest of the actor depends on:
+Each traversal is a packaged walk of the endpoint graph (docs/ARCHITECTURE.md).
+Only `shopping` exists so far; the other three actors named in the architecture
+land here the same way.
 
     run(ctx, task) -> iterable of Record
 
-  ctx   a Context (src/context.py): ctx.get() for cached fetches, ctx.seen() to
-        skip work, ctx.watermark() for where the last run stopped
-  task  the actor input dict
-  yield Record(scope=…, id=…, data={…}) — `data` is what lands in the dataset
-
-Sketch:
-
-    from .records import Record
-
-    METRICS = ("saves", "impressions")     # what "changed" means for a pin
-
-    def run(ctx, task):
-        for term in task.get("queries", []):
-            r = ctx.get("search", SEARCH_URL, params={...})
-            if r.status_code != 200:
-                continue
-            for raw in parse_results(r.json()):        # a named parser, always
-                pin_id = raw.get("id")
-                if ctx.seen("pins", pin_id, raw, fields=METRICS):
-                    continue                           # skips the detail fetch
-                yield Record(scope="pins", id=pin_id, data=raw, fields=METRICS)
-
-Rules that carry over from the parent repo and are not negotiable:
-
-  1. Never index a raw response key. Parse through a named function, and diff the
-     keys the response actually has against the keys the code reads. Seven
-     modules there fetched correct data and read None out of it for months.
-  2. Absent is not zero. A field that did not render is None, not 0. Let the
-     consumer decide at the point of use.
-  3. A failed fetch is never cached and never stored as 0. `ctx.get` already
-     refuses to cache anything that is not a usable 200 with a body.
-
-`session.classify(response)` separates auth_expired from rate_limited from
-blocked from malformed — use it rather than treating every non-200 alike. A
-`malformed` verdict means our request was wrong; never evict a profile over one.
+Rules that carry over and are not negotiable (see the pinterest-trends-coder
+skill): named parsers only, absent is not zero, every relative number carries
+its normalisation scope, and nothing is marked seen until it has been pushed.
 """
+from .records import Record
+from .shopping import ShoppingScraper
+from .transport import TrendsClient
+
+# What counts as "this record changed" for the seen-set. Deliberately the
+# movement fields: a category re-emits when its growth or rank actually moves,
+# not when Pinterest reorders a list or adds a field nothing reads.
+SHOPPING_FIELDS = ("rank_in_vertical", "growth", "summary")
 
 
-class NotImplementedYet(RuntimeError):
+class UnknownOperation(ValueError):
     pass
 
 
 def run(ctx, task):
-    raise NotImplementedYet(
-        "Pinterest endpoint logic has not been added yet. Drop the endpoint specs "
-        "in and implement run() to yield Record objects."
+    operation = (task.get("operation") or "shopping").lower()
+    if operation != "shopping":
+        raise UnknownOperation(
+            f"operation={operation!r} is not implemented yet. "
+            f"Available: shopping.")
+    return _shopping(ctx, task)
+
+
+def _shopping(ctx, task):
+    client = TrendsClient(ctx.session)
+    scraper = ShoppingScraper(
+        client,
+        region=task.get("region", "US"),
+        event=task.get("event", "OUTBOUND_CLICK"),
+        drill_top_n=int(task.get("drillTopN", 3)),
     )
+
+    verticals = task.get("verticals") or None
+    max_records = int(task.get("maxRecords", 0) or 0)
+    emitted = 0
+
+    for record in scraper.run(verticals=verticals,
+                              with_products=task.get("includeProducts", True)):
+        yield Record(
+            scope=f"shopping:{record['region']}:{record['vertical_id']}",
+            id=record["category_id"],
+            data=record,
+            fields=SHOPPING_FIELDS,
+        )
+        emitted += 1
+        if max_records and emitted >= max_records:
+            return
