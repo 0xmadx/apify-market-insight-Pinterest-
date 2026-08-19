@@ -261,6 +261,42 @@ logged as opportunities; vanished keys that a parser reads are failures.
 
 ---
 
+## COVERAGE LEDGER (updated 2026-08-19 — the build is done)
+
+157 checks across four suites, every one tagged with its scenario id:
+
+| Suite | Checks | Covers |
+|---|---|---|
+| `tests/test_incremental.py` | 20 | freshness layer (cache/seen-set/watermark — F3's cache honesty) |
+| `tests/test_shopping_api.py` | 54 | B1–B5, C1–C5, C7, C2b (vertical-name guard), F (event/demographics) |
+| `tests/test_shopping_traversal.py` | 33 | E2 end-to-end incl. budget, A4, D3–D5 |
+| `tests/test_full_project.py` | 50 | B1–B6, C4, D1–D5, E1, E3, E4, F1/F3/F6, H2/H3 |
+
+**Covered live instead of offline:** A3 (the PWS-handler 403 → `malformed`) and
+A5's no-rate-limit-headers fact are exercised by `probes/probe_endpoints.py` and
+`probes/param_matrix.py` (37 cases) rather than unit tests — G1 runs them
+before any release.
+
+**Deliberately not yet implemented:**
+- **A1/A2 as standalone units** — the envelope unwrap and error surface are
+  exercised through every traversal test and every probe; standalone units add
+  little until transport changes.
+- **C6** (two age/gender schemes from one shared input) — `vocab.py` carries
+  both schemes and `keywords.py` maps the keyword codes; the shopping side
+  currently passes enum lists through untranslated, so the *shared-input* mapper
+  C6 describes does not exist yet. Build it when a customer-facing input needs
+  one age vocabulary across operations.
+- **F1/F2/F4 (actor-level queue/lease/budget)** and **E-scenario live budget
+  asserts** — Phase 4 (deployment) work: they test the actor under Apify
+  conditions, not the traversals.
+- **G2** shape-drift automation — run manually today (`probe_endpoints` then
+  `inventory`); wire into CI at deploy time.
+
+Scenario text below is kept as written — it is the contract the ledger is
+audited against.
+
+---
+
 ### Priorities for the coding agent
 
 Build order that keeps every commit shippable:

@@ -1,11 +1,13 @@
 # ARCHITECTURE — the endpoint graph and the product built on it
 
 > This document is the bridge between the wire reference
-> ([07-API-REFERENCE.md](07-API-REFERENCE.md)) and the code that does not exist
-> yet. It answers three questions the endpoint docs cannot: **how the endpoints
-> link**, **what a customer actually buys**, and **how a run flows through the
-> session layer that is already built**. Written 2026-08-19, after all 16
-> probeable endpoints were verified live ([../probes/RESULTS.md](../probes/RESULTS.md)).
+> ([07-API-REFERENCE.md](07-API-REFERENCE.md)) and the code — it answers three
+> questions the endpoint docs cannot: **how the endpoints link**, **what a
+> customer actually buys**, and **how a run flows through the layers**. Written
+> 2026-08-19 as the design; **the design is now implemented** — all four layers
+> built (§3.2), all four operations verified live, 157 offline checks. Where
+> this doc and `src/` disagree, that is a bug in one of them: fix it in the
+> same commit, the same rule as wire-vs-doc.
 
 ---
 
@@ -30,7 +32,7 @@ shopping/top (vertical 1250)      "Mascaras is trending, id 1311"
             └► has_prediction?    🔮 true → 91-day forecast · false → rank on growth
 ```
 
-Every actor below is a packaged traversal like that one. The customer buys the
+Every operation below is a packaged traversal like that one. The customer buys the
 walk, not the endpoints.
 
 ---
@@ -96,6 +98,10 @@ This table **is** the map. Every edge was verified on the wire.
 
 These are the points where the *response* decides the next call. They are the
 logic a coding agent must implement exactly:
+
+**Growth `{value, index}` pairs (settled 2026-08-19):** `index` is the 1..N rank
+of the value within its response — response-scoped, exposed as
+`*_rank_in_response`, never comparable across responses.
 
 **🔮 `has_prediction` (per keyword × region, never changes with dates)**
 ```
@@ -213,16 +219,17 @@ strategy · e-commerce assortment · campaign timing · monitoring), a distinct
 price point, and a distinct request weight — and each is a *complete* traversal,
 so no actor requires another one to be useful.
 
-## 3.2 The shared core (already ~60% built)
+## 3.2 The shared core — ✅ ALL FOUR LAYERS BUILT (2026-08-19)
 
 ```
                      ┌─────────────────────────────────────┐
-                     │            ACTOR LAYER              │
-                     │  input schema → traversal → records │   ← TO BUILD (per actor)
+                     │        ACTOR LAYER  ✅ built        │
+                     │ scraper.py dispatch · 4 operations  │
+                     │ .actor/input_schema.json (18 params)│
                      ├─────────────────────────────────────┤
-                     │            GRAPH LAYER              │
-                     │ transport A/B · parsers · vocab ·   │   ← TO BUILD (once)
-                     │ normalisation guard · decision nodes│
+                     │        GRAPH LAYER  ✅ built        │
+                     │ transport.py · vocab.py · parsers.py│
+                     │ shopping/keywords/moments/radar .py │
                      ├─────────────────────────────────────┤
                      │        FRESHNESS LAYER  ✅ built    │
                      │ cache (TTL/kind) · seen-set ·       │
@@ -234,11 +241,17 @@ so no actor requires another one to be useful.
                      └─────────────────────────────────────┘
 ```
 
-The graph layer is the only genuinely new code: `transport.py` (style A/B, both
-verified in [../probes/probe_endpoints.py](../probes/probe_endpoints.py)),
-`vocab.py` (regions, 24 interests, 7 verticals, moment slugs per region, the two
-age/gender schemes), `parsers.py` (one named parser per endpoint — see the skill),
-and the traversals.
+All four operations are verified live (2026-08-19): shopping end-to-end with 33
+shoppable pins; keywords with real forecasts; moments with the phase gate and
+derived audience; radar's 11 curated records in 2 requests. 157 offline checks
+across four suites. What remains is Phase 4: deployment (network-reachable
+Redis + `apify push`) — see [BUILD-PLAN.md](BUILD-PLAN.md).
+
+One packaging note: §3.1 describes four separate Apify listings; what is built
+today is **one actor with an `operation` input** dispatching the same four
+traversals. The traversals ARE the shared core either way — splitting into
+separate listings later is packaging work (four thin `.actor/` manifests over
+the same `src/`), not a rebuild.
 
 ## 3.3 The session economics of "your vault serves all customers"
 
