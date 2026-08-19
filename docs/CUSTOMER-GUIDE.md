@@ -26,7 +26,84 @@ record marked `"_demo": true` so you can never mistake one for the other.
 
 ---
 
-## The four questions it answers
+## What you actually get
+
+Every example below is a **real record from a real run**, not an illustration.
+Where a number appears on Pinterest's own screen too, it matches.
+
+### One trending product category — `shopping`
+
+```json
+{
+  "category_name": "Mascaras",
+  "category_path": ["Beauty", "Makeup", "Eye makeup", "Mascaras"],
+  "growth": { "mom_change": 0.25, "wow_change": null, "yoy_change": null },
+  "age_distribution":    { "18-24": 0.28, "25-34": 0.29, "35-44": 0.14, "65+": 0.09 },
+  "gender_distribution": { "female": 0.88, "male": 0.04, "unspecified": 0.08 },
+  "search_queries": ["eyelashes", "eyelash growth", "eye makeup", "makeup routine", "…25 total"],
+  "top_products": [
+    {
+      "title": "APPLE MASCARA SUPER LASH - AVOCADO (BLACK) (5 PCS)",
+      "merchant_name": "Amazon.com",
+      "price": "$14.85", "price_value": 14.85, "currency": "USD",
+      "in_stock": true, "merchant_domain": "amazon.com",
+      "merchant_url": "https://www.amazon.com/APPLE-MASCARA-SUPER-LASH-AVOCADO/dp/B07DMSF28S",
+      "pin_url": "https://www.pinterest.com/pin/4597682773444952192/",
+      "image_url": "https://i.pinimg.com/1200x/…"
+    }
+  ]
+}
+```
+
+**50 products** per category, each with the pin, the merchant and the image.
+Add `enrichTopN` and the top N also carry **price, stock and the outbound
+merchant link** — the chain category → pin → merchant page exists on no
+Pinterest screen. Pinterest shows the product and the merchant name; it never
+shows the price and never links out.
+
+### One search keyword — `keywords`
+
+```json
+{
+  "term": "halloween nails",
+  "status": "ok",
+  "has_forecast": true,
+  "wow_change": 0.30, "mom_change": 1.00, "yoy_change": null,
+  "age_distribution": { "18-24": 0.40, "25-34": 0.37, "35-44": 0.15, "65+": 0.04 },
+  "series": [ { "date": "2026-11-13", "count": 0, "normalized": 0,
+                "predicted_lower": 0, "predicted_upper": 1 } ],
+  "related": ["nails", "nails inspo 2026", "fall nails", "halloween nail designs"],
+  "pin_images": ["…9 urls"]
+}
+```
+
+66 weekly points, and where `has_forecast` is true the tail runs **91 days into
+the future** with `predicted_lower` / `predicted_upper` bounds.
+
+### One seasonal moment — `moments`
+
+```json
+{
+  "slug": "thanksgiving",
+  "phase": "approaching", "phase_label": "Approaching",
+  "next_peak": { "takeoff_date": "2026-10-31", "peak_date": "2026-11-28",
+                 "peak_length_days": 28,
+                 "takeoff_at": 1793404800000, "peak_at": 1795824000000 },
+  "series_points": 456,
+  "audience": { "age_distribution": { "25-34": 0.31, "35-44": 0.22, "18-24": 0.17 } },
+  "keywords": ["sweet potato recipes", "fall crafts", "green bean recipes", "…25 total"],
+  "_meta": { "aggregation": "daily", "audience_basis": "measured" }
+}
+```
+
+**456 daily points** — nothing else in this API resolves below weekly. The
+dates are the product: *start on 31 Oct, peak 28 Nov, 28 days of peak.*
+`peak_date` matches the "Week of Nov 28, 2026" on Pinterest's own screen, and
+`*_at` epoch values are kept alongside for sorting.
+
+---
+
+## The five questions it answers
 
 | Operation | The question | Cost | Records |
 |---|---|---|---|
@@ -52,6 +129,97 @@ search-query chips into full keyword records — 74 nodes for about 17 requests,
 because it batches each level instead of walking node by node. Every record
 says how it was reached (`_meta.crawl_path`), and the last record is a summary
 telling you whether you got everything or ran out of budget.
+
+---
+
+## Who this is for, and the call they make
+
+Five jobs this does well. Each is one request body — copy it and change the
+words.
+
+### 1. An Etsy / Shopify seller deciding what to make next
+
+*"What is selling on Pinterest in my category, at what price, from whom?"*
+
+```json
+{ "operation": "shopping", "verticals": ["1250"], "drillTopN": 3, "enrichTopN": 5 }
+```
+
+You get trending categories with the **actual products people click through to
+buy** — title, merchant, price, stock, and the outbound link. That is your
+competitive price band and your product brief in one record.
+
+### 2. A seller planning a seasonal range
+
+*"When do I list the Christmas stock — and did I already miss Halloween?"*
+
+```json
+{ "operation": "moments" }
+```
+
+Every moment with `takeoff_date`, `peak_date` and `peak_length_days`. Measured:
+Thanksgiving takes off **31 Oct** and peaks **28 Nov** for 28 days. Combine with
+`endDate` to check what actually happened last year before committing stock.
+
+### 3. An SEO / content team building a keyword plan
+
+*"Which terms are still climbing, and which already peaked?"*
+
+```json
+{ "operation": "keywords", "mode": "exact",
+  "queries": ["boho wall art", "macrame wall hanging"], "includeRelated": true }
+```
+
+Growth over three horizons, a 91-day forecast where Pinterest has one, the
+audience per term, and 5 related terms each. `has_forecast: false` is a final
+answer, not a retry — the record says so.
+
+### 4. An agency or brand doing audience research
+
+*"Who is actually buying this, and does that change by intent?"*
+
+```json
+{ "operation": "shopping", "verticals": ["1042"], "drillTopN": 5, "event": "SAVE" }
+```
+
+The same category has a materially different audience depending on the action.
+Measured on **Mascaras**, with only `event` changed:
+
+| band | `OUTBOUND_CLICK` | `ENGAGEMENT` | `SAVE` |
+|---|---|---|---|
+| 18-24 | 0.28 | 0.33 | **0.38** |
+| 25-34 | 0.29 | 0.30 | 0.32 |
+| 55-64 | 0.09 | 0.06 | 0.04 |
+| 65+ | **0.09** | 0.07 | 0.04 |
+
+Younger people **save** (planning); older people **click through** (buying). So
+pick the event that matches your intent, and note that every demographic record
+states the event it was measured under.
+
+⚠️ **`event` changes the ranking too, not just the audience.** Running the call
+above twice with different events and comparing the top result compares **two
+different categories** — with `drillTopN: 1` we measured `OUTBOUND_CLICK`
+returning Mascaras and `SAVE` returning False eyelashes. To compare events
+honestly, pin the category (`verticals` + a larger `drillTopN`, then match on
+`category_id`) rather than trusting position.
+
+### 5. A data team populating a trends dashboard
+
+*"Give me the whole neighbourhood around a topic, on a schedule."*
+
+```json
+{ "operation": "crawl", "crawlFrom": "shopping", "verticals": ["1250"],
+  "crawlDepth": 1, "maxRequests": 60 }
+```
+
+One call returns categories **and** the keywords behind them, each record
+carrying `_meta.crawl_path` so the graph reassembles. Schedule it daily: runs
+after the first only emit what actually moved, so a dashboard refresh is cheap.
+
+**Scheduling note.** Records are deduplicated across runs by default — a second
+identical run emits nothing and costs almost nothing, because the response
+cache serves it. Set `"fullRescan": true` when you want a complete snapshot
+regardless.
 
 ---
 
@@ -327,17 +495,22 @@ Pinterest settles it. Every record carries `_meta.end_date` with the real date,
 so you compare against that rather than today.
 
 **Audience shifts by action, a lot.** The same category has a materially
-different audience depending on whether you measure clicks or saves:
+different audience depending on whether you measure clicks or saves. Measured
+on Mascaras, only `event` varying:
 
-| | 25-34 | 65+ |
+| band | `OUTBOUND_CLICK` | `SAVE` |
 |---|---|---|
-| `OUTBOUND_CLICK` | 13% | **32%** |
-| `SAVE` | **23%** | 19% |
+| 18-24 | 0.28 | **0.38** |
+| 65+ | **0.09** | 0.04 |
 
 Younger people *save* (planning); older people *click through* (buying). So
 "the audience for this category" is not a well-formed question — every
 demographic record states the `event` it was measured under, and you pick the
 one matching your intent.
+
+The size of the gap varies by category, so read it from your own records rather
+than from this table — and remember `event` also reorders the results, so
+compare by `category_id`, never by position.
 
 ---
 

@@ -123,7 +123,7 @@ endpoint probe harness (16/16 OK on 2026-08-18).
 `shopping`, `keywords`, `moments`, `radar`, and `crawl`, which follows the
 links between them instead of stopping at one page. Both of Pinterest's time
 controls are wired: `endDate` (which date) and `dateRange` (how much history).
-335 offline checks, 0 unread response fields (`probes/coverage.py`).
+339 offline checks, 0 unread response fields (`probes/coverage.py`).
 
 **Both browser captures landed 2026-08-19:**
 - §3.18 moment Age/Gender via the persisted GraphQL query — audience is now

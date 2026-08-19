@@ -17,6 +17,8 @@ So, the rules here:
 Percent fields come back as fractions (0.82 = 82%) and are passed through as
 fractions — converting here would hide the unit from the consumer.
 """
+import datetime as _dt
+
 
 # ------------------------------------------------------------------ helpers
 
@@ -459,6 +461,26 @@ def _epoch_ms(value):
         return None
 
 
+def _iso_date(millis):
+    """Epoch-ms -> YYYY-MM-DD (UTC), or None.
+
+    The whole promise of the moments operation is "when do I launch", and the
+    answer shipped as `1795824000000`. Correct, machine-friendly, and unusable
+    without conversion — for the one field the customer opens the record to
+    read. The epoch value stays (it is what sorts and diffs cleanly); this is
+    the same instant a person can act on.
+
+    UTC on purpose: Pinterest's own screen says "Week of Nov 28, 2026" with no
+    timezone, and inventing a local one would move the date for half the world.
+    """
+    if millis is None:
+        return None
+    try:
+        return _dt.datetime.fromtimestamp(millis / 1000, _dt.timezone.utc)                  .date().isoformat()
+    except (TypeError, ValueError, OSError, OverflowError):
+        return None
+
+
 def parse_moments_list(data):
     """§3.3 → the region's moments. PARALLEL ARRAYS, zipped by index.
 
@@ -485,7 +507,10 @@ def parse_moments_list(data):
             return None
         return {
             "peak_at": _epoch_ms(_get(node, "peak_timestamp_millis")),
+            "peak_date": _iso_date(_epoch_ms(_get(node, "peak_timestamp_millis"))),
             "takeoff_at": _epoch_ms(_get(node, "takeoff_timestamp_millis")),
+            "takeoff_date": _iso_date(
+                _epoch_ms(_get(node, "takeoff_timestamp_millis"))),
             "peak_length_days": _get(node, "peak_length_in_days"),
         }
 
@@ -498,6 +523,7 @@ def parse_moments_list(data):
             "next_peak": peak(peaks[i]),
             "last_peak": peak(historical[i]),
             "next_occurrence_at": _epoch_ms(next_ts[i]),
+            "next_occurrence_date": _iso_date(_epoch_ms(next_ts[i])),
         })
     return out
 
@@ -531,7 +557,10 @@ def parse_moment_metrics(data):
             "series": series(_list(moment, "daily_values")),
             "peaks": [{
                 "peak_at": _epoch_ms(_get(p, "peak_timestamp_millis")),
+                "peak_date": _iso_date(_epoch_ms(_get(p, "peak_timestamp_millis"))),
                 "takeoff_at": _epoch_ms(_get(p, "takeoff_timestamp_millis")),
+                "takeoff_date": _iso_date(
+                    _epoch_ms(_get(p, "takeoff_timestamp_millis"))),
                 "peak_length_days": _get(p, "peak_length_in_days"),
             } for p in _list(moment, "peaks")],
             "interest_split": interests,

@@ -286,7 +286,8 @@ One record per row. Every record carries `_meta`.
 | `slug` | string | wire form, e.g. `fathers day` |
 | `phase` | string | `rising`, `approaching`, `cooldown`, `off_season`, `ended` |
 | `actionable` | boolean | true for `rising` / `approaching` |
-| `next_peak` · `last_peak` | object | `{takeoff_at, peak_at, peak_length_days}`, epoch ms |
+| `next_peak` · `last_peak` | object | `{takeoff_at, takeoff_date, peak_at, peak_date, peak_length_days}`. `*_at` are epoch ms (they sort and diff cleanly); **`*_date` are `YYYY-MM-DD` in UTC** — the same instant, readable. Measured: Thanksgiving 2026 takes off `2026-10-31` and peaks `2026-11-28`, matching the "Week of Nov 28, 2026" on Pinterest's own screen |
+| `next_occurrence_at` · `next_occurrence_date` | | when the moment next comes round — epoch ms and `YYYY-MM-DD` |
 | `next_occurrence_at` | number | epoch ms |
 | `drilled` | boolean | gated on phase — cooled moments cost no extra requests |
 | `series` · `series_points` | array · number | the demand curve. **Daily resolution here and nowhere else in this API** |

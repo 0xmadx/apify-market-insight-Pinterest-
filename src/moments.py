@@ -106,6 +106,7 @@ class MomentScraper:
                 "next_peak": moment["next_peak"],
                 "last_peak": moment["last_peak"],
                 "next_occurrence_at": moment["next_occurrence_at"],
+                "next_occurrence_date": moment["next_occurrence_date"],
 
                 "drilled": drilled,
                 "series": (detail or {}).get("series"),

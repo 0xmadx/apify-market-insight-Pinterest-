@@ -1,14 +1,19 @@
 {
   "actorSpecification": 1,
   "name": "pinterest-vault-scraper",
-  "title": "Pinterest Scraper (vault sessions)",
-  "description": "Pinterest data via an operator-supplied logged-in session pulled from a Redis session vault. No browser, no login inside the actor.",
-  "version": "0.1",
+  "title": "Pinterest Trends \u2014 keywords, shopping, seasonal moments",
+  "description": "Pinterest Trends data as structured records: trending search keywords with growth and 91-day forecasts, trending product categories with real prices and outbound merchant links, seasonal moments with takeoff and peak dates, and audience age/gender for all of them. Five operations, one endpoint, no input required to start.",
+  "version": "1.0",
   "buildTag": "latest",
-  "meta": { "templateId": "python-start" },
+  "meta": {
+    "templateId": "python-start"
+  },
   "dockerfile": "../Dockerfile",
   "input": "./input_schema.json",
   "storages": {
-    "dataset": { "actorSpecification": 1, "views": {} }
+    "dataset": {
+      "actorSpecification": 1,
+      "views": {}
+    }
   }
 }

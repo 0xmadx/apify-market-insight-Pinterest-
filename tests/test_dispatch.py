@@ -18,6 +18,7 @@ Two things are proved here that the per-traversal suites cannot:
      dispatcher must not drift — 14 working parameters were once invisible in
      the form, including the one that fetches price.
 """
+import datetime as _dt
 import json
 import pathlib
 import re
@@ -412,6 +413,26 @@ def main():
     check("US and AU+NZ still allowed (17 regions do have moments)",
           _v.region("US", capability="moments") == "US"
           and _v.region("AU+NZ", capability="moments") == "AU+NZ")
+
+    # "When do I launch" is the whole point of this operation, and the answer
+    # shipped as `1795824000000`. The epoch value stays — it sorts and diffs —
+    # but a customer must not have to convert the one field they opened the
+    # record to read. NOTE: the doc-drift guard does NOT cover these, because
+    # it only walks top-level and _meta keys; nested fields need real asserts.
+    mrec, _c = drive({"operation": "moments", "drill": False})
+    peaks = [r.data.get("next_peak") for r in mrec if r.data.get("next_peak")]
+    check("a moment's peak carries a readable date beside the epoch",
+          bool(peaks) and all(p.get("peak_date") and p.get("takeoff_at")
+                              for p in peaks), len(peaks))
+    check("...formatted YYYY-MM-DD",
+          all(len(p["peak_date"]) == 10 and p["peak_date"][4] == "-"
+              for p in peaks), peaks[0].get("peak_date") if peaks else None)
+    check("...and the epoch and the date describe the same instant",
+          all(_dt.datetime.fromtimestamp(p["peak_at"] / 1000, _dt.timezone.utc)
+              .date().isoformat() == p["peak_date"] for p in peaks))
+    check("next_occurrence gets the same treatment",
+          all(r.data.get("next_occurrence_date") for r in mrec
+              if r.data.get("next_occurrence_at")))
 
     # Our records carry the wire value; Pinterest's screen shows another word.
     check("cooldown reads 'Cooling' on Pinterest's own screen",
