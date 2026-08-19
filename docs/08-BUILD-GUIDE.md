@@ -197,7 +197,7 @@ Every count in this API is **peak-normalised within its response**, never an abs
 4. To compare across scopes, use **percentages** (`percent_growth`, `wow/mom/yoy_change`) — those
    are absolute.
 
-*Evidence:* "family" is `100` alone but `8` beside "nails". Beauty's #1 category is `1.00` alone,
+*Evidence (re-measured 2026-08-19, `param_matrix --group G`):* peak `normalizedCount` for `terms=nails,family` — with `normalize_against_group=true` → `{nails: 100, family: 8}`; with `false` → `{nails: 100, family: 100}`. The same two terms, one switch, and `family` reads as either 8% or 100% of `nails`. Beauty's #1 category is `1.00` alone,
 `0.01` beside Fashion.
 
 ---

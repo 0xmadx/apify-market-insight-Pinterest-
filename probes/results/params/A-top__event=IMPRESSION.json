@@ -8,7 +8,7 @@
       "api_error_code": 12
     },
     "data": {
-      "request_id": "9287798449031764"
+      "request_id": "5848320471592750"
     }
   },
   "resource": {
@@ -31,6 +31,6 @@
       }
     }
   },
-  "request_identifier": "9287798449031764",
+  "request_identifier": "5848320471592750",
   "_client_context": "<stripped: account PII, see strip_pii()>"
 }

@@ -233,6 +233,45 @@ def build_cases(date):
              lambda r, d, e: _judge_listlen(r, d, e, expect_nonempty=True)),
     ]
 
+    # --- GROUP F: does `event` really move demographics but not keywords? --
+    # Doc #7 §3.9 / scenario C7. This is the claim the product depends on:
+    # keywords requested ONCE, demographics NEVER cached across events.
+    for event in ["OUTBOUND_CLICK", "ENGAGEMENT", "SAVE"]:
+        cases.append(Case(
+            "F", f"demographics event={event}",
+            "age/gender differ per event; related_search_trends identical",
+            A(f"/ads/v4/trends/shopping/product_categories/demographics/US",
+              {"product_category_ids": [CAT], "event": event,
+               "end_date": date}),
+            _judge_demo))
+
+    # --- GROUP G: normalize_against_group — the comparability switch -------
+    cases += [
+        Case("G", "metrics 2 terms normalize_against_group=true",
+             "shared scale — the two terms ARE comparable",
+             B("/metrics/", {"terms": "nails,family", "country": "US",
+                             "end_date": date, "days": 365, "aggregation": 2,
+                             "normalize_against_group": "true",
+                             "shouldMock": "false"}),
+             _judge_norm),
+        Case("G", "metrics 2 terms normalize_against_group=false",
+             "each term self-normalised to 100 — NOT comparable",
+             B("/metrics/", {"terms": "nails,family", "country": "US",
+                             "end_date": date, "days": 365, "aggregation": 2,
+                             "normalize_against_group": "false",
+                             "shouldMock": "false"}),
+             _judge_norm),
+        Case("G", "metrics 10 terms — silent drop of no-data terms",
+             "fewer rows than terms requested; match BY TERM not index",
+             B("/metrics/", {"terms": "nails,family,zzzqqqxyz,halloween,"
+                                      "christmas ornament,mom necklace,"
+                                      "felt garland,qqzzxx99,backpack name tag,"
+                                      "embroidery ideas",
+                             "country": "US", "end_date": date, "days": 365,
+                             "aggregation": 2, "shouldMock": "false"}),
+             _judge_multiterm),
+    ]
+
     # --- GROUP H: shouldMock — fake data behind a 200 ----------------------
     cases += [
         Case("H", "metrics shouldMock=true",
@@ -294,6 +333,53 @@ def _judge_daily(r, d, e):
         return "MISMATCH", f"no daily_values ({r.status_code} {str(e)[:80]})"
     n = len(vals)
     return ("MATCH" if n > 300 else "NEW"), f"{n} points (weekly baseline is ~66)"
+
+
+_demo_seen = {}
+
+
+def _judge_demo(r, d, e):
+    """Accumulates across the 3 event calls, then reports the comparison."""
+    if r.status_code != 200 or not isinstance(d, dict):
+        return "MISMATCH", f"{r.status_code} {str(e)[:80]}"
+    dist = d.get("product_category_distributions", {}).get(CAT, {})
+    demos = (dist.get("demographics") or [{}])[0]
+    ages = demos.get("age_distribution") or {}
+    kws = tuple(dist.get("related_search_trends") or [])
+    _demo_seen[len(_demo_seen)] = (ages, kws)
+
+    detail = f"65+={ages.get('65+')} 25-34={ages.get('25-34')} kws={len(kws)}"
+    if len(_demo_seen) < 3:
+        return "MATCH", detail
+
+    all_ages = [v[0] for v in _demo_seen.values()]
+    all_kws = [v[1] for v in _demo_seen.values()]
+    ages_differ = len({json.dumps(a, sort_keys=True) for a in all_ages}) > 1
+    kws_same = len(set(all_kws)) == 1
+    if ages_differ and kws_same:
+        return "MATCH", (detail + " | CONFIRMED across 3 events: "
+                         "ages differ, keywords identical")
+    return "MISMATCH", (detail + f" | ages_differ={ages_differ} "
+                        f"keywords_identical={kws_same}")
+
+
+def _judge_norm(r, d, e):
+    if r.status_code != 200 or not isinstance(d, list):
+        return "MISMATCH", f"{r.status_code} {str(e)[:80]}"
+    peaks = {}
+    for row in d:
+        counts = row.get("counts") or []
+        peaks[row.get("term")] = max((c.get("normalizedCount") or 0)
+                                     for c in counts) if counts else None
+    both100 = sum(1 for v in peaks.values() if v == 100)
+    return "MATCH", f"peak normalizedCount per term: {peaks} ({both100} at 100)"
+
+
+def _judge_multiterm(r, d, e):
+    if r.status_code != 200 or not isinstance(d, list):
+        return "MISMATCH", f"{r.status_code} {str(e)[:80]}"
+    got = [row.get("term") for row in d]
+    return "MATCH", f"requested 10, got {len(got)}: {got}"
 
 
 def _judge_mock(r, d, e):

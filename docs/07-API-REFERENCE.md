@@ -310,12 +310,20 @@ modelling one page-level `event` will silently mismatch the UI.
 The shopping table (§3.7) calls the same `ENGAGEMENT` value **"Engagement"**; here it is
 **"All"**. Same enum, different wording, same page family.
 
-**3. `event` changes demographics a LOT, and `related_search_trends` not at all.** Measured on
-category `1408` across all three events — the keyword chips were byte-identical (17 terms,
-same order), but the audience moved materially: 65+ was **32% of outbound clicks vs 19% of
-saves**; 25-34 was **23% of saves vs 13% of clicks**. So: request the keywords once, but never
-cache demographics across events — and label which `event` any audience figure came from,
-because "the audience for this category" is meaningless without it.
+**3. `event` changes demographics a LOT, and `related_search_trends` not at all.**
+**Independently re-measured 2026-08-19** by `probes/param_matrix.py --group F` on category
+`1408`, all three events:
+
+| `event` | 25-34 | 65+ | female | keywords |
+|---|---|---|---|---|
+| `OUTBOUND_CLICK` | 0.13 | **0.32** | 0.82 | 17 |
+| `ENGAGEMENT` | 0.17 | 0.27 | 0.83 | 17 |
+| `SAVE` | **0.23** | 0.19 | 0.85 | 17 |
+
+The keyword lists were **byte-identical across all three** (verified by set comparison), while
+65+ nearly halves from clicks to saves and 25-34 nearly doubles. So: request the keywords once,
+but **never cache demographics across events** — and label which `event` any audience figure
+came from, because "the audience for this category" is not a well-formed fact without it.
 
 ## 3.10 `…/product_categories/top_products` — Top products (the one that works)
 **No path params.** `{"product_category_id":"1408","region":"US","event":"OUTBOUND_CLICK"}`
@@ -373,13 +381,20 @@ GET /metrics/?terms=nails&country=US&end_date=2026-08-14&days=365
 ```
 | Param | Values |
 |-------|--------|
-| `terms` | 1..N comma-separated. 10 requested → **9 returned** (silently drops no-data terms) |
+| `terms` | 1..N comma-separated. **Silently drops terms with no data — and the drop is far heavier than one.** Measured 2026-08-19: 10 terms → **4 returned**. Dropped included `halloween` and `christmas ornament`, which plainly have volume — so the filter is not simply "unknown term". Never infer a term is dead from its absence here; match by term and mark the rest `no_data`, not `0`. |
 | `days` | 90/180/365/730 |
 | **`aggregation`** | **`2` ONLY** (weekly, 7-day step). 0/1/3/4 and string values → 400. ⚠️ No daily for KEYWORDS — but **moments DO support daily**, see §3.4 |
 | **`predicted_days`** | **0–91**. Points = `predicted_days÷7`. 180/365 → 400 |
 | **`normalize_against_group`** | 🚨 `true` = shared scale (comparable). `false` = each term self-normalised to 100 (**not comparable**) |
 | **`shouldMock`** | ⚠️ **`true` returns FAKE 2019 data, count 0, HTTP 200.** Always `false` |
 | `end_date` | ⚠️ **future → 400**; older than ~1 yr → 400 (`2026-01-01` ok, `2025-08-01` → 400) |
+
+> ⚠️ **Style B errors carry NO message.** `predicted_days=180` returns **HTTP 400 with an
+> empty body (`[]`)** — verified 2026-08-19. Unlike Style A, which puts a readable reason in
+> `resource_response.error.message_detail` (e.g. `'limit' is too large: 1000 > 522`), the
+> plain endpoints tell you only the status code. **A client cannot learn the ceiling from the
+> response here** — which is exactly why the ceilings must be enforced client-side before the
+> wire (§validation).
 
 Returns `[{term, has_prediction, growth_rates:{wow_change,mom_change,yoy_change},
 counts:[{date,count,normalizedCount,predictedUpper/LowerBoundNormalizedCount}]}]`

@@ -7,6 +7,7 @@
     "data": {
       "ordered_values": [
         {
+          "product_category": "1356",
           "related_search_trends": [
             "wide leg jeans",
             "linen pants",
@@ -34,32 +35,32 @@
             "cargo",
             "baggy jeans"
           ],
-          "product_category": "1356",
+          "parent_product_categories": [
+            "1104"
+          ],
           "summary": {
             "engagement": {
               "percent_relative_volume": 1,
-              "lookback": 2,
               "percent_growth": 0.1,
-              "total": 0
+              "total": 0,
+              "lookback": 2
             },
             "outbound_clicks": {
               "percent_relative_volume": 1,
-              "lookback": 2,
               "percent_growth": 0.1,
-              "total": 0
+              "total": 0,
+              "lookback": 2
             },
             "saves": {
               "percent_relative_volume": 1,
-              "lookback": 2,
               "percent_growth": 0.05,
-              "total": 0
+              "total": 0,
+              "lookback": 2
             }
-          },
-          "parent_product_categories": [
-            "1104"
-          ]
+          }
         },
         {
+          "product_category": "1108",
           "related_search_trends": [
             "winter fashion",
             "leather jacket",
@@ -87,33 +88,33 @@
             "jean jacket",
             "leather coat"
           ],
-          "product_category": "1108",
-          "summary": {
-            "engagement": {
-              "percent_relative_volume": 0.51,
-              "lookback": 2,
-              "percent_growth": 0.3,
-              "total": 0
-            },
-            "outbound_clicks": {
-              "percent_relative_volume": 0.44,
-              "lookback": 2,
-              "percent_growth": 0.43,
-              "total": 0
-            },
-            "saves": {
-              "percent_relative_volume": 0.65,
-              "lookback": 2,
-              "percent_growth": 0.12,
-              "total": 0
-            }
-          },
           "parent_product_categories": [
             "1104",
             "1350"
-          ]
+          ],
+          "summary": {
+            "engagement": {
+              "percent_relative_volume": 0.51,
+              "percent_growth": 0.3,
+              "total": 0,
+              "lookback": 2
+            },
+            "outbound_clicks": {
+              "percent_relative_volume": 0.44,
+              "percent_growth": 0.43,
+              "total": 0,
+              "lookback": 2
+            },
+            "saves": {
+              "percent_relative_volume": 0.65,
+              "percent_growth": 0.12,
+              "total": 0,
+              "lookback": 2
+            }
+          }
         },
         {
+          "product_category": "1350",
           "related_search_trends": [
             "winter fashion",
             "leather jacket",
@@ -141,32 +142,32 @@
             "jean jacket",
             "leather coat"
           ],
-          "product_category": "1350",
+          "parent_product_categories": [
+            "1104"
+          ],
           "summary": {
             "engagement": {
               "percent_relative_volume": 0.51,
-              "lookback": 2,
               "percent_growth": 0.3,
-              "total": 0
+              "total": 0,
+              "lookback": 2
             },
             "outbound_clicks": {
               "percent_relative_volume": 0.44,
-              "lookback": 2,
               "percent_growth": 0.43,
-              "total": 0
+              "total": 0,
+              "lookback": 2
             },
             "saves": {
               "percent_relative_volume": 0.65,
-              "lookback": 2,
               "percent_growth": 0.12,
-              "total": 0
+              "total": 0,
+              "lookback": 2
             }
-          },
-          "parent_product_categories": [
-            "1104"
-          ]
+          }
         },
         {
+          "product_category": "1452",
           "related_search_trends": [
             "crochet clothes",
             "tricot",
@@ -194,33 +195,33 @@
             "fall outfits",
             "winter fashion"
           ],
-          "product_category": "1452",
-          "summary": {
-            "engagement": {
-              "percent_relative_volume": 0.33,
-              "lookback": 2,
-              "percent_growth": 0.22,
-              "total": 0
-            },
-            "outbound_clicks": {
-              "percent_relative_volume": 0.33,
-              "lookback": 2,
-              "percent_growth": 0.39,
-              "total": 0
-            },
-            "saves": {
-              "percent_relative_volume": 0.46,
-              "lookback": 2,
-              "percent_growth": 0.08,
-              "total": 0
-            }
-          },
           "parent_product_categories": [
             "1478",
             "1104"
-          ]
+          ],
+          "summary": {
+            "engagement": {
+              "percent_relative_volume": 0.33,
+              "percent_growth": 0.22,
+              "total": 0,
+              "lookback": 2
+            },
+            "outbound_clicks": {
+              "percent_relative_volume": 0.33,
+              "percent_growth": 0.39,
+              "total": 0,
+              "lookback": 2
+            },
+            "saves": {
+              "percent_relative_volume": 0.46,
+              "percent_growth": 0.08,
+              "total": 0,
+              "lookback": 2
+            }
+          }
         },
         {
+          "product_category": "1261",
           "related_search_trends": [
             "wide leg jeans",
             "senior jeans inspo",
@@ -248,31 +249,30 @@
             "embroidered jeans",
             "baggy jeans"
           ],
-          "product_category": "1261",
-          "summary": {
-            "engagement": {
-              "percent_relative_volume": 0.24,
-              "lookback": 2,
-              "percent_growth": 0.16,
-              "total": 0
-            },
-            "outbound_clicks": {
-              "percent_relative_volume": 0.24,
-              "lookback": 2,
-              "percent_growth": 0.22,
-              "total": 0
-            },
-            "saves": {
-              "percent_relative_volume": 0.25,
-              "lookback": 2,
-              "percent_growth": 0.02,
-              "total": 0
-            }
-          },
           "parent_product_categories": [
             "1356",
             "1104"
-          ]
+          ],
+          "summary": {
+            "engagement": {
+              "percent_relative_volume": 0.24,
+              "percent_growth": 0.16,
+              "total": 0,
+              "lookback": 2
+            },
+            "outbound_clicks": {
+              "percent_relative_volume": 0.24,
+              "percent_growth": 0.22,
+              "total": 0,
+              "lookback": 2
+            },
+            "saves": {
+              "percent_relative_volume": 0.25,
+              "percent_growth": 0.02,
+              "total": 0,
+              "lookback": 2
+            }
+          }
         }
       ],
       "total_num_product_categories": 17
@@ -300,6 +300,6 @@
       }
     }
   },
-  "request_identifier": "7072484529137098",
+  "request_identifier": "1601933001905071",
   "_client_context": "<stripped: account PII, see strip_pii()>"
 }

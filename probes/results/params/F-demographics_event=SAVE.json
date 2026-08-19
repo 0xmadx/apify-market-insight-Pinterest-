@@ -1,0 +1,93 @@
+{
+  "resource_response": {
+    "status": "success",
+    "code": 0,
+    "message": "ok",
+    "endpoint_name": "get_product_category_demographics",
+    "data": {
+      "product_category_distributions": {
+        "1408": {
+          "summaries": [
+            {
+              "engagement": {
+                "total": 0,
+                "percent_relative_volume": null,
+                "percent_growth": 0.71,
+                "lookback": 2
+              },
+              "saves": {
+                "total": 0,
+                "percent_relative_volume": null,
+                "percent_growth": 0.63,
+                "lookback": 2
+              },
+              "outbound_clicks": {
+                "total": 0,
+                "percent_relative_volume": null,
+                "percent_growth": 0.84,
+                "lookback": 2
+              }
+            }
+          ],
+          "demographics": [
+            {
+              "gender_distribution": {
+                "male": 0.04,
+                "female": 0.85,
+                "unspecified": 0.11
+              },
+              "age_distribution": {
+                "18-24": 0.1,
+                "25-34": 0.23,
+                "35-44": 0.17,
+                "45-49": 0.07,
+                "50-54": 0.08,
+                "55-64": 0.18,
+                "65+": 0.19
+              }
+            }
+          ],
+          "related_search_trends": [
+            "fall halloween decor",
+            "halloween decor",
+            "vintage halloween",
+            "halloween stuff",
+            "diy halloween decorations",
+            "fall halloween",
+            "halloween crafts",
+            "haunted",
+            "halloween ideas",
+            "ornament ideas",
+            "fall decor",
+            "halloween diy",
+            "ornament crafts",
+            "diy christmas ornaments",
+            "pumpkin",
+            "xmas decor",
+            "halloween fun"
+          ]
+        }
+      }
+    },
+    "x_pinterest_sli_endpoint_name": "get_product_category_demographics",
+    "http_status": 200
+  },
+  "resource": {
+    "name": "ApiResource",
+    "options": {
+      "bookmarks": [
+        "-end-"
+      ],
+      "url": "/ads/v4/trends/shopping/product_categories/demographics/US",
+      "data": {
+        "product_category_ids": [
+          "1408"
+        ],
+        "event": "SAVE",
+        "end_date": "2026-08-14"
+      }
+    }
+  },
+  "request_identifier": "1024287199500685",
+  "_client_context": "<stripped: account PII, see strip_pii()>"
+}

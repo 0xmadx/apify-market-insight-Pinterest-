@@ -5,18 +5,18 @@
         "index": 99,
         "value": 100.01
       },
+      "term": "sterling point tv show",
       "seasonality_score": 0.3267289,
-      "wow_change": {
-        "index": 91,
-        "value": 7
-      },
       "mom_change": {
         "index": 100,
         "value": 100.01
       },
       "affinity": null,
       "normalizedCount": 4,
-      "term": "sterling point tv show",
+      "wow_change": {
+        "index": 91,
+        "value": 7
+      },
       "searchCount": 4,
       "reverseRank": 100
     },
@@ -25,18 +25,18 @@
         "index": 96,
         "value": 100.01
       },
+      "term": "sterling point",
       "seasonality_score": 0.3268867,
-      "wow_change": {
-        "index": 97,
-        "value": 10
-      },
       "mom_change": {
         "index": 99,
         "value": 100.01
       },
       "affinity": null,
       "normalizedCount": 10,
-      "term": "sterling point",
+      "wow_change": {
+        "index": 97,
+        "value": 10
+      },
       "searchCount": 10,
       "reverseRank": 99
     },
@@ -45,18 +45,18 @@
         "index": 74,
         "value": 70
       },
+      "term": "see more",
       "seasonality_score": 0.3140129,
-      "wow_change": {
-        "index": 50,
-        "value": 0.6
-      },
       "mom_change": {
         "index": 98,
         "value": 100.01
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "see more",
+      "wow_change": {
+        "index": 50,
+        "value": 0.6
+      },
       "searchCount": 2,
       "reverseRank": 98
     },
@@ -65,18 +65,18 @@
         "index": 30,
         "value": 0.4
       },
+      "term": "end of august nails",
       "seasonality_score": 0.7856542,
-      "wow_change": {
-        "index": 99,
-        "value": 20
-      },
       "mom_change": {
         "index": 97,
         "value": 100.01
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "end of august nails",
+      "wow_change": {
+        "index": 99,
+        "value": 20
+      },
       "searchCount": 2,
       "reverseRank": 97
     },
@@ -85,18 +85,18 @@
         "index": 98,
         "value": 100.01
       },
+      "term": "tui de",
       "seasonality_score": 0.32111287,
-      "wow_change": {
-        "index": 36,
-        "value": 0.3
-      },
       "mom_change": {
         "index": 96,
         "value": 100.01
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "tui de",
+      "wow_change": {
+        "index": 36,
+        "value": 0.3
+      },
       "searchCount": 2,
       "reverseRank": 96
     },
@@ -105,18 +105,18 @@
         "index": 94,
         "value": 100.01
       },
+      "term": "find similar",
       "seasonality_score": 0.3161428,
-      "wow_change": {
-        "index": 42,
-        "value": 0.4
-      },
       "mom_change": {
         "index": 95,
         "value": 100.01
       },
       "affinity": null,
       "normalizedCount": 39,
-      "term": "find similar",
+      "wow_change": {
+        "index": 42,
+        "value": 0.4
+      },
       "searchCount": 39,
       "reverseRank": 95
     },
@@ -125,18 +125,18 @@
         "index": 64,
         "value": 7
       },
+      "term": "senior sunrise frame ideas",
       "seasonality_score": 0.41844526,
-      "wow_change": {
-        "index": 62,
-        "value": 1
-      },
       "mom_change": {
         "index": 94,
         "value": 100.01
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "senior sunrise frame ideas",
+      "wow_change": {
+        "index": 62,
+        "value": 1
+      },
       "searchCount": 2,
       "reverseRank": 94
     },
@@ -145,18 +145,18 @@
         "index": 76,
         "value": 80
       },
+      "term": "rosemary walten pfp",
       "seasonality_score": 0.32331294,
-      "wow_change": {
-        "index": 10,
-        "value": -0.06
-      },
       "mom_change": {
         "index": 93,
         "value": 100.01
       },
       "affinity": null,
       "normalizedCount": 3,
-      "term": "rosemary walten pfp",
+      "wow_change": {
+        "index": 10,
+        "value": -0.06
+      },
       "searchCount": 3,
       "reverseRank": 93
     },
@@ -165,18 +165,18 @@
         "index": 71,
         "value": 55
       },
+      "term": "cry baby makeup",
       "seasonality_score": 0.3232054,
-      "wow_change": {
-        "index": 77,
-        "value": 2
-      },
       "mom_change": {
         "index": 92,
         "value": 95
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "cry baby makeup",
+      "wow_change": {
+        "index": 77,
+        "value": 2
+      },
       "searchCount": 2,
       "reverseRank": 92
     },
@@ -185,18 +185,18 @@
         "index": 88,
         "value": 100.01
       },
+      "term": "fall hair color 2026",
       "seasonality_score": 0.3211196,
-      "wow_change": {
-        "index": 54,
-        "value": 0.9
-      },
       "mom_change": {
         "index": 91,
         "value": 90
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "fall hair color 2026",
+      "wow_change": {
+        "index": 54,
+        "value": 0.9
+      },
       "searchCount": 2,
       "reverseRank": 91
     },
@@ -205,18 +205,18 @@
         "index": 5,
         "value": -0.6
       },
+      "term": "summer to fall transition nails",
       "seasonality_score": 0.6486609,
-      "wow_change": {
-        "index": 56,
-        "value": 0.9
-      },
       "mom_change": {
         "index": 90,
         "value": 85
       },
       "affinity": null,
       "normalizedCount": 5,
-      "term": "summer to fall transition nails",
+      "wow_change": {
+        "index": 56,
+        "value": 0.9
+      },
       "searchCount": 5,
       "reverseRank": 90
     },
@@ -225,18 +225,18 @@
         "index": 8,
         "value": -0.3
       },
+      "term": "august september nails",
       "seasonality_score": 0.598234,
-      "wow_change": {
-        "index": 85,
-        "value": 3
-      },
       "mom_change": {
         "index": 89,
         "value": 85
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "august september nails",
+      "wow_change": {
+        "index": 85,
+        "value": 3
+      },
       "searchCount": 2,
       "reverseRank": 89
     },
@@ -245,18 +245,18 @@
         "index": 4,
         "value": -0.6
       },
+      "term": "late summer early fall nails",
       "seasonality_score": 0.5609973,
-      "wow_change": {
-        "index": 79,
-        "value": 2
-      },
       "mom_change": {
         "index": 88,
         "value": 70
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "late summer early fall nails",
+      "wow_change": {
+        "index": 79,
+        "value": 2
+      },
       "searchCount": 2,
       "reverseRank": 88
     },
@@ -265,18 +265,18 @@
         "index": 28,
         "value": 0.3
       },
+      "term": "senior sunrise captions",
       "seasonality_score": 0.935116,
-      "wow_change": {
-        "index": 81,
-        "value": 3
-      },
       "mom_change": {
         "index": 87,
         "value": 70
       },
       "affinity": null,
       "normalizedCount": 3,
-      "term": "senior sunrise captions",
+      "wow_change": {
+        "index": 81,
+        "value": 3
+      },
       "searchCount": 3,
       "reverseRank": 87
     },
@@ -285,18 +285,18 @@
         "index": 70,
         "value": 30
       },
+      "term": "senior window paint ideas",
       "seasonality_score": 0.35356122,
-      "wow_change": {
-        "index": 83,
-        "value": 3
-      },
       "mom_change": {
         "index": 86,
         "value": 60
       },
       "affinity": null,
       "normalizedCount": 3,
-      "term": "senior window paint ideas",
+      "wow_change": {
+        "index": 83,
+        "value": 3
+      },
       "searchCount": 3,
       "reverseRank": 86
     },
@@ -305,18 +305,18 @@
         "index": 93,
         "value": 100.01
       },
+      "term": "nails august 2026",
       "seasonality_score": 0.31614655,
-      "wow_change": {
-        "index": 22,
-        "value": 0.1
-      },
       "mom_change": {
         "index": 85,
         "value": 55
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "nails august 2026",
+      "wow_change": {
+        "index": 22,
+        "value": 0.1
+      },
       "searchCount": 2,
       "reverseRank": 85
     },
@@ -325,18 +325,18 @@
         "index": 81,
         "value": 100.01
       },
+      "term": "fall hair 2026",
       "seasonality_score": 0.31823543,
-      "wow_change": {
-        "index": 33,
-        "value": 0.3
-      },
       "mom_change": {
         "index": 84,
         "value": 55
       },
       "affinity": null,
       "normalizedCount": 5,
-      "term": "fall hair 2026",
+      "wow_change": {
+        "index": 33,
+        "value": 0.3
+      },
       "searchCount": 5,
       "reverseRank": 84
     },
@@ -345,18 +345,18 @@
         "index": 11,
         "value": -0.3
       },
+      "term": "back to school prayer",
       "seasonality_score": 0.90966177,
-      "wow_change": {
-        "index": 59,
-        "value": 1
-      },
       "mom_change": {
         "index": 83,
         "value": 50
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "back to school prayer",
+      "wow_change": {
+        "index": 59,
+        "value": 1
+      },
       "searchCount": 2,
       "reverseRank": 83
     },
@@ -365,18 +365,18 @@
         "index": 60,
         "value": 2
       },
+      "term": "august gel nails ideas",
       "seasonality_score": 0.65290695,
-      "wow_change": {
-        "index": 4,
-        "value": -0.1
-      },
       "mom_change": {
         "index": 82,
         "value": 45
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "august gel nails ideas",
+      "wow_change": {
+        "index": 4,
+        "value": -0.1
+      },
       "searchCount": 2,
       "reverseRank": 82
     },
@@ -385,18 +385,18 @@
         "index": 92,
         "value": 100.01
       },
+      "term": "fall decorations 2026",
       "seasonality_score": 0.31751782,
-      "wow_change": {
-        "index": 47,
-        "value": 0.5
-      },
       "mom_change": {
         "index": 81,
         "value": 45
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "fall decorations 2026",
+      "wow_change": {
+        "index": 47,
+        "value": 0.5
+      },
       "searchCount": 2,
       "reverseRank": 81
     },
@@ -405,18 +405,18 @@
         "index": 78,
         "value": 85
       },
+      "term": "steve lacy concert outfit",
       "seasonality_score": 0.32759085,
-      "wow_change": {
-        "index": 100,
-        "value": 65
-      },
       "mom_change": {
         "index": 80,
         "value": 45
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "steve lacy concert outfit",
+      "wow_change": {
+        "index": 100,
+        "value": 65
+      },
       "searchCount": 2,
       "reverseRank": 80
     },
@@ -425,18 +425,18 @@
         "index": 37,
         "value": 0.5
       },
+      "term": "senior car ideas",
       "seasonality_score": 0.8161279,
-      "wow_change": {
-        "index": 84,
-        "value": 3
-      },
       "mom_change": {
         "index": 79,
         "value": 35
       },
       "affinity": null,
       "normalizedCount": 4,
-      "term": "senior car ideas",
+      "wow_change": {
+        "index": 84,
+        "value": 3
+      },
       "searchCount": 4,
       "reverseRank": 79
     },
@@ -445,18 +445,18 @@
         "index": 58,
         "value": 2
       },
+      "term": "senior car painting ideas",
       "seasonality_score": 0.6692594,
-      "wow_change": {
-        "index": 66,
-        "value": 1
-      },
       "mom_change": {
         "index": 78,
         "value": 35
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "senior car painting ideas",
+      "wow_change": {
+        "index": 66,
+        "value": 1
+      },
       "searchCount": 2,
       "reverseRank": 78
     },
@@ -465,18 +465,18 @@
         "index": 84,
         "value": 100.01
       },
+      "term": "august nails 2026",
       "seasonality_score": 0.31834742,
-      "wow_change": {
-        "index": 19,
-        "value": 0.07
-      },
       "mom_change": {
         "index": 77,
         "value": 35
       },
       "affinity": null,
       "normalizedCount": 8,
-      "term": "august nails 2026",
+      "wow_change": {
+        "index": 19,
+        "value": 0.07
+      },
       "searchCount": 8,
       "reverseRank": 77
     },
@@ -485,18 +485,18 @@
         "index": 97,
         "value": 100.01
       },
+      "term": "pantheon smp",
       "seasonality_score": 0.32343376,
-      "wow_change": {
-        "index": 82,
-        "value": 3
-      },
       "mom_change": {
         "index": 76,
         "value": 35
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "pantheon smp",
+      "wow_change": {
+        "index": 82,
+        "value": 3
+      },
       "searchCount": 2,
       "reverseRank": 76
     },
@@ -505,18 +505,18 @@
         "index": 91,
         "value": 100.01
       },
+      "term": "froggy dude",
       "seasonality_score": 0.3161384,
-      "wow_change": {
-        "index": 25,
-        "value": 0.1
-      },
       "mom_change": {
         "index": 75,
         "value": 35
       },
       "affinity": null,
       "normalizedCount": 3,
-      "term": "froggy dude",
+      "wow_change": {
+        "index": 25,
+        "value": 0.1
+      },
       "searchCount": 3,
       "reverseRank": 75
     },
@@ -525,18 +525,18 @@
         "index": 45,
         "value": 0.8
       },
+      "term": "senior cars",
       "seasonality_score": 0.849212,
-      "wow_change": {
-        "index": 88,
-        "value": 4
-      },
       "mom_change": {
         "index": 74,
         "value": 30
       },
       "affinity": null,
       "normalizedCount": 4,
-      "term": "senior cars",
+      "wow_change": {
+        "index": 88,
+        "value": 4
+      },
       "searchCount": 4,
       "reverseRank": 74
     },
@@ -545,18 +545,18 @@
         "index": 3,
         "value": -0.7
       },
+      "term": "end of summer nails ideas",
       "seasonality_score": 0.8947699,
-      "wow_change": {
-        "index": 92,
-        "value": 7
-      },
       "mom_change": {
         "index": 73,
         "value": 30
       },
       "affinity": null,
       "normalizedCount": 5,
-      "term": "end of summer nails ideas",
+      "wow_change": {
+        "index": 92,
+        "value": 7
+      },
       "searchCount": 5,
       "reverseRank": 73
     },
@@ -565,18 +565,18 @@
         "index": 39,
         "value": 0.5
       },
+      "term": "senior car paint",
       "seasonality_score": 0.850574,
-      "wow_change": {
-        "index": 6,
-        "value": -0.1
-      },
       "mom_change": {
         "index": 72,
         "value": 30
       },
       "affinity": null,
       "normalizedCount": 5,
-      "term": "senior car paint",
+      "wow_change": {
+        "index": 6,
+        "value": -0.1
+      },
       "searchCount": 5,
       "reverseRank": 72
     },
@@ -585,18 +585,18 @@
         "index": 100,
         "value": 100.01
       },
+      "term": "august nails ideas 2026",
       "seasonality_score": 0.31639436,
-      "wow_change": {
-        "index": 18,
-        "value": 0.06
-      },
       "mom_change": {
         "index": 71,
         "value": 25
       },
       "affinity": null,
       "normalizedCount": 15,
-      "term": "august nails ideas 2026",
+      "wow_change": {
+        "index": 18,
+        "value": 0.06
+      },
       "searchCount": 15,
       "reverseRank": 71
     },
@@ -605,18 +605,18 @@
         "index": 22,
         "value": 0.02
       },
+      "term": "end of summer captions",
       "seasonality_score": 0.98690456,
-      "wow_change": {
-        "index": 57,
-        "value": 1
-      },
       "mom_change": {
         "index": 70,
         "value": 25
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "end of summer captions",
+      "wow_change": {
+        "index": 57,
+        "value": 1
+      },
       "searchCount": 2,
       "reverseRank": 70
     },
@@ -625,18 +625,18 @@
         "index": 72,
         "value": 55
       },
+      "term": "recent anime",
       "seasonality_score": 0.3591803,
-      "wow_change": {
-        "index": 3,
-        "value": -0.1
-      },
       "mom_change": {
         "index": 69,
         "value": 25
       },
       "affinity": null,
       "normalizedCount": 8,
-      "term": "recent anime",
+      "wow_change": {
+        "index": 3,
+        "value": -0.1
+      },
       "searchCount": 8,
       "reverseRank": 69
     },
@@ -645,18 +645,18 @@
         "index": 83,
         "value": 100.01
       },
+      "term": "true blue 3s outfits",
       "seasonality_score": 0.31314972,
-      "wow_change": {
-        "index": 8,
-        "value": -0.1
-      },
       "mom_change": {
         "index": 68,
         "value": 25
       },
       "affinity": null,
       "normalizedCount": 3,
-      "term": "true blue 3s outfits",
+      "wow_change": {
+        "index": 8,
+        "value": -0.1
+      },
       "searchCount": 3,
       "reverseRank": 68
     },
@@ -665,18 +665,18 @@
         "index": 51,
         "value": 1
       },
+      "term": "senior sunrise poster ideas",
       "seasonality_score": 0.7553994,
-      "wow_change": {
-        "index": 37,
-        "value": 0.3
-      },
       "mom_change": {
         "index": 67,
         "value": 25
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "senior sunrise poster ideas",
+      "wow_change": {
+        "index": 37,
+        "value": 0.3
+      },
       "searchCount": 2,
       "reverseRank": 67
     },
@@ -685,18 +685,18 @@
         "index": 55,
         "value": 1
       },
+      "term": "kids lunch box meals",
       "seasonality_score": 0.7487545,
-      "wow_change": {
-        "index": 51,
-        "value": 0.7
-      },
       "mom_change": {
         "index": 66,
         "value": 25
       },
       "affinity": null,
       "normalizedCount": 5,
-      "term": "kids lunch box meals",
+      "wow_change": {
+        "index": 51,
+        "value": 0.7
+      },
       "searchCount": 5,
       "reverseRank": 66
     },
@@ -705,18 +705,18 @@
         "index": 19,
         "value": -0.01
       },
+      "term": "august nails ideas",
       "seasonality_score": 0.9737673,
-      "wow_change": {
-        "index": 5,
-        "value": -0.1
-      },
       "mom_change": {
         "index": 65,
         "value": 25
       },
       "affinity": null,
       "normalizedCount": 100,
-      "term": "august nails ideas",
+      "wow_change": {
+        "index": 5,
+        "value": -0.1
+      },
       "searchCount": 100,
       "reverseRank": 65
     },
@@ -725,18 +725,18 @@
         "index": 20,
         "value": 0
       },
+      "term": "early fall nails",
       "seasonality_score": 0.56805986,
-      "wow_change": {
-        "index": 28,
-        "value": 0.2
-      },
       "mom_change": {
         "index": 64,
         "value": 25
       },
       "affinity": null,
       "normalizedCount": 6,
-      "term": "early fall nails",
+      "wow_change": {
+        "index": 28,
+        "value": 0.2
+      },
       "searchCount": 6,
       "reverseRank": 64
     },
@@ -745,18 +745,18 @@
         "index": 89,
         "value": 100.01
       },
+      "term": "calculator bedazzled",
       "seasonality_score": 0.32630536,
-      "wow_change": {
-        "index": 98,
-        "value": 15
-      },
       "mom_change": {
         "index": 63,
         "value": 25
       },
       "affinity": null,
       "normalizedCount": 6,
-      "term": "calculator bedazzled",
+      "wow_change": {
+        "index": 98,
+        "value": 15
+      },
       "searchCount": 6,
       "reverseRank": 63
     },
@@ -765,18 +765,18 @@
         "index": 62,
         "value": 3
       },
+      "term": "back to school chalkboard ideas",
       "seasonality_score": 0.49874213,
-      "wow_change": {
-        "index": 34,
-        "value": 0.3
-      },
       "mom_change": {
         "index": 62,
         "value": 20
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "back to school chalkboard ideas",
+      "wow_change": {
+        "index": 34,
+        "value": 0.3
+      },
       "searchCount": 2,
       "reverseRank": 62
     },
@@ -785,18 +785,18 @@
         "index": 25,
         "value": 0.2
       },
+      "term": "august nail color",
       "seasonality_score": 0.94786656,
-      "wow_change": {
-        "index": 16,
-        "value": 0.03
-      },
       "mom_change": {
         "index": 61,
         "value": 20
       },
       "affinity": null,
       "normalizedCount": 4,
-      "term": "august nail color",
+      "wow_change": {
+        "index": 16,
+        "value": 0.03
+      },
       "searchCount": 4,
       "reverseRank": 61
     },
@@ -805,18 +805,18 @@
         "index": 10,
         "value": -0.3
       },
+      "term": "first day of school quotes",
       "seasonality_score": 0.9345509,
-      "wow_change": {
-        "index": 71,
-        "value": 1
-      },
       "mom_change": {
         "index": 60,
         "value": 20
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "first day of school quotes",
+      "wow_change": {
+        "index": 71,
+        "value": 1
+      },
       "searchCount": 2,
       "reverseRank": 60
     },
@@ -825,18 +825,18 @@
         "index": 12,
         "value": -0.2
       },
+      "term": "happy first day of school",
       "seasonality_score": 0.9928213,
-      "wow_change": {
-        "index": 70,
-        "value": 1
-      },
       "mom_change": {
         "index": 59,
         "value": 20
       },
       "affinity": null,
       "normalizedCount": 3,
-      "term": "happy first day of school",
+      "wow_change": {
+        "index": 70,
+        "value": 1
+      },
       "searchCount": 3,
       "reverseRank": 59
     },
@@ -845,18 +845,18 @@
         "index": 69,
         "value": 20
       },
+      "term": "needy",
       "seasonality_score": 0.32409987,
-      "wow_change": {
-        "index": 14,
-        "value": 0
-      },
       "mom_change": {
         "index": 58,
         "value": 20
       },
       "affinity": null,
       "normalizedCount": 19,
-      "term": "needy",
+      "wow_change": {
+        "index": 14,
+        "value": 0
+      },
       "searchCount": 19,
       "reverseRank": 58
     },
@@ -865,18 +865,18 @@
         "index": 59,
         "value": 2
       },
+      "term": "senior car paint ideas",
       "seasonality_score": 0.73674643,
-      "wow_change": {
-        "index": 64,
-        "value": 1
-      },
       "mom_change": {
         "index": 57,
         "value": 20
       },
       "affinity": null,
       "normalizedCount": 30,
-      "term": "senior car paint ideas",
+      "wow_change": {
+        "index": 64,
+        "value": 1
+      },
       "searchCount": 30,
       "reverseRank": 57
     },
@@ -885,18 +885,18 @@
         "index": 7,
         "value": -0.4
       },
+      "term": "august nail colors",
       "seasonality_score": 0.9199797,
-      "wow_change": {
-        "index": 30,
-        "value": 0.2
-      },
       "mom_change": {
         "index": 56,
         "value": 20
       },
       "affinity": null,
       "normalizedCount": 9,
-      "term": "august nail colors",
+      "wow_change": {
+        "index": 30,
+        "value": 0.2
+      },
       "searchCount": 9,
       "reverseRank": 56
     },
@@ -905,18 +905,18 @@
         "index": 41,
         "value": 0.6
       },
+      "term": "senior car",
       "seasonality_score": 0.7995672,
-      "wow_change": {
-        "index": 74,
-        "value": 1
-      },
       "mom_change": {
         "index": 55,
         "value": 20
       },
       "affinity": null,
       "normalizedCount": 21,
-      "term": "senior car",
+      "wow_change": {
+        "index": 74,
+        "value": 1
+      },
       "searchCount": 21,
       "reverseRank": 55
     },
@@ -925,18 +925,18 @@
         "index": 63,
         "value": 3
       },
+      "term": "build a bear bat",
       "seasonality_score": 0.48410293,
-      "wow_change": {
-        "index": 73,
-        "value": 1
-      },
       "mom_change": {
         "index": 54,
         "value": 20
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "build a bear bat",
+      "wow_change": {
+        "index": 73,
+        "value": 1
+      },
       "searchCount": 2,
       "reverseRank": 54
     },
@@ -945,18 +945,18 @@
         "index": 47,
         "value": 0.8
       },
+      "term": "end of summer nails",
       "seasonality_score": 0.8880289,
-      "wow_change": {
-        "index": 9,
-        "value": -0.08
-      },
       "mom_change": {
         "index": 53,
         "value": 20
       },
       "affinity": null,
       "normalizedCount": 42,
-      "term": "end of summer nails",
+      "wow_change": {
+        "index": 9,
+        "value": -0.08
+      },
       "searchCount": 42,
       "reverseRank": 53
     },
@@ -965,18 +965,18 @@
         "index": 85,
         "value": 100.01
       },
+      "term": "stilletos nails ideas",
       "seasonality_score": 0.3184572,
-      "wow_change": {
-        "index": 27,
-        "value": 0.2
-      },
       "mom_change": {
         "index": 52,
         "value": 20
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "stilletos nails ideas",
+      "wow_change": {
+        "index": 27,
+        "value": 0.2
+      },
       "searchCount": 2,
       "reverseRank": 52
     },
@@ -985,18 +985,18 @@
         "index": 16,
         "value": -0.2
       },
+      "term": "freshman box ideas",
       "seasonality_score": 0.7317865,
-      "wow_change": {
-        "index": 20,
-        "value": 0.07
-      },
       "mom_change": {
         "index": 51,
         "value": 20
       },
       "affinity": null,
       "normalizedCount": 7,
-      "term": "freshman box ideas",
+      "wow_change": {
+        "index": 20,
+        "value": 0.07
+      },
       "searchCount": 7,
       "reverseRank": 51
     },
@@ -1005,18 +1005,18 @@
         "index": 77,
         "value": 85
       },
+      "term": "fall nails 2026",
       "seasonality_score": 0.33123806,
-      "wow_change": {
-        "index": 80,
-        "value": 2
-      },
       "mom_change": {
         "index": 50,
         "value": 20
       },
       "affinity": null,
       "normalizedCount": 3,
-      "term": "fall nails 2026",
+      "wow_change": {
+        "index": 80,
+        "value": 2
+      },
       "searchCount": 3,
       "reverseRank": 50
     },
@@ -1025,18 +1025,18 @@
         "index": 42,
         "value": 0.6
       },
+      "term": "late summer nails",
       "seasonality_score": 0.75883174,
-      "wow_change": {
-        "index": 55,
-        "value": 0.9
-      },
       "mom_change": {
         "index": 49,
         "value": 20
       },
       "affinity": null,
       "normalizedCount": 17,
-      "term": "late summer nails",
+      "wow_change": {
+        "index": 55,
+        "value": 0.9
+      },
       "searchCount": 17,
       "reverseRank": 49
     },
@@ -1045,18 +1045,18 @@
         "index": 24,
         "value": 0.2
       },
+      "term": "senior sunrise poster",
       "seasonality_score": 0.8060531,
-      "wow_change": {
-        "index": 52,
-        "value": 0.8
-      },
       "mom_change": {
         "index": 48,
         "value": 15
       },
       "affinity": null,
       "normalizedCount": 4,
-      "term": "senior sunrise poster",
+      "wow_change": {
+        "index": 52,
+        "value": 0.8
+      },
       "searchCount": 4,
       "reverseRank": 48
     },
@@ -1065,18 +1065,18 @@
         "index": 46,
         "value": 0.8
       },
+      "term": "senior sunrise posters",
       "seasonality_score": 0.8159556,
-      "wow_change": {
-        "index": 44,
-        "value": 0.4
-      },
       "mom_change": {
         "index": 47,
         "value": 15
       },
       "affinity": null,
       "normalizedCount": 32,
-      "term": "senior sunrise posters",
+      "wow_change": {
+        "index": 44,
+        "value": 0.4
+      },
       "searchCount": 32,
       "reverseRank": 47
     },
@@ -1085,18 +1085,18 @@
         "index": 87,
         "value": 100.01
       },
+      "term": "paparazzi trend",
       "seasonality_score": 0.31272838,
-      "wow_change": {
-        "index": 17,
-        "value": 0.06
-      },
       "mom_change": {
         "index": 46,
         "value": 15
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "paparazzi trend",
+      "wow_change": {
+        "index": 17,
+        "value": 0.06
+      },
       "searchCount": 2,
       "reverseRank": 46
     },
@@ -1105,18 +1105,18 @@
         "index": 48,
         "value": 0.9
       },
+      "term": "late summer outfits",
       "seasonality_score": 0.9677867,
-      "wow_change": {
-        "index": 86,
-        "value": 3
-      },
       "mom_change": {
         "index": 45,
         "value": 15
       },
       "affinity": null,
       "normalizedCount": 7,
-      "term": "late summer outfits",
+      "wow_change": {
+        "index": 86,
+        "value": 3
+      },
       "searchCount": 7,
       "reverseRank": 45
     },
@@ -1125,18 +1125,18 @@
         "index": 6,
         "value": -0.4
       },
+      "term": "media day poses volleyball",
       "seasonality_score": 0.9389322,
-      "wow_change": {
-        "index": 32,
-        "value": 0.3
-      },
       "mom_change": {
         "index": 44,
         "value": 15
       },
       "affinity": null,
       "normalizedCount": 3,
-      "term": "media day poses volleyball",
+      "wow_change": {
+        "index": 32,
+        "value": 0.3
+      },
       "searchCount": 3,
       "reverseRank": 44
     },
@@ -1145,18 +1145,18 @@
         "index": 43,
         "value": 0.6
       },
+      "term": "august nail designs",
       "seasonality_score": 0.6548398,
-      "wow_change": {
-        "index": 46,
-        "value": 0.5
-      },
       "mom_change": {
         "index": 43,
         "value": 15
       },
       "affinity": null,
       "normalizedCount": 5,
-      "term": "august nail designs",
+      "wow_change": {
+        "index": 46,
+        "value": 0.5
+      },
       "searchCount": 5,
       "reverseRank": 43
     },
@@ -1165,18 +1165,18 @@
         "index": 68,
         "value": 15
       },
+      "term": "colorful y2k nails",
       "seasonality_score": 0.3317155,
-      "wow_change": {
-        "index": 49,
-        "value": 0.6
-      },
       "mom_change": {
         "index": 42,
         "value": 15
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "colorful y2k nails",
+      "wow_change": {
+        "index": 49,
+        "value": 0.6
+      },
       "searchCount": 2,
       "reverseRank": 42
     },
@@ -1185,18 +1185,18 @@
         "index": 54,
         "value": 1
       },
+      "term": "snacks for school",
       "seasonality_score": 0.70215774,
-      "wow_change": {
-        "index": 94,
-        "value": 9
-      },
       "mom_change": {
         "index": 41,
         "value": 15
       },
       "affinity": null,
       "normalizedCount": 7,
-      "term": "snacks for school",
+      "wow_change": {
+        "index": 94,
+        "value": 9
+      },
       "searchCount": 7,
       "reverseRank": 41
     },
@@ -1205,18 +1205,18 @@
         "index": 38,
         "value": 0.5
       },
+      "term": "short fall nails",
       "seasonality_score": 0.91217506,
-      "wow_change": {
-        "index": 40,
-        "value": 0.4
-      },
       "mom_change": {
         "index": 40,
         "value": 15
       },
       "affinity": null,
       "normalizedCount": 5,
-      "term": "short fall nails",
+      "wow_change": {
+        "index": 40,
+        "value": 0.4
+      },
       "searchCount": 5,
       "reverseRank": 40
     },
@@ -1225,18 +1225,18 @@
         "index": 33,
         "value": 0.4
       },
+      "term": "senior car decorating ideas",
       "seasonality_score": 0.89480966,
-      "wow_change": {
-        "index": 67,
-        "value": 1
-      },
       "mom_change": {
         "index": 39,
         "value": 15
       },
       "affinity": null,
       "normalizedCount": 59,
-      "term": "senior car decorating ideas",
+      "wow_change": {
+        "index": 67,
+        "value": 1
+      },
       "searchCount": 59,
       "reverseRank": 39
     },
@@ -1245,18 +1245,18 @@
         "index": 21,
         "value": 0.01
       },
+      "term": "senior car decorating",
       "seasonality_score": 0.85759795,
-      "wow_change": {
-        "index": 87,
-        "value": 3
-      },
       "mom_change": {
         "index": 38,
         "value": 15
       },
       "affinity": null,
       "normalizedCount": 4,
-      "term": "senior car decorating",
+      "wow_change": {
+        "index": 87,
+        "value": 3
+      },
       "searchCount": 4,
       "reverseRank": 38
     },
@@ -1265,18 +1265,18 @@
         "index": 80,
         "value": 100.01
       },
+      "term": "ash trevino reaction pic",
       "seasonality_score": 0.31172624,
-      "wow_change": {
-        "index": 13,
-        "value": -0.01
-      },
       "mom_change": {
         "index": 37,
         "value": 15
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "ash trevino reaction pic",
+      "wow_change": {
+        "index": 13,
+        "value": -0.01
+      },
       "searchCount": 2,
       "reverseRank": 37
     },
@@ -1285,18 +1285,18 @@
         "index": 79,
         "value": 100.01
       },
+      "term": "august 2026 nails",
       "seasonality_score": 0.31820834,
-      "wow_change": {
-        "index": 12,
-        "value": -0.02
-      },
       "mom_change": {
         "index": 36,
         "value": 15
       },
       "affinity": null,
       "normalizedCount": 5,
-      "term": "august 2026 nails",
+      "wow_change": {
+        "index": 12,
+        "value": -0.02
+      },
       "searchCount": 5,
       "reverseRank": 36
     },
@@ -1305,18 +1305,18 @@
         "index": 52,
         "value": 1
       },
+      "term": "first day of school hairstyles for kids",
       "seasonality_score": 0.8858209,
-      "wow_change": {
-        "index": 60,
-        "value": 1
-      },
       "mom_change": {
         "index": 35,
         "value": 15
       },
       "affinity": null,
       "normalizedCount": 3,
-      "term": "first day of school hairstyles for kids",
+      "wow_change": {
+        "index": 60,
+        "value": 1
+      },
       "searchCount": 3,
       "reverseRank": 35
     },
@@ -1325,18 +1325,18 @@
         "index": 15,
         "value": -0.2
       },
+      "term": "last first day of school senior year",
       "seasonality_score": 0.954071,
-      "wow_change": {
-        "index": 68,
-        "value": 1
-      },
       "mom_change": {
         "index": 34,
         "value": 15
       },
       "affinity": null,
       "normalizedCount": 6,
-      "term": "last first day of school senior year",
+      "wow_change": {
+        "index": 68,
+        "value": 1
+      },
       "searchCount": 6,
       "reverseRank": 34
     },
@@ -1345,18 +1345,18 @@
         "index": 82,
         "value": 100.01
       },
+      "term": "my life with the walter boys season 3",
       "seasonality_score": 0.32296526,
-      "wow_change": {
-        "index": 31,
-        "value": 0.2
-      },
       "mom_change": {
         "index": 33,
         "value": 15
       },
       "affinity": null,
       "normalizedCount": 4,
-      "term": "my life with the walter boys season 3",
+      "wow_change": {
+        "index": 31,
+        "value": 0.2
+      },
       "searchCount": 4,
       "reverseRank": 33
     },
@@ -1365,18 +1365,18 @@
         "index": 23,
         "value": 0.2
       },
+      "term": "first day of school signs",
       "seasonality_score": 0.965328,
-      "wow_change": {
-        "index": 89,
-        "value": 4
-      },
       "mom_change": {
         "index": 32,
         "value": 15
       },
       "affinity": null,
       "normalizedCount": 3,
-      "term": "first day of school signs",
+      "wow_change": {
+        "index": 89,
+        "value": 4
+      },
       "searchCount": 3,
       "reverseRank": 32
     },
@@ -1385,18 +1385,18 @@
         "index": 14,
         "value": -0.2
       },
+      "term": "feliz dia dos pais",
       "seasonality_score": 0.98734814,
-      "wow_change": {
-        "index": 96,
-        "value": 10
-      },
       "mom_change": {
         "index": 31,
         "value": 15
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "feliz dia dos pais",
+      "wow_change": {
+        "index": 96,
+        "value": 10
+      },
       "searchCount": 2,
       "reverseRank": 31
     },
@@ -1405,18 +1405,18 @@
         "index": 49,
         "value": 0.9
       },
+      "term": "september nails",
       "seasonality_score": 0.9879448,
-      "wow_change": {
-        "index": 69,
-        "value": 1
-      },
       "mom_change": {
         "index": 30,
         "value": 15
       },
       "affinity": null,
       "normalizedCount": 42,
-      "term": "september nails",
+      "wow_change": {
+        "index": 69,
+        "value": 1
+      },
       "searchCount": 42,
       "reverseRank": 30
     },
@@ -1425,18 +1425,18 @@
         "index": 26,
         "value": 0.2
       },
+      "term": "media day poses soccer",
       "seasonality_score": 0.9658093,
-      "wow_change": {
-        "index": 61,
-        "value": 1
-      },
       "mom_change": {
         "index": 29,
         "value": 10
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "media day poses soccer",
+      "wow_change": {
+        "index": 61,
+        "value": 1
+      },
       "searchCount": 2,
       "reverseRank": 29
     },
@@ -1445,18 +1445,18 @@
         "index": 65,
         "value": 8
       },
+      "term": "volleyball poses for pictures",
       "seasonality_score": 0.4994601,
-      "wow_change": {
-        "index": 53,
-        "value": 0.8
-      },
       "mom_change": {
         "index": 28,
         "value": 10
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "volleyball poses for pictures",
+      "wow_change": {
+        "index": 53,
+        "value": 0.8
+      },
       "searchCount": 2,
       "reverseRank": 28
     },
@@ -1465,18 +1465,18 @@
         "index": 90,
         "value": 100.01
       },
+      "term": "gooning corn",
       "seasonality_score": 0.31321567,
-      "wow_change": {
-        "index": 7,
-        "value": -0.1
-      },
       "mom_change": {
         "index": 27,
         "value": 10
       },
       "affinity": null,
       "normalizedCount": 3,
-      "term": "gooning corn",
+      "wow_change": {
+        "index": 7,
+        "value": -0.1
+      },
       "searchCount": 3,
       "reverseRank": 27
     },
@@ -1485,18 +1485,18 @@
         "index": 34,
         "value": 0.5
       },
+      "term": "night before school",
       "seasonality_score": 0.9747399,
-      "wow_change": {
-        "index": 63,
-        "value": 1
-      },
       "mom_change": {
         "index": 26,
         "value": 10
       },
       "affinity": null,
       "normalizedCount": 3,
-      "term": "night before school",
+      "wow_change": {
+        "index": 63,
+        "value": 1
+      },
       "searchCount": 3,
       "reverseRank": 26
     },
@@ -1505,18 +1505,18 @@
         "index": 53,
         "value": 1
       },
+      "term": "meet the teacher outfit",
       "seasonality_score": 0.78198785,
-      "wow_change": {
-        "index": 2,
-        "value": -0.1
-      },
       "mom_change": {
         "index": 25,
         "value": 10
       },
       "affinity": null,
       "normalizedCount": 3,
-      "term": "meet the teacher outfit",
+      "wow_change": {
+        "index": 2,
+        "value": -0.1
+      },
       "searchCount": 3,
       "reverseRank": 25
     },
@@ -1525,18 +1525,18 @@
         "index": 66,
         "value": 10
       },
+      "term": "stiller nails ideas",
       "seasonality_score": 0.3181796,
-      "wow_change": {
-        "index": 35,
-        "value": 0.3
-      },
       "mom_change": {
         "index": 24,
         "value": 10
       },
       "affinity": null,
       "normalizedCount": 7,
-      "term": "stiller nails ideas",
+      "wow_change": {
+        "index": 35,
+        "value": 0.3
+      },
       "searchCount": 7,
       "reverseRank": 24
     },
@@ -1545,18 +1545,18 @@
         "index": 2,
         "value": -0.7
       },
+      "term": "yummy easy snacks",
       "seasonality_score": 0.3802249,
-      "wow_change": {
-        "index": 65,
-        "value": 1
-      },
       "mom_change": {
         "index": 23,
         "value": 10
       },
       "affinity": null,
       "normalizedCount": 5,
-      "term": "yummy easy snacks",
+      "wow_change": {
+        "index": 65,
+        "value": 1
+      },
       "searchCount": 5,
       "reverseRank": 23
     },
@@ -1565,18 +1565,18 @@
         "index": 56,
         "value": 1
       },
+      "term": "winter arc",
       "seasonality_score": 0.94843787,
-      "wow_change": {
-        "index": 95,
-        "value": 9
-      },
       "mom_change": {
         "index": 22,
         "value": 10
       },
       "affinity": null,
       "normalizedCount": 4,
-      "term": "winter arc",
+      "wow_change": {
+        "index": 95,
+        "value": 9
+      },
       "searchCount": 4,
       "reverseRank": 22
     },
@@ -1585,18 +1585,18 @@
         "index": 18,
         "value": -0.09
       },
+      "term": "back to school coloring pages",
       "seasonality_score": 0.97084844,
-      "wow_change": {
-        "index": 23,
-        "value": 0.1
-      },
       "mom_change": {
         "index": 21,
         "value": 10
       },
       "affinity": null,
       "normalizedCount": 3,
-      "term": "back to school coloring pages",
+      "wow_change": {
+        "index": 23,
+        "value": 0.1
+      },
       "searchCount": 3,
       "reverseRank": 21
     },
@@ -1605,18 +1605,18 @@
         "index": 86,
         "value": 100.01
       },
+      "term": "fdoc outfit black women",
       "seasonality_score": 0.31599456,
-      "wow_change": {
-        "index": 21,
-        "value": 0.08
-      },
       "mom_change": {
         "index": 20,
         "value": 10
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "fdoc outfit black women",
+      "wow_change": {
+        "index": 21,
+        "value": 0.08
+      },
       "searchCount": 2,
       "reverseRank": 20
     },
@@ -1625,18 +1625,18 @@
         "index": 17,
         "value": -0.1
       },
+      "term": "summer to fall transition outfits",
       "seasonality_score": 0.82371724,
-      "wow_change": {
-        "index": 75,
-        "value": 1
-      },
       "mom_change": {
         "index": 19,
         "value": 10
       },
       "affinity": null,
       "normalizedCount": 3,
-      "term": "summer to fall transition outfits",
+      "wow_change": {
+        "index": 75,
+        "value": 1
+      },
       "searchCount": 3,
       "reverseRank": 19
     },
@@ -1645,18 +1645,18 @@
         "index": 95,
         "value": 100.01
       },
+      "term": "the hood marvel rivals",
       "seasonality_score": 0.32214472,
-      "wow_change": {
-        "index": 41,
-        "value": 0.4
-      },
       "mom_change": {
         "index": 18,
         "value": 10
       },
       "affinity": null,
       "normalizedCount": 3,
-      "term": "the hood marvel rivals",
+      "wow_change": {
+        "index": 41,
+        "value": 0.4
+      },
       "searchCount": 3,
       "reverseRank": 18
     },
@@ -1665,18 +1665,18 @@
         "index": 13,
         "value": -0.2
       },
+      "term": "first day of school crafts for preschool",
       "seasonality_score": 0.92886555,
-      "wow_change": {
-        "index": 24,
-        "value": 0.1
-      },
       "mom_change": {
         "index": 17,
         "value": 10
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "first day of school crafts for preschool",
+      "wow_change": {
+        "index": 24,
+        "value": 0.1
+      },
       "searchCount": 2,
       "reverseRank": 17
     },
@@ -1685,18 +1685,18 @@
         "index": 27,
         "value": 0.3
       },
+      "term": "first day of school outfit teacher",
       "seasonality_score": 0.9518591,
-      "wow_change": {
-        "index": 76,
-        "value": 1
-      },
       "mom_change": {
         "index": 16,
         "value": 10
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "first day of school outfit teacher",
+      "wow_change": {
+        "index": 76,
+        "value": 1
+      },
       "searchCount": 2,
       "reverseRank": 16
     },
@@ -1705,18 +1705,18 @@
         "index": 9,
         "value": -0.3
       },
+      "term": "first day of school breakfast",
       "seasonality_score": 0.9533284,
-      "wow_change": {
-        "index": 48,
-        "value": 0.6
-      },
       "mom_change": {
         "index": 15,
         "value": 10
       },
       "affinity": null,
       "normalizedCount": 4,
-      "term": "first day of school breakfast",
+      "wow_change": {
+        "index": 48,
+        "value": 0.6
+      },
       "searchCount": 4,
       "reverseRank": 15
     },
@@ -1725,18 +1725,18 @@
         "index": 31,
         "value": 0.4
       },
+      "term": "simple fall nails",
       "seasonality_score": 0.9590781,
-      "wow_change": {
-        "index": 43,
-        "value": 0.4
-      },
       "mom_change": {
         "index": 14,
         "value": 10
       },
       "affinity": null,
       "normalizedCount": 5,
-      "term": "simple fall nails",
+      "wow_change": {
+        "index": 43,
+        "value": 0.4
+      },
       "searchCount": 5,
       "reverseRank": 14
     },
@@ -1745,18 +1745,18 @@
         "index": 75,
         "value": 75
       },
+      "term": "fall fashion 2026",
       "seasonality_score": 0.33139783,
-      "wow_change": {
-        "index": 90,
-        "value": 6
-      },
       "mom_change": {
         "index": 13,
         "value": 10
       },
       "affinity": null,
       "normalizedCount": 6,
-      "term": "fall fashion 2026",
+      "wow_change": {
+        "index": 90,
+        "value": 6
+      },
       "searchCount": 6,
       "reverseRank": 13
     },
@@ -1765,18 +1765,18 @@
         "index": 44,
         "value": 0.6
       },
+      "term": "media day poses",
       "seasonality_score": 0.87499785,
-      "wow_change": {
-        "index": 39,
-        "value": 0.4
-      },
       "mom_change": {
         "index": 12,
         "value": 10
       },
       "affinity": null,
       "normalizedCount": 19,
-      "term": "media day poses",
+      "wow_change": {
+        "index": 39,
+        "value": 0.4
+      },
       "searchCount": 19,
       "reverseRank": 12
     },
@@ -1785,18 +1785,18 @@
         "index": 57,
         "value": 2
       },
+      "term": "hoco signs",
       "seasonality_score": 0.97917235,
-      "wow_change": {
-        "index": 93,
-        "value": 9
-      },
       "mom_change": {
         "index": 11,
         "value": 10
       },
       "affinity": null,
       "normalizedCount": 9,
-      "term": "hoco signs",
+      "wow_change": {
+        "index": 93,
+        "value": 9
+      },
       "searchCount": 9,
       "reverseRank": 11
     },
@@ -1805,18 +1805,18 @@
         "index": 29,
         "value": 0.4
       },
+      "term": "soccer media day poses",
       "seasonality_score": 0.9390971,
-      "wow_change": {
-        "index": 45,
-        "value": 0.5
-      },
       "mom_change": {
         "index": 10,
         "value": 10
       },
       "affinity": null,
       "normalizedCount": 4,
-      "term": "soccer media day poses",
+      "wow_change": {
+        "index": 45,
+        "value": 0.5
+      },
       "searchCount": 4,
       "reverseRank": 10
     },
@@ -1825,18 +1825,18 @@
         "index": 40,
         "value": 0.6
       },
+      "term": "basic back to school nails",
       "seasonality_score": 0.62391305,
-      "wow_change": {
-        "index": 11,
-        "value": -0.03
-      },
       "mom_change": {
         "index": 9,
         "value": 10
       },
       "affinity": null,
       "normalizedCount": 17,
-      "term": "basic back to school nails",
+      "wow_change": {
+        "index": 11,
+        "value": -0.03
+      },
       "searchCount": 17,
       "reverseRank": 9
     },
@@ -1845,18 +1845,18 @@
         "index": 1,
         "value": -0.7
       },
+      "term": "september nail ideas",
       "seasonality_score": 0.9595167,
-      "wow_change": {
-        "index": 78,
-        "value": 2
-      },
       "mom_change": {
         "index": 8,
         "value": 10
       },
       "affinity": null,
       "normalizedCount": 3,
-      "term": "september nail ideas",
+      "wow_change": {
+        "index": 78,
+        "value": 2
+      },
       "searchCount": 3,
       "reverseRank": 8
     },
@@ -1865,18 +1865,18 @@
         "index": 36,
         "value": 0.5
       },
+      "term": "first day of school picture ideas",
       "seasonality_score": 0.9565637,
-      "wow_change": {
-        "index": 58,
-        "value": 1
-      },
       "mom_change": {
         "index": 7,
         "value": 10
       },
       "affinity": null,
       "normalizedCount": 4,
-      "term": "first day of school picture ideas",
+      "wow_change": {
+        "index": 58,
+        "value": 1
+      },
       "searchCount": 4,
       "reverseRank": 7
     },
@@ -1885,18 +1885,18 @@
         "index": 67,
         "value": 10
       },
+      "term": "crafts diy projects",
       "seasonality_score": 0.29230553,
-      "wow_change": {
-        "index": 29,
-        "value": 0.2
-      },
       "mom_change": {
         "index": 6,
         "value": 10
       },
       "affinity": null,
       "normalizedCount": 4,
-      "term": "crafts diy projects",
+      "wow_change": {
+        "index": 29,
+        "value": 0.2
+      },
       "searchCount": 4,
       "reverseRank": 6
     },
@@ -1905,18 +1905,18 @@
         "index": 50,
         "value": 1
       },
+      "term": "back to school nails almond",
       "seasonality_score": 0.68836766,
-      "wow_change": {
-        "index": 1,
-        "value": -0.1
-      },
       "mom_change": {
         "index": 5,
         "value": 10
       },
       "affinity": null,
       "normalizedCount": 5,
-      "term": "back to school nails almond",
+      "wow_change": {
+        "index": 1,
+        "value": -0.1
+      },
       "searchCount": 5,
       "reverseRank": 5
     },
@@ -1925,18 +1925,18 @@
         "index": 35,
         "value": 0.5
       },
+      "term": "nail inspo august",
       "seasonality_score": 0.7740764,
-      "wow_change": {
-        "index": 26,
-        "value": 0.1
-      },
       "mom_change": {
         "index": 4,
         "value": 10
       },
       "affinity": null,
       "normalizedCount": 2,
-      "term": "nail inspo august",
+      "wow_change": {
+        "index": 26,
+        "value": 0.1
+      },
       "searchCount": 2,
       "reverseRank": 4
     },
@@ -1945,18 +1945,18 @@
         "index": 73,
         "value": 65
       },
+      "term": "welcome back to school board ideas",
       "seasonality_score": 0.32704556,
-      "wow_change": {
-        "index": 15,
-        "value": 0.01
-      },
       "mom_change": {
         "index": 3,
         "value": 10
       },
       "affinity": null,
       "normalizedCount": 6,
-      "term": "welcome back to school board ideas",
+      "wow_change": {
+        "index": 15,
+        "value": 0.01
+      },
       "searchCount": 6,
       "reverseRank": 3
     },
@@ -1965,18 +1965,18 @@
         "index": 32,
         "value": 0.4
       },
+      "term": "fall nails ideas",
       "seasonality_score": 0.90096116,
-      "wow_change": {
-        "index": 38,
-        "value": 0.4
-      },
       "mom_change": {
         "index": 2,
         "value": 10
       },
       "affinity": null,
       "normalizedCount": 3,
-      "term": "fall nails ideas",
+      "wow_change": {
+        "index": 38,
+        "value": 0.4
+      },
       "searchCount": 3,
       "reverseRank": 2
     },
@@ -1985,18 +1985,18 @@
         "index": 61,
         "value": 3
       },
+      "term": "night before first day of school",
       "seasonality_score": 0.6981359,
-      "wow_change": {
-        "index": 72,
-        "value": 1
-      },
       "mom_change": {
         "index": 1,
         "value": 10
       },
       "affinity": null,
       "normalizedCount": 3,
-      "term": "night before first day of school",
+      "wow_change": {
+        "index": 72,
+        "value": 1
+      },
       "searchCount": 3,
       "reverseRank": 1
     }

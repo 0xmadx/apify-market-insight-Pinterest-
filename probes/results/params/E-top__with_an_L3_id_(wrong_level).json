@@ -5,8 +5,8 @@
     "message": "ok",
     "endpoint_name": "get_filtered_product_categories",
     "data": {
-      "total_num_product_categories": 0,
-      "ordered_values": []
+      "ordered_values": [],
+      "total_num_product_categories": 0
     },
     "x_pinterest_sli_endpoint_name": "get_filtered_product_categories",
     "http_status": 200
@@ -31,6 +31,6 @@
       }
     }
   },
-  "request_identifier": "1345826400173151",
+  "request_identifier": "1248266434311913",
   "_client_context": "<stripped: account PII, see strip_pii()>"
 }

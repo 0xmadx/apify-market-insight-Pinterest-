@@ -5,32 +5,13 @@
     "message": "ok",
     "endpoint_name": "get_filtered_product_categories",
     "data": {
+      "total_num_product_categories": 6,
       "ordered_values": [
         {
           "parent_product_categories": [
             "1104"
           ],
           "product_category": "1350",
-          "summary": {
-            "saves": {
-              "lookback": 2,
-              "percent_growth": 0.12,
-              "total": 0,
-              "percent_relative_volume": 1
-            },
-            "engagement": {
-              "lookback": 2,
-              "percent_growth": 0.3,
-              "total": 0,
-              "percent_relative_volume": 1
-            },
-            "outbound_clicks": {
-              "lookback": 2,
-              "percent_growth": 0.43,
-              "total": 0,
-              "percent_relative_volume": 1
-            }
-          },
           "related_search_trends": [
             "winter fashion",
             "leather jacket",
@@ -57,7 +38,27 @@
             "quilted jacket",
             "jean jacket",
             "leather coat"
-          ]
+          ],
+          "summary": {
+            "engagement": {
+              "total": 0,
+              "lookback": 2,
+              "percent_growth": 0.3,
+              "percent_relative_volume": 1
+            },
+            "outbound_clicks": {
+              "total": 0,
+              "lookback": 2,
+              "percent_growth": 0.43,
+              "percent_relative_volume": 1
+            },
+            "saves": {
+              "total": 0,
+              "lookback": 2,
+              "percent_growth": 0.12,
+              "percent_relative_volume": 1
+            }
+          }
         },
         {
           "parent_product_categories": [
@@ -65,26 +66,6 @@
             "1350"
           ],
           "product_category": "1108",
-          "summary": {
-            "saves": {
-              "lookback": 2,
-              "percent_growth": 0.12,
-              "total": 0,
-              "percent_relative_volume": 0.99
-            },
-            "engagement": {
-              "lookback": 2,
-              "percent_growth": 0.3,
-              "total": 0,
-              "percent_relative_volume": 0.99
-            },
-            "outbound_clicks": {
-              "lookback": 2,
-              "percent_growth": 0.43,
-              "total": 0,
-              "percent_relative_volume": 0.99
-            }
-          },
           "related_search_trends": [
             "winter fashion",
             "leather jacket",
@@ -111,33 +92,33 @@
             "quilted jacket",
             "jean jacket",
             "leather coat"
-          ]
+          ],
+          "summary": {
+            "engagement": {
+              "total": 0,
+              "lookback": 2,
+              "percent_growth": 0.3,
+              "percent_relative_volume": 0.99
+            },
+            "outbound_clicks": {
+              "total": 0,
+              "lookback": 2,
+              "percent_growth": 0.43,
+              "percent_relative_volume": 0.99
+            },
+            "saves": {
+              "total": 0,
+              "lookback": 2,
+              "percent_growth": 0.12,
+              "percent_relative_volume": 0.99
+            }
+          }
         },
         {
           "parent_product_categories": [
             "1416"
           ],
           "product_category": "1069",
-          "summary": {
-            "saves": {
-              "lookback": 2,
-              "percent_growth": 0.1,
-              "total": 0,
-              "percent_relative_volume": 0.47
-            },
-            "engagement": {
-              "lookback": 2,
-              "percent_growth": 0.2,
-              "total": 0,
-              "percent_relative_volume": 0.44
-            },
-            "outbound_clicks": {
-              "lookback": 2,
-              "percent_growth": 0.32,
-              "total": 0,
-              "percent_relative_volume": 0.45
-            }
-          },
           "related_search_trends": [
             "combat boots",
             "ugg",
@@ -164,7 +145,27 @@
             "botas vaqueras",
             "heeled boots",
             "cowgirl boots"
-          ]
+          ],
+          "summary": {
+            "engagement": {
+              "total": 0,
+              "lookback": 2,
+              "percent_growth": 0.2,
+              "percent_relative_volume": 0.44
+            },
+            "outbound_clicks": {
+              "total": 0,
+              "lookback": 2,
+              "percent_growth": 0.32,
+              "percent_relative_volume": 0.45
+            },
+            "saves": {
+              "total": 0,
+              "lookback": 2,
+              "percent_growth": 0.1,
+              "percent_relative_volume": 0.47
+            }
+          }
         },
         {
           "parent_product_categories": [
@@ -172,26 +173,6 @@
             "1448"
           ],
           "product_category": "1447",
-          "summary": {
-            "saves": {
-              "lookback": 2,
-              "percent_growth": 0.13,
-              "total": 0,
-              "percent_relative_volume": 0.18
-            },
-            "engagement": {
-              "lookback": 2,
-              "percent_growth": 0.07,
-              "total": 0,
-              "percent_relative_volume": 0.15
-            },
-            "outbound_clicks": {
-              "lookback": 2,
-              "percent_growth": 0.1,
-              "total": 0,
-              "percent_relative_volume": 0.09
-            }
-          },
           "related_search_trends": [
             "groomsmen suits",
             "wedding suit",
@@ -218,33 +199,33 @@
             "formal",
             "black suit",
             "suit jacket"
-          ]
+          ],
+          "summary": {
+            "engagement": {
+              "total": 0,
+              "lookback": 2,
+              "percent_growth": 0.07,
+              "percent_relative_volume": 0.15
+            },
+            "outbound_clicks": {
+              "total": 0,
+              "lookback": 2,
+              "percent_growth": 0.1,
+              "percent_relative_volume": 0.09
+            },
+            "saves": {
+              "total": 0,
+              "lookback": 2,
+              "percent_growth": 0.13,
+              "percent_relative_volume": 0.18
+            }
+          }
         },
         {
           "parent_product_categories": [
             "1003"
           ],
           "product_category": "1404",
-          "summary": {
-            "saves": {
-              "lookback": 2,
-              "percent_growth": 0.14,
-              "total": 0,
-              "percent_relative_volume": 0.13
-            },
-            "engagement": {
-              "lookback": 2,
-              "percent_growth": 0.18,
-              "total": 0,
-              "percent_relative_volume": 0.12
-            },
-            "outbound_clicks": {
-              "lookback": 2,
-              "percent_growth": 0.33,
-              "total": 0,
-              "percent_relative_volume": 0.12
-            }
-          },
           "related_search_trends": [
             "tricot",
             "knitting ideas",
@@ -271,10 +252,29 @@
             "knitting projects",
             "scarf",
             "shawl knitting patterns"
-          ]
+          ],
+          "summary": {
+            "engagement": {
+              "total": 0,
+              "lookback": 2,
+              "percent_growth": 0.18,
+              "percent_relative_volume": 0.12
+            },
+            "outbound_clicks": {
+              "total": 0,
+              "lookback": 2,
+              "percent_growth": 0.33,
+              "percent_relative_volume": 0.12
+            },
+            "saves": {
+              "total": 0,
+              "lookback": 2,
+              "percent_growth": 0.14,
+              "percent_relative_volume": 0.13
+            }
+          }
         }
-      ],
-      "total_num_product_categories": 6
+      ]
     },
     "x_pinterest_sli_endpoint_name": "get_filtered_product_categories",
     "http_status": 200
@@ -299,6 +299,6 @@
       }
     }
   },
-  "request_identifier": "1322259710341442",
+  "request_identifier": "1688277454469431",
   "_client_context": "<stripped: account PII, see strip_pii()>"
 }

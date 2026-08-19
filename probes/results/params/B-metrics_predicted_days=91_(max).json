@@ -1,12 +1,12 @@
 [
   {
     "growth_rates": {
-      "yoy_change": null,
       "mom_change": 0.1,
+      "yoy_change": null,
       "wow_change": -0.03
     },
-    "has_prediction": true,
     "term": "nails",
+    "has_prediction": true,
     "counts": [
       {
         "count": 55,

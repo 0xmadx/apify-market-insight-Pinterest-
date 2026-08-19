@@ -1,6 +1,6 @@
 # Parameter matrix — what the params actually do
 
-Live, profile `profile_ldu6ypke8`, 2026-08-18 21:14. One request per case.
+Live, profile `profile_ldu6ypke8`, 2026-08-18 21:20. One request per case.
 
 **MATCH** = the wire agrees with the doc. **MISMATCH** = the doc is now wrong — fix it in the commit that found this. **NEW** = it errored/behaved as expected but differently in detail; read before trusting.
 
@@ -36,6 +36,12 @@ Live, profile `profile_ldu6ypke8`, 2026-08-18 21:14. One request per case.
 | E | top/ with an L3 id (wrong level) | 200 + 0 rows — WRONG LEVEL, silent | **MATCH** | `200, 0 rows (silent empty confirmed)` |
 | E | editorial region=FR | 200 + 0 items — REGION UNSUPPORTED, silent | **MATCH** | `0 items (silent empty confirmed)` |
 | E | editorial region=US (control) | 200 with 6 items | **MATCH** | `6 items` |
+| F | demographics event=OUTBOUND_CLICK | age/gender differ per event; related_search_trends identical | **MATCH** | `65+=0.32 25-34=0.13 kws=17` |
+| F | demographics event=ENGAGEMENT | age/gender differ per event; related_search_trends identical | **MATCH** | `65+=0.27 25-34=0.17 kws=17` |
+| F | demographics event=SAVE | age/gender differ per event; related_search_trends identical | **MATCH** | `65+=0.19 25-34=0.23 kws=17 | CONFIRMED across 3 events: ages differ, keywords identical` |
+| G | metrics 2 terms normalize_against_group=true | shared scale — the two terms ARE comparable | **MATCH** | `peak normalizedCount per term: {'nails': 100, 'family': 8} (1 at 100)` |
+| G | metrics 2 terms normalize_against_group=false | each term self-normalised to 100 — NOT comparable | **MATCH** | `peak normalizedCount per term: {'nails': 100, 'family': 100} (2 at 100)` |
+| G | metrics 10 terms — silent drop of no-data terms | fewer rows than terms requested; match BY TERM not index | **MATCH** | `requested 10, got 4: ['nails', 'family', 'felt garland', 'embroidery ideas']` |
 | H | metrics shouldMock=true | 200 with FAKE 2019 data — never use | **MATCH** | `200, first date 2019-06-12T00:00:00.000Z (doc says fake 2019 data)` |
 
 Raw responses: `probes/results/params/*.json`.
