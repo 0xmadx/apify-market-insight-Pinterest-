@@ -59,6 +59,46 @@ class Config:
     COOKIE_DOMAIN: str = ".pinterest.com"
     REQUEST_TIMEOUT: int = int(os.environ.get("REQUEST_TIMEOUT", "30"))
 
+    # Cookies that must be present for a profile to be logged in at all.
+    # Verified against the live vault 2026-08-18: both profiles carry `_auth` and
+    # `_pinterest_sess`. A jar without them is a signed-out browser — it has
+    # cookies, so the "has cookies" check passes, and every request then goes out
+    # anonymous. That failure reads as a site change, not as a dead session.
+    REQUIRED_COOKIES: str = os.environ.get(
+        "REQUIRED_COOKIES", "_auth,_pinterest_sess")
+
+    # ---- not pulling old data -------------------------------------------
+
+    # How long before an already-collected record is worth re-reading. Pinterest
+    # metrics move, so identity-only dedup would freeze a live number into a
+    # one-time snapshot. 7 days reads as "the counts have probably shifted".
+    SEEN_TTL: int = int(os.environ.get("SEEN_TTL", str(7 * 86400)))
+    # Coarse bound so an abandoned scope's seen-set cannot grow forever.
+    SEEN_KEY_TTL: int = int(os.environ.get("SEEN_KEY_TTL", str(90 * 86400)))
+
+    CACHE_ENABLED: bool = os.environ.get("CACHE_ENABLED", "true").lower() in (
+        "1", "true", "yes", "t")
+    # Per-endpoint-kind TTLs, "kind=seconds" comma separated. A single global TTL
+    # is either wastefully short for a weekly trend series or dangerously long
+    # for a search ranking.
+    CACHE_TTLS: str = os.environ.get(
+        "CACHE_TTLS", "default=3600,trends=21600,search=900,detail=43200")
+
+    @property
+    def cache_ttls(self) -> dict:
+        out = {"default": 3600}
+        for pair in self.CACHE_TTLS.split(","):
+            kind, _, seconds = pair.partition("=")
+            try:
+                out[kind.strip()] = int(seconds)
+            except ValueError:
+                continue
+        return out
+
+    @property
+    def required_cookies(self) -> list:
+        return [c.strip() for c in self.REQUIRED_COOKIES.split(",") if c.strip()]
+
     # Only used when a vault profile carries no user_agent of its own. The real
     # UA always comes from the browser the cookies were born in.
     USER_AGENT_FALLBACK: str = (

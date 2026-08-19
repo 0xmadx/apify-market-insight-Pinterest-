@@ -83,9 +83,48 @@ Dockerfile                 apify/actor-python:3.12 — no browser image
 src/config.py              env-driven config
 src/vault.py               lease/release an Identity from Redis
 src/session.py             curl_cffi session wearing exactly one identity
+src/state.py               seen-set + watermark — never re-pull what we hold
+src/cache.py               response cache, TTL per endpoint kind
+src/context.py             what the scraper is handed (ctx.get, ctx.seen)
+src/records.py             the Record the scraper yields
 src/scraper.py             ← the Pinterest logic goes here (currently raises)
-src/main.py                actor entrypoint: lease → scrape → dataset
+src/main.py                actor entrypoint: lease → scrape → dedup → dataset
 src/status.py              vault health check
+tests/test_incremental.py  20 checks over the freshness rules
+```
+
+## Not pulling old data
+
+Three separate layers, each blocking a different kind of "old":
+
+| Layer | Blocks | Where |
+|---|---|---|
+| **Response cache** | re-requesting the same URL inside its TTL | `ctx.get(kind, url)` — TTL per kind: `trends` 6h, `detail` 12h, `search` 15m. Never caches a non-200, a blocked response, or an empty body |
+| **Seen-set** | re-pushing a record already collected and unchanged | `ctx.seen(scope, id, record)` and a final pass in `main.py`. Re-collects when the id is new, the content fingerprint moved, or the entry is older than 7 days |
+| **Session freshness** | running on a dead login | the vault refuses a profile with no heartbeat in 15 min, and now one missing `_auth` / `_pinterest_sess` |
+
+Three design decisions inside that are worth knowing:
+
+- **Records are marked seen only after the dataset push returns.** Marking first
+  means a crash between mark and push loses those records forever — the next run
+  skips them and nothing notices. Marking after can at worst duplicate a batch,
+  which is visible and fixable.
+- **Dedup is on a content fingerprint, not just an id.** A pin's save count moves;
+  identity-only dedup would freeze a live metric into a one-time snapshot. Pass
+  `fields=` to say which keys count as a change.
+- **A signed-in check, not just a cookies-present check.** A logged-out browser
+  still has cookies, so the old check passed and every request went out anonymous
+  — and Pinterest answers those with plausible *public* data. The run would
+  "succeed" while collecting the wrong thing.
+
+Two run switches, both off by default: `fullRescan` ignores the seen-set,
+`forceRefresh` ignores the cache. Both still write, so a one-off full run does not
+leave the next run with nothing to skip.
+
+Run the checks:
+
+```bash
+.venv/Scripts/python.exe -m tests.test_incremental
 ```
 
 ## Running it

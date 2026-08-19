@@ -17,6 +17,18 @@
       "default": 0,
       "minimum": 0
     },
+    "fullRescan": {
+      "title": "Full rescan (ignore what was already collected)",
+      "type": "boolean",
+      "description": "Off by default: each run returns only records that are new or whose numbers changed since last time. Turn on to re-collect everything.",
+      "default": false
+    },
+    "forceRefresh": {
+      "title": "Force refresh (ignore cached responses)",
+      "type": "boolean",
+      "description": "Off by default: repeat calls inside an endpoint's TTL are served from cache. Turn on to hit Pinterest for every request — slower and more exposed, but guaranteed live.",
+      "default": false
+    },
     "vaultPlatform": {
       "title": "Vault platform key",
       "type": "string",

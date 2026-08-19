@@ -107,6 +107,21 @@ class SessionVault:
             self._evict(platform, profile_id, "no cookies")
             return None
 
+        # A jar can be non-empty and still be signed out — the check above passes
+        # on a logged-out browser. Without the auth cookies every request goes out
+        # anonymous, and Pinterest answers those with plausible *public* data, so
+        # the run "succeeds" while collecting the wrong thing. That is the failure
+        # mode this whole file exists to prevent: a plausible wrong number.
+        try:
+            present = set(json.loads(raw_cookies) or {})
+        except (ValueError, TypeError):
+            present = set()
+        missing = [c for c in self.config.required_cookies if c not in present]
+        if missing:
+            self._evict(platform, profile_id,
+                        f"signed out — missing {', '.join(missing)}")
+            return None
+
         age = self._age(data)
         if age is None:
             # No heartbeat field at all — written by something other than the Go
