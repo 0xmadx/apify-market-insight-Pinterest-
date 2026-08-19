@@ -39,28 +39,35 @@ These came out of reading the inventory against the docs. Each is either a
 the probe that settles it. Chasing the hypotheses IS Phase 0 work — budget ~10
 live requests total.
 
-**F1 — `pin_id` is the bridge out of the Trends walled garden. CONFIRMED
-2026-08-19.** `top_products[].pin_id`, `topics[].pins[].id`,
-`editorial[].pins[].id` are real pin ids. The trends responses themselves
-contain no merchant URLs (only `i.pinimg.com` images), but the pin's page on
-`www.pinterest.com` does: manually inspected pin `4607745477126792832` (the #1
-top product from our `3.10` probe) and found merchant `Oriental Trading`
-(`www.orientaltrading.com`), product title, price `$380.99`, a shipping note,
-and a "Visit site" outbound link. **The outbound URL passes through a
-`/v3/offsite/` call as an input param** on `www.pinterest.com` — a different,
-more defended surface than `trends.pinterest.com`, so this was verified by
-manual DevTools capture rather than an automated probe.
+**F1 — `pin_id` is the bridge out of the Trends walled garden. Data CONFIRMED,
+read-endpoint STILL OPEN (corrected 2026-08-19).** `top_products[].pin_id`,
+`topics[].pins[].id`, `editorial[].pins[].id` are real pin ids. The trends
+responses themselves contain no merchant URLs (only `i.pinimg.com` images), but
+the pin's page on `www.pinterest.com` does: manually inspected pin
+`4607745477126792832` (the #1 top product from our `3.10` probe) and found
+merchant `Oriental Trading` (`www.orientaltrading.com`), product title, price
+`$380.99`, rating, a shipping note, and a "Visit site" outbound link. Full
+detail in [07-API-REFERENCE.md §3.19](07-API-REFERENCE.md).
 
-**Not yet captured: the raw request.** What exists so far is a description of
-the fields (host, price, shipping, link), not the actual HTTP request/response
-needed to replay it in code — URL, method, headers, exact param/response keys.
-**Action before building the shopping actor's outbound-link field:** get a
-"Copy as cURL" or HAR export of the `/v3/offsite/` call (and whichever resource
-call on the pin page carries merchant_name/price/host) from DevTools →
-Network on that pin page, save it under `probes/captures/`, then replay it
-through a leased session to confirm it works outside a live browser tab before
-it becomes a doc (`09-pin-outbound-links.md`) or code. Until that replay
-succeeds, treat the shape as known but the endpoint as unverified server-side.
+> ⚠️ **Correction to an earlier version of this section.** It previously said
+> the outbound URL "passes through a `/v3/offsite/` call" — true but
+> misleading. `/v3/offsite/` takes the merchant `url` as an **input** param
+> (`data.url`); it is a click-tracking/validation hop fired on interaction, not
+> a lookup fired on load, and it is **confirmed NOT to be the endpoint that
+> returns** merchant_name/price/host. Do not build against it expecting data
+> back — it was checked and ruled out, not merely undocumented.
+
+**Not yet captured: which call actually returns the data.** The fields are
+confirmed to exist on the rendered page; the specific `ApiResource`/resource
+call that returns them (likely a pin-detail GET, analogous to how
+`top_products` wraps its own payload) has not been captured. **Action before
+building the shopping actor's outbound-link field:** on
+`www.pinterest.com/pin/{pin_id}/`, DevTools → Network → filter `resource/` →
+find the response containing `merchant`/`price`/host fields → Copy as cURL or
+export HAR, save under `probes/captures/`, then replay it through a leased
+session to confirm it works outside a live browser tab before it becomes code.
+Until that replay succeeds, treat the shape as known but the endpoint as
+unverified server-side.
 
 **F2 — `merchant_name` is competitive intel the docs shrug at.**
 33 top products for one category each carry the selling merchant's name. Grouped,

@@ -113,7 +113,8 @@ information — you must back off blindly.
 | 16 | `/related_terms/` | B GET | §3.15 |
 | 17 | `/term_images/` | **B POST** | §3.16 |
 | 18 | `/prefix_match/` | B GET | §3.17 |
-| — | `POST /_/graphql/` | GraphQL | §3.18 (unresolved — needs a manual capture) |
+| — | `POST /_/graphql/` | GraphQL | §3.18 (not reproducible — no REST equivalent; capturable via manual DevTools, not yet done) |
+| — | `www.pinterest.com/pin/{pin_id}/` | not Trends API | §3.19 — bonus: merchant/price data exists here; read-endpoint not yet captured |
 
 **No endpoint exists for:** Pinterest Predicts (static in JS bundle), CSV Export (client-side
 papaparse), region list, interest list (both hardcoded in bundle).
@@ -412,38 +413,120 @@ GET /prefix_match/?query=hallow&country=US
 Searches the **whole keyword space** (unlike `keywordsToInclude`, which only filters the
 trending set) — works for non-trending terms. No `hasPrediction` field.
 
-## 3.18 `POST /_/graphql/` — moment page Age/Gender (STATUS: UNRESOLVED, not disproven)
-The `/moments/{slug}` page's **"Who's driving this moment"** Age+Gender charts are fed by a
-GraphQL POST using a **persisted query** — the query body is not present in any JS bundle and
-could not be extracted.
+## 3.18 `POST /_/graphql/` — moment page Age/Gender (NOT REPRODUCIBLE, status confirmed by elimination)
 
-**No REST equivalent exists.** Probed and rejected:
+The `/moments/{slug}` page's **"Who's driving this moment"** Age+Gender charts are the one
+dataset with no reachable REST endpoint.
+
+### What was proven
+
+A **complete cold-load capture** of a moment page (41 requests) shows only these
+trends-related calls:
+```
+GET  /latest_available_date/
+A    /ads/v4/trends/moment/available/{region}
+A    /ads/v4/trends/moment/metrics/{region}
+GET  /top_trends_filtered/?...&moments=<slug>
+POST /_/graphql/            ← the only unaccounted-for call
+```
+`moment/metrics` was re-inspected in full: **zero** matches for `age`, `gender`, `female`, or
+`distribution` anywhere in its 64 KB response. None of the other calls carry demographics
+either. **By elimination, the GraphQL POST is the source.**
+
+> ⚠️ **Investigation history — kept so this isn't re-litigated with worse information.** An
+> earlier pass tentatively reversed "not reproducible" after seeing the generic `/_/graphql/`
+> endpoint also fire on `/shopping` (which has no demographics chart) and called that
+> "decisive". **That reasoning does not hold** — one shared/generic endpoint can carry a
+> different payload per page, so seeing it fire elsewhere says nothing about what it returns
+> on a moment page. You cannot identify what this call does by its URL alone. Status is
+> "not reproducible" (no REST equivalent), not "impossible to ever capture" (see below).
+
+### Why the body could not be captured (by automation)
+
+Capturing a POST body requires replacing `window.fetch` **before the page's own JavaScript
+runs**. Five workarounds were attempted and all failed:
+
+| Attempt | Result |
+|---------|--------|
+| Client-side SPA navigation with hook pre-armed | GraphQL did not re-fire (cached) |
+| Scroll to lazy-load the chart | chart rendered, **0 requests** |
+| Relay globals (`__PWS_RELAY_SSR_REQUESTS__`) | already consumed / empty |
+| Server-rendered HTML | no `age_distribution` in 118 KB of SSR HTML |
+| React fiber traversal from the chart node | no demographic props found |
+
+### REST alternatives — all rejected
 - `/ads/v4/trends/moment/demographics/{region}` → **404 API method not found**
 - `/demographics/?moments=…` → **400**
-- `moment/metrics` with `include_demographics` → ignored — and a fresh capture of a cold
-  load of a moment page (41 requests, 2026-08-19) re-confirmed `moment/metrics` carries no
-  age/gender fields at all. GraphQL remains the only unaccounted-for candidate.
+- `moment/metrics` with `include_demographics` → silently ignored
 
-> ⚠️ **Investigation history, kept so this isn't re-litigated with worse information.**
-> An earlier pass tentatively reversed the "not reproducible" call after seeing the generic
-> `/_/graphql/` endpoint also fire on `/shopping` — a page with no age chart — and called that
-> "decisive". **That reasoning does not hold**: one generic GraphQL endpoint can carry a
-> different persisted query and a different payload per page. Seeing it fire elsewhere proves
-> nothing about what it returns on a moment page. Status reverted to unresolved.
+### ✅ Workaround (derived, not measured)
+```
+1. GET /top_trends_filtered/?country={r}&moments=<slug>&trendsPreset=1&numTermsToReturn=25
+2. GET /demographics/?terms=<those terms>&country={r}&end_date=…&days=90
+3. Aggregate the per-term age/gender distributions
+```
+This approximates moment-level demographics from its constituent keywords. **Label it
+`derived`** (see ARCHITECTURE.md §2.3, scenario D4) — it will not match Pinterest's own chart
+exactly.
 
-**Why it can't be captured by automation.** To read a POST body you must hook
-`window.fetch`/XHR *before* the page's own JS runs and fires the request. Five automated
-approaches were tried and all failed for that reason: client-side SPA navigation, a
-scroll-triggered lazy load, reading Relay's client-side globals, the server-rendered HTML,
-and React fiber-tree traversal. None of them run early enough. **This genuinely needs a
-human**: DevTools → Network → filter `graphql`, open the moment page fresh (or hard-reload
-with the panel already open), right-click the POST → **Copy as cURL**.
+### To upgrade this to measured
 
-**Workaround for an API client, still the fallback until the capture lands:** take the
-moment's top keywords from `/top_trends_filtered/?moments=<slug>` (§3.12), then call
-`/demographics/` (§3.14) on those terms and aggregate. Approximate — label it `derived`,
-never `measured` (see ARCHITECTURE.md §2.3, scenario D4) — but it's the only REST path to
-moment-level demographics until the real request is in hand.
+Capture the live request from browser DevTools: Network → filter `graphql` → right-click the
+POST → **Copy as cURL**. The `operationName`/query hash + `variables` are sufficient to
+replay it. **Browser automation cannot do this** — it can't hook before the page's own
+scripts run, which is exactly what all five attempts above ran into.
+
+---
+
+## 3.19 PRODUCT / MERCHANT DATA — `www.pinterest.com/pin/{pin_id}/`
+
+⭐ Not part of the Trends API, but it completes the shopping chain. `top_products` (§3.10)
+returns `pin_id` but **no merchant URL or price**. Both are available from the pin page.
+
+### What a pin page exposes
+For pin `4607745477126792832` (the #1 top-product for *Seasonal & holiday decorations*):
+
+| Field | Value |
+|-------|-------|
+| Merchant | **Oriental Trading** |
+| Outbound host | **`www.orientaltrading.com`** |
+| Product title | 97" Halloween Manor Archway Halloween Prop |
+| **Price** | **$380.99** |
+| Rating | 2.0 (1 review) |
+| Shipping | Free shipping with $25+ |
+| CTA | "Visit site" |
+
+### The outbound-link endpoint — a dead end for READING data, keep for reference
+```jsonc
+// via the ApiResource wrapper, on www.pinterest.com
+{"options":{"url":"/v3/offsite/",
+ "data":{"check_only":true,"client_tracking_params":"…","pin_id":"…","url":"<MERCHANT URL>"}}}
+```
+⚠️ **The merchant `url` is an INPUT to this call, not an output** — the client already has it
+from the pin object before this fires. `/v3/offsite/` is a click-tracking/validation hop, not
+a lookup, and it fires **on interaction**, not on page load. **This is NOT the endpoint that
+returns merchant name, price, or the outbound URL** — do not build against it expecting a
+merchant record back.
+
+> ⚠️ Different host (`www.pinterest.com`, not `trends.pinterest.com`) → different PWS handler
+> (`www/index.js`) and a cross-origin boundary. Treat as a separate client.
+
+### ⚠️ STILL OPEN: which call actually returns merchant_name / price / host
+
+The table above is confirmed to exist on the rendered pin page (manual inspection), but the
+**specific resource call that returns it has not yet been captured** — `/v3/offsite/` was the
+first candidate checked and is confirmed to be the wrong one (input, not output). The likely
+source is a pin-detail `ApiResource` call (a "PinResource"-style GET) fired on page load,
+analogous to how `top_products` wraps its own payload — but this needs its own DevTools
+capture on `www.pinterest.com/pin/{pin_id}/` (filter Network for `resource/`, look for the
+merchant/price fields in the response, Copy as cURL) before it can be built against. Until
+then, treat "which endpoint returns this" as unverified even though "this data exists on the
+page" is confirmed.
+
+**Chain once the read-endpoint is captured:** `product_categories/top` → category →
+`top_products` → `pin_id` → the pin's resource call → merchant + price + outbound URL. This
+would yield **real, linkable product pages per trending category** — something the Trends UI
+never shows.
 
 ---
 

@@ -63,8 +63,14 @@ Reverse-engineered from `trends.pinterest.com`. **18 REST endpoints**, fully map
 (client-side papaparse), region list, interest list, spotlight trend detail, "Predict the future"
 toggle, "All categories" tab, "Other product categories".
 
-**Not reproducible:** moment-page Age/Gender (persisted GraphQL — workaround in #7 §3.18);
+**Not reproducible:** moment-page Age/Gender (persisted GraphQL — proven by elimination,
+5 capture workarounds failed; derived workaround + DevTools upgrade path in #7 §3.18);
 merchant endpoints (need catalog); `publish_state=DRAFT` (permission-gated).
+
+**Bonus — product/merchant data (#7 §3.19):** `top_products` returns `pin_id` only, but
+`pinterest.com/pin/{pin_id}/` exposes **merchant name, outbound host, price, rating and
+shipping** — completing the chain to real product links per trending category. Confirmed
+the data exists; the exact read-endpoint on that page is not yet captured.
 
 **Untested:** anonymous/logged-out access; rate-limit thresholds.
 
