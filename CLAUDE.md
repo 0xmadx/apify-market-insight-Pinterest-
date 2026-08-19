@@ -119,9 +119,11 @@ fingerprints, mark-after-push ordering) · actor skeleton (`src/main.py`) ·
 endpoint probe harness (16/16 OK on 2026-08-18).
 
 **Built + verified live:** the graph layer (`transport.py`, `vocab.py`,
-`parsers.py`) and all four traversals as one actor with an `operation` input —
-`shopping`, `keywords`, `moments`, `radar`. 334 offline checks, 0 unread
-response fields (`probes/coverage.py`).
+`parsers.py`) and five traversals as one actor with an `operation` input —
+`shopping`, `keywords`, `moments`, `radar`, and `crawl`, which follows the
+links between them instead of stopping at one page. Both of Pinterest's time
+controls are wired: `endDate` (which date) and `dateRange` (how much history).
+334 offline checks, 0 unread response fields (`probes/coverage.py`).
 
 **Both browser captures landed 2026-08-19:**
 - §3.18 moment Age/Gender via the persisted GraphQL query — audience is now

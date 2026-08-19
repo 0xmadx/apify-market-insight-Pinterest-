@@ -142,7 +142,7 @@ The graph logic from ARCHITECTURE §2.3, as testable planners (they emit a
   tri-state labelling (**D3**) · moment-demographics workaround, `derived`
   labelled (**D4**) · normalisation scope stamps (**D5**).
 
-## PHASE 3 — The traversals ✅ BUILT as one actor with 4 operations (operator may still split into separate Apify listings; the traversals are the shared core either way)
+## PHASE 3 — The traversals ✅ BUILT as one actor with 5 operations (operator may still split into separate Apify listings; the traversals are the shared core either way)
 
 Build order = revenue order: **E1 keyword-research** (flagship) → **E2
 shopping-trends** (now including F2 merchant intel + H1 outbound links if
@@ -150,6 +150,30 @@ proven) → **E3 seasonal-moments** → **E4 trend-radar**. Each actor: fixtures
 first, then ONE budgeted live run (per-scenario request caps are written in
 TEST-SCENARIOS group E). Records flow through the existing `Record`/`ctx`
 freshness layer — do not reinvent it.
+
+## PHASE 3b — `crawl`, and the pre-ship audit ✅ DONE (2026-08-19)
+
+**`crawl`** is the fifth operation: it walks the edges §2.2 of ARCHITECTURE
+already documented — including the one labelled *"the loop edge — siblings
+re-enter"* — which every other operation parsed and then ignored. Breadth-first
+and batched per level, so cost scales with depth, not node count.
+
+**The audit** measured what had only ever been assumed. Everything it found was
+in the same class: a run that succeeds and is wrong.
+
+| Found | Was | Is |
+|---|---|---|
+| `endDate` on `keywords` / `shopping` | HTTP 500 for every past date | forecast dropped for past dates, history kept, and the record says why |
+| shopping history cap | 730 (copied from a different parameter) | **~257**, measured — the old value let ~470 days of silent empties through |
+| `_meta.end_date` | claimed to be "Pinterest's date" | only discovery echoes one; the rest say `end_date_basis: requested` |
+| regions with no moments | 2 declared | **15** measured — 13 regions were returning silent empties |
+| Pinterest's *Date range* dropdown | three differently-named inputs | one `dateRange` control across all operations |
+| `docs/API.md` | claimed "generated from the schema", wasn't, had drifted | enforced in all four directions by `test_dispatch` |
+| the crawl request budget | read an attribute only the test double had — counted **zero** in production | reads the real counter, and refuses to run if it cannot count |
+
+The last one is the lesson worth keeping: **a guard that cannot measure must
+refuse to run, never fail open** — and a fake that does not expose what the real
+client exposes is not testing the real path.
 
 ## PHASE 4 — Product behavior + deploy
 
@@ -161,10 +185,23 @@ root README documents — Upstash; not built yet, operator decision pending).
 ## CONTINUOUS — the drift canary
 
 `probes/probe_endpoints.py` before every release (**G1**); re-run B2 coverage
-against the *fresh* probe JSONs, not just committed fixtures (**G2**). New keys
-in fresh responses are logged as opportunities — that is Phase 0.2 happening
-again, forever. This API has no contract; the probe suite is the contract we
-maintain ourselves.
+against the *fresh* probe JSONs, not just committed fixtures (**G2**);
+`probes/history_caps.py` to confirm each `endDate` window still holds (**G3**).
+New keys in fresh responses are logged as opportunities — that is Phase 0.2
+happening again, forever. This API has no contract; the probe suite is the
+contract we maintain ourselves.
+
+⚠️ **Order matters.** `probe_endpoints` rewrites the fixtures the suites read,
+so tests run *after* it, against the data it just fetched. That is the point —
+it is the only step that checks the code against today's wire. It also means a
+test must never assert a count Pinterest owns: two did, and the documented
+release sequence failed itself.
+
+**G3 also settles an open question.** Shopping's history floor is currently
+undetermined — a fixed data-start date and a rolling ~257-day window look
+identical from one observation. If a later run measures a cap that has grown by
+roughly the days elapsed since 2026-08-19, the floor is fixed; record that in
+`vocab.py`, which says so.
 
 ---
 

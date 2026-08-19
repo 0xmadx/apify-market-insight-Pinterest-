@@ -12,15 +12,16 @@ against is **a plausible wrong number, not a crash**.
 
 ## The first thing you do is RUN, not read
 
-Phase 0 is complete and all four operations are built (`shopping`, `keywords`,
-`moments`, `radar`) — but the loop below still runs before you change anything,
-because the wire moves and the docs are only a snapshot of it:
+Phase 0 is complete and all five operations are built (`shopping`, `keywords`,
+`moments`, `radar`, `crawl`) — but the loop below still runs before you change
+anything, because the wire moves and the docs are only a snapshot of it:
 
 ```bash
 .venv/Scripts/python.exe -m src.status              # vault green?
 .venv/Scripts/python.exe -m probes.probe_endpoints  # all endpoints, structured
 .venv/Scripts/python.exe -m probes.inventory        # every field they returned
 .venv/Scripts/python.exe -m probes.coverage         # fields the parsers DON'T surface
+.venv/Scripts/python.exe -m probes.history_caps     # endDate windows still hold?
 ```
 
 `coverage` is the one that answers "did we read the output before parsing it":
@@ -116,6 +117,31 @@ fact no doc records, probe it live through a leased session (vault permitting,
 `python -m src.status` first) rather than reasoning about it — one live call has
 repeatedly beaten three plausible theories.
 
+## Four lessons the audit added — each one shipped as a bug
+
+**Verifying one call is not verifying the feature.** `endDate` shipped
+"verified" on its discovery call and crashed `keywords` and `shopping` with
+HTTP 500 on every past date, in the enrichment step that check never reached.
+Run the whole operation end-to-end (`api_sim.execute`) and every operation that
+shares the parameter — `moment/metrics` behaved differently from the other two
+chart endpoints.
+
+**A constant that was never probed is a guess wearing a number.** Shopping's
+history cap read 730 for the project's life; it was copied from a different
+parameter's ceiling and the real value is ~257. If you cannot cite the
+measurement and its date next to a limit, measure it.
+
+**Never assert a count Pinterest owns.** `probe_endpoints` refreshes the very
+fixtures the suites read, so a pinned "33 products" makes the documented
+release sequence fail itself. Assert the invariant, or better the relationship
+(a short category list equals `total_in_vertical`, which also proves it is not
+truncation).
+
+**A fake that does not expose what the real client exposes does not test the
+real path.** The crawl budget read `client.all_calls` — an attribute only the
+test double had. Every offline check passed while the guard counted zero in
+production. Guards that cannot measure must refuse to run, never fail open.
+
 ## Tests
 
 Write the offline test against a probe fixture BEFORE the code it proves.
@@ -124,3 +150,9 @@ namespace, real assertions on real shapes. Live tests: ≤2 requests each, skip
 cleanly when the vault has no usable profile. Every scenario you implement is
 one from `docs/TEST-SCENARIOS.md` — reference its id (B1, D3, E2…) in the test
 name so coverage is auditable.
+
+`tests/test_dispatch.py` also guards the DOCS: it fails the build if the schema
+offers an input `docs/API.md` does not document, if the code reads one the
+schema does not offer, or if any operation emits a field — including a `_meta`
+key — missing from its output table. Add a field, document it in the same
+commit; the suite will tell you if you forget.

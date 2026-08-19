@@ -78,12 +78,27 @@ class CrawlBudget:
     def __init__(self, client, max_requests):
         self.client = client
         self.max_requests = max_requests
-        self.start = len(getattr(client, "all_calls", []) or [])
+        # ⚠️ This read the test client's `all_calls` via getattr with a []
+        # default. The REAL TrendsClient has no such attribute, so in
+        # production the budget counted zero, never tripped, and the only
+        # guard against a runaway crawl silently did not exist — while every
+        # offline test passed, because the fake client did have it.
+        #
+        # `request_count` is TrendsClient's own counter, incremented in
+        # _request. Missing it is a programming error, not a condition to
+        # degrade through: a budget that cannot count MUST refuse to run
+        # rather than fail open.
+        if not hasattr(client, "request_count"):
+            raise TypeError(
+                f"{type(client).__name__} has no `request_count`; a crawl "
+                f"budget that cannot count requests would silently allow an "
+                f"unbounded crawl. Give the client a request_count.")
+        self.start = client.request_count
         self.exhausted = False
 
     @property
     def spent(self):
-        return len(getattr(self.client, "all_calls", []) or []) - self.start
+        return self.client.request_count - self.start
 
     def remaining(self):
         return max(0, self.max_requests - self.spent)

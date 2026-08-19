@@ -1,12 +1,29 @@
-# Pinterest Apify actor — the floor
+# Pinterest Trends — an Apify actor
 
-An Apify actor that scrapes Pinterest using **a session the operator's own Chrome
-already holds**, pulled from the Redis vault. The actor never logs in, never
-stores a credential, and never runs a browser.
+Reads Pinterest Trends using **a session the operator's own Chrome already
+holds**, pulled from the Redis vault. It never logs in, never stores a
+credential, and never runs a browser.
 
-This directory is the floor only: session plumbing, actor packaging, health
-check. **The Pinterest endpoint logic is not here** — it goes in
-[`src/scraper.py`](src/scraper.py) once the API notes land.
+Pinterest publishes this data through a filtered interface. The actor asks the
+same backend the same questions — unfiltered, joined together, and in a shape
+that goes straight into a spreadsheet.
+
+**Five operations.** Four answer one question each; the fifth follows the links
+between them.
+
+| Operation | The question | Requests | Records |
+|---|---|---|---|
+| `radar` | What is Pinterest itself featuring right now? | 2 | 11 |
+| `keywords` | What are people searching for, and is it still growing? | ~14 | 10 |
+| `moments` | When does this season actually start? | ~16 | 13 |
+| `shopping` | What products are people clicking through to buy? | ~38 | 57 |
+| `crawl` | Follow Pinterest's navigation, the way you would click it | ~17 | 74 |
+
+Press Run with nothing filled in and you get what is trending now.
+
+**New to this?** → [docs/CUSTOMER-GUIDE.md](docs/CUSTOMER-GUIDE.md) ·
+**Integrating?** → [docs/API.md](docs/API.md) ·
+**Changing the code?** → [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
 ---
 
@@ -93,9 +110,11 @@ src/transport.py           the two call styles + cache + blind backoff
 src/vocab.py               measured ceilings/enums, refused before the wire
 src/parsers.py             one named parser per endpoint
 src/shopping.py  keywords.py  moments.py  radar.py   the four traversals
+src/crawl.py               the fifth: follows the links between them
 src/status.py              vault health check
-tests/test_incremental.py  20 checks over the freshness rules
-docs/                      the Pinterest Trends API specs — see docs/README.md
+tests/                     5 suites, 334 offline checks — see below
+probes/                    live wire probes; probe_endpoints is the release gate
+docs/                      product docs + the reverse-engineering corpus
 ```
 
 ## Where everything is
@@ -115,23 +134,23 @@ docs/                      the Pinterest Trends API specs — see docs/README.md
 | `.claude/skills/pinterest-trends-coder/` | the enforced coding skill — invoked before writing any code |
 | [docs/README.md](docs/README.md) | which spec drafts were superseded and why |
 
-**Current state:** all four operations are BUILT and offline-tested —
-`shopping` (verified live end-to-end), `keywords`, `moments`, `radar` — on top of
-the shared graph layer (`transport.py`, `vocab.py`, `parsers.py`) and the
-session + freshness layers. 334 offline checks across five suites, all green — and **all four operations
-verified live** (2026-08-19): shopping end-to-end with 33 shoppable pins;
-radar's 5 spotlight + 6 editorial with campaign windows; keywords with real
-forecasts and audiences; moments with the phase gate drilling only
-rising/approaching and the derived audience labelled as such. The three-way
-smoke cost 21 requests on one leased session.
+**Current state:** all five operations are built, offline-tested and verified
+live, on top of the shared graph layer (`transport.py`, `vocab.py`,
+`parsers.py`) and the session + freshness layers. 16/16 endpoints answer, 0
+response fields go unread.
 
-Run everything offline:
+Both of Pinterest's time controls are wired: `endDate` (which date am I looking
+at) and `dateRange` (how much history the chart shows). They are different
+questions and compose.
+
+Run everything offline — **334 checks, no network**:
 
 ```bash
-.venv/Scripts/python.exe -m tests.test_incremental          # 20 — freshness layer
-.venv/Scripts/python.exe -m tests.test_shopping_api         # 54 — vocab + parsers
-.venv/Scripts/python.exe -m tests.test_shopping_traversal   # 33 — shopping walk
-.venv/Scripts/python.exe -m tests.test_full_project         # 50 — keywords/moments/radar
+.venv/Scripts/python.exe -m tests.test_incremental          #  20 — freshness layer
+.venv/Scripts/python.exe -m tests.test_shopping_api         #  54 — vocab + parsers
+.venv/Scripts/python.exe -m tests.test_shopping_traversal   #  33 — shopping walk
+.venv/Scripts/python.exe -m tests.test_full_project         #  95 — keywords/moments/radar
+.venv/Scripts/python.exe -m tests.test_dispatch             # 132 — the customer-facing path
 ```
 
 ## Not pulling old data

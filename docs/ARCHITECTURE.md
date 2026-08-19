@@ -5,7 +5,7 @@
 > questions the endpoint docs cannot: **how the endpoints link**, **what a
 > customer actually buys**, and **how a run flows through the layers**. Written
 > 2026-08-19 as the design; **the design is now implemented** — all four layers
-> built (§3.2), all four operations verified live, 334 offline checks. Where
+> built (§3.2), five operations verified live, 334 offline checks. Where
 > this doc and `src/` disagree, that is a bug in one of them: fix it in the
 > same commit, the same rule as wire-vs-doc.
 
@@ -93,6 +93,62 @@ This table **is** the map. Every edge was verified on the wire.
 
 **Join keys, ranked by reach:** keyword string (universal) → region → interest ID
 → moment slug → category ID (shopping-only, needs the taxonomy join).
+
+## 2.2b Walking the edges — the `crawl` operation
+
+For most of this project the table above was a **map nobody walked**. The four
+operations each traverse a fixed slice of it and stop; the edges they cross on
+the way out — `related_search_trends`, `editorial[].keywords`,
+`related_terms[].term`, the one this document already labelled *"the loop edge
+— siblings re-enter"* — were parsed, emitted on the record, and never followed.
+
+`crawl` (`src/crawl.py`) follows them. It is the same graph; the difference is
+that traversal is now driven by the edges rather than hardcoded per operation.
+
+**Entry points** are Pinterest's own pages, because "where do I start" is a
+navigation question, not a data one:
+
+| `crawlFrom` | Loads | Then follows |
+|---|---|---|
+| `overview` | spotlight + editorial + every moment | their `keywords` |
+| `shopping` | trending product categories | each category's `search_queries` chips |
+| `search` | trending search keywords | each keyword's `related` |
+| `moments` | every seasonal moment | each moment's `keywords` |
+
+**The traversal order is the whole design.** Breadth-first, batched per level —
+never depth-first per node:
+
+```
+depth-first, per node     13 moments x 25 keywords x 3 calls   ~975 requests
+breadth-first, per level  the same 74 nodes                    ~17 requests
+```
+
+The keyword endpoints take arrays (§2.2: `metrics.terms`,
+`demographics.terms`), so one call answers for a whole level. Cost scales with
+**depth**, not with how many nodes the level holds. A depth-first crawler over
+this graph would be correct and unusable on a session shared by every customer.
+
+The one edge that does **not** batch is `related_terms` — one request per term.
+So it is fetched only when a deeper level will actually consume it, capped by
+`relatedFanout`. Getting this wrong made `crawlDepth: 2` silently return depth
+1's result: the level was enriched without edges, the frontier came back empty,
+and the crawl stopped *while reporting success*.
+
+**Two guards**, because this is the one operation that can run away:
+
+- `maxRequests` caps what is **followed**. The entry page always loads in full
+  — half an entry page is a wrong answer, not a cheaper one — so its cost is a
+  reported floor (`entry_cost`), not something the budget can prevent.
+- every node is visited once, keyed by `(kind, id)`. `mascara` reached from
+  three categories is one keyword, and a keyword never collides with a category
+  of the same name.
+
+**Every crawl ends with a `crawl_summary` record.** Records stream as they are
+found, so one emitted early cannot know the crawl was cut short later. The
+summary is written last and carries nodes-by-kind, requests spent vs budget,
+the entry floor, `truncated`, and how many edges were left unfollowed. Without
+it a truncated crawl is indistinguishable from a complete one — the same
+silent-empty failure this codebase refuses everywhere else.
 
 ## 2.3 Decision nodes — where the traversal branches
 
@@ -244,9 +300,10 @@ so no actor requires another one to be useful.
                      └─────────────────────────────────────┘
 ```
 
-All four operations are verified live (2026-08-19): shopping end-to-end with 33
+All operations are verified live (2026-08-19): shopping end-to-end with its
 shoppable pins; keywords with real forecasts; moments with the phase gate and
-derived audience; radar's 11 curated records in 2 requests. 334 offline checks
+measured audience; radar's 11 curated records in 2 requests; and `crawl`
+walking the edges (§2.2b) from any of four entry pages. 334 offline checks
 across five suites. What remains is Phase 4: deployment (network-reachable
 Redis + `apify push`) — see [BUILD-PLAN.md](BUILD-PLAN.md).
 

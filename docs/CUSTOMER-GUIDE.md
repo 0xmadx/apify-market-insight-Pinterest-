@@ -237,6 +237,55 @@ endpoint returns no date at all, so `end_date` is your own ask passed through
 and any snapping is invisible. We would rather say that than let you read a
 number as confirmed when it is not.
 
+### "Give me everything around this, not one report" — the crawl
+
+The other four operations answer one question and stop. Pinterest's own site
+does not: a moment links to its keywords, a category's *Search queries* chips
+link to the keyword page, a keyword links to its related terms. `crawl` walks
+those links for you.
+
+```json
+{ "operation": "crawl", "crawlFrom": "shopping", "crawlDepth": 1 }
+```
+
+That loads the trending-categories page, then follows **every category's
+search-query chips** into full keyword records — about 74 nodes for 17
+requests. Start somewhere else by changing one field:
+
+| `crawlFrom` | Starts at | Then follows |
+|---|---|---|
+| `overview` | spotlight + editorial + every moment | their keywords |
+| `shopping` | trending product categories | each category's search-query chips |
+| `search` | trending search keywords | each keyword's related terms |
+| `moments` | every seasonal moment | each moment's keywords |
+
+**Why it is not slow.** It walks a whole level at once rather than node by
+node, and the keyword endpoints accept batches — so cost grows with `crawlDepth`,
+not with how many things it finds. Node-by-node would be roughly 975 requests
+for the same result.
+
+**Every record says how you got there.** `_meta.crawl_path` reads
+`shopping > keyword`, so a dataset mixing categories, moments and keywords
+still explains itself.
+
+**Read the last record.** Every crawl ends with a summary:
+
+```json
+{ "crawl_summary": true, "nodes_total": 74,
+  "nodes_by_kind": { "category": 19, "keyword": 50, "moment": 13 },
+  "requests_spent": 17, "request_budget": 60, "entry_cost": 13,
+  "truncated": false, "edges_unfollowed": 0 }
+```
+
+`truncated: true` means **your dataset is partial** — the budget stopped it.
+Raise `maxRequests` or lower `crawlDepth`. Records stream as they are found, so
+a record written early cannot know the crawl was cut short later; this last one
+is where that fact lives. Check it before you trust a crawl to be complete.
+
+One thing to know about `maxRequests`: it caps what the crawl **follows**. The
+entry page always loads in full, because half a page is a wrong answer rather
+than a cheap one. `entry_cost` in the summary tells you that floor.
+
 ### "Just tell me what's hot" — zero input
 
 ```json

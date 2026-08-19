@@ -59,6 +59,17 @@ class EveryFixture(PipelineFake):
     def all_calls(self):
         return self.calls + self.shop.calls
 
+    @property
+    def request_count(self):
+        """The same counter the real TrendsClient exposes.
+
+        Added because the crawl budget read `all_calls` — which only THIS
+        class had. Every offline test passed while the budget counted zero in
+        production. A fake that does not expose what the real client exposes
+        does not test the real path.
+        """
+        return len(self.all_calls)
+
 
 class Ctx:
     def __init__(self, task):

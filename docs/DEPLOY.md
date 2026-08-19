@@ -189,6 +189,10 @@ costs in the system.
 .venv/Scripts/python.exe -m tests.test_dispatch     # the customer-facing path
 ```
 
+334 checks total. `test_dispatch` also guards the docs: it fails if
+`.actor/input_schema.json` and `docs/API.md` disagree in either direction, or
+if any operation emits a field its output table does not document.
+
 The probe suite is the contract this API does not have. An endpoint dropping to
 FAIL is stop-ship until the docs and parsers are reconciled with the new wire
 truth — see `docs/TEST-SCENARIOS.md` group G.

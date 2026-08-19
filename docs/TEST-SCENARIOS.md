@@ -261,6 +261,28 @@ logged as opportunities; vanished keys that a parser reads are failures.
 
 ---
 
+## H, I, J — scenarios added by the pre-ship audit
+
+These came from measuring, not from planning, and each one names a bug that
+shipped:
+
+| Id | Scenario | Expected (measured) |
+|---|---|---|
+| H1 | history caps differ per endpoint | shopping ~257d, keywords ~365d, moments ~730d. Past the cap: **HTTP 200 + empty list**, refused before the wire |
+| H2 | date provenance | only discovery echoes the date it used; shopping and moment/metrics echo none, so `end_date_basis` is `requested` there |
+| H3 | forecast from a past date | `predicted_days > 0` with a past `endDate` is HTTP 500 on keyword and shopping charts. Forecast dropped, history kept, `forecast_suppressed` explains |
+| I1 | the Date-range control | `past_3_months/6_months/1_year/2_years` → 90/180/365/730, reaching the wire on all three surfaces |
+| I2 | precedence | an explicit `days`/`chartDays`/`lookbackDays` **overrides** `dateRange` |
+| I3 | moment regions | 17 of 32 have moments; the other 15 are refused, not silently empty |
+| I4 | phase labels | wire `cooldown`→UI "Cooling", `off_season`/`ended`→"Frozen"; unknown phases pass through |
+| J1 | crawl depth | depth 1 follows the entry page's keyword links; depth 2 reaches depth 2 (it silently did not) |
+| J2 | crawl cost | breadth-first and batched — 74 nodes for ~17 requests, not ~975 |
+| J3 | crawl budget | caps what is **followed**; entry page is a reported floor. Budget must count REAL requests — it once read an attribute only the test client had, and counted zero in production |
+| J4 | crawl summary | terminal record; `truncated: true` means the dataset is partial |
+| J5 | crawl provenance | every node carries `crawl_path`; ids namespaced by kind |
+
+---
+
 ## COVERAGE LEDGER (updated 2026-08-19 — the build is done)
 
 334 checks across five suites, every one tagged with its scenario id:
@@ -271,6 +293,7 @@ logged as opportunities; vanished keys that a parser reads are failures.
 | `tests/test_shopping_api.py` | 54 | B1–B5, C1–C5, C7, C2b (vertical-name guard), F (event/demographics) |
 | `tests/test_shopping_traversal.py` | 33 | E2 end-to-end incl. budget, A4, D3–D5 |
 | `tests/test_full_project.py` | 95 | B1–B6, C4, D1–D5, D4/D4b (§3.18 + interest matrix), E1–E4, E2b (§3.19 commerce), F1/F3/F6 (incl. cache wiring), H2/H3 |
+| `tests/test_dispatch.py` | 132 | the customer-facing path: schema↔code↔docs drift (all four directions), C6, H (history caps + date provenance), I (the Date-range control, moment regions, phase labels), J (the crawl) |
 
 **Covered live instead of offline:** A3 (the PWS-handler 403 → `malformed`) and
 A5's no-rate-limit-headers fact are exercised by `probes/probe_endpoints.py` and
@@ -281,11 +304,6 @@ before any release.
 - **A1/A2 as standalone units** — the envelope unwrap and error surface are
   exercised through every traversal test and every probe; standalone units add
   little until transport changes.
-- **C6** (two age/gender schemes from one shared input) — `vocab.py` carries
-  both schemes and `keywords.py` maps the keyword codes; the shopping side
-  currently passes enum lists through untranslated, so the *shared-input* mapper
-  C6 describes does not exist yet. Build it when a customer-facing input needs
-  one age vocabulary across operations.
 - **F1/F2/F4 (actor-level queue/lease/budget)** and **E-scenario live budget
   asserts** — Phase 4 (deployment) work: they test the actor under Apify
   conditions, not the traversals.

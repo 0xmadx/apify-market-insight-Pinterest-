@@ -156,6 +156,7 @@ PAGE = """<!doctype html><meta charset=utf-8>
     <option value=keywords>keywords — trending search terms + forecast</option>
     <option value=shopping selected>shopping — trending product categories</option>
     <option value=moments>moments — seasonal timing</option>
+    <option value=crawl>crawl — follow the links, like clicking through</option>
   </select>
 
   <label>Region</label>
@@ -193,6 +194,11 @@ const EXTRA = {
   <label>Interest breakdown <div class=hint>ids, comma separated. 918530398158 = Food and Drinks — an audience Pinterest's own dropdown will not show you for most moments.</div></label>
   <input id=interestIds placeholder="918530398158">`,
  radar:`<label>Interest filter <div class=hint>one id, or empty for all</div></label><input id=interest placeholder="">`,
+ crawl:`<label>Start from <div class=hint>the Pinterest page the crawl opens first</div></label>
+  <select id=crawlFrom><option value=overview>overview — spotlight + editorial + moments</option><option value=shopping>shopping — trending product categories</option><option value=search>search — trending search keywords</option><option value=moments>moments only</option></select>
+  <label>Depth <div class=hint>0 = the page only. 1 = follow its keyword links. 2 = follow those keywords' related terms.</div></label><input id=crawlDepth type=number value=1 min=0 max=3>
+  <label>Request budget <div class=hint>caps what it FOLLOWS. The entry page always loads in full — see entry_cost in the last record.</div></label><input id=maxRequests type=number value=60 min=1>
+  <label>Max keywords per level <div class=hint>keeps a wide page (13 moments x 25 keywords) from becoming a level of 325</div></label><input id=maxNodesPerLevel type=number value=50 min=1>`,
 };
 function fields(){document.getElementById('extra').innerHTML=EXTRA[op.value]||'';curl();}
 function body(){
@@ -202,8 +208,8 @@ function body(){
   for(const [k,f] of Object.entries({verticals:list,queries:list,keywordsToInclude:list,interestIds:list})){
     const v=f(k); if(v) t[k]=v;
   }
-  for(const k of ['mode','aggregation','interest']){const v=get(k); if(v) t[k]=v;}
-  for(const k of ['drillTopN','enrichTopN','maxTerms']){const v=get(k); if(v!==null) t[k]=+v;}
+  for(const k of ['mode','aggregation','interest','crawlFrom']){const v=get(k); if(v) t[k]=v;}
+  for(const k of ['drillTopN','enrichTopN','maxTerms','crawlDepth','maxRequests','maxNodesPerLevel']){const v=get(k); if(v!==null) t[k]=+v;}
   return t;
 }
 function curl(){document.getElementById('curl').textContent=
