@@ -40,8 +40,8 @@ These came out of reading the inventory against the docs. Each is either a
 the probe that settles it. Chasing the hypotheses IS Phase 0 work — budget ~10
 live requests total.
 
-**F1 — `pin_id` is the bridge out of the Trends walled garden. Data CONFIRMED,
-read-endpoint STILL OPEN (corrected 2026-08-19).** `top_products[].pin_id`,
+**F1 — `pin_id` is the bridge out of the Trends walled garden. ✅ CLOSED
+2026-08-19 — read-endpoint captured, see doc #7 §3.19.** `top_products[].pin_id`,
 `topics[].pins[].id`, `editorial[].pins[].id` are real pin ids. The trends
 responses themselves contain no merchant URLs (only `i.pinimg.com` images), but
 the pin's page on `www.pinterest.com` does: manually inspected pin
@@ -58,17 +58,18 @@ detail in [07-API-REFERENCE.md §3.19](07-API-REFERENCE.md).
 > returns** merchant_name/price/host. Do not build against it expecting data
 > back — it was checked and ruled out, not merely undocumented.
 
-**Not yet captured: which call actually returns the data.** The fields are
-confirmed to exist on the rendered page; the specific `ApiResource`/resource
-call that returns them (likely a pin-detail GET, analogous to how
-`top_products` wraps its own payload) has not been captured. **Action before
-building the shopping actor's outbound-link field:** on
-`www.pinterest.com/pin/{pin_id}/`, DevTools → Network → filter `resource/` →
-find the response containing `merchant`/`price`/host fields → Copy as cURL or
-export HAR, save under `probes/captures/`, then replay it through a leased
-session to confirm it works outside a live browser tab before it becomes code.
-Until that replay succeeds, treat the shape as known but the endpoint as
-unverified server-side.
+**✅ The call was captured 2026-08-19:**
+`GET www.pinterest.com/resource/PinResource/get/` with
+`field_set_key: "auth_web_main_pin"` (the load-bearing option) and the
+page-specific handler `www/pin/[id].js`. Implemented in
+`transport.pin_resource()` + `parsers.parse_pin_closeup()`, wired into
+`ShoppingScraper(enrich_top_n=…)` and OFF by default — 1 request per pin, no
+batch form. Paths and procedure: `probes/captures/pin_closeup.md`.
+
+⚠️ **Still unverified server-side:** the offline tests prove the parser reads
+the captured shape, but the call has not yet been replayed from a leased
+session. `www.pinterest.com` is a stricter host than `trends.pinterest.com`,
+so a refusal there is plausible until proven otherwise.
 
 **F2 — `merchant_name` is competitive intel the docs shrug at.**
 33 top products for one category each carry the selling merchant's name. Grouped,

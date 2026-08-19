@@ -25,8 +25,12 @@ one-vertical-per-call, the double-spelled `has_prediction`). It is not advisory.
 
 ```bash
 .venv/Scripts/python.exe -m src.status              # vault health — ALWAYS first
-.venv/Scripts/python.exe -m tests.test_incremental  # 20 offline checks
 .venv/Scripts/python.exe -m probes.probe_endpoints  # 16 live endpoint probes (needs vault)
+.venv/Scripts/python.exe -m probes.coverage         # fields the parsers DON'T surface
+.venv/Scripts/python.exe -m tests.test_incremental        # 20
+.venv/Scripts/python.exe -m tests.test_shopping_api       # 54
+.venv/Scripts/python.exe -m tests.test_shopping_traversal # 33
+.venv/Scripts/python.exe -m tests.test_full_project       # 95
 ```
 
 Everything is a module run from the repo root. The venv is local to this repo.
@@ -81,11 +85,21 @@ freshness layer (response cache per-kind TTL, seen-set with content
 fingerprints, mark-after-push ordering) · actor skeleton (`src/main.py`) ·
 endpoint probe harness (16/16 OK on 2026-08-18).
 
-**Not built (docs first, by operator decision):** the graph layer (transport
-A/B as reusable module, named parsers, vocab, traversals) and the four actors —
-`pinterest-keyword-research`, `pinterest-shopping-trends`,
-`pinterest-seasonal-moments`, `pinterest-trend-radar`. Build order and
-per-scenario acceptance live in `docs/TEST-SCENARIOS.md` §priorities.
+**Built + verified live:** the graph layer (`transport.py`, `vocab.py`,
+`parsers.py`) and all four traversals as one actor with an `operation` input —
+`shopping`, `keywords`, `moments`, `radar`. 202 offline checks, 0 unread
+response fields (`probes/coverage.py`).
+
+**Both browser captures landed 2026-08-19:**
+- §3.18 moment Age/Gender via the persisted GraphQL query — audience is now
+  `measured`, not derived. The SAME query answers **moment × interest**, and
+  Pinterest's ~7-per-moment dropdown is UI curation, not a data limit.
+- §3.19 `PinResource` on `www.pinterest.com` — price + outbound merchant URL.
+  ⚠️ Implemented and offline-tested but **not yet replayed from a leased
+  session**; that host is stricter than `trends.`
+
+**Remaining:** Phase 4 deploy — needs a network-reachable Redis
+(`docs/DEPLOY.md`). Everything else is done.
 
 ## Working style that has paid off
 

@@ -1,6 +1,7 @@
 # Pinterest Trends — DOCUMENTATION INDEX
 
-Reverse-engineered from `trends.pinterest.com`. **18 REST endpoints**, fully mapped.
+Reverse-engineered from `trends.pinterest.com`. **18 REST endpoints + 2 captured**
+(the moment-demographics GraphQL query §3.18 and `PinResource` §3.19), fully mapped.
 
 ---
 
@@ -36,7 +37,7 @@ Reverse-engineered from `trends.pinterest.com`. **18 REST endpoints**, fully map
 
 ---
 
-## ENDPOINT COVERAGE — 18/18 ✅
+## ENDPOINT COVERAGE — 20/20 ✅
 
 | Endpoint | Doc |
 |----------|-----|
@@ -58,19 +59,27 @@ Reverse-engineered from `trends.pinterest.com`. **18 REST endpoints**, fully map
 | `/related_terms/` | #4, #7 §3.15 |
 | `POST /term_images/` | #4, #7 §3.16 |
 | `/prefix_match/` | #4, #7 §3.17 |
+| `POST /_/graphql/` (moment Age/Gender) | #7 §3.18 ✅ captured 2026-08-19 |
+| `GET www.pinterest.com/resource/PinResource/get/` | #7 §3.19 ✅ captured 2026-08-19 |
 
 **Confirmed NOT endpoints:** Pinterest Predicts (hardcoded in JS bundle), CSV Export
 (client-side papaparse), region list, interest list, spotlight trend detail, "Predict the future"
 toggle, "All categories" tab, "Other product categories".
 
-**Not reproducible:** moment-page Age/Gender (persisted GraphQL — proven by elimination,
-5 capture workarounds failed; derived workaround + DevTools upgrade path in #7 §3.18);
-merchant endpoints (need catalog); `publish_state=DRAFT` (permission-gated).
+**Captured 2026-08-19 (previously listed here as not reproducible):** moment-page
+Age/Gender via the persisted GraphQL query — see #7 §3.18. The same query also answers
+**moment × interest**, and Pinterest's ~7-per-moment dropdown is UI curation, not a data
+limit: any moment × any interest is queryable.
+
+**Still not reproducible:** merchant endpoints (need a product catalog);
+`publish_state=DRAFT` (permission-gated).
 
 **Bonus — product/merchant data (#7 §3.19):** `top_products` returns `pin_id` only, but
 `pinterest.com/pin/{pin_id}/` exposes **merchant name, outbound host, price, rating and
-shipping** — completing the chain to real product links per trending category. Confirmed
-the data exists; the exact read-endpoint on that page is not yet captured.
+shipping** — completing the chain to real product links per trending category.
+**Captured 2026-08-19:** `GET www.pinterest.com/resource/PinResource/get/` with
+`field_set_key: auth_web_main_pin`. Costs 1 request per pin (no batch form), so
+enrichment is opt-in and capped. See #7 §3.19.
 
 **Untested:** anonymous/logged-out access; rate-limit thresholds.
 

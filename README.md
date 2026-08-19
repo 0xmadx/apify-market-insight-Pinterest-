@@ -115,7 +115,7 @@ docs/                      the Pinterest Trends API specs — see docs/README.md
 **Current state:** all four operations are BUILT and offline-tested —
 `shopping` (verified live end-to-end), `keywords`, `moments`, `radar` — on top of
 the shared graph layer (`transport.py`, `vocab.py`, `parsers.py`) and the
-session + freshness layers. 157 offline checks across four suites, all green — and **all four operations
+session + freshness layers. 202 offline checks across four suites, all green — and **all four operations
 verified live** (2026-08-19): shopping end-to-end with 33 shoppable pins;
 radar's 5 spotlight + 6 editorial with campaign windows; keywords with real
 forecasts and audiences; moments with the phase gate drilling only

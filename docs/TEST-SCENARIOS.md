@@ -263,14 +263,14 @@ logged as opportunities; vanished keys that a parser reads are failures.
 
 ## COVERAGE LEDGER (updated 2026-08-19 — the build is done)
 
-157 checks across four suites, every one tagged with its scenario id:
+202 checks across four suites, every one tagged with its scenario id:
 
 | Suite | Checks | Covers |
 |---|---|---|
 | `tests/test_incremental.py` | 20 | freshness layer (cache/seen-set/watermark — F3's cache honesty) |
 | `tests/test_shopping_api.py` | 54 | B1–B5, C1–C5, C7, C2b (vertical-name guard), F (event/demographics) |
 | `tests/test_shopping_traversal.py` | 33 | E2 end-to-end incl. budget, A4, D3–D5 |
-| `tests/test_full_project.py` | 50 | B1–B6, C4, D1–D5, E1, E3, E4, F1/F3/F6, H2/H3 |
+| `tests/test_full_project.py` | 95 | B1–B6, C4, D1–D5, D4/D4b (§3.18 + interest matrix), E1–E4, E2b (§3.19 commerce), F1/F3/F6 (incl. cache wiring), H2/H3 |
 
 **Covered live instead of offline:** A3 (the PWS-handler 403 → `malformed`) and
 A5's no-rate-limit-headers fact are exercised by `probes/probe_endpoints.py` and
