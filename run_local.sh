@@ -65,8 +65,11 @@ echo '--- actor ---'
 echo '--- dataset ---'
 DS=storage/datasets/default
 if [ -d \"\$DS\" ]; then
-  echo \"\$(ls \$DS/*.json 2>/dev/null | wc -l) records written\"
-  ls \$DS/*.json 2>/dev/null | head -1 | xargs -r ./.venv/bin/python -c \\
+  # [0-9]*.json, NOT *.json — Apify writes __metadata__.json alongside the
+  # records, so a bare glob reports one record too many AND, when combined
+  # with a tail, silently drops a real record from the sample.
+  echo \"\$(ls \$DS/[0-9]*.json 2>/dev/null | wc -l) records written\"
+  ls \$DS/[0-9]*.json 2>/dev/null | head -1 | xargs -r ./.venv/bin/python -c \\
     'import json,sys; d=json.load(open(sys.argv[1])); print(json.dumps(d, indent=2)[:1200])'
 else
   echo 'no dataset — the run produced no records (see the actor log above)'

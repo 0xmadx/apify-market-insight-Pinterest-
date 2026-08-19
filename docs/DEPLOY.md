@@ -175,6 +175,37 @@ costs in the system.
 
 ---
 
+## The image, rehearsed (2026-08-19)
+
+The real `apify/actor-python:3.12` image was built and run against the vault
+before shipping — the step that closes the gap between "works on my machine"
+and "works in the cloud".
+
+```bash
+docker build -t pinterest-actor .
+docker run --rm   -e REDIS_URL="redis://host.docker.internal:6379/0"   -e VAULT_PLATFORM=pinterest -e VAULT_WAIT_TIMEOUT=30   -v "<abs-path>/_actorstore:/usr/src/app/storage"   --add-host=host.docker.internal:host-gateway   pinterest-actor
+```
+
+Put the input at `_actorstore/key_value_stores/default/INPUT.json`. Results:
+Python 3.12.13 on Linux, vault reached over a real network hop, `radar` 11
+records and `crawl` 13 records, exit 0 both times.
+
+**Two things this caught that nothing else could.**
+
+`.dockerignore` correctly excludes `.env` — verified by listing the built
+image, not by reading the file. But it did **not** exclude `docs/`, `probes/`
+and `tests/`: 2.4MB of dev material was shipping inside the product, including
+`docs/wire/` and `probes/results/` — the entire reverse-engineering corpus.
+`src/` imports none of it (checked), so it is now excluded. The image holds
+`src/`, `.actor/`, `requirements.txt` and the Dockerfile, and nothing else.
+
+Input reaching a containerised actor is worth testing explicitly rather than
+assuming. A first attempt logged `task={}` and ran the DEFAULT operation — the
+mount had silently failed (Git Bash rewrites `/tmp/...` into a Windows path
+Docker never sees). The actor was right; the harness was wrong. But that is
+exactly what a mis-set input looks like in production: a successful run of the
+wrong thing, with `task={}` as the only clue. Check that line in the log.
+
 ## Before every release
 
 ```bash

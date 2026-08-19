@@ -5,3 +5,18 @@ apify_storage/
 __pycache__/
 *.pyc
 .git/
+
+# Dev material. `src/` imports none of it (checked: no `import probes|tests`
+# anywhere under src/), and the actor's CMD is `python -m src.main`, so none of
+# this is reachable at runtime. Excluded for two reasons:
+#   1. a production image should hold what it runs and nothing else
+#   2. docs/wire/ and probes/results/ ARE the reverse-engineering — the whole
+#      measured map of an API with no contract. That is the thing being sold;
+#      it does not belong inside the artefact shipped to run it.
+docs/
+probes/
+tests/
+.claude/
+api_sim.py
+run_local.sh
+*.md
