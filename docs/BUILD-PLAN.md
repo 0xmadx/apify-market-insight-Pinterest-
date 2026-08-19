@@ -74,13 +74,11 @@ unverified server-side.
 that answers "who is winning outbound clicks in this category" — a customer-
 facing field. Cost: zero extra requests. Add to the shopping actor's record.
 
-**H2 — `wow_change.index` / `mom_change.index` / `yoy_change.index` are
-undocumented.** `top_trends_filtered` rows carry `{value, index}` per growth
-metric; docs only describe `value`. Sample: value 100.01 / index 10, value 7 /
-index 8. Hypothesis: `index` is a bucketed 0–10 strength score (UI arrow
-intensity). Probe: pull 100 rows (one call), scatter value-vs-index, decide.
-If it's a server-computed rank bucket it is *free ranking signal* — document
-either way.
+**H2 — SETTLED 2026-08-19.** `top_trends_filtered`'s `{value, index}` growth
+pairs: `index` is the 1..N **rank of the value within this response** (100 rows
+→ indexes 1..100, one each, monotone with value). Not a strength score, fully
+derivable by sorting, response-scoped. Recorded in doc #7 §3.12; raw evidence in
+`probes/results/params/H2-top_trends_100rows.json`.
 
 **F3 — editorial items carry campaign windows.** `start_date` (e.g. 2026-08-01),
 `end_date`, `hide_keyword_percentages`, `is_ready_for_translation` — the docs
@@ -111,7 +109,7 @@ Trivial, but free: creative-palette signal, keep in the record.
 
 ---
 
-## PHASE 1 — Graph layer (pure functions, offline-testable)
+## PHASE 1 — Graph layer ✅ BUILT (transport.py, vocab.py, parsers.py — all 16 endpoints parsed)
 
 Order within the phase; each item cites its TEST-SCENARIOS group:
 
@@ -130,7 +128,7 @@ Order within the phase; each item cites its TEST-SCENARIOS group:
 
 Definition of done: groups A, B, C green offline; no network in CI.
 
-## PHASE 2 — Decision nodes and traversals
+## PHASE 2 — Decision nodes and traversals ✅ BUILT (crystal-ball D1, phase gate D2, tri-state D3, derived-label D4, scope stamps D5)
 
 The graph logic from ARCHITECTURE §2.3, as testable planners (they emit a
 *planned request list* first — that is what D-tests assert on):
@@ -139,7 +137,7 @@ The graph logic from ARCHITECTURE §2.3, as testable planners (they emit a
   tri-state labelling (**D3**) · moment-demographics workaround, `derived`
   labelled (**D4**) · normalisation scope stamps (**D5**).
 
-## PHASE 3 — The actors, one at a time, each shippable alone
+## PHASE 3 — The traversals ✅ BUILT as one actor with 4 operations (operator may still split into separate Apify listings; the traversals are the shared core either way)
 
 Build order = revenue order: **E1 keyword-research** (flagship) → **E2
 shopping-trends** (now including F2 merchant intel + H1 outbound links if

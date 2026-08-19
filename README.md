@@ -107,9 +107,22 @@ docs/                      the Pinterest Trends API specs — see docs/README.md
 | `.claude/skills/pinterest-trends-coder/` | the enforced coding skill — invoked before writing any code |
 | [docs/README.md](docs/README.md) | which spec drafts were superseded and why |
 
-**Current state:** session + freshness layers built and tested; all 16 probeable
-endpoints verified live; product architecture and test scenarios documented. The
-graph layer and the four actors are documented but deliberately not yet coded.
+**Current state:** all four operations are BUILT and offline-tested —
+`shopping` (verified live end-to-end), `keywords`, `moments`, `radar` — on top of
+the shared graph layer (`transport.py`, `vocab.py`, `parsers.py`) and the
+session + freshness layers. 157 offline checks across four suites, all green.
+One live smoke of keywords/moments/radar remains (needs a Pinterest tab open so
+the vault has a fresh session); `shopping` already ran live: real categories,
+audiences, search queries and 33 shoppable pins with merchants.
+
+Run everything offline:
+
+```bash
+.venv/Scripts/python.exe -m tests.test_incremental          # 20 — freshness layer
+.venv/Scripts/python.exe -m tests.test_shopping_api         # 54 — vocab + parsers
+.venv/Scripts/python.exe -m tests.test_shopping_traversal   # 33 — shopping walk
+.venv/Scripts/python.exe -m tests.test_full_project         # 50 — keywords/moments/radar
+```
 
 ## Not pulling old data
 

@@ -1,40 +1,146 @@
 {
-  "title": "Pinterest Scraper input",
+  "title": "Pinterest Trends Scraper input",
   "type": "object",
   "schemaVersion": 1,
   "properties": {
-    "queries": {
-      "title": "Search terms",
-      "type": "array",
-      "description": "Terms to look up. What is done with them is defined by the endpoint layer.",
-      "editor": "stringList",
-      "prefill": []
+    "operation": {
+      "title": "Operation",
+      "type": "string",
+      "description": "Which traversal to run. shopping: trending product categories, joined and drilled. keywords: discover/seed/exact keyword research through the full pipeline. moments: seasonal moments with the API's only daily-resolution curves. radar: Pinterest's curated spotlight + Editors' Picks (2 requests, schedule-friendly).",
+      "enum": [
+        "shopping",
+        "keywords",
+        "moments",
+        "radar"
+      ],
+      "default": "shopping"
+    },
+    "region": {
+      "title": "Region",
+      "type": "string",
+      "description": "Pinterest region code. top_products and editorial only return data for US, CA, GB+IE.",
+      "default": "US",
+      "editor": "textfield"
     },
     "maxRecords": {
       "title": "Max records",
       "type": "integer",
-      "description": "Hard stop on records pushed to the dataset. 0 means no limit.",
+      "description": "Hard stop on records pushed. 0 = no limit.",
       "default": 0,
       "minimum": 0
     },
-    "fullRescan": {
-      "title": "Full rescan (ignore what was already collected)",
+    "verticals": {
+      "title": "[shopping] Verticals",
+      "type": "array",
+      "editor": "stringList",
+      "description": "L1 vertical ids (1181 Fashion, 1250 Home decor, 1042 Beauty, 1148 DIY, 1016 Arts & entertainment, 1500 Wedding, 1315 Media). Empty = all seven."
+    },
+    "drillTopN": {
+      "title": "[shopping] Drill top N",
+      "type": "integer",
+      "description": "How many categories per vertical get the full drill-down (audience, search queries, products). Each drilled category costs ~2 extra requests.",
+      "default": 3,
+      "minimum": 0
+    },
+    "event": {
+      "title": "[shopping] Ranking event",
+      "type": "string",
+      "description": "OUTBOUND_CLICK (purchase intent), ENGAGEMENT (broad attention), SAVE (planning). The audience differs materially per event.",
+      "enum": [
+        "OUTBOUND_CLICK",
+        "ENGAGEMENT",
+        "SAVE"
+      ],
+      "default": "OUTBOUND_CLICK"
+    },
+    "mode": {
+      "title": "[keywords] Mode",
+      "type": "string",
+      "description": "discover: Pinterest's trending set with filters. seed: typeahead expansion of a stem (whole keyword space). exact: enrich your own term list.",
+      "enum": [
+        "discover",
+        "seed",
+        "exact"
+      ],
+      "default": "discover"
+    },
+    "queries": {
+      "title": "[keywords] Terms / seed stem",
+      "type": "array",
+      "editor": "stringList",
+      "description": "exact mode: the terms to enrich. seed mode: the first entry is the stem. Lowercase (enforced - uppercase silently returns nothing)."
+    },
+    "preset": {
+      "title": "[keywords] Discover preset",
+      "type": "integer",
+      "description": "1 top monthly, 2 top yearly, 3 growing, 4 seasonal.",
+      "default": 3,
+      "minimum": 1,
+      "maximum": 4
+    },
+    "maxTerms": {
+      "title": "[keywords] Max terms to enrich",
+      "type": "integer",
+      "description": "Cap on terms sent through the pipeline. 0 = all discovered (up to 100).",
+      "default": 0,
+      "minimum": 0
+    },
+    "includeRelated": {
+      "title": "[keywords] Include related terms",
       "type": "boolean",
-      "description": "Off by default: each run returns only records that are new or whose numbers changed since last time. Turn on to re-collect everything.",
+      "description": "5 siblings per term, each with its own forecast flag. Costs one request PER TERM (no batch form exists).",
+      "default": false
+    },
+    "includeImages": {
+      "title": "[keywords] Include pin images",
+      "type": "boolean",
+      "description": "9 popular-pin image urls per term. One batched POST for the whole run.",
+      "default": true
+    },
+    "aggregation": {
+      "title": "[moments] Granularity",
+      "type": "string",
+      "description": "daily is unique to moments - nothing else in the API resolves below weekly.",
+      "enum": [
+        "daily",
+        "weekly",
+        "monthly"
+      ],
+      "default": "daily"
+    },
+    "phases": {
+      "title": "[moments] Phases to drill",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Which phases get curves + keywords + audience. Default: rising, approaching. All moments are emitted either way; cooled ones cost no extra requests.",
+      "prefill": [
+        "rising",
+        "approaching"
+      ]
+    },
+    "includeAudience": {
+      "title": "[moments] Derived audience",
+      "type": "boolean",
+      "description": "Aggregate the moment's keyword audiences (labelled derived - Pinterest's own moment chart is not reachable via REST).",
+      "default": true
+    },
+    "interest": {
+      "title": "[radar] Interest filter",
+      "type": "string",
+      "editor": "textfield",
+      "description": "One interest id to scope the spotlight, or empty for all."
+    },
+    "fullRescan": {
+      "title": "Full rescan",
+      "type": "boolean",
+      "description": "Ignore the seen-set: re-emit records already collected in previous runs.",
       "default": false
     },
     "forceRefresh": {
-      "title": "Force refresh (ignore cached responses)",
+      "title": "Force refresh",
       "type": "boolean",
-      "description": "Off by default: repeat calls inside an endpoint's TTL are served from cache. Turn on to hit Pinterest for every request — slower and more exposed, but guaranteed live.",
+      "description": "Ignore cached responses: hit Pinterest for every request.",
       "default": false
-    },
-    "vaultPlatform": {
-      "title": "Vault platform key",
-      "type": "string",
-      "description": "Which pool of sessions to draw from. Leave as 'pinterest' unless you keep several.",
-      "default": "pinterest",
-      "editor": "textfield"
     }
   },
   "required": []

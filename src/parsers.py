@@ -247,3 +247,260 @@ def missing_terms(requested, parsed):
     """Terms the API dropped. Absence means 'no data returned', NOT zero volume
     — `halloween` and `christmas ornament` were both dropped in testing."""
     return [t for t in requested if t not in parsed]
+
+
+# ------------------------------------------------------ keyword discovery
+
+def parse_discover(data):
+    """§3.12 `/top_trends_filtered/` → ranked keywords with growth + seasonality.
+
+    Growth fields arrive as `{value, index}`. `index` was decoded live
+    (2026-08-19, 100 rows): it is the 1..N rank of the value WITHIN THIS
+    RESPONSE — monotone with value, one per row. It is exposed as
+    `*_rank_in_response` so its scope is in its name; it must never be compared
+    across responses.
+
+    `affinity` is null in 100/100 rows — dropped, not carried.
+    `searchCount`/`normalizedCount` are response-scoped relative volumes.
+    """
+    def growth(node):
+        if not isinstance(node, dict):
+            return None, None
+        return _get(node, "value"), _get(node, "index")
+
+    rows = []
+    for node in _list(data, "values"):
+        wow_v, wow_i = growth(_get(node, "wow_change"))
+        mom_v, mom_i = growth(_get(node, "mom_change"))
+        yoy_v, yoy_i = growth(_get(node, "yoy_change"))
+        rows.append({
+            "term": _get(node, "term"),
+            "search_count": _get(node, "searchCount"),
+            "normalized_count": _get(node, "normalizedCount"),
+            "reverse_rank": _get(node, "reverseRank"),
+            "seasonality_score": _get(node, "seasonality_score"),
+            "wow_change": wow_v, "wow_rank_in_response": wow_i,
+            "mom_change": mom_v, "mom_rank_in_response": mom_i,
+            "yoy_change": yoy_v, "yoy_rank_in_response": yoy_i,
+        })
+    return {"end_date": _get(data, "endDate"), "terms": rows}
+
+
+def parse_prefix_match(data):
+    """§3.17 typeahead → up to 10 terms, each with a ~1-year weekly sparkline.
+
+    Searches the WHOLE keyword space (works for non-trending terms), unlike
+    `keywordsToInclude` which only filters the trending set. Counts are bare
+    ints, response-scoped. Empty list = no match, not an error.
+    """
+    return [{"term": _get(node, "term"),
+             "sparkline": list(_list(node, "counts"))}
+            for node in (data if isinstance(data, list) else [])]
+
+
+def parse_keyword_demographics(data):
+    """§3.14 → {term: {age_distribution, gender_distribution}}, fractions 0-1.
+
+    ⚠️ A DIFFERENT endpoint and a different subject from the category
+    demographics (§3.9) despite the name — the same theme can have opposite
+    audiences as a keyword vs as a category. Key order may differ from request
+    order; consumers match by term.
+    """
+    out = {}
+    for term, node in (_get(data, "term_distributions", default={}) or {}).items():
+        out[term] = {
+            "age_distribution": _get(node, "age_distribution"),
+            "gender_distribution": _get(node, "gender_distribution"),
+        }
+    return out
+
+
+def parse_related_terms(data):
+    """§3.15 → exactly 5 siblings. camelCase-only `hasPrediction` here (§3.13
+    ships both spellings) — normalised to the same canonical field.
+
+    Forecastability does NOT propagate: a forecastable parent can have 0/5
+    forecastable siblings and vice-versa.
+    """
+    return [{"term": _get(node, "term"),
+             "has_forecast": _get(node, "has_prediction", "hasPrediction"),
+             "sparkline": list(_list(node, "counts"))}
+            for node in (data if isinstance(data, list) else [])]
+
+
+def parse_term_images(data):
+    """§3.16 POST /term_images/ → {term: [image urls]}. URLs only — no pin ids,
+    so nothing here bridges off Pinterest; §3.10 pin_id is that bridge."""
+    if not isinstance(data, dict):
+        return {}
+    return {term: list(urls) for term, urls in data.items()
+            if isinstance(urls, list)}
+
+
+# ---------------------------------------------------------------- moments
+
+def _epoch_ms(value):
+    """Moment timestamps arrive as epoch-ms STRINGS. Absent stays None."""
+    if value in (None, ""):
+        return None
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def parse_moments_list(data):
+    """§3.3 → the region's moments. PARALLEL ARRAYS, zipped by index.
+
+    A length mismatch raises rather than truncating: zipping unequal arrays
+    silently mis-assigns every phase after the gap — a wrong number on every
+    record, not a parse hiccup.
+    """
+    moments = _list(data, "moments")
+    phases = _list(data, "phase_labels")
+    peaks = _list(data, "peaks")
+    historical = _list(data, "historical_peaks")
+    next_ts = _list(data, "moment_next_occurrence_timestamps")
+
+    lengths = {len(moments), len(phases), len(peaks), len(historical), len(next_ts)}
+    if len(lengths) > 1:
+        raise ValueError(
+            f"moment/available parallel arrays disagree on length: "
+            f"moments={len(moments)} phases={len(phases)} peaks={len(peaks)} "
+            f"historical={len(historical)} next={len(next_ts)} — zipping these "
+            f"would mis-assign every field after the shortest.")
+
+    def peak(node):
+        if not isinstance(node, dict):
+            return None
+        return {
+            "peak_at": _epoch_ms(_get(node, "peak_timestamp_millis")),
+            "takeoff_at": _epoch_ms(_get(node, "takeoff_timestamp_millis")),
+            "peak_length_days": _get(node, "peak_length_in_days"),
+        }
+
+    out = []
+    for i, slug in enumerate(moments):
+        out.append({
+            "slug": slug,
+            "phase": phases[i],
+            "actionable": phases[i] in ("rising", "approaching"),
+            "next_peak": peak(peaks[i]),
+            "last_peak": peak(historical[i]),
+            "next_occurrence_at": _epoch_ms(next_ts[i]),
+        })
+    return out
+
+
+def parse_moment_metrics(data):
+    """§3.4 → demand curve + forecast + per-interest split, keyed by slug.
+
+    The ONLY endpoint in the whole API with daily granularity. Counts are
+    response-scoped (`normal_counts`); `moment_interests` is keyed by interest
+    ID and each interest carries its own series.
+    """
+    def series(values):
+        return [{
+            "at": _get(point, "timestamp"),
+            "count": _get(point, "normal_counts"),
+            "predicted_lower": _get(point, "predicted_normalized_lower_bound_count"),
+            "predicted_upper": _get(point, "predicted_normalized_upper_bound_count"),
+        } for point in (values or [])]
+
+    out = {}
+    for node in _list(data, "moments"):
+        slug = _get(node, "name")
+        moment = _get(node, "moment") or {}
+        interests = {}
+        for interest_id, sub in (_get(node, "moment_interests") or {}).items():
+            interests[str(interest_id)] = {
+                "series": series(_list(sub, "daily_values")),
+            }
+        out[slug] = {
+            "slug": slug,
+            "series": series(_list(moment, "daily_values")),
+            "peaks": [{
+                "peak_at": _epoch_ms(_get(p, "peak_timestamp_millis")),
+                "takeoff_at": _epoch_ms(_get(p, "takeoff_timestamp_millis")),
+                "peak_length_days": _get(p, "peak_length_in_days"),
+            } for p in _list(moment, "peaks")],
+            "interest_split": interests,
+        }
+    return out
+
+
+# ------------------------------------------------------ spotlight/editorial
+
+def _pins(node):
+    """Pin thumbnails, shared by spotlight and editorial. `id` is kept because
+    it is the bridge to the pin page (§3.19); `color` is the dominant-color hex
+    — free creative-palette signal (F6)."""
+    out = []
+    for pin in _list(node, "pins"):
+        pin_id = _get(pin, "id")
+        out.append({
+            "pin_id": pin_id,
+            "pin_url": f"https://www.pinterest.com/pin/{pin_id}/" if pin_id else None,
+            "image_url": _get(pin, "src"),
+            "color": _get(pin, "color"),
+            "width": _get(pin, "width"),
+            "height": _get(pin, "height"),
+        })
+    return out
+
+
+def parse_spotlight(data):
+    """§3.2 → 5 curated trends. The detail view fires no request — this object
+    IS the detail, so everything is kept.
+
+    time_series carries forecast fields that were null on every captured trend
+    (F4/H3) — passed through nullable, never assumed always-null.
+    """
+    out = []
+    for node in (data if isinstance(data, list) else []):
+        out.append({
+            "id": _get(node, "id"),
+            "name": _get(node, "name"),
+            "description": _get(node, "description"),
+            "interests": [str(i) for i in _list(node, "interests")],
+            "pct_growth_mom": _get(node, "pct_growth_mom"),
+            "keywords": list(_list(node, "related_search_trends")),
+            "series": [{
+                "date": _get(p, "date"),
+                "count": _get(p, "count"),
+                "normalized": _get(p, "normalized_count"),
+                "predicted_lower": _get(p, "normalized_predicted_lower_bound"),
+                "predicted_upper": _get(p, "normalized_predicted_upper_bound"),
+            } for p in _list(node, "time_series")],
+            "pins": _pins(node),
+            "is_published": _get(node, "is_published"),
+        })
+    return out
+
+
+def parse_editorial(data, region):
+    """§3.5 → 6 hand-written trends. Keywords are nested PER REGION inside each
+    item — the requested region's list is picked here, and an item that does not
+    cover that region gets None, never another region's list (scenario B6).
+
+    `start_date` is the campaign window (F3): when Pinterest's editors began the
+    push. Emitted, because "how long has this been promoted" is a signal.
+    """
+    out = []
+    for node in (data if isinstance(data, list) else []):
+        keywords_by_region = _get(node, "keywords") or {}
+        out.append({
+            "id": _get(node, "id"),
+            "title": _get(node, "title"),
+            "body": _get(node, "body"),
+            "trend_type": _get(node, "trend_type"),
+            "interests": [str(i) for i in _list(node, "interests")],
+            "regions": list(_list(node, "regions")),
+            "keywords": (list(keywords_by_region[region])
+                         if region in keywords_by_region else None),
+            "campaign_start": _get(node, "start_date") or None,
+            "campaign_end": _get(node, "end_date") or None,
+            "pins": _pins(node),
+            "is_published": _get(node, "is_published"),
+        })
+    return out

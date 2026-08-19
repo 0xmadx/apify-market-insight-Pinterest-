@@ -1,0 +1,2005 @@
+{
+  "values": [
+    {
+      "normalizedCount": 100,
+      "wow_change": {
+        "index": 21,
+        "value": -0.03
+      },
+      "seasonality_score": 0.9211629,
+      "term": "nails",
+      "yoy_change": {
+        "index": 36,
+        "value": 0.04
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 74,
+        "value": 0.2
+      },
+      "searchCount": 100,
+      "reverseRank": 100
+    },
+    {
+      "normalizedCount": 55,
+      "wow_change": {
+        "index": 84,
+        "value": 0.08
+      },
+      "seasonality_score": 0.57133836,
+      "term": "hairstyles",
+      "yoy_change": {
+        "index": 51,
+        "value": 0.2
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 60,
+        "value": 0.07
+      },
+      "searchCount": 55,
+      "reverseRank": 99
+    },
+    {
+      "normalizedCount": 54,
+      "wow_change": {
+        "index": 66,
+        "value": 0.01
+      },
+      "seasonality_score": 0.41190982,
+      "term": "wallpaper",
+      "yoy_change": {
+        "index": 83,
+        "value": 0.9
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 42,
+        "value": 0.01
+      },
+      "searchCount": 54,
+      "reverseRank": 98
+    },
+    {
+      "normalizedCount": 54,
+      "wow_change": {
+        "index": 27,
+        "value": -0.01
+      },
+      "seasonality_score": 0.5484456,
+      "term": "nail ideas",
+      "yoy_change": {
+        "index": 88,
+        "value": 1
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 65,
+        "value": 0.08
+      },
+      "searchCount": 54,
+      "reverseRank": 97
+    },
+    {
+      "normalizedCount": 43,
+      "wow_change": {
+        "index": 23,
+        "value": -0.03
+      },
+      "seasonality_score": 0.80608094,
+      "term": "nail inspo",
+      "yoy_change": {
+        "index": 71,
+        "value": 0.6
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 83,
+        "value": 0.3
+      },
+      "searchCount": 43,
+      "reverseRank": 96
+    },
+    {
+      "normalizedCount": 39,
+      "wow_change": {
+        "index": 89,
+        "value": 0.1
+      },
+      "seasonality_score": 0.7285849,
+      "term": "outfit ideas",
+      "yoy_change": {
+        "index": 21,
+        "value": -0.08
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 79,
+        "value": 0.2
+      },
+      "searchCount": 39,
+      "reverseRank": 95
+    },
+    {
+      "normalizedCount": 31,
+      "wow_change": {
+        "index": 39,
+        "value": 0
+      },
+      "seasonality_score": 0.65066934,
+      "term": "drawing ideas",
+      "yoy_change": {
+        "index": 59,
+        "value": 0.3
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 45,
+        "value": 0.02
+      },
+      "searchCount": 31,
+      "reverseRank": 94
+    },
+    {
+      "normalizedCount": 28,
+      "wow_change": {
+        "index": 74,
+        "value": 0.03
+      },
+      "seasonality_score": 0.7553174,
+      "term": "dinner ideas",
+      "yoy_change": {
+        "index": 39,
+        "value": 0.05
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 52,
+        "value": 0.05
+      },
+      "searchCount": 28,
+      "reverseRank": 93
+    },
+    {
+      "normalizedCount": 21,
+      "wow_change": {
+        "index": 92,
+        "value": 0.1
+      },
+      "seasonality_score": 0.9691007,
+      "term": "back to school nails",
+      "yoy_change": {
+        "index": 50,
+        "value": 0.2
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 98,
+        "value": 4
+      },
+      "searchCount": 21,
+      "reverseRank": 92
+    },
+    {
+      "normalizedCount": 20,
+      "wow_change": {
+        "index": 93,
+        "value": 0.1
+      },
+      "seasonality_score": 0.4833352,
+      "term": "aesthetic",
+      "yoy_change": {
+        "index": 68,
+        "value": 0.5
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 53,
+        "value": 0.06
+      },
+      "searchCount": 20,
+      "reverseRank": 91
+    },
+    {
+      "normalizedCount": 20,
+      "wow_change": {
+        "index": 2,
+        "value": -0.3
+      },
+      "seasonality_score": 0.45927614,
+      "term": "summer nails 2026",
+      "yoy_change": {
+        "index": 100,
+        "value": 100.01
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 1,
+        "value": -0.5
+      },
+      "searchCount": 20,
+      "reverseRank": 90
+    },
+    {
+      "normalizedCount": 20,
+      "wow_change": {
+        "index": 11,
+        "value": -0.06
+      },
+      "seasonality_score": 0.9813673,
+      "term": "back to school outfits",
+      "yoy_change": {
+        "index": 18,
+        "value": -0.1
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 93,
+        "value": 1
+      },
+      "searchCount": 20,
+      "reverseRank": 89
+    },
+    {
+      "normalizedCount": 20,
+      "wow_change": {
+        "index": 87,
+        "value": 0.1
+      },
+      "seasonality_score": 0.98767424,
+      "term": "first day of school outfit",
+      "yoy_change": {
+        "index": 33,
+        "value": 0
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 95,
+        "value": 2
+      },
+      "searchCount": 20,
+      "reverseRank": 88
+    },
+    {
+      "normalizedCount": 19,
+      "wow_change": {
+        "index": 52,
+        "value": 0
+      },
+      "seasonality_score": 0.656706,
+      "term": "french tip nails",
+      "yoy_change": {
+        "index": 76,
+        "value": 0.7
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 62,
+        "value": 0.07
+      },
+      "searchCount": 19,
+      "reverseRank": 87
+    },
+    {
+      "normalizedCount": 19,
+      "wow_change": {
+        "index": 72,
+        "value": 0.03
+      },
+      "seasonality_score": 0.7816307,
+      "term": "senior jeans",
+      "yoy_change": {
+        "index": 75,
+        "value": 0.7
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 96,
+        "value": 2
+      },
+      "searchCount": 19,
+      "reverseRank": 86
+    },
+    {
+      "normalizedCount": 17,
+      "wow_change": {
+        "index": 29,
+        "value": -0.01
+      },
+      "seasonality_score": 0.45534182,
+      "term": "pose reference",
+      "yoy_change": {
+        "index": 66,
+        "value": 0.4
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 64,
+        "value": 0.08
+      },
+      "searchCount": 17,
+      "reverseRank": 85
+    },
+    {
+      "normalizedCount": 17,
+      "wow_change": {
+        "index": 6,
+        "value": -0.2
+      },
+      "seasonality_score": 0.63359374,
+      "term": "shoes",
+      "yoy_change": {
+        "index": 38,
+        "value": 0.05
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 84,
+        "value": 0.3
+      },
+      "searchCount": 17,
+      "reverseRank": 84
+    },
+    {
+      "normalizedCount": 17,
+      "wow_change": {
+        "index": 24,
+        "value": -0.02
+      },
+      "seasonality_score": 0.8852071,
+      "term": "august nails",
+      "yoy_change": {
+        "index": 87,
+        "value": 1
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 100,
+        "value": 6
+      },
+      "searchCount": 17,
+      "reverseRank": 83
+    },
+    {
+      "normalizedCount": 15,
+      "wow_change": {
+        "index": 5,
+        "value": -0.2
+      },
+      "seasonality_score": 0.4357851,
+      "term": "spiderman",
+      "yoy_change": {
+        "index": 90,
+        "value": 1
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 94,
+        "value": 2
+      },
+      "searchCount": 15,
+      "reverseRank": 82
+    },
+    {
+      "normalizedCount": 15,
+      "wow_change": {
+        "index": 98,
+        "value": 0.3
+      },
+      "seasonality_score": 0.51295346,
+      "term": "outfit",
+      "yoy_change": {
+        "index": 70,
+        "value": 0.6
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 63,
+        "value": 0.07
+      },
+      "searchCount": 15,
+      "reverseRank": 81
+    },
+    {
+      "normalizedCount": 15,
+      "wow_change": {
+        "index": 20,
+        "value": -0.04
+      },
+      "seasonality_score": 0.3394633,
+      "term": "reaction pictures",
+      "yoy_change": {
+        "index": 46,
+        "value": 0.1
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 19,
+        "value": -0.03
+      },
+      "searchCount": 15,
+      "reverseRank": 80
+    },
+    {
+      "normalizedCount": 14,
+      "wow_change": {
+        "index": 97,
+        "value": 0.3
+      },
+      "seasonality_score": 0.994475,
+      "term": "fall outfits",
+      "yoy_change": {
+        "index": 19,
+        "value": -0.1
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 97,
+        "value": 2
+      },
+      "searchCount": 14,
+      "reverseRank": 79
+    },
+    {
+      "normalizedCount": 14,
+      "wow_change": {
+        "index": 49,
+        "value": 0
+      },
+      "seasonality_score": 0.095671326,
+      "term": "youtube",
+      "yoy_change": {
+        "index": 6,
+        "value": -0.3
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 20,
+        "value": -0.03
+      },
+      "searchCount": 14,
+      "reverseRank": 78
+    },
+    {
+      "normalizedCount": 14,
+      "wow_change": {
+        "index": 16,
+        "value": -0.04
+      },
+      "seasonality_score": 0.5623987,
+      "term": "hair",
+      "yoy_change": {
+        "index": 42,
+        "value": 0.06
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 30,
+        "value": -0.01
+      },
+      "searchCount": 14,
+      "reverseRank": 77
+    },
+    {
+      "normalizedCount": 14,
+      "wow_change": {
+        "index": 75,
+        "value": 0.04
+      },
+      "seasonality_score": 0.8525989,
+      "term": "simple nails",
+      "yoy_change": {
+        "index": 63,
+        "value": 0.4
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 86,
+        "value": 0.3
+      },
+      "searchCount": 14,
+      "reverseRank": 76
+    },
+    {
+      "normalizedCount": 13,
+      "wow_change": {
+        "index": 71,
+        "value": 0.03
+      },
+      "seasonality_score": 0.67814314,
+      "term": "makeup",
+      "yoy_change": {
+        "index": 57,
+        "value": 0.3
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 32,
+        "value": 0
+      },
+      "searchCount": 13,
+      "reverseRank": 75
+    },
+    {
+      "normalizedCount": 13,
+      "wow_change": {
+        "index": 45,
+        "value": 0
+      },
+      "seasonality_score": 0.502099,
+      "term": "braids hairstyles",
+      "yoy_change": {
+        "index": 84,
+        "value": 0.9
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 22,
+        "value": -0.03
+      },
+      "searchCount": 13,
+      "reverseRank": 74
+    },
+    {
+      "normalizedCount": 13,
+      "wow_change": {
+        "index": 86,
+        "value": 0.1
+      },
+      "seasonality_score": 0.54807216,
+      "term": "outfit inspo",
+      "yoy_change": {
+        "index": 81,
+        "value": 0.8
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 81,
+        "value": 0.2
+      },
+      "searchCount": 13,
+      "reverseRank": 73
+    },
+    {
+      "normalizedCount": 13,
+      "wow_change": {
+        "index": 31,
+        "value": -0.01
+      },
+      "seasonality_score": 0.87599474,
+      "term": "flowers",
+      "yoy_change": {
+        "index": 47,
+        "value": 0.1
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 18,
+        "value": -0.04
+      },
+      "searchCount": 13,
+      "reverseRank": 72
+    },
+    {
+      "normalizedCount": 13,
+      "wow_change": {
+        "index": 13,
+        "value": -0.04
+      },
+      "seasonality_score": 0.76258814,
+      "term": "braids",
+      "yoy_change": {
+        "index": 35,
+        "value": 0.02
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 16,
+        "value": -0.05
+      },
+      "searchCount": 13,
+      "reverseRank": 71
+    },
+    {
+      "normalizedCount": 12,
+      "wow_change": {
+        "index": 30,
+        "value": -0.01
+      },
+      "seasonality_score": 0.91829926,
+      "term": "funny",
+      "yoy_change": {
+        "index": 58,
+        "value": 0.3
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 25,
+        "value": -0.02
+      },
+      "searchCount": 12,
+      "reverseRank": 70
+    },
+    {
+      "normalizedCount": 12,
+      "wow_change": {
+        "index": 100,
+        "value": 0.5
+      },
+      "seasonality_score": 0.99609214,
+      "term": "fall nails",
+      "yoy_change": {
+        "index": 41,
+        "value": 0.06
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 99,
+        "value": 5
+      },
+      "searchCount": 12,
+      "reverseRank": 69
+    },
+    {
+      "normalizedCount": 12,
+      "wow_change": {
+        "index": 48,
+        "value": 0
+      },
+      "seasonality_score": 0.98389375,
+      "term": "pink nails",
+      "yoy_change": {
+        "index": 20,
+        "value": -0.08
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 66,
+        "value": 0.08
+      },
+      "searchCount": 12,
+      "reverseRank": 68
+    },
+    {
+      "normalizedCount": 12,
+      "wow_change": {
+        "index": 90,
+        "value": 0.1
+      },
+      "seasonality_score": 0.39118487,
+      "term": "hairstyle ideas",
+      "yoy_change": {
+        "index": 97,
+        "value": 8
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 37,
+        "value": 0
+      },
+      "searchCount": 12,
+      "reverseRank": 67
+    },
+    {
+      "normalizedCount": 12,
+      "wow_change": {
+        "index": 51,
+        "value": 0
+      },
+      "seasonality_score": 0.66380197,
+      "term": "happy birthday",
+      "yoy_change": {
+        "index": 31,
+        "value": 0
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 31,
+        "value": 0
+      },
+      "searchCount": 12,
+      "reverseRank": 66
+    },
+    {
+      "normalizedCount": 12,
+      "wow_change": {
+        "index": 61,
+        "value": 0
+      },
+      "seasonality_score": 0.70099044,
+      "term": "google",
+      "yoy_change": {
+        "index": 65,
+        "value": 0.4
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 58,
+        "value": 0.07
+      },
+      "searchCount": 12,
+      "reverseRank": 65
+    },
+    {
+      "normalizedCount": 12,
+      "wow_change": {
+        "index": 7,
+        "value": -0.1
+      },
+      "seasonality_score": 0.36358327,
+      "term": "pose",
+      "yoy_change": {
+        "index": 93,
+        "value": 2
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 14,
+        "value": -0.06
+      },
+      "searchCount": 12,
+      "reverseRank": 64
+    },
+    {
+      "normalizedCount": 12,
+      "wow_change": {
+        "index": 42,
+        "value": 0
+      },
+      "seasonality_score": 0.7073608,
+      "term": "short nail designs",
+      "yoy_change": {
+        "index": 86,
+        "value": 1
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 73,
+        "value": 0.1
+      },
+      "searchCount": 12,
+      "reverseRank": 63
+    },
+    {
+      "normalizedCount": 12,
+      "wow_change": {
+        "index": 99,
+        "value": 0.3
+      },
+      "seasonality_score": 0.53458756,
+      "term": "flower",
+      "yoy_change": {
+        "index": 73,
+        "value": 0.6
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 54,
+        "value": 0.06
+      },
+      "searchCount": 12,
+      "reverseRank": 62
+    },
+    {
+      "normalizedCount": 11,
+      "wow_change": {
+        "index": 60,
+        "value": 0
+      },
+      "seasonality_score": 0.96436584,
+      "term": "almond nails",
+      "yoy_change": {
+        "index": 12,
+        "value": -0.2
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 57,
+        "value": 0.07
+      },
+      "searchCount": 11,
+      "reverseRank": 61
+    },
+    {
+      "normalizedCount": 11,
+      "wow_change": {
+        "index": 81,
+        "value": 0.06
+      },
+      "seasonality_score": 0.89166564,
+      "term": "nail designs",
+      "yoy_change": {
+        "index": 15,
+        "value": -0.2
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 89,
+        "value": 0.4
+      },
+      "searchCount": 11,
+      "reverseRank": 60
+    },
+    {
+      "normalizedCount": 11,
+      "wow_change": {
+        "index": 50,
+        "value": 0
+      },
+      "seasonality_score": 0.76182276,
+      "term": "drawings",
+      "yoy_change": {
+        "index": 55,
+        "value": 0.3
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 29,
+        "value": -0.01
+      },
+      "searchCount": 11,
+      "reverseRank": 59
+    },
+    {
+      "normalizedCount": 11,
+      "wow_change": {
+        "index": 41,
+        "value": 0
+      },
+      "seasonality_score": 0.33920678,
+      "term": "nail inspo ideas",
+      "yoy_change": {
+        "index": 99,
+        "value": 100.01
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 91,
+        "value": 0.9
+      },
+      "searchCount": 11,
+      "reverseRank": 58
+    },
+    {
+      "normalizedCount": 11,
+      "wow_change": {
+        "index": 33,
+        "value": -0.01
+      },
+      "seasonality_score": 0.8104282,
+      "term": "pink wallpaper",
+      "yoy_change": {
+        "index": 48,
+        "value": 0.2
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 41,
+        "value": 0.01
+      },
+      "searchCount": 11,
+      "reverseRank": 57
+    },
+    {
+      "normalizedCount": 11,
+      "wow_change": {
+        "index": 91,
+        "value": 0.1
+      },
+      "seasonality_score": 0.8669288,
+      "term": "cute hairstyles",
+      "yoy_change": {
+        "index": 40,
+        "value": 0.05
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 68,
+        "value": 0.1
+      },
+      "searchCount": 11,
+      "reverseRank": 56
+    },
+    {
+      "normalizedCount": 11,
+      "wow_change": {
+        "index": 83,
+        "value": 0.08
+      },
+      "seasonality_score": 0.5831782,
+      "term": "hair styles",
+      "yoy_change": {
+        "index": 14,
+        "value": -0.2
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 8,
+        "value": -0.09
+      },
+      "searchCount": 11,
+      "reverseRank": 55
+    },
+    {
+      "normalizedCount": 11,
+      "wow_change": {
+        "index": 10,
+        "value": -0.08
+      },
+      "seasonality_score": 0.592918,
+      "term": "painting ideas",
+      "yoy_change": {
+        "index": 69,
+        "value": 0.6
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 21,
+        "value": -0.03
+      },
+      "searchCount": 11,
+      "reverseRank": 54
+    },
+    {
+      "normalizedCount": 10,
+      "wow_change": {
+        "index": 56,
+        "value": 0
+      },
+      "seasonality_score": 0.65822804,
+      "term": "art",
+      "yoy_change": {
+        "index": 37,
+        "value": 0.05
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 27,
+        "value": -0.02
+      },
+      "searchCount": 10,
+      "reverseRank": 53
+    },
+    {
+      "normalizedCount": 10,
+      "wow_change": {
+        "index": 8,
+        "value": -0.09
+      },
+      "seasonality_score": 0.9683899,
+      "term": "fulani braids",
+      "yoy_change": {
+        "index": 28,
+        "value": -0.03
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 15,
+        "value": -0.05
+      },
+      "searchCount": 10,
+      "reverseRank": 52
+    },
+    {
+      "normalizedCount": 10,
+      "wow_change": {
+        "index": 80,
+        "value": 0.05
+      },
+      "seasonality_score": 0.83666027,
+      "term": "banana bread recipe",
+      "yoy_change": {
+        "index": 25,
+        "value": -0.04
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 56,
+        "value": 0.06
+      },
+      "searchCount": 10,
+      "reverseRank": 51
+    },
+    {
+      "normalizedCount": 10,
+      "wow_change": {
+        "index": 28,
+        "value": -0.01
+      },
+      "seasonality_score": 0.50817597,
+      "term": "wedding dresses",
+      "yoy_change": {
+        "index": 5,
+        "value": -0.3
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 88,
+        "value": 0.4
+      },
+      "searchCount": 10,
+      "reverseRank": 50
+    },
+    {
+      "normalizedCount": 10,
+      "wow_change": {
+        "index": 1,
+        "value": -0.3
+      },
+      "seasonality_score": 0.9877274,
+      "term": "back to school",
+      "yoy_change": {
+        "index": 26,
+        "value": -0.04
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 90,
+        "value": 0.7
+      },
+      "searchCount": 10,
+      "reverseRank": 49
+    },
+    {
+      "normalizedCount": 10,
+      "wow_change": {
+        "index": 22,
+        "value": -0.03
+      },
+      "seasonality_score": 0.6786053,
+      "term": "banner",
+      "yoy_change": {
+        "index": 82,
+        "value": 0.8
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 59,
+        "value": 0.07
+      },
+      "searchCount": 10,
+      "reverseRank": 48
+    },
+    {
+      "normalizedCount": 10,
+      "wow_change": {
+        "index": 85,
+        "value": 0.09
+      },
+      "seasonality_score": 0.691634,
+      "term": "doodles",
+      "yoy_change": {
+        "index": 72,
+        "value": 0.6
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 33,
+        "value": 0
+      },
+      "searchCount": 10,
+      "reverseRank": 47
+    },
+    {
+      "normalizedCount": 10,
+      "wow_change": {
+        "index": 64,
+        "value": 0.01
+      },
+      "seasonality_score": 0.4134951,
+      "term": "polka dot nails",
+      "yoy_change": {
+        "index": 27,
+        "value": -0.03
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 46,
+        "value": 0.03
+      },
+      "searchCount": 10,
+      "reverseRank": 46
+    },
+    {
+      "normalizedCount": 10,
+      "wow_change": {
+        "index": 53,
+        "value": 0
+      },
+      "seasonality_score": 0.925758,
+      "term": "birthday nails",
+      "yoy_change": {
+        "index": 61,
+        "value": 0.3
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 47,
+        "value": 0.04
+      },
+      "searchCount": 10,
+      "reverseRank": 45
+    },
+    {
+      "normalizedCount": 10,
+      "wow_change": {
+        "index": 88,
+        "value": 0.1
+      },
+      "seasonality_score": 0.807581,
+      "term": "curly hairstyles",
+      "yoy_change": {
+        "index": 7,
+        "value": -0.3
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 38,
+        "value": 0.01
+      },
+      "searchCount": 10,
+      "reverseRank": 44
+    },
+    {
+      "normalizedCount": 9,
+      "wow_change": {
+        "index": 9,
+        "value": -0.08
+      },
+      "seasonality_score": 0.72143793,
+      "term": "room ideas",
+      "yoy_change": {
+        "index": 23,
+        "value": -0.04
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 51,
+        "value": 0.05
+      },
+      "searchCount": 9,
+      "reverseRank": 43
+    },
+    {
+      "normalizedCount": 9,
+      "wow_change": {
+        "index": 59,
+        "value": 0
+      },
+      "seasonality_score": 0.8330494,
+      "term": "chicken breast recipes",
+      "yoy_change": {
+        "index": 22,
+        "value": -0.07
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 71,
+        "value": 0.1
+      },
+      "searchCount": 9,
+      "reverseRank": 42
+    },
+    {
+      "normalizedCount": 9,
+      "wow_change": {
+        "index": 76,
+        "value": 0.04
+      },
+      "seasonality_score": 0.90312177,
+      "term": "easy dinner recipes",
+      "yoy_change": {
+        "index": 3,
+        "value": -0.3
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 69,
+        "value": 0.1
+      },
+      "searchCount": 9,
+      "reverseRank": 41
+    },
+    {
+      "normalizedCount": 9,
+      "wow_change": {
+        "index": 18,
+        "value": -0.04
+      },
+      "seasonality_score": 0.865251,
+      "term": "white",
+      "yoy_change": {
+        "index": 62,
+        "value": 0.4
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 55,
+        "value": 0.06
+      },
+      "searchCount": 9,
+      "reverseRank": 40
+    },
+    {
+      "normalizedCount": 9,
+      "wow_change": {
+        "index": 82,
+        "value": 0.07
+      },
+      "seasonality_score": 0.6792543,
+      "term": "katseye",
+      "yoy_change": {
+        "index": 78,
+        "value": 0.7
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 76,
+        "value": 0.2
+      },
+      "searchCount": 9,
+      "reverseRank": 39
+    },
+    {
+      "normalizedCount": 9,
+      "wow_change": {
+        "index": 70,
+        "value": 0.02
+      },
+      "seasonality_score": 0.7857457,
+      "term": "short nails",
+      "yoy_change": {
+        "index": 13,
+        "value": -0.2
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 48,
+        "value": 0.04
+      },
+      "searchCount": 9,
+      "reverseRank": 38
+    },
+    {
+      "normalizedCount": 9,
+      "wow_change": {
+        "index": 15,
+        "value": -0.04
+      },
+      "seasonality_score": 0.8268501,
+      "term": "things to draw",
+      "yoy_change": {
+        "index": 60,
+        "value": 0.3
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 26,
+        "value": -0.02
+      },
+      "searchCount": 9,
+      "reverseRank": 37
+    },
+    {
+      "normalizedCount": 9,
+      "wow_change": {
+        "index": 36,
+        "value": -0.01
+      },
+      "seasonality_score": 0.51125836,
+      "term": "nails design",
+      "yoy_change": {
+        "index": 2,
+        "value": -0.4
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 75,
+        "value": 0.2
+      },
+      "searchCount": 9,
+      "reverseRank": 36
+    },
+    {
+      "normalizedCount": 9,
+      "wow_change": {
+        "index": 69,
+        "value": 0.02
+      },
+      "seasonality_score": 0.52129096,
+      "term": "dinner recipes",
+      "yoy_change": {
+        "index": 1,
+        "value": -0.5
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 43,
+        "value": 0.02
+      },
+      "searchCount": 9,
+      "reverseRank": 35
+    },
+    {
+      "normalizedCount": 9,
+      "wow_change": {
+        "index": 96,
+        "value": 0.2
+      },
+      "seasonality_score": 0.92769104,
+      "term": "school outfits",
+      "yoy_change": {
+        "index": 10,
+        "value": -0.3
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 92,
+        "value": 0.9
+      },
+      "searchCount": 9,
+      "reverseRank": 34
+    },
+    {
+      "normalizedCount": 9,
+      "wow_change": {
+        "index": 68,
+        "value": 0.02
+      },
+      "seasonality_score": 0.3006724,
+      "term": "wallpapers",
+      "yoy_change": {
+        "index": 32,
+        "value": 0
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 10,
+        "value": -0.07
+      },
+      "searchCount": 9,
+      "reverseRank": 33
+    },
+    {
+      "normalizedCount": 9,
+      "wow_change": {
+        "index": 79,
+        "value": 0.05
+      },
+      "seasonality_score": 0.4569909,
+      "term": "half up half down hair",
+      "yoy_change": {
+        "index": 77,
+        "value": 0.7
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 67,
+        "value": 0.09
+      },
+      "searchCount": 9,
+      "reverseRank": 32
+    },
+    {
+      "normalizedCount": 9,
+      "wow_change": {
+        "index": 14,
+        "value": -0.04
+      },
+      "seasonality_score": 0.6300871,
+      "term": "bedroom ideas",
+      "yoy_change": {
+        "index": 9,
+        "value": -0.3
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 28,
+        "value": -0.01
+      },
+      "searchCount": 9,
+      "reverseRank": 31
+    },
+    {
+      "normalizedCount": 9,
+      "wow_change": {
+        "index": 95,
+        "value": 0.2
+      },
+      "seasonality_score": 0.8993604,
+      "term": "lunch ideas",
+      "yoy_change": {
+        "index": 30,
+        "value": 0
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 85,
+        "value": 0.3
+      },
+      "searchCount": 9,
+      "reverseRank": 30
+    },
+    {
+      "normalizedCount": 8,
+      "wow_change": {
+        "index": 55,
+        "value": 0
+      },
+      "seasonality_score": 0.59397393,
+      "term": "breakfast ideas",
+      "yoy_change": {
+        "index": 4,
+        "value": -0.3
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 24,
+        "value": -0.02
+      },
+      "searchCount": 8,
+      "reverseRank": 29
+    },
+    {
+      "normalizedCount": 8,
+      "wow_change": {
+        "index": 65,
+        "value": 0.01
+      },
+      "seasonality_score": 0.32355744,
+      "term": "hello kitty",
+      "yoy_change": {
+        "index": 8,
+        "value": -0.3
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 34,
+        "value": 0
+      },
+      "searchCount": 8,
+      "reverseRank": 28
+    },
+    {
+      "normalizedCount": 8,
+      "wow_change": {
+        "index": 26,
+        "value": -0.02
+      },
+      "seasonality_score": 0.29541895,
+      "term": "gif",
+      "yoy_change": {
+        "index": 92,
+        "value": 2
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 9,
+        "value": -0.09
+      },
+      "searchCount": 8,
+      "reverseRank": 27
+    },
+    {
+      "normalizedCount": 8,
+      "wow_change": {
+        "index": 3,
+        "value": -0.3
+      },
+      "seasonality_score": 0.9822696,
+      "term": "beach nails",
+      "yoy_change": {
+        "index": 44,
+        "value": 0.1
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 2,
+        "value": -0.4
+      },
+      "searchCount": 8,
+      "reverseRank": 26
+    },
+    {
+      "normalizedCount": 8,
+      "wow_change": {
+        "index": 58,
+        "value": 0
+      },
+      "seasonality_score": 0.8459572,
+      "term": "cute nails",
+      "yoy_change": {
+        "index": 29,
+        "value": -0.02
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 82,
+        "value": 0.2
+      },
+      "searchCount": 8,
+      "reverseRank": 25
+    },
+    {
+      "normalizedCount": 8,
+      "wow_change": {
+        "index": 35,
+        "value": -0.01
+      },
+      "seasonality_score": 0.44940367,
+      "term": "michael jackson",
+      "yoy_change": {
+        "index": 96,
+        "value": 5
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 3,
+        "value": -0.3
+      },
+      "searchCount": 8,
+      "reverseRank": 24
+    },
+    {
+      "normalizedCount": 8,
+      "wow_change": {
+        "index": 43,
+        "value": 0
+      },
+      "seasonality_score": 0.9407469,
+      "term": "blue nails",
+      "yoy_change": {
+        "index": 11,
+        "value": -0.2
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 6,
+        "value": -0.1
+      },
+      "searchCount": 8,
+      "reverseRank": 23
+    },
+    {
+      "normalizedCount": 8,
+      "wow_change": {
+        "index": 57,
+        "value": 0
+      },
+      "seasonality_score": 0.87657624,
+      "term": "good morning",
+      "yoy_change": {
+        "index": 34,
+        "value": 0.01
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 13,
+        "value": -0.06
+      },
+      "searchCount": 8,
+      "reverseRank": 22
+    },
+    {
+      "normalizedCount": 8,
+      "wow_change": {
+        "index": 4,
+        "value": -0.3
+      },
+      "seasonality_score": 0.426527,
+      "term": "jude bellingham",
+      "yoy_change": {
+        "index": 98,
+        "value": 15
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 61,
+        "value": 0.07
+      },
+      "searchCount": 8,
+      "reverseRank": 21
+    },
+    {
+      "normalizedCount": 8,
+      "wow_change": {
+        "index": 47,
+        "value": 0
+      },
+      "seasonality_score": 0.8454865,
+      "term": "anime",
+      "yoy_change": {
+        "index": 43,
+        "value": 0.09
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 12,
+        "value": -0.06
+      },
+      "searchCount": 8,
+      "reverseRank": 20
+    },
+    {
+      "normalizedCount": 8,
+      "wow_change": {
+        "index": 40,
+        "value": 0
+      },
+      "seasonality_score": 0.71951187,
+      "term": "profile picture",
+      "yoy_change": {
+        "index": 45,
+        "value": 0.1
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 17,
+        "value": -0.04
+      },
+      "searchCount": 8,
+      "reverseRank": 19
+    },
+    {
+      "normalizedCount": 8,
+      "wow_change": {
+        "index": 63,
+        "value": 0.01
+      },
+      "seasonality_score": 0.92155254,
+      "term": "red nails",
+      "yoy_change": {
+        "index": 16,
+        "value": -0.1
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 4,
+        "value": -0.2
+      },
+      "searchCount": 8,
+      "reverseRank": 18
+    },
+    {
+      "normalizedCount": 8,
+      "wow_change": {
+        "index": 73,
+        "value": 0.03
+      },
+      "seasonality_score": 0.61903954,
+      "term": "room decor",
+      "yoy_change": {
+        "index": 74,
+        "value": 0.6
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 5,
+        "value": -0.1
+      },
+      "searchCount": 8,
+      "reverseRank": 17
+    },
+    {
+      "normalizedCount": 8,
+      "wow_change": {
+        "index": 44,
+        "value": 0
+      },
+      "seasonality_score": 0.5981359,
+      "term": "engagement rings",
+      "yoy_change": {
+        "index": 17,
+        "value": -0.1
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 39,
+        "value": 0.01
+      },
+      "searchCount": 8,
+      "reverseRank": 16
+    },
+    {
+      "normalizedCount": 8,
+      "wow_change": {
+        "index": 67,
+        "value": 0.02
+      },
+      "seasonality_score": 0.7131856,
+      "term": "y2k outfits",
+      "yoy_change": {
+        "index": 54,
+        "value": 0.2
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 78,
+        "value": 0.2
+      },
+      "searchCount": 8,
+      "reverseRank": 15
+    },
+    {
+      "normalizedCount": 8,
+      "wow_change": {
+        "index": 38,
+        "value": -0.01
+      },
+      "seasonality_score": 0.33662114,
+      "term": "nail art",
+      "yoy_change": {
+        "index": 85,
+        "value": 0.9
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 50,
+        "value": 0.04
+      },
+      "searchCount": 8,
+      "reverseRank": 14
+    },
+    {
+      "normalizedCount": 8,
+      "wow_change": {
+        "index": 94,
+        "value": 0.2
+      },
+      "seasonality_score": 0.42874274,
+      "term": "crockpot meals",
+      "yoy_change": {
+        "index": 94,
+        "value": 2
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 87,
+        "value": 0.3
+      },
+      "searchCount": 8,
+      "reverseRank": 13
+    },
+    {
+      "normalizedCount": 7,
+      "wow_change": {
+        "index": 34,
+        "value": -0.01
+      },
+      "seasonality_score": 0.84993625,
+      "term": "iphone wallpaper",
+      "yoy_change": {
+        "index": 24,
+        "value": -0.04
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 35,
+        "value": 0
+      },
+      "searchCount": 7,
+      "reverseRank": 12
+    },
+    {
+      "normalizedCount": 7,
+      "wow_change": {
+        "index": 77,
+        "value": 0.05
+      },
+      "seasonality_score": 0.49675402,
+      "term": "ground beef recipes for dinner",
+      "yoy_change": {
+        "index": 89,
+        "value": 1
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 70,
+        "value": 0.1
+      },
+      "searchCount": 7,
+      "reverseRank": 11
+    },
+    {
+      "normalizedCount": 7,
+      "wow_change": {
+        "index": 78,
+        "value": 0.05
+      },
+      "seasonality_score": 0.5717865,
+      "term": "business casual outfits for women",
+      "yoy_change": {
+        "index": 80,
+        "value": 0.7
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 77,
+        "value": 0.2
+      },
+      "searchCount": 7,
+      "reverseRank": 10
+    },
+    {
+      "normalizedCount": 7,
+      "wow_change": {
+        "index": 46,
+        "value": 0
+      },
+      "seasonality_score": 0.60293216,
+      "term": "cute pfp",
+      "yoy_change": {
+        "index": 56,
+        "value": 0.3
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 36,
+        "value": 0
+      },
+      "searchCount": 7,
+      "reverseRank": 9
+    },
+    {
+      "normalizedCount": 7,
+      "wow_change": {
+        "index": 19,
+        "value": -0.04
+      },
+      "seasonality_score": 0.6143678,
+      "term": "anime pfp",
+      "yoy_change": {
+        "index": 52,
+        "value": 0.2
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 7,
+        "value": -0.09
+      },
+      "searchCount": 7,
+      "reverseRank": 8
+    },
+    {
+      "normalizedCount": 7,
+      "wow_change": {
+        "index": 37,
+        "value": -0.01
+      },
+      "seasonality_score": 0.75447196,
+      "term": "blue",
+      "yoy_change": {
+        "index": 53,
+        "value": 0.2
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 23,
+        "value": -0.03
+      },
+      "searchCount": 7,
+      "reverseRank": 7
+    },
+    {
+      "normalizedCount": 7,
+      "wow_change": {
+        "index": 32,
+        "value": -0.01
+      },
+      "seasonality_score": 0.49273956,
+      "term": "quick weave hairstyles",
+      "yoy_change": {
+        "index": 67,
+        "value": 0.5
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 72,
+        "value": 0.1
+      },
+      "searchCount": 7,
+      "reverseRank": 6
+    },
+    {
+      "normalizedCount": 7,
+      "wow_change": {
+        "index": 62,
+        "value": 0.01
+      },
+      "seasonality_score": 0.7850369,
+      "term": "widgets",
+      "yoy_change": {
+        "index": 64,
+        "value": 0.4
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 44,
+        "value": 0.02
+      },
+      "searchCount": 7,
+      "reverseRank": 5
+    },
+    {
+      "normalizedCount": 7,
+      "wow_change": {
+        "index": 54,
+        "value": 0
+      },
+      "seasonality_score": 0.8837448,
+      "term": "square nails",
+      "yoy_change": {
+        "index": 49,
+        "value": 0.2
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 49,
+        "value": 0.04
+      },
+      "searchCount": 7,
+      "reverseRank": 4
+    },
+    {
+      "normalizedCount": 7,
+      "wow_change": {
+        "index": 25,
+        "value": -0.02
+      },
+      "seasonality_score": 0.44637188,
+      "term": "pfp ideas",
+      "yoy_change": {
+        "index": 95,
+        "value": 2
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 80,
+        "value": 0.2
+      },
+      "searchCount": 7,
+      "reverseRank": 3
+    },
+    {
+      "normalizedCount": 7,
+      "wow_change": {
+        "index": 12,
+        "value": -0.06
+      },
+      "seasonality_score": 0.80134964,
+      "term": "crafts",
+      "yoy_change": {
+        "index": 79,
+        "value": 0.7
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 11,
+        "value": -0.07
+      },
+      "searchCount": 7,
+      "reverseRank": 2
+    },
+    {
+      "normalizedCount": 7,
+      "wow_change": {
+        "index": 17,
+        "value": -0.04
+      },
+      "seasonality_score": 0.38160843,
+      "term": "overlay",
+      "yoy_change": {
+        "index": 91,
+        "value": 2
+      },
+      "affinity": null,
+      "mom_change": {
+        "index": 40,
+        "value": 0.01
+      },
+      "searchCount": 7,
+      "reverseRank": 1
+    }
+  ],
+  "endDate": "2026-08-14"
+}

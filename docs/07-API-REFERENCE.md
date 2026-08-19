@@ -369,6 +369,13 @@ Returns `{endDate, values:[{term, searchCount, normalizedCount, reverseRank,
 seasonality_score, wow_change:{value,index}, mom_change, yoy_change, affinity}]}`
 
 ⚠️ **`affinity` is `null` in 100/100 rows** — never populated; ignore it.
+
+⭐ **`wow/mom/yoy_change.index` decoded (probed 2026-08-19, 100 rows):** each growth metric
+returns `{value, index}`. `value` is the growth fraction; `index` is the **1..N rank of that
+value within this response** — 100 rows produced indexes 1..100, one each, monotone with
+value (index 100 = highest growth in the set). It is NOT a stable strength score: it is
+response-scoped like every other relative number, and fully derivable by sorting `value`.
+Parse it as `rank_in_response` or drop it — never compare it across responses.
 ⚠️ **No prediction flag here** — the crystal ball requires an extra `/metrics/` call per term.
 
 **Caller A — Moment page chips:** `?country&moments=halloween&endDate&lookbackWindow=2&rankingMethod=1&trendsPreset=1&numTermsToReturn=25`
