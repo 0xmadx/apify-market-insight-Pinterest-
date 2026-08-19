@@ -20,6 +20,34 @@ would find an empty vault and fail with `VaultEmpty` — correctly, but uselessl
 The extension and the Go server keep working exactly as they do now; only the
 Redis address moves.
 
+## 1b. Rehearse it locally first — `./run_local.sh`
+
+Before paying for anything, the deploy is rehearsable on this machine. WSL runs
+the actor on **Linux 3.12** (the same base as `apify/actor-python:3.12`) and
+reaches the vault at the **Windows host IP** — a real network hop from a
+separate namespace, the same shape as an Apify container reaching Upstash.
+
+```bash
+./run_local.sh                       # radar — 2 requests
+./run_local.sh keywords
+./run_local.sh shopping '{"verticals":["1042"],"drillTopN":1}'
+```
+
+**Proven this way on 2026-08-19** (Ubuntu WSL, `REDIS_URL` pointed at
+`172.31.144.1:6379`, never localhost):
+
+- all 246 offline checks pass on Linux — the code had only ever run on Windows
+- the actor boots the real Apify SDK, reads `INPUT.json`, and reaches a
+  networked Redis
+- with an empty vault it fails **exactly as designed**: `ERROR No leasable
+  'pinterest' profile after 30s`, terminal status *"No usable Pinterest session
+  in the vault."*, exit code 1, and **no dataset written** — the F1 contract
+  (fail loudly, never emit an empty "successful" dataset) proven on the real
+  SDK rather than asserted in a unit test
+
+What this does NOT prove: a full run with records. That needs a live session
+(a Pinterest tab open). Everything up to the lease is verified.
+
 ## 2. Push
 
 ```bash
