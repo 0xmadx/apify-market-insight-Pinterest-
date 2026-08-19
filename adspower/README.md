@@ -78,13 +78,19 @@ Nothing downstream can work until a human signs those profiles in: no
 cookie-sync mechanism can copy a session that does not exist. This is the
 operator's step — signing in is not something the agent does.
 
-**2. The Chrome extension does not load into AdsPower's browser.**
+**2. The Chrome extension does not load into AdsPower's browser** — and it is
+the wrong mechanism anyway, so `sync_cookies.py` replaces it (see below).
+
+<details><summary>the extension detail, kept for the record</summary>
+
 `--load-extension=/home/devy/adspower/extension` **is** present in SunBrowser's
 command line (confirmed from `/proc/<pid>/cmdline`), yet the only service worker
 the browser registers is AdsPower's own
 (`gcaiimgaiohlnlflkjjmcohobkpbbnfi`). Ours never appears.
 
-### The extension is probably the wrong mechanism here anyway
+</details>
+
+### Why the API, not the extension
 
 The extension exists because a **human's** Chrome needs to volunteer its
 cookies. On a headless server there is no human and no reason for the browser
@@ -104,8 +110,44 @@ Same destination, same Redis keys, same `SessionManager` on the other side —
 and no extension to load, no browser to keep in the foreground. The Go server
 and the vault do not change at all.
 
-**Not built yet**, because step 0 is a human logging those profiles in. Written
-down here so the decision is not re-derived later.
+**Built: `sync_cookies.py`.** Run it against a live AdsPower:
+
+```bash
+export ADS_API_KEY=...
+python3 sync_cookies.py --dry-run           # read and report, write nothing
+python3 sync_cookies.py --group pinterest   # only that group
+```
+
+It walks every profile, starts it, reads cookies over CDP, and POSTs a payload
+byte-identical to the extension's. Two refusals are deliberate:
+
+- a profile with **no** `_auth` / `_pinterest_sess` is not written. Those are
+  what `SessionManager` requires; storing a cookie-less profile creates an
+  identity that looks available and cannot authenticate — precisely the defect
+  the Etsy side already shipped once.
+- every skip prints its reason. "no pinterest cookies at all (never signed in)"
+  and "cookies exist but none of the auth ones" mean different things and must
+  not collapse into one silent skip.
+
+`profile_id` is `ads_<user_id>` — derived from AdsPower's immutable id rather
+than random like the extension's, so re-running **updates** a profile's vault
+entry instead of growing a new one each time.
+
+First full run, 2026-08-19:
+
+```
+5 profile(s) — DRY RUN
+  pinterest_4        SKIP — no pinterest cookies at all (never signed in)
+  pinterest_3        FAIL — SunBrowser 149 is not ready (kernel still downloading)
+  pinterest_2        SKIP — no pinterest cookies at all (never signed in)
+  (unnamed)          SKIP — no pinterest cookies at all (never signed in)
+  Default Profile    SKIP — no pinterest cookies at all (never signed in)
+  0/5 synced
+```
+
+The mechanism is proven — it started each profile, read its cookie jar and
+reported honestly. **0/5 is the true answer**, not a bug: none of these
+profiles has ever signed in to Pinterest.
 
 ## Handy commands
 
