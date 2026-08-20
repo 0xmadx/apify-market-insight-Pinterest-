@@ -1,0 +1,34 @@
+# Re-sync AdsPower cookies into the vault. Paired with adspower-sync.timer.
+#
+# WHY THIS EXISTS — the failure it fixes is silent and total:
+#
+# The vault evicts any profile whose `last_updated` is older than
+# PROFILE_MAX_AGE (900s). The Chrome extension never trips that because it
+# beams on every cookie change; a MANUAL sync does, 15 minutes later:
+#
+#     [vault] evicted pinterest/ads_k1fx40wf: stale (934s since heartbeat)
+#
+# So without this timer an AdsPower profile is usable for fifteen minutes after
+# each hand-run and then vanishes — and it vanishes QUIETLY, leaving a scraper
+# that simply never draws it. This is the heartbeat that makes the profiles
+# permanent members of the pool rather than guests.
+[Unit]
+Description=Sync AdsPower profile cookies into the session vault
+After=adspower.service
+Wants=adspower.service
+
+[Service]
+Type=oneshot
+User=devy
+EnvironmentFile=/etc/adspower/api.env
+WorkingDirectory=/home/devy/pinterest-apify/adspower
+
+# --ua-mode auto: a browser starts only for a profile with no stored UA, so the
+# routine run is the ~2s v2 path and never launches Chromium.
+ExecStart=/home/devy/pinterest-actor/.venv/bin/python sync_cookies.py \
+  --group pinterest --ua-mode auto
+
+# A failed sync must not take the timer down with it: the next tick should try
+# again. AdsPower being briefly busy is normal, not fatal.
+SuccessExitStatus=0 1
+TimeoutStartSec=600

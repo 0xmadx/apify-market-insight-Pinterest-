@@ -270,7 +270,7 @@ One record per row. Every record carries `_meta`.
 | `status` | string | `ok`, or `no_data` when Pinterest returned nothing for it |
 | `has_forecast` | boolean or null | the 🔮 flag. `null` = the field was absent, not `false` |
 | `forecast_note` | string or null | present when `has_forecast` is false — says rank on growth instead, and **do not retry** |
-| `wow_change` · `mom_change` · `yoy_change` | number or null | fractions. `yoy` is frequently null |
+| `wow_change` · `mom_change` · `yoy_change` | number or null | fractions. **`yoy_change` needs `days: 730`** — measured, it is `null` at 180 and 365 and populated only at 730, which is why 730 is now the default. An earlier version of this page called `yoy` "frequently null" as though that were a fact about Pinterest; it was a fact about how much history we asked for |
 | `seasonality_score` · `search_count` | number | discovery mode only |
 | `series` | array | `{date, count, normalized, predicted_lower, predicted_upper}` |
 | `age_distribution` · `gender_distribution` | object | per term |

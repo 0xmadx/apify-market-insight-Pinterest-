@@ -120,6 +120,137 @@ def main():
     state.reset("pins")
     cache.clear()
 
+    print("\nSINGLEFLIGHT - one fill per key, not one per client")
+    import json as _json, threading, time as _t
+    from src.transport import TrendsClient
+
+    sf = ResponseCache(replace(base, PLATFORM="__sf_unit"))
+    sf.clear()
+
+    class _R:
+        status_code = 200
+        text = '{"date": "2026-08-14"}'
+        def json(self): return _json.loads(self.text)
+
+    wire = {"n": 0}
+    wlock = threading.Lock()
+
+    class _Slow:
+        def get(self, url, params=None, headers=None):
+            with wlock: wire["n"] += 1
+            _t.sleep(0.8)
+            return _R()
+        def post(self, *a, **k): raise AssertionError("no POSTs here")
+
+    def _client():
+        TrendsClient(_Slow(), cache=sf).style_b("/x/", {"q": "same"}, kind="trends")
+
+    # THE BUG THIS GUARDS: measured before singleflight, 8 clients asking one
+    # uncached question made 8 requests and tied up 8 leased identities. The
+    # cache was perfect after the first fill and absent during it.
+    ts = [threading.Thread(target=_client) for _ in range(6)]
+    [x.start() for x in ts]; [x.join() for x in ts]
+    check("6 clients on one cold key make ONE upstream request", wire["n"] == 1)
+
+    # A warm key must not take the lock path at all.
+    wire["n"] = 0
+    _client()
+    check("a warm key costs no request at all", wire["n"] == 0)
+
+    # The lock must be RELEASED after a fill, or every later waiter sits out
+    # the full timeout before fetching anyway.
+    sf.clear()
+    check("the fill lock is released after storing",
+          sf.acquire_fill("trends", "https://x/y", {"a": 1}))
+    sf.release_fill("trends", "https://x/y", {"a": 1})
+    check("...so the next caller can claim it",
+          sf.acquire_fill("trends", "https://x/y", {"a": 1}))
+    check("...and a second claim while held is refused",
+          not sf.acquire_fill("trends", "https://x/y", {"a": 1}))
+    sf.release_fill("trends", "https://x/y", {"a": 1})
+
+    # A waiter whose winner never delivers must FETCH, not fail: a duplicate
+    # request is the right outcome, silence is not.
+    slow_cfg = replace(base, PLATFORM="__sf_unit", FILL_WAIT_TIMEOUT=1.0)
+    sf2 = ResponseCache(slow_cfg); sf2.clear()
+    sf2.acquire_fill("trends", "https://x/z", None)      # winner that never returns
+    wire["n"] = 0
+    TrendsClient(_Slow(), cache=sf2).style_b("/z/", None, kind="trends")
+    check("a waiter whose winner never delivers fetches rather than failing",
+          wire["n"] == 1)
+    sf.clear(); sf2.clear()
+
+    print("\nLAZY LEASING - an identity only when the wire is touched")
+    from src.lazy import LazySession
+
+    lz = LazySession(base)
+    # THE POINT: capacity is profiles/miss_rate, not profiles. A run served
+    # entirely from cache must occupy nothing at all.
+    check("nothing is leased until a request happens", not lz.acquired)
+    check("...and closing an unused session is a no-op, not an error",
+          lz.close() is None)
+    check("a run that never fetched reports no identity", lz.identity is None)
+
+    # stats() must not explode on a cache-only run, and must not name a profile
+    # that was never used.
+    from src.context import Context
+    ctx = Context(lz, None, {}, base)
+    check("stats() on a cache-only run says so instead of crashing",
+          ctx.stats()["profile"] == "cache-only")
+
+    # The bootstrap was uncached, so EVERY run leased an identity just to ask
+    # "what is your newest date?" — which defeated lazy leasing entirely.
+    check("the bootstrap call is cached", "bootstrap" in base.cache_ttls)
+    check("...but briefly: it is what expires every other key",
+          base.cache_ttls["bootstrap"] <= 900)
+    check("...much shorter than the trends TTL it gates",
+          base.cache_ttls["bootstrap"] < base.cache_ttls["trends"])
+
+    print("\nPER-ITEM CACHE - overlapping customers share work")
+    frag = ResponseCache(replace(base, PLATFORM="__frag_unit"))
+    frag.clear()
+    grp = {"region": "US", "end_date": "2026-08-14", "days": 365}
+
+    check("an unfetched item is a miss",
+          frag.get_item("detail", grp, "macrame") is None)
+    frag.put_item("detail", grp, "macrame", {"18-24": 0.5})
+    check("...and a hit after one customer fetched it",
+          frag.get_item("detail", grp, "macrame") == {"18-24": 0.5})
+
+    # The group is everything that makes two identical terms different answers.
+    # Leaving any of it out serves a US answer to a DE request.
+    check("the same term in another REGION is a miss",
+          frag.get_item("detail", {**grp, "region": "DE"}, "macrame") is None)
+    check("the same term on another DATE is a miss",
+          frag.get_item("detail", {**grp, "end_date": "2026-08-21"}, "macrame") is None)
+    check("the same term over another WINDOW is a miss",
+          frag.get_item("detail", {**grp, "days": 90}, "macrame") is None)
+
+    # Absent is not zero: a cached None would hide a term Pinterest simply has
+    # no data for yet, permanently.
+    check("None is never stored", not frag.put_item("detail", grp, "x", None))
+    check("...so it stays a miss and gets retried",
+          frag.get_item("detail", grp, "x") is None)
+    frag.clear()
+
+    # THE MEASUREMENT THAT DECIDED THIS. /metrics/ sends
+    # normalize_against_group=true, so a term's counts are scaled against the
+    # OTHER terms in the same request. Live, same term, same dates:
+    #     'eye makeup' beside 'eyelashes'                     -> [30, 32, 36]
+    #     'eye makeup' beside 'nails','hairstyles','wallpaper'-> [ 1,  1,  2]
+    # Caching that per term would serve a 36 next to a fresh 1. Demographics
+    # are per-term percentages and measured IDENTICAL across both groups.
+    import inspect
+    from src.keywords import KeywordScraper
+    msrc = inspect.getsource(KeywordScraper._metrics)
+    dsrc = inspect.getsource(KeywordScraper._demographics)
+    check("_metrics carries the group-relative warning",
+          "NEVER cache this per term" in msrc and "GROUP-RELATIVE" in msrc)
+    check("_metrics does NOT use the per-item cache",
+          "get_item" not in msrc and "put_item" not in msrc)
+    check("_demographics DOES use it, and says it was measured safe",
+          "get_item" in dsrc and "MEASURED SAFE" in dsrc)
+
     failed = [n for n, ok in checks if not ok]
     print(f"\n{len(checks) - len(failed)}/{len(checks)} checks passed")
     if failed:

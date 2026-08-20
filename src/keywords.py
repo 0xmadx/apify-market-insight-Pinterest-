@@ -24,10 +24,26 @@ from .transport import TrendsAPIError
 
 
 class KeywordScraper:
-    def __init__(self, client, region="US", days=365, predicted_days=91,
+    def __init__(self, client, region="US", days=730, predicted_days=91,
                  end_date=None, log=print):
         self.client = client
         self.region = vocab.region(region)
+        # 730 by default, and this is not a preference — it is the only
+        # window that returns year-over-year. Measured 2026-08-19, same terms
+        # and end date, only `days` changing:
+        #
+        #     days=180 -> yoy_change: None
+        #     days=365 -> yoy_change: None
+        #     days=730 -> yoy_change: 0.09 / 0.05
+        #
+        # The old 365 default made `yoy_change` null for everything, which
+        # reads as "Pinterest does not publish year-over-year" when the truth
+        # is we were not asking for enough history. `docs/API.md` even recorded
+        # "yoy is frequently null" as a fact about the API. It was ours.
+        #
+        # It costs nothing: 730 is the SAME single request and the same ~0.7s
+        # (measured 0.70s at 180 vs 0.73s at 730). Only the payload grows,
+        # 8KB -> 31KB per term.
         self.days = vocab.ceiling("days", days)
         # A customer-chosen point in time, or None for "the newest settled
         # data". Discovery reaches far back; /metrics/ does not, so the two are
@@ -82,10 +98,26 @@ class KeywordScraper:
             self.client.style_b("/top_trends_filtered/", params, kind="search"))
 
     def seed(self, stem):
-        """/prefix_match/ — the discovery primitive. Whole keyword space."""
+        """/prefix_match/ — the discovery primitive. Whole keyword space.
+
+        This is what the "Search for a keyword" box on Pinterest's own Trends
+        page does, and it is how most customers will actually use a keyword
+        tool: they type. Unlike `discover`, it reaches terms that are not
+        currently trending.
+
+        `kind="typeahead"` (6h), not "search" (15min): suggestions are the
+        slowest-moving data here, and typed stems repeat heavily across
+        customers — "christmas gift" is not a rare query. Measured: a repeat of
+        the same stem costs ZERO wire requests and takes no identity at all.
+
+        ⚠️ This request carries no end_date, so its cache key does not change
+        when Pinterest publishes. Every other endpoint self-invalidates that
+        way; here the TTL is the only control, which is why it is hours and not
+        days.
+        """
         return parsers.parse_prefix_match(self.client.style_b(
             "/prefix_match/", {"query": vocab.keyword(stem),
-                               "country": self.region}, kind="search"))
+                               "country": self.region}, kind="typeahead"))
 
     # ------------------------------------------------------------- the walk
 
@@ -188,6 +220,24 @@ class KeywordScraper:
     # ------------------------------------------------------------ the calls
 
     def _metrics(self, term_list, end_date):
+        """⚠️ NEVER cache this per term. The numbers are GROUP-RELATIVE.
+
+        `normalize_against_group=true` means a term's counts are scaled against
+        the other terms in the SAME request. Measured 2026-08-19, `eye makeup`
+        on identical dates and windows:
+
+            beside 'eyelashes'                        -> [30, 32, 36]
+            beside 'nails','hairstyles','wallpaper'   -> [ 1,  1,  2]
+
+        Same term, same period, thirty-fold difference — because the company it
+        keeps sets the scale. Caching one term's series and serving it next to
+        another group's would produce numbers that look ordinary and are not
+        comparable, which is this codebase's defining failure mode.
+
+        `_meta.normalization_scope` carries the term COUNT for exactly this
+        reason. /demographics/ is per-term percentages and IS safe to cache
+        that way; this is not.
+        """
         # A forecast running forward from a PAST end_date is HTTP 500 on this
         # endpoint (measured: -7d forecasts, -14d does not, at any
         # predicted_days > 0). Style B sends no error body, so it arrived as a
@@ -208,12 +258,50 @@ class KeywordScraper:
         }, kind="search"))
 
     def _demographics(self, term_list, end_date):
+        """Per-TERM cached, so customers with overlapping keywords share work.
+
+        MEASURED SAFE 2026-08-19: `eye makeup` returns the same distribution
+        whether it is requested beside two peers or beside `nails`,
+        `hairstyles` and `wallpaper` — these are per-term percentages, not
+        volumes relative to the request. So a term fetched for one customer can
+        be handed to the next.
+
+        ⚠️ /metrics/ is NOT safe this way and must never copy this — see the
+        warning on `_metrics`.
+
+        Only the terms nobody has fetched yet reach Pinterest; the rest come
+        from cache. Two customers sharing one keyword out of ten now cost nine
+        lookups, not twenty.
+        """
+        cache = getattr(self.client, "cache", None)
+        group = {"region": self.region, "end_date": end_date,
+                 "days": self.days}
+        known, missing = {}, list(term_list)
+        if cache is not None:
+            known = {}
+            missing = []
+            for term in term_list:
+                hit = cache.get_item("detail", group, term)
+                if hit is None:
+                    missing.append(term)
+                else:
+                    known[term] = hit
+            if not missing:
+                return known                      # nothing to ask Pinterest
+
         try:
-            return parsers.parse_keyword_demographics(self.client.style_b(
-                "/demographics/", {"terms": ",".join(term_list),
+            fetched = parsers.parse_keyword_demographics(self.client.style_b(
+                "/demographics/", {"terms": ",".join(missing),
                                    "country": self.region,
                                    "end_date": end_date, "days": self.days},
                                   kind="detail"))
+            if cache is not None:
+                for term, value in fetched.items():
+                    cache.put_item("detail", group, term, value)
+            known.update(fetched)
+            return known
+        except Exception:
+            raise
         except TrendsAPIError as exc:
             self.log(f"[keywords] demographics failed ({exc}) — records will "
                      f"carry null audiences, not zeros")

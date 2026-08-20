@@ -12,7 +12,9 @@ Key schema (unchanged, so both projects can share one vault):
         user_agent     str          the UA of the browser the cookies were born in
         last_updated   unix seconds written by the Go server on every beacon
         is_valid       "1" | "0"
-        proxy          str          OPTIONAL, nothing writes it in phase 1
+        proxy          str          per-profile exit IP, written by
+                                    adspower/sync_cookies.py. Absent means
+                                    the profile exits from the HOST.
     valid_profiles:{platform}        SET of profile_id
 
 Added here, and absent from the parent repo: a LEASE. Two concurrent Apify runs
@@ -60,6 +62,7 @@ class SessionVault:
     def __init__(self, config: Config = None):
         self.config = config or Config()
         self.r = redis.Redis.from_url(self.config.REDIS_URL, decode_responses=True)
+        self._noted = set()
 
     # ---------------------------------------------------------------- reading
 
@@ -87,8 +90,26 @@ class SessionVault:
             time.sleep(self.config.WAIT_INTERVAL)
 
     def _candidates(self, platform):
-        """Every profile in the valid pool, in arbitrary order."""
-        return list(self.r.smembers(f"valid_profiles:{platform}") or [])
+        """Every profile in the valid pool, SHUFFLED.
+
+        The docstring used to say "arbitrary order", which is true of Redis and
+        false in practice: SMEMBERS returns the same order every call for an
+        unchanged set, and `acquire` takes the first leasable one. So one
+        profile absorbed every request while the rest idled — measured with
+        three profiles in the pool, eight consecutive leases all drew the same
+        identity.
+
+        That is the opposite of what the pool is for. Each profile is a
+        separate account behind its own proxy; concentrating traffic on one
+        makes that one look like a bot and leaves the others cold, which is
+        itself a signal. Shuffling spreads the load, and the lease still
+        guarantees no two runs share an identity.
+        """
+        import random
+
+        pool = list(self.r.smembers(f"valid_profiles:{platform}") or [])
+        random.shuffle(pool)
+        return pool
 
     def _try_lease(self, platform, profile_id):
         """Validate one profile and claim it. None if it is unusable or taken."""
@@ -132,6 +153,21 @@ class SessionVault:
             self._evict(platform, profile_id, f"stale ({int(age)}s since heartbeat)")
             return None
 
+        # No proxy means this identity exits from whatever host the run is on.
+        # SKIPPED, NOT EVICTED — and the distinction is the point. An eviction
+        # says "this session is burned"; a missing proxy says "this profile is
+        # not finished being set up". The writer re-adds it on its next beacon
+        # either way, so evicting would only churn the pool while hiding the
+        # real state. Skipping leaves it visible in `describe()` with the reason
+        # attached, which is where the operator can act on it.
+        if self.config.REQUIRE_PROXY and not (data.get("proxy") or "").strip():
+            self._note_once(
+                platform, profile_id,
+                "no proxy — would exit from this host's IP. Assign one with "
+                "`adspower/assign_proxies.py`, or set REQUIRE_PROXY=0 if this "
+                "machine has no proxies at all.")
+            return None
+
         # SET NX is the whole of the mutual exclusion: whoever sets it owns the
         # profile until the TTL expires, so a crashed run releases it unaided.
         if not self.r.set(
@@ -151,9 +187,9 @@ class SessionVault:
             profile_id=profile_id,
             cookies=cookies,
             user_agent=data.get("user_agent") or self.config.USER_AGENT_FALLBACK,
-            # None throughout phase 1 — nothing writes this field yet. Read from
-            # the profile and never from a global, so that phase 2 (AdsPower +
-            # Webshare, one proxy per profile) changes the writer, not this code.
+            # Read from THIS profile's hash and never from a global: the whole
+            # point is one exit IP per account. None is reachable only when
+            # REQUIRE_PROXY is off, and then means "exits from the host".
             proxy=data.get("proxy") or None,
             age=age,
         )
@@ -184,6 +220,19 @@ class SessionVault:
         self._evict(platform, profile_id, "blocked by the target")
         self.release(platform, profile_id)
 
+    def _note_once(self, platform, profile_id, reason):
+        """Log a skip reason once per vault instance.
+
+        `acquire` re-walks the pool every WAIT_INTERVAL (1s), so a plain print
+        here would emit the same line sixty times while a run waits out its
+        timeout — and a reason repeated sixty times reads as noise rather than
+        as the one thing the operator needs to fix.
+        """
+        if profile_id in self._noted:
+            return
+        self._noted.add(profile_id)
+        print(f"[vault] skipping {platform}/{profile_id}: {reason}")
+
     def _evict(self, platform, profile_id, reason):
         self.r.hset(f"cookie:{platform}:{profile_id}", "is_valid", "0")
         self.r.srem(f"valid_profiles:{platform}", profile_id)
@@ -208,6 +257,7 @@ class SessionVault:
                 "cookie_count": cookie_count,
                 "age_seconds": None if age is None else int(age),
                 "has_user_agent": bool(data.get("user_agent")),
+                "has_proxy": bool((data.get("proxy") or "").strip()),
                 "leased": bool(self.r.exists(f"lease:{platform}:{profile_id}")),
             })
         return out

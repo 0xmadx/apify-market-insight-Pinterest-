@@ -36,7 +36,7 @@ class ShoppingScraper:
     """
 
     def __init__(self, client, region="US", event="OUTBOUND_CLICK",
-                 drill_top_n=3, chart_days=180, predicted_days=28,
+                 drill_top_n=3, chart_days=730, predicted_days=28,
                  enrich_top_n=0, end_date=None, age_buckets=None, genders=None,
                  ranking_method="GROWTH", order_by="RELATIVE_VOLUME",
                  log=print):
@@ -44,8 +44,11 @@ class ShoppingScraper:
         self.region = vocab.region(region)
         self.event = vocab.event(event)
         self.drill_top_n = drill_top_n
-        # The detail page's own defaults: 180 days with a 28-day forecast is
-        # what produces the dashed prediction band. The table uses 60/0.
+        # 730 by default, not Pinterest's own 180: one year shows each season
+        # exactly once, which cannot tell a seasonal pattern from a one-off.
+        # Two years costs the SAME single request and the same ~0.7s — only the
+        # payload grows. Pass chartDays=180 to match their detail page (180
+        # with a 28-day forecast is what draws their dashed prediction band).
         self.requested_end_date = end_date
         self.chart_days = vocab.ceiling("days", chart_days)
         self.predicted_days = vocab.ceiling("predicted_days", predicted_days)

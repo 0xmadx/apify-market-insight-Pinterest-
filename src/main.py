@@ -23,7 +23,7 @@ from .config import Config
 from .context import Context
 from .records import Record
 from .scraper import run as run_scraper
-from .session import leased_session
+from .lazy import lazy_session
 from .state import RunState, fingerprint
 from .vault import VaultEmpty
 
@@ -121,9 +121,12 @@ async def _batches(task, config):
     def worker():
         batch = []
         try:
-            with leased_session(config) as (session, identity):
-                Actor.log.info(f"using profile {identity.profile_id}")
-                ctx = Context(session, identity, task, config)
+            # Lazy: the identity is taken on the first request that actually
+            # reaches Pinterest, not at run start. A run served from cache or
+            # coalesced onto another worker's fetch never occupies a profile —
+            # which is what lets a handful of profiles serve many customers.
+            with lazy_session(config, log=Actor.log.info) as session:
+                ctx = Context(session, None, task, config)
                 for record in run_scraper(ctx, task):
                     if not isinstance(record, Record):
                         raise TypeError(
@@ -134,8 +137,13 @@ async def _batches(task, config):
                     if len(batch) >= BATCH_SIZE:
                         put(batch)
                         batch = []
+                ctx.identity = session.identity      # known only now
                 Actor.log.info(
-                    f"cache: {ctx.cache.hits} hits, {ctx.cache.misses} misses")
+                    f"cache: {ctx.cache.hits} hits, {ctx.cache.misses} misses"
+                    f" · wire: {session.fetches} request(s)"
+                    + (f" as {session.identity.profile_id}"
+                       if session.acquired
+                       else " · NO identity needed (fully cached)"))
             if batch:
                 put(batch)
         finally:

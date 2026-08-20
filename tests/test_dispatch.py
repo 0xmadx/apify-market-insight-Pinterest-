@@ -548,6 +548,48 @@ def main():
           f"{len(ids)} ids, {len(set(ids))} unique")
 
 
+    print("\nK - a run must never outlive its lease")
+    # THE ONLY RULE THAT PROTECTS THE ACCOUNTS THEMSELVES. The vault leases a
+    # profile with SET NX and a 900s expiry so a crashed run cannot hold one
+    # forever — but that same expiry means a run LONGER than the TTL loses its
+    # lease mid-flight, and the vault then hands the same Pinterest session to
+    # another run. Two runs, one account, two IPs. `maxRequests` had NO maximum
+    # at all, so it was reachable straight from customer input.
+    check("K1 a request budget cap exists at all",
+          isinstance(_v.MAX_REQUESTS_PER_RUN, int))
+    check("K2 ...and it leaves margin below the lease TTL",
+          _v.MAX_REQUESTS_PER_RUN * 2 <= 900,
+          f"{_v.MAX_REQUESTS_PER_RUN} x 2s/request vs 900s")
+    check("K3 an ordinary budget passes untouched",
+          _v.request_budget(60) == 60 and _v.request_budget(400) == 400)
+    try:
+        _v.request_budget(5000)
+        check("K4 a budget that could outlive the lease is REFUSED", False)
+    except _v.InvalidParam as exc:
+        # Refused, not silently clamped: a customer who asked for 5000 and
+        # quietly got 400 would read the short result as "Pinterest had no
+        # more" — the wrong answer wearing the right shape.
+        check("K4 a budget that could outlive the lease is REFUSED", True)
+        check("K5 ...and the message explains the ACCOUNT risk, not just a limit",
+              "two runs on one session" in str(exc) or "another run" in str(exc),
+              str(exc)[:70])
+    for bad in (0, -5, "abc", None):
+        try:
+            _v.request_budget(bad)
+            check(f"K6 {bad!r} is refused", False)
+        except _v.InvalidParam:
+            check(f"K6 {bad!r} is refused", True)
+    # And it must be enforced on the path a customer actually reaches.
+    try:
+        drive({"operation": "crawl", "maxRequests": 5000})
+        check("K7 the cap is enforced through the dispatcher", False)
+    except _v.InvalidParam:
+        check("K7 the cap is enforced through the dispatcher", True)
+    schema_max = schema["maxRequests"].get("maximum")
+    check("K8 the form advertises the same cap the code enforces",
+          schema_max == _v.MAX_REQUESTS_PER_RUN, schema_max)
+
+
     print("\nthe reference and the form cannot drift either")
     api_md = pathlib.Path("docs/API.md").read_text(encoding="utf-8")
     undocumented = [k for k in schema if "`" + k + "`" not in api_md]

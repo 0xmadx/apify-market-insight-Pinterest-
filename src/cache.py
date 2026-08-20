@@ -53,6 +53,7 @@ class ResponseCache:
         self.config = config or Config()
         self.r = redis.Redis.from_url(self.config.REDIS_URL, decode_responses=True)
         self.hits = 0
+        self.coalesced = 0
         self.misses = 0
 
     def _key(self, kind, url, params, body):
@@ -107,6 +108,104 @@ class ResponseCache:
             json.dumps(entry),
         )
         return True
+
+    # ---------------------------------------------------- per-item caching
+    #
+    # THE PROBLEM: a batched request is cached as ONE entry keyed on the whole
+    # term list. Measured — customer A fetches
+    #     terms = "boho wall art,macrame,sunset print"
+    # and customer B asks for just "macrame". Different key, so B MISSES and
+    # refetches something already sitting in Redis.
+    #
+    # Customers asking overlapping-but-not-identical keyword sets is the normal
+    # case, and singleflight cannot help: the requests are genuinely different.
+    # Storing each TERM separately turns those into partial hits, so only the
+    # keywords nobody has asked for yet ever reach Pinterest.
+    #
+    # Values here are already-parsed fragments, not raw HTTP responses, so this
+    # is a separate pair from get/put rather than a flag on them.
+
+    def get_item(self, kind, group, item):
+        """One cached fragment. None means nobody has fetched this item yet."""
+        if not self.config.CACHE_ENABLED:
+            return None
+        raw = self.r.get(self._item_key(kind, group, item))
+        if raw is None:
+            self.misses += 1
+            return None
+        try:
+            value = json.loads(raw)
+        except ValueError:
+            return None          # unusable entry is absent, never data
+        self.hits += 1
+        return value
+
+    def put_item(self, kind, group, item, value):
+        """Store one fragment. `None` is NOT stored — absent is not zero, and a
+        cached None would hide a term Pinterest simply had no data for yet."""
+        if not self.config.CACHE_ENABLED or value is None:
+            return False
+        self.r.setex(self._item_key(kind, group, item),
+                     self.ttl_for(kind), json.dumps(value))
+        return True
+
+    def _item_key(self, kind, group, item):
+        """`group` is everything that makes two identical terms different
+        answers — region, end_date, the history window. Leaving any of it out
+        would serve a US answer to a DE request, or last week's to this week's.
+        """
+        digest = hashlib.sha1(
+            json.dumps([group, item], sort_keys=True, default=str).encode()
+        ).hexdigest()
+        return f"cache:{self.config.PLATFORM}:{kind}:item:{digest}"
+
+    # ------------------------------------------------------- singleflight
+    #
+    # MEASURED without this: 8 clients asking the SAME uncached question made 8
+    # upstream requests. Once warm they made 0. So the cache is perfect AFTER
+    # the first fill and absent DURING it — a textbook cache stampede, and the
+    # binding cost is not Pinterest's patience but IDENTITIES: seven of those
+    # eight burned a leased profile to fetch a duplicate.
+    #
+    # The fix is the standard one: exactly one caller fills a key, everyone
+    # else waits for it. `SET NX` because the waiters are separate processes
+    # (Apify containers), so an in-process singleflight would not see them.
+
+    def acquire_fill(self, kind, url, params=None, body=None):
+        """Claim the right to fetch this key. False means someone else has it.
+
+        The lock TTL is deliberately short: if the winner dies mid-fetch the
+        key must become fillable again quickly, and a duplicate fetch is a far
+        cheaper failure than a key nothing is allowed to fill.
+        """
+        if not self.config.CACHE_ENABLED:
+            return True
+        lock = self._key(kind, url, params, body) + ":fill"
+        return bool(self.r.set(lock, "1", nx=True,
+                               ex=self.config.FILL_LOCK_TTL))
+
+    def release_fill(self, kind, url, params=None, body=None):
+        if not self.config.CACHE_ENABLED:
+            return
+        self.r.delete(self._key(kind, url, params, body) + ":fill")
+
+    def wait_for_fill(self, kind, url, params=None, body=None):
+        """Poll for the winner's answer. None means give up and fetch it too.
+
+        Returning None rather than raising is deliberate: a waiter that times
+        out must still be able to serve its customer. A duplicate request is
+        the correct outcome when the winner is slow — silence is not.
+        """
+        if not self.config.CACHE_ENABLED:
+            return None
+        deadline = time.time() + self.config.FILL_WAIT_TIMEOUT
+        while time.time() < deadline:
+            time.sleep(self.config.FILL_POLL_INTERVAL)
+            hit = self.get(kind, url, params, body)
+            if hit is not None:
+                self.coalesced += 1
+                return hit
+        return None
 
     def clear(self, kind=None):
         """Drop cached responses. `kind=None` drops every kind for this platform."""

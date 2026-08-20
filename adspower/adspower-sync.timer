@@ -1,0 +1,28 @@
+# The heartbeat for AdsPower-sourced profiles.
+#
+# PROFILE_MAX_AGE is 900s. Syncing every 5 minutes leaves a 3x margin, so a
+# single missed run — AdsPower restarting, a throttle, a slow proxy — never
+# reaches the eviction threshold. Matching the interval to the timeout would
+# make one hiccup enough to drop a profile out of the pool.
+#
+# Cost of a tick: one v1 list call plus one v2 cookies call per profile, about
+# two seconds total and no browser. Cheap enough that 5 minutes is not a
+# compromise.
+[Unit]
+Description=Keep AdsPower sessions fresh in the vault
+Requires=adspower-sync.service
+
+[Timer]
+# Not OnBootSec=0: AdsPower needs time to start and load profiles, and a sync
+# that runs before it is ready just logs a failure.
+OnBootSec=3min
+OnUnitActiveSec=5min
+# Spread the tick slightly so a restart does not align every future run to the
+# same second — the Local API allows ~1 request/second and anything else on the
+# box shares that budget.
+RandomizedDelaySec=20
+AccuracySec=15s
+Persistent=true
+
+[Install]
+WantedBy=timers.target

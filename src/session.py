@@ -55,10 +55,12 @@ def classify(response) -> str:
 
 
 def build_session(identity: Identity, config: Config = None):
-    """A curl_cffi session wearing exactly one identity: its cookies, its UA.
+    """A curl_cffi session wearing exactly one identity: its cookies, its UA,
+    and its exit IP.
 
-    Phase 2 adds its IP to that list — `identity.proxy` is already carried here
-    and is simply None today.
+    All three come from the same profile hash, so a cookie jar is never sent
+    over a UA or an address it was not born behind. `identity.proxy` is None
+    only when REQUIRE_PROXY is off, and the session then exits from the host.
     """
     config = config or Config()
 
@@ -67,9 +69,10 @@ def build_session(identity: Identity, config: Config = None):
         "timeout": config.REQUEST_TIMEOUT,
     }
     if identity.proxy:
-        # Inert in phase 1. When AdsPower profiles arrive, the proxy comes from
-        # the same hash as the cookies, so a cookie is never sent from an IP it
-        # was not born on.
+        # The proxy comes from the same hash as the cookies — written there by
+        # `adspower/sync_cookies.py`, mirroring what the AdsPower browser itself
+        # uses — so the scraper and the browser that made the session share one
+        # exit IP.
         kwargs["proxies"] = {"http": identity.proxy, "https": identity.proxy}
 
     session = requests.Session(**kwargs)

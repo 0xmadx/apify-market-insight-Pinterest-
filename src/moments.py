@@ -29,7 +29,7 @@ ACTIONABLE = ("rising", "approaching")
 
 class MomentScraper:
     def __init__(self, client, region="US", aggregation="daily",
-                 lookback_days=365, predicted_days=91, keywords_per_moment=25,
+                 lookback_days=730, predicted_days=91, keywords_per_moment=25,
                  interest_ids=None, end_date=None, log=print):
         self.client = client
         self.region = vocab.region(region, capability="moments")

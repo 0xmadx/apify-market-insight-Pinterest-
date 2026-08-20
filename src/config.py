@@ -49,7 +49,17 @@ class Config:
 
     # Bounded, never infinite: an empty vault must fail, not hang.
     WAIT_TIMEOUT: int = int(os.environ.get("VAULT_WAIT_TIMEOUT", "60"))
-    WAIT_INTERVAL: int = 5
+    # How often a waiting run re-checks for a free profile. Was 5s, which
+    # made sense with one profile and long runs and wastes half the pool with
+    # several profiles and short ones: a freed profile sat idle for up to 5
+    # seconds before anyone noticed. Measured, 100 clients on 4 profiles:
+    #
+    #     WAIT_INTERVAL=5s -> 39/100 served
+    #     WAIT_INTERVAL=1s -> 60/100 served
+    #
+    # +50% throughput from one number. Not lower than 1s: below that the poll
+    # itself becomes Redis load, and the win is already banked.
+    WAIT_INTERVAL: int = int(os.environ.get("VAULT_WAIT_INTERVAL", "1"))
 
     # curl_cffi TLS fingerprint. This has to stay plausible against the UA the
     # vault hands back — a Chrome 124 user agent over a Chrome 99 TLS handshake
@@ -67,12 +77,39 @@ class Config:
     REQUIRED_COOKIES: str = os.environ.get(
         "REQUIRED_COOKIES", "_auth,_pinterest_sess")
 
+    # A profile with no proxy exits from whatever host the run happens to be on.
+    # That is coherent on a laptop where the browser and the scraper share one
+    # IP, and it is a MIXED POOL the moment any other profile has a proxy: the
+    # same customer's requests then come from a datacentre IP one run and a
+    # residential one the next, and one Pinterest account's cookies get replayed
+    # from an address they were never born behind.
+    #
+    # Measured 2026-08-20: 6 profiles in the live pool, 5 AdsPower ones on their
+    # own Webshare exit IPs and one Chrome-extension profile with none. Roughly
+    # one run in six went out from the operator's home IP, and nothing said so.
+    #
+    # Default ON. It costs pool size — that pool drops from 6 usable to 5 — and
+    # that is the cheaper mistake: a smaller pool delays a run, an unproxied
+    # identity risks the account. Set REQUIRE_PROXY=0 for local development on a
+    # machine that has no proxies at all, where every profile is unproxied and
+    # the pool is therefore not mixed.
+    REQUIRE_PROXY: bool = os.environ.get("REQUIRE_PROXY", "1") not in (
+        "0", "false", "False", "no", "")
+
     # ---- not pulling old data -------------------------------------------
 
     # How long before an already-collected record is worth re-reading. Pinterest
     # metrics move, so identity-only dedup would freeze a live number into a
     # one-time snapshot. 7 days reads as "the counts have probably shifted".
     SEEN_TTL: int = int(os.environ.get("SEEN_TTL", str(7 * 86400)))
+
+    # Singleflight. Short on purpose: the winner dying must not block a key for
+    # long, and a duplicate fetch is cheaper than a key nobody may fill.
+    FILL_LOCK_TTL: int = int(os.environ.get("FILL_LOCK_TTL", "45"))
+    # A waiter that times out fetches it itself rather than failing the
+    # customer — see wait_for_fill.
+    FILL_WAIT_TIMEOUT: float = float(os.environ.get("FILL_WAIT_TIMEOUT", "30"))
+    FILL_POLL_INTERVAL: float = float(os.environ.get("FILL_POLL_INTERVAL", "0.25"))
     # Coarse bound so an abandoned scope's seen-set cannot grow forever.
     SEEN_KEY_TTL: int = int(os.environ.get("SEEN_KEY_TTL", str(90 * 86400)))
 
@@ -81,8 +118,33 @@ class Config:
     # Per-endpoint-kind TTLs, "kind=seconds" comma separated. A single global TTL
     # is either wastefully short for a weekly trend series or dangerously long
     # for a search ranking.
+    # `bootstrap` is /latest_available_date/ — the one call EVERY run makes.
+    # It was uncached, so even a fully-cached run had to lease an identity just
+    # to ask "what is your newest date?". 300s collapses 100 concurrent runs
+    # into one such request while still noticing new data within five minutes;
+    # Pinterest settles roughly daily, so five minutes costs nothing.
+    #
+    # `typeahead` is /prefix_match/ — a customer typing a query, which is the
+    # most common way a keyword tool gets used. It sat on the 15-minute
+    # `search` TTL, which is far too short: autocomplete suggestions are the
+    # slowest-moving thing this API returns ("macrame" -> ideas / plant hanger
+    # / bracelet does not change in a quarter of an hour).
+    #
+    # ⚠️ It is also the ONE endpoint whose request carries no end_date, so its
+    # cache key does NOT change when Pinterest publishes new data. Every other
+    # key self-invalidates that way; this one has only the TTL. 6h is chosen to
+    # match `trends` for that reason — long enough to make repeated queries
+    # free, short enough that a day's new data is never more than a few hours
+    # away. It is a judgement, not a measurement: suggestion stability over a
+    # full day was not tested.
+    #
+    # It must stay SHORT for a second reason: every other cache key contains
+    # end_date, so this value is what makes the rest of the cache expire. Cache
+    # it for hours and the whole cache goes stale together.
     CACHE_TTLS: str = os.environ.get(
-        "CACHE_TTLS", "default=3600,trends=21600,search=900,detail=43200")
+        "CACHE_TTLS",
+        "default=3600,trends=21600,search=900,detail=43200,bootstrap=300,"
+        "typeahead=21600")
 
     @property
     def cache_ttls(self) -> dict:
@@ -106,8 +168,9 @@ class Config:
         "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
     )
 
-    # No proxy configuration exists here, deliberately. Phase 1 is one local
-    # Chrome on a home IP. When AdsPower and Webshare arrive in phase 2, the
-    # proxy is written into the *profile hash* alongside that profile's cookies
-    # — per profile and per account, never a global. `Identity.proxy` already
-    # reads it from there, so phase 2 changes the writer and not this file.
+    # No GLOBAL proxy setting exists here, deliberately, and none ever should.
+    # `adspower/sync_cookies.py` writes each profile's proxy into that profile's
+    # own hash, next to its cookies — per profile and per account. A global
+    # would put two profiles behind one exit IP, which defeats the separation
+    # the proxies are for. `Identity.proxy` reads it from the hash, so the
+    # writer can change without this file changing.
