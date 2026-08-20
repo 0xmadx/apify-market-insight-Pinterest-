@@ -180,6 +180,32 @@ def main():
           wire["n"] == 1)
     sf.clear(); sf2.clear()
 
+    print("\nLAZY LEASING - an identity only when the wire is touched")
+    from src.lazy import LazySession
+
+    lz = LazySession(base)
+    # THE POINT: capacity is profiles/miss_rate, not profiles. A run served
+    # entirely from cache must occupy nothing at all.
+    check("nothing is leased until a request happens", not lz.acquired)
+    check("...and closing an unused session is a no-op, not an error",
+          lz.close() is None)
+    check("a run that never fetched reports no identity", lz.identity is None)
+
+    # stats() must not explode on a cache-only run, and must not name a profile
+    # that was never used.
+    from src.context import Context
+    ctx = Context(lz, None, {}, base)
+    check("stats() on a cache-only run says so instead of crashing",
+          ctx.stats()["profile"] == "cache-only")
+
+    # The bootstrap was uncached, so EVERY run leased an identity just to ask
+    # "what is your newest date?" — which defeated lazy leasing entirely.
+    check("the bootstrap call is cached", "bootstrap" in base.cache_ttls)
+    check("...but briefly: it is what expires every other key",
+          base.cache_ttls["bootstrap"] <= 900)
+    check("...much shorter than the trends TTL it gates",
+          base.cache_ttls["bootstrap"] < base.cache_ttls["trends"])
+
     failed = [n for n, ok in checks if not ok]
     print(f"\n{len(checks) - len(failed)}/{len(checks)} checks passed")
     if failed:

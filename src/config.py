@@ -89,8 +89,18 @@ class Config:
     # Per-endpoint-kind TTLs, "kind=seconds" comma separated. A single global TTL
     # is either wastefully short for a weekly trend series or dangerously long
     # for a search ranking.
+    # `bootstrap` is /latest_available_date/ — the one call EVERY run makes.
+    # It was uncached, so even a fully-cached run had to lease an identity just
+    # to ask "what is your newest date?". 300s collapses 100 concurrent runs
+    # into one such request while still noticing new data within five minutes;
+    # Pinterest settles roughly daily, so five minutes costs nothing.
+    #
+    # It must stay SHORT for a second reason: every other cache key contains
+    # end_date, so this value is what makes the rest of the cache expire. Cache
+    # it for hours and the whole cache goes stale together.
     CACHE_TTLS: str = os.environ.get(
-        "CACHE_TTLS", "default=3600,trends=21600,search=900,detail=43200")
+        "CACHE_TTLS",
+        "default=3600,trends=21600,search=900,detail=43200,bootstrap=300")
 
     @property
     def cache_ttls(self) -> dict:

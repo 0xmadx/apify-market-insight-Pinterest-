@@ -68,7 +68,24 @@ The winner fetches; the losers poll for the result. This is the change that
 turns 100 clients into 20 requests, and it costs nothing — Redis already holds
 the cache, so the lock lives beside it.
 
-**2. Lazy leasing.** Acquire an identity *after* the cache miss and after
+**2. Lazy leasing.** ✅ **BUILT 2026-08-19.** Measured with the same test that
+started this:
+
+```
+10 concurrent clients, 2 usable profiles, warm cache
+  succeeded       : 10/10   (was 6/10)
+  failed          : 0       (was 4 VaultEmpty)
+  identities used : 1 of 10 clients
+  elapsed         : 2.1s
+```
+
+The bootstrap (`/latest_available_date/`) had to be cached for this to pay off
+at all — it was the one uncached call every run makes, so every run leased an
+identity just to ask "what is your newest date?". A 300s TTL collapses that,
+and stays short because every other cache key contains `end_date`, so this
+value is what expires the rest of the cache.
+
+*(original plan follows)* Acquire an identity *after* the cache miss and after
 winning the lock — not at run start. Today `main.py` wraps the whole run, so a
 run that is entirely cache hits still occupies a profile. Combined with (1),
 only the winner of each key ever needs an identity at all.

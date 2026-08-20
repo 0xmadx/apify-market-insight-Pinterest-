@@ -78,7 +78,10 @@ class Context:
 
     def stats(self) -> dict:
         return {
-            "profile": self.identity.profile_id,
+            # None until the first wire request under lazy leasing — a run
+            # served entirely from cache never takes an identity, and saying
+            # "cache-only" is more honest than naming a profile it never used.
+            "profile": getattr(self.identity, "profile_id", None) or "cache-only",
             "cache_hits": self.cache.hits,
             "cache_misses": self.cache.misses,
             "force_refresh": self.force_refresh,

@@ -83,7 +83,12 @@ class TrendsClient:
         """The date every other call hangs off. Never `today()` — data lags ~4d
         and a future end_date is a 400."""
         if self.end_date is None:
-            self.end_date = self.style_b("/latest_available_date/").get("date")
+            # kind="bootstrap" (300s): every run asks this, and leaving it
+            # uncached meant every run leased an identity for it alone — which
+            # defeated lazy leasing entirely. Short TTL because this value is
+            # what invalidates every other cache key (they all carry end_date).
+            self.end_date = self.style_b(
+                "/latest_available_date/", kind="bootstrap").get("date")
             if not self.end_date:
                 raise TrendsAPIError("latest_available_date returned no date",
                                      endpoint="/latest_available_date/")
