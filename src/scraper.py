@@ -177,7 +177,7 @@ def _crawl(client, task):
         region=task.get("region", "US"),
         entry=(task.get("crawlFrom") or "overview").lower(),
         depth=int(task.get("crawlDepth", 1)),
-        max_requests=int(task.get("maxRequests", 60)),
+        max_requests=vocab.request_budget(task.get("maxRequests", 60)),
         max_nodes_per_level=int(task.get("maxNodesPerLevel", 50)),
         related_fanout=int(task.get("relatedFanout", 10)),
         verticals=task.get("verticals") or None,

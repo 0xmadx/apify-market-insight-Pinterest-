@@ -322,6 +322,47 @@ LIMITS = {
 }
 
 
+# ⚠️ A RUN MUST NEVER OUTLIVE ITS LEASE. This is the one rule that protects
+# the accounts themselves.
+#
+# The vault hands out a profile with a `SET NX` lease that auto-expires after
+# LEASE_TTL (900s), so a crashed run cannot hold a profile forever. But the
+# same expiry means a run that takes LONGER than the TTL loses its lease
+# mid-flight — and the vault will then hand that same profile to somebody else.
+# Two runs, one Pinterest session, two IPs. That is the fastest way to get an
+# account flagged, and it was reachable from customer input: `maxRequests` had
+# no maximum at all.
+#
+# At a measured ~1s/request the arithmetic is direct, and the margin is for
+# requests that are slower than 1s — a retry, a slow proxy, Pinterest's own
+# backoff. Half the TTL, so even a run averaging 2s/request stays inside it.
+MAX_REQUESTS_PER_RUN = 400
+
+
+def request_budget(value, lease_ttl=900):
+    """Cap a run's request budget so it cannot outlive its lease.
+
+    Refused rather than silently clamped: a customer who asked for 5000 and
+    quietly got 400 would read the short result as "Pinterest had no more",
+    which is the wrong answer wearing the right shape.
+    """
+    try:
+        asked = int(value)
+    except (TypeError, ValueError):
+        raise InvalidParam(f"maxRequests={value!r} must be a whole number") from None
+    if asked < 1:
+        raise InvalidParam("maxRequests must be at least 1")
+    if asked > MAX_REQUESTS_PER_RUN:
+        raise InvalidParam(
+            f"maxRequests={asked} exceeds the {MAX_REQUESTS_PER_RUN} cap. At "
+            f"~1s per request that run could outlive its {lease_ttl}s session "
+            f"lease, and the vault would hand the same Pinterest account to "
+            f"another run while this one was still using it — two runs on one "
+            f"session from two IPs. Split the work across several runs "
+            f"instead; the cache makes the second one cheap.")
+    return asked
+
+
 # --------------------------------------------------------------- validators
 
 def event(value, *, endpoint="top"):

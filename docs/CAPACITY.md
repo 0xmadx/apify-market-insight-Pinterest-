@@ -95,3 +95,46 @@ on them:
 
 Instrument before buying accounts. The expensive lever should be pulled last
 and with evidence.
+
+
+---
+
+## ⚠️ The rule that protects the accounts themselves
+
+**A run must never outlive its lease.**
+
+The vault hands out a profile with a `SET NX` lease that expires after
+`LEASE_TTL` (900s), so a crashed run cannot hold a profile forever. But that
+same expiry means a run taking LONGER than the TTL loses its lease mid-flight —
+and the vault then hands that profile to somebody else. **Two runs, one
+Pinterest session, two IPs.** That is how an account gets flagged.
+
+It was reachable from customer input: `maxRequests` had **no maximum at all**.
+`maxRequests: 5000` is a ~5000s run against a 900s lease.
+
+Now capped at **400** — half the TTL at a measured ~1s/request, so even a run
+averaging 2s/request stays inside. **Refused, not clamped:** a customer who
+asked for 5000 and quietly got 400 would read the short result as "Pinterest
+had no more", which is the wrong answer wearing the right shape.
+
+### A crash does NOT ban an account
+
+Worth stating plainly, because the intuition runs the other way. A crashed run
+**strands** its profile — the account sits unused until the lease expires. That
+is the over-cautious failure, not the dangerous one. Observed during testing:
+three killed threads left all three profiles locked with ~90s to run.
+
+The cost is availability, not accounts: 15 minutes of a profile being idle for
+a run that needed 3-38 seconds.
+
+### Still open: lease renewal
+
+The proper fix for the stranding is a heartbeat — hold a short TTL (~60s) and
+refresh it every few seconds while the run is alive. A crash stops the
+heartbeat and frees the profile in seconds; a long run keeps renewing and never
+loses it. Same guarantee, ~15x faster recovery, and it would make the 400 cap
+unnecessary.
+
+**Not built.** Lowering `LEASE_TTL` WITHOUT renewal would be actively
+dangerous — it creates exactly the mid-flight expiry the cap above exists to
+prevent. Renewal and a lower TTL must land together or not at all.

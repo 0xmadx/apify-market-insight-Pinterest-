@@ -48,7 +48,8 @@
       "type": "integer",
       "default": 60,
       "minimum": 1,
-      "description": "The crawl stops when it has spent this many requests, and says so in _meta.crawl_truncated. A crawl is the one operation that can run away, so this is a hard cap rather than a target."
+      "description": "The crawl stops when it has spent this many requests, and says so in _meta.crawl_truncated. Hard-capped at 400: at ~1s per request a longer run could outlive its 900s session lease, and the vault would then hand the same Pinterest account to another run while this one was still using it \u2014 two runs on one session from two IPs, which is how accounts get flagged. Split bigger jobs across several runs; the cache makes the second one cheap.",
+      "maximum": 400
     },
     "maxNodesPerLevel": {
       "title": "[crawl] Max nodes per level",
