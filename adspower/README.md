@@ -148,9 +148,15 @@ stored value survives. The fast path sends nothing rather than a guess.
 | **csrftoken** | **inside the cookies** | Pinterest's CSRF is *cookie-echo*: `session.py` reads `cookies["csrftoken"]` and sends it back as `X-CSRFToken`. There is no token call to make. A jar without it still syncs — reads work — but the run warns, because POSTs will fail |
 | **user_agent** | a browser, **once** | AdsPower spoofs a different UA per profile. Replaying cookies under another profile's UA is exactly the mismatch a fingerprinter looks for, so it is stored beside them |
 
-`Identity` also carries `proxy`, always `None` in phase 1. AdsPower knows each
-profile's proxy (`user_proxy_config`) but the Go server has no proxy field, so
-wiring it means changing the session layer — deliberately not done here.
+| **proxy** | AdsPower's `user_proxy_config` | written straight to Redis by this script, because the Go server has no proxy field. The scraper then exits from the same IP the browser does |
+
+Since 2026-08-20 the vault **refuses to lease a profile with no proxy**
+(`REQUIRE_PROXY`, default on). A profile without one exits from whatever host
+the run is on, so a pool holding both proxied and unproxied profiles sends the
+same customer's requests from a datacentre IP one run and a residential one the
+next. Measured on the live pool that day: 5 proxied AdsPower profiles and 1
+Chrome-extension profile with none, so about one run in six went out from the
+operator's home IP and nothing said so. `python -m src.status` now names it.
 
 **Verified end to end 2026-08-19** — an AdsPower-sourced identity driving the
 real API:

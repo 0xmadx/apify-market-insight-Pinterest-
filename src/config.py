@@ -77,6 +77,25 @@ class Config:
     REQUIRED_COOKIES: str = os.environ.get(
         "REQUIRED_COOKIES", "_auth,_pinterest_sess")
 
+    # A profile with no proxy exits from whatever host the run happens to be on.
+    # That is coherent on a laptop where the browser and the scraper share one
+    # IP, and it is a MIXED POOL the moment any other profile has a proxy: the
+    # same customer's requests then come from a datacentre IP one run and a
+    # residential one the next, and one Pinterest account's cookies get replayed
+    # from an address they were never born behind.
+    #
+    # Measured 2026-08-20: 6 profiles in the live pool, 5 AdsPower ones on their
+    # own Webshare exit IPs and one Chrome-extension profile with none. Roughly
+    # one run in six went out from the operator's home IP, and nothing said so.
+    #
+    # Default ON. It costs pool size — that pool drops from 6 usable to 5 — and
+    # that is the cheaper mistake: a smaller pool delays a run, an unproxied
+    # identity risks the account. Set REQUIRE_PROXY=0 for local development on a
+    # machine that has no proxies at all, where every profile is unproxied and
+    # the pool is therefore not mixed.
+    REQUIRE_PROXY: bool = os.environ.get("REQUIRE_PROXY", "1") not in (
+        "0", "false", "False", "no", "")
+
     # ---- not pulling old data -------------------------------------------
 
     # How long before an already-collected record is worth re-reading. Pinterest
@@ -149,8 +168,9 @@ class Config:
         "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
     )
 
-    # No proxy configuration exists here, deliberately. Phase 1 is one local
-    # Chrome on a home IP. When AdsPower and Webshare arrive in phase 2, the
-    # proxy is written into the *profile hash* alongside that profile's cookies
-    # — per profile and per account, never a global. `Identity.proxy` already
-    # reads it from there, so phase 2 changes the writer and not this file.
+    # No GLOBAL proxy setting exists here, deliberately, and none ever should.
+    # `adspower/sync_cookies.py` writes each profile's proxy into that profile's
+    # own hash, next to its cookies — per profile and per account. A global
+    # would put two profiles behind one exit IP, which defeats the separation
+    # the proxies are for. `Identity.proxy` reads it from the hash, so the
+    # writer can change without this file changing.

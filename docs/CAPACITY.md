@@ -117,6 +117,31 @@ averaging 2s/request stays inside. **Refused, not clamped:** a customer who
 asked for 5000 and quietly got 400 would read the short result as "Pinterest
 had no more", which is the wrong answer wearing the right shape.
 
+### The pool is smaller than it looks — on purpose
+
+`REQUIRE_PROXY` (default on) refuses to lease a profile that has no proxy, so
+the pool size that matters is **profiles with an exit IP**, not profiles in
+Redis.
+
+```
+2026-08-20, live pool:   6 profiles usable
+                         5 AdsPower, each on its own Webshare US IP
+                         1 Chrome extension, no proxy   -> now refused
+
+                         5 usable
+```
+
+That is a real 17% cut in concurrency, taken deliberately. An unproxied profile
+exits from whatever host the run is on, which in a mixed pool means the same
+customer's requests come from a datacentre IP one run and the operator's home
+connection the next — and one Pinterest account's cookies get replayed from an
+address they were never born behind. **A smaller pool delays a run; an
+unproxied identity risks the account.** The refusal is a skip, not an eviction,
+so the profile stays visible in `python -m src.status` with the reason attached.
+
+Every profile added from here needs a proxy *before* its first login. Buying
+accounts without buying proxies does not grow this number.
+
 ### A crash does NOT ban an account
 
 Worth stating plainly, because the intuition runs the other way. A crashed run

@@ -46,6 +46,8 @@ def main():
             problems.append(f"stale {age}s")
         if not row["has_user_agent"]:
             problems.append("no user_agent")
+        if config.REQUIRE_PROXY and not row.get("has_proxy"):
+            problems.append("no proxy — would exit from this host")
         if row["leased"]:
             problems.append("currently leased")
 
