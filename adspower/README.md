@@ -307,6 +307,31 @@ Note 16 raw cookies become 11 in the vault: `cookie_json` is keyed by name, and
 `csrftoken` / `_ir` / `g_state` each appear on several domains. The extension
 does the same thing (`cookieJson[c.name] = c.value`), so the two agree.
 
+## ⚠️ The heartbeat — without it the profiles silently vanish
+
+The vault evicts any profile whose `last_updated` is older than
+`PROFILE_MAX_AGE` (900s). The Chrome extension never trips this because it
+beams on every cookie change. A **manual** sync does, fifteen minutes later:
+
+```
+[vault] evicted pinterest/ads_k1fx40wf: stale (934s since heartbeat)
+```
+
+And it goes quietly — the scraper simply stops drawing that profile. So
+`adspower-sync.timer` runs the sync every **5 minutes**, a 3× margin on the
+900s timeout so one missed tick (AdsPower restarting, a throttle) never reaches
+eviction. A tick costs ~2s and starts no browser.
+
+```bash
+sudo cp adspower-sync.{service,timer} /etc/systemd/system/
+sudo systemctl daemon-reload && sudo systemctl enable --now adspower-sync.timer
+systemctl list-timers adspower-sync        # when it next fires
+journalctl -u adspower-sync -f             # watch it run
+```
+
+The unit reads `/etc/adspower/api.env`, which must also carry `REDIS_URL` —
+from inside WSL that is the Windows host, not localhost.
+
 ## Handy commands
 
 ```bash

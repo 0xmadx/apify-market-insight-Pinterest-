@@ -87,8 +87,26 @@ class SessionVault:
             time.sleep(self.config.WAIT_INTERVAL)
 
     def _candidates(self, platform):
-        """Every profile in the valid pool, in arbitrary order."""
-        return list(self.r.smembers(f"valid_profiles:{platform}") or [])
+        """Every profile in the valid pool, SHUFFLED.
+
+        The docstring used to say "arbitrary order", which is true of Redis and
+        false in practice: SMEMBERS returns the same order every call for an
+        unchanged set, and `acquire` takes the first leasable one. So one
+        profile absorbed every request while the rest idled — measured with
+        three profiles in the pool, eight consecutive leases all drew the same
+        identity.
+
+        That is the opposite of what the pool is for. Each profile is a
+        separate account behind its own proxy; concentrating traffic on one
+        makes that one look like a bot and leaves the others cold, which is
+        itself a signal. Shuffling spreads the load, and the lease still
+        guarantees no two runs share an identity.
+        """
+        import random
+
+        pool = list(self.r.smembers(f"valid_profiles:{platform}") or [])
+        random.shuffle(pool)
+        return pool
 
     def _try_lease(self, platform, profile_id):
         """Validate one profile and claim it. None if it is unusable or taken."""
