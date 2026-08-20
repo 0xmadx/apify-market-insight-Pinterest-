@@ -120,6 +120,66 @@ def main():
     state.reset("pins")
     cache.clear()
 
+    print("\nSINGLEFLIGHT - one fill per key, not one per client")
+    import json as _json, threading, time as _t
+    from src.transport import TrendsClient
+
+    sf = ResponseCache(replace(base, PLATFORM="__sf_unit"))
+    sf.clear()
+
+    class _R:
+        status_code = 200
+        text = '{"date": "2026-08-14"}'
+        def json(self): return _json.loads(self.text)
+
+    wire = {"n": 0}
+    wlock = threading.Lock()
+
+    class _Slow:
+        def get(self, url, params=None, headers=None):
+            with wlock: wire["n"] += 1
+            _t.sleep(0.8)
+            return _R()
+        def post(self, *a, **k): raise AssertionError("no POSTs here")
+
+    def _client():
+        TrendsClient(_Slow(), cache=sf).style_b("/x/", {"q": "same"}, kind="trends")
+
+    # THE BUG THIS GUARDS: measured before singleflight, 8 clients asking one
+    # uncached question made 8 requests and tied up 8 leased identities. The
+    # cache was perfect after the first fill and absent during it.
+    ts = [threading.Thread(target=_client) for _ in range(6)]
+    [x.start() for x in ts]; [x.join() for x in ts]
+    check("6 clients on one cold key make ONE upstream request", wire["n"] == 1)
+
+    # A warm key must not take the lock path at all.
+    wire["n"] = 0
+    _client()
+    check("a warm key costs no request at all", wire["n"] == 0)
+
+    # The lock must be RELEASED after a fill, or every later waiter sits out
+    # the full timeout before fetching anyway.
+    sf.clear()
+    check("the fill lock is released after storing",
+          sf.acquire_fill("trends", "https://x/y", {"a": 1}))
+    sf.release_fill("trends", "https://x/y", {"a": 1})
+    check("...so the next caller can claim it",
+          sf.acquire_fill("trends", "https://x/y", {"a": 1}))
+    check("...and a second claim while held is refused",
+          not sf.acquire_fill("trends", "https://x/y", {"a": 1}))
+    sf.release_fill("trends", "https://x/y", {"a": 1})
+
+    # A waiter whose winner never delivers must FETCH, not fail: a duplicate
+    # request is the right outcome, silence is not.
+    slow_cfg = replace(base, PLATFORM="__sf_unit", FILL_WAIT_TIMEOUT=1.0)
+    sf2 = ResponseCache(slow_cfg); sf2.clear()
+    sf2.acquire_fill("trends", "https://x/z", None)      # winner that never returns
+    wire["n"] = 0
+    TrendsClient(_Slow(), cache=sf2).style_b("/z/", None, kind="trends")
+    check("a waiter whose winner never delivers fetches rather than failing",
+          wire["n"] == 1)
+    sf.clear(); sf2.clear()
+
     failed = [n for n, ok in checks if not ok]
     print(f"\n{len(checks) - len(failed)}/{len(checks)} checks passed")
     if failed:

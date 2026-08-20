@@ -72,6 +72,10 @@ class TrendsClient:
         self.end_date = None
         self.request_count = 0
         self.cache_hits = 0
+        # keys this client won the right to fill, so _store knows what
+        # to unlock. A set, because one run fills many keys.
+        self._holding_fill = set()
+        self.coalesced = 0
 
     # ------------------------------------------------------------ bootstrap
 
@@ -271,24 +275,60 @@ class TrendsClient:
     # ----------------------------------------------------------- cache glue
 
     def _cached(self, kind, url, params):
-        """A hit returns the parsed payload; None means 'go to the wire'."""
+        """A hit returns the parsed payload; None means 'go to the wire'.
+
+        On a MISS this also runs singleflight: it claims the right to fill the
+        key, and if another worker already holds that right it waits for their
+        answer instead of fetching a duplicate. Measured without it, 8 clients
+        asking one uncached question made 8 requests and tied up 8 identities.
+        """
         if not (self.cache and kind) or self.force_refresh:
             return None
-        hit = self.cache.get(kind, url, params)
+
+        payload = self._decode(self.cache.get(kind, url, params))
+        if payload is not None:
+            self.cache_hits += 1
+            return payload
+
+        # Miss. Exactly one caller should go to the wire for this key.
+        if self.cache.acquire_fill(kind, url, params):
+            self._holding_fill.add(self.cache._key(kind, url, params, None))
+            return None                      # we own it — caller fetches
+
+        payload = self._decode(self.cache.wait_for_fill(kind, url, params))
+        if payload is not None:
+            self.cache_hits += 1
+            self.coalesced += 1
+            return payload
+        # The winner was slower than the wait, or died. Fetch it ourselves
+        # rather than fail the customer — a duplicate beats a silence.
+        return None
+
+    @staticmethod
+    def _decode(hit):
+        """A cache entry that will not parse is treated as absent, never as
+        data: replaying an unusable body for a whole TTL is the worse error."""
         if hit is None:
             return None
         try:
-            payload = hit.json()
+            return hit.json()
         except Exception:
-            return None          # unusable entry — refetch rather than guess
-        self.cache_hits += 1
-        return payload
+            return None
 
     def _store(self, kind, url, response, params):
         """Only usable 200s are stored — cache.put() enforces that itself, so a
-        403 or an empty body can never be replayed for a whole TTL."""
+        403 or an empty body can never be replayed for a whole TTL.
+
+        Releasing the fill lock happens here and ALWAYS, hit or miss: a lock
+        left behind makes every waiter sit out the full timeout before fetching
+        anyway, turning one slow request into many.
+        """
         if self.cache and kind:
             self.cache.put(kind, url, response, params)
+            key = self.cache._key(kind, url, params, None)
+            if key in self._holding_fill:
+                self._holding_fill.discard(key)
+                self.cache.release_fill(kind, url, params)
 
     # -------------------------------------------------------------- plumbing
 

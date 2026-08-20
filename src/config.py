@@ -73,6 +73,14 @@ class Config:
     # metrics move, so identity-only dedup would freeze a live number into a
     # one-time snapshot. 7 days reads as "the counts have probably shifted".
     SEEN_TTL: int = int(os.environ.get("SEEN_TTL", str(7 * 86400)))
+
+    # Singleflight. Short on purpose: the winner dying must not block a key for
+    # long, and a duplicate fetch is cheaper than a key nobody may fill.
+    FILL_LOCK_TTL: int = int(os.environ.get("FILL_LOCK_TTL", "45"))
+    # A waiter that times out fetches it itself rather than failing the
+    # customer — see wait_for_fill.
+    FILL_WAIT_TIMEOUT: float = float(os.environ.get("FILL_WAIT_TIMEOUT", "30"))
+    FILL_POLL_INTERVAL: float = float(os.environ.get("FILL_POLL_INTERVAL", "0.25"))
     # Coarse bound so an abandoned scope's seen-set cannot grow forever.
     SEEN_KEY_TTL: int = int(os.environ.get("SEEN_KEY_TTL", str(90 * 86400)))
 

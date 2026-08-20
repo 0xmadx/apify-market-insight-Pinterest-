@@ -53,6 +53,7 @@ class ResponseCache:
         self.config = config or Config()
         self.r = redis.Redis.from_url(self.config.REDIS_URL, decode_responses=True)
         self.hits = 0
+        self.coalesced = 0
         self.misses = 0
 
     def _key(self, kind, url, params, body):
@@ -107,6 +108,54 @@ class ResponseCache:
             json.dumps(entry),
         )
         return True
+
+    # ------------------------------------------------------- singleflight
+    #
+    # MEASURED without this: 8 clients asking the SAME uncached question made 8
+    # upstream requests. Once warm they made 0. So the cache is perfect AFTER
+    # the first fill and absent DURING it — a textbook cache stampede, and the
+    # binding cost is not Pinterest's patience but IDENTITIES: seven of those
+    # eight burned a leased profile to fetch a duplicate.
+    #
+    # The fix is the standard one: exactly one caller fills a key, everyone
+    # else waits for it. `SET NX` because the waiters are separate processes
+    # (Apify containers), so an in-process singleflight would not see them.
+
+    def acquire_fill(self, kind, url, params=None, body=None):
+        """Claim the right to fetch this key. False means someone else has it.
+
+        The lock TTL is deliberately short: if the winner dies mid-fetch the
+        key must become fillable again quickly, and a duplicate fetch is a far
+        cheaper failure than a key nothing is allowed to fill.
+        """
+        if not self.config.CACHE_ENABLED:
+            return True
+        lock = self._key(kind, url, params, body) + ":fill"
+        return bool(self.r.set(lock, "1", nx=True,
+                               ex=self.config.FILL_LOCK_TTL))
+
+    def release_fill(self, kind, url, params=None, body=None):
+        if not self.config.CACHE_ENABLED:
+            return
+        self.r.delete(self._key(kind, url, params, body) + ":fill")
+
+    def wait_for_fill(self, kind, url, params=None, body=None):
+        """Poll for the winner's answer. None means give up and fetch it too.
+
+        Returning None rather than raising is deliberate: a waiter that times
+        out must still be able to serve its customer. A duplicate request is
+        the correct outcome when the winner is slow — silence is not.
+        """
+        if not self.config.CACHE_ENABLED:
+            return None
+        deadline = time.time() + self.config.FILL_WAIT_TIMEOUT
+        while time.time() < deadline:
+            time.sleep(self.config.FILL_POLL_INTERVAL)
+            hit = self.get(kind, url, params, body)
+            if hit is not None:
+                self.coalesced += 1
+                return hit
+        return None
 
     def clear(self, kind=None):
         """Drop cached responses. `kind=None` drops every kind for this platform."""

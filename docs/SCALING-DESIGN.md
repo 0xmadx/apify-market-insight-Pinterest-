@@ -61,7 +61,9 @@ With coalescing plus lazy leasing, **10 profiles stops being the constraint**.
 
 ## The four changes, in dependency order
 
-**1. Singleflight on cache miss.** `SET NX` a short lock on the cache key.
+**1. Singleflight on cache miss.** ✅ **BUILT 2026-08-19.** Measured through the real transport: 8 clients on one cold key made **1** request instead of 8, in 1.7s, saving 7 identities. A warm key still costs nothing. A waiter whose winner never delivers fetches it itself rather than failing — a duplicate request is the right outcome, silence is not.
+
+*(original plan follows)* `SET NX` a short lock on the cache key.
 The winner fetches; the losers poll for the result. This is the change that
 turns 100 clients into 20 requests, and it costs nothing — Redis already holds
 the cache, so the lock lives beside it.
