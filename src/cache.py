@@ -109,6 +109,56 @@ class ResponseCache:
         )
         return True
 
+    # ---------------------------------------------------- per-item caching
+    #
+    # THE PROBLEM: a batched request is cached as ONE entry keyed on the whole
+    # term list. Measured — customer A fetches
+    #     terms = "boho wall art,macrame,sunset print"
+    # and customer B asks for just "macrame". Different key, so B MISSES and
+    # refetches something already sitting in Redis.
+    #
+    # Customers asking overlapping-but-not-identical keyword sets is the normal
+    # case, and singleflight cannot help: the requests are genuinely different.
+    # Storing each TERM separately turns those into partial hits, so only the
+    # keywords nobody has asked for yet ever reach Pinterest.
+    #
+    # Values here are already-parsed fragments, not raw HTTP responses, so this
+    # is a separate pair from get/put rather than a flag on them.
+
+    def get_item(self, kind, group, item):
+        """One cached fragment. None means nobody has fetched this item yet."""
+        if not self.config.CACHE_ENABLED:
+            return None
+        raw = self.r.get(self._item_key(kind, group, item))
+        if raw is None:
+            self.misses += 1
+            return None
+        try:
+            value = json.loads(raw)
+        except ValueError:
+            return None          # unusable entry is absent, never data
+        self.hits += 1
+        return value
+
+    def put_item(self, kind, group, item, value):
+        """Store one fragment. `None` is NOT stored — absent is not zero, and a
+        cached None would hide a term Pinterest simply had no data for yet."""
+        if not self.config.CACHE_ENABLED or value is None:
+            return False
+        self.r.setex(self._item_key(kind, group, item),
+                     self.ttl_for(kind), json.dumps(value))
+        return True
+
+    def _item_key(self, kind, group, item):
+        """`group` is everything that makes two identical terms different
+        answers — region, end_date, the history window. Leaving any of it out
+        would serve a US answer to a DE request, or last week's to this week's.
+        """
+        digest = hashlib.sha1(
+            json.dumps([group, item], sort_keys=True, default=str).encode()
+        ).hexdigest()
+        return f"cache:{self.config.PLATFORM}:{kind}:item:{digest}"
+
     # ------------------------------------------------------- singleflight
     #
     # MEASURED without this: 8 clients asking the SAME uncached question made 8

@@ -114,7 +114,7 @@ src/parsers.py             one named parser per endpoint
 src/shopping.py  keywords.py  moments.py  radar.py   the four traversals
 src/crawl.py               the fifth: follows the links between them
 src/status.py              vault health check
-tests/                     6 suites, 410 offline checks — see below
+tests/                     6 suites, 420 offline checks — see below
 probes/                    live wire probes; probe_endpoints is the release gate
 docs/                      product docs + the reverse-engineering corpus
 ```

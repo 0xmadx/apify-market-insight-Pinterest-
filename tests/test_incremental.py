@@ -206,6 +206,51 @@ def main():
     check("...much shorter than the trends TTL it gates",
           base.cache_ttls["bootstrap"] < base.cache_ttls["trends"])
 
+    print("\nPER-ITEM CACHE - overlapping customers share work")
+    frag = ResponseCache(replace(base, PLATFORM="__frag_unit"))
+    frag.clear()
+    grp = {"region": "US", "end_date": "2026-08-14", "days": 365}
+
+    check("an unfetched item is a miss",
+          frag.get_item("detail", grp, "macrame") is None)
+    frag.put_item("detail", grp, "macrame", {"18-24": 0.5})
+    check("...and a hit after one customer fetched it",
+          frag.get_item("detail", grp, "macrame") == {"18-24": 0.5})
+
+    # The group is everything that makes two identical terms different answers.
+    # Leaving any of it out serves a US answer to a DE request.
+    check("the same term in another REGION is a miss",
+          frag.get_item("detail", {**grp, "region": "DE"}, "macrame") is None)
+    check("the same term on another DATE is a miss",
+          frag.get_item("detail", {**grp, "end_date": "2026-08-21"}, "macrame") is None)
+    check("the same term over another WINDOW is a miss",
+          frag.get_item("detail", {**grp, "days": 90}, "macrame") is None)
+
+    # Absent is not zero: a cached None would hide a term Pinterest simply has
+    # no data for yet, permanently.
+    check("None is never stored", not frag.put_item("detail", grp, "x", None))
+    check("...so it stays a miss and gets retried",
+          frag.get_item("detail", grp, "x") is None)
+    frag.clear()
+
+    # THE MEASUREMENT THAT DECIDED THIS. /metrics/ sends
+    # normalize_against_group=true, so a term's counts are scaled against the
+    # OTHER terms in the same request. Live, same term, same dates:
+    #     'eye makeup' beside 'eyelashes'                     -> [30, 32, 36]
+    #     'eye makeup' beside 'nails','hairstyles','wallpaper'-> [ 1,  1,  2]
+    # Caching that per term would serve a 36 next to a fresh 1. Demographics
+    # are per-term percentages and measured IDENTICAL across both groups.
+    import inspect
+    from src.keywords import KeywordScraper
+    msrc = inspect.getsource(KeywordScraper._metrics)
+    dsrc = inspect.getsource(KeywordScraper._demographics)
+    check("_metrics carries the group-relative warning",
+          "NEVER cache this per term" in msrc and "GROUP-RELATIVE" in msrc)
+    check("_metrics does NOT use the per-item cache",
+          "get_item" not in msrc and "put_item" not in msrc)
+    check("_demographics DOES use it, and says it was measured safe",
+          "get_item" in dsrc and "MEASURED SAFE" in dsrc)
+
     failed = [n for n, ok in checks if not ok]
     print(f"\n{len(checks) - len(failed)}/{len(checks)} checks passed")
     if failed:

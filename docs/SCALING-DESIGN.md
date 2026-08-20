@@ -101,6 +101,54 @@ round-robin when draining. Without it, one customer submitting 500 URLs owns
 the pool. Bright Data's answer is a hard per-account cap and a 429; that is the
 simple version and it works.
 
+## Different keywords — and the trap in fixing it
+
+Coalescing only collapses **identical** requests. Two customers asking about
+different keywords genuinely need different answers. But a keyword request is
+not one thing:
+
+| part | shared between customers? |
+|---|---|
+| `latest_available_date` | ✅ always |
+| the 383-row taxonomy | ✅ always |
+| trending discovery for a region | ✅ same region/preset |
+| **per-keyword stats** | ❌ unique |
+
+So the shared spine is free now; the leaves are not. The obvious fix is to
+cache **per term** rather than per request-batch — measured, the whole batch is
+one cache entry, so a customer asking for one of three already-fetched terms
+misses entirely.
+
+### ⚠️ But per-term caching is UNSAFE for `/metrics/`
+
+`normalize_against_group=true` means a term's counts are scaled against the
+*other terms in the same request*. Measured 2026-08-19, same term, same dates,
+same window:
+
+```
+'eye makeup' beside 'eyelashes'                        -> [30, 32, 36]
+'eye makeup' beside 'nails','hairstyles','wallpaper'   -> [ 1,  1,  2]
+```
+
+**Thirty-fold difference, purely from the company it keeps.** Caching that per
+term would serve a `36` next to a fresh `1` for the same keyword — a number
+that looks ordinary and is not comparable. `_meta.normalization_scope` carries
+the term count for exactly this reason.
+
+`/demographics/` was measured **identical** across both groups — per-term
+percentages, not relative volumes — so that one IS cached per term. Result on
+the real path:
+
+```
+A: 3 fresh keywords      wire=3
+B: SAME 3 keywords       wire=0    <- and no identity taken at all
+C: 1 known + 1 new       wire=2
+```
+
+The honest limit: partial overlap still costs one request (the missing terms
+are batched into a single call), so this saves *payload*, not *requests*, until
+the overlap is total. Full overlap is where it pays.
+
 ## Sizing, from the measured ~1s per request
 
 ```

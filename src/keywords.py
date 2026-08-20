@@ -188,6 +188,24 @@ class KeywordScraper:
     # ------------------------------------------------------------ the calls
 
     def _metrics(self, term_list, end_date):
+        """⚠️ NEVER cache this per term. The numbers are GROUP-RELATIVE.
+
+        `normalize_against_group=true` means a term's counts are scaled against
+        the other terms in the SAME request. Measured 2026-08-19, `eye makeup`
+        on identical dates and windows:
+
+            beside 'eyelashes'                        -> [30, 32, 36]
+            beside 'nails','hairstyles','wallpaper'   -> [ 1,  1,  2]
+
+        Same term, same period, thirty-fold difference — because the company it
+        keeps sets the scale. Caching one term's series and serving it next to
+        another group's would produce numbers that look ordinary and are not
+        comparable, which is this codebase's defining failure mode.
+
+        `_meta.normalization_scope` carries the term COUNT for exactly this
+        reason. /demographics/ is per-term percentages and IS safe to cache
+        that way; this is not.
+        """
         # A forecast running forward from a PAST end_date is HTTP 500 on this
         # endpoint (measured: -7d forecasts, -14d does not, at any
         # predicted_days > 0). Style B sends no error body, so it arrived as a
@@ -208,12 +226,50 @@ class KeywordScraper:
         }, kind="search"))
 
     def _demographics(self, term_list, end_date):
+        """Per-TERM cached, so customers with overlapping keywords share work.
+
+        MEASURED SAFE 2026-08-19: `eye makeup` returns the same distribution
+        whether it is requested beside two peers or beside `nails`,
+        `hairstyles` and `wallpaper` — these are per-term percentages, not
+        volumes relative to the request. So a term fetched for one customer can
+        be handed to the next.
+
+        ⚠️ /metrics/ is NOT safe this way and must never copy this — see the
+        warning on `_metrics`.
+
+        Only the terms nobody has fetched yet reach Pinterest; the rest come
+        from cache. Two customers sharing one keyword out of ten now cost nine
+        lookups, not twenty.
+        """
+        cache = getattr(self.client, "cache", None)
+        group = {"region": self.region, "end_date": end_date,
+                 "days": self.days}
+        known, missing = {}, list(term_list)
+        if cache is not None:
+            known = {}
+            missing = []
+            for term in term_list:
+                hit = cache.get_item("detail", group, term)
+                if hit is None:
+                    missing.append(term)
+                else:
+                    known[term] = hit
+            if not missing:
+                return known                      # nothing to ask Pinterest
+
         try:
-            return parsers.parse_keyword_demographics(self.client.style_b(
-                "/demographics/", {"terms": ",".join(term_list),
+            fetched = parsers.parse_keyword_demographics(self.client.style_b(
+                "/demographics/", {"terms": ",".join(missing),
                                    "country": self.region,
                                    "end_date": end_date, "days": self.days},
                                   kind="detail"))
+            if cache is not None:
+                for term, value in fetched.items():
+                    cache.put_item("detail", group, term, value)
+            known.update(fetched)
+            return known
+        except Exception:
+            raise
         except TrendsAPIError as exc:
             self.log(f"[keywords] demographics failed ({exc}) — records will "
                      f"carry null audiences, not zeros")
