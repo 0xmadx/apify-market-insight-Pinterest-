@@ -217,6 +217,27 @@ curl -s -H "api-key: $KEY" "localhost:50325/api/v1/browser/start?user_id=<id>"
 curl -s -H "api-key: $KEY" "localhost:50325/api/v1/browser/stop?user_id=<id>"
 ```
 
-The Local API rate-limits to roughly **one request per second** — a burst
-returns `"Too many request per second"`, which reads like a failure but is just
-pacing.
+## Rate limiting — measured, because guessing costs whole profiles
+
+It is **1 request per second**, not the 120/min it is often described as:
+
+| attempted | result |
+|---|---|
+| ~1300/min (no gap) | 1 ok, **9 limited** |
+| **~120/min (0.5s gap)** | 5 ok, **5 limited** — exactly half |
+| ~57/min (1.05s gap) | **8 ok, 0 limited** |
+
+Half the calls failing at 0.5s spacing is what a strict 1/sec window looks like
+from outside.
+
+**v1 and v2 keep separate budgets.** Alternating them with no gap, the first
+call to each family succeeded and only the second of each was limited — so
+`sync_cookies.py` paces per family, which is roughly twice as fast as treating
+the API as one queue.
+
+**A throttle is not a failure.** AdsPower reports it as a normal HTTP 200 with
+`code: -1` and a message — no 429, no `Retry-After`, so the string is the only
+signal. The first version of `ads_call` raised on it, which aborts a whole
+profile for what is only pacing; with one profile that never fired, with twenty
+it would. It now retries (the window clears in ~0.6s) and only raises after
+four attempts, saying that something else must be sharing the budget.

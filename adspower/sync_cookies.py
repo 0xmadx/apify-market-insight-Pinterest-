@@ -52,30 +52,78 @@ ADS = "http://127.0.0.1:50325"
 GO_SERVER = "http://172.31.144.1:8000/update-cookie"
 GO_TOKEN = "super_secret_key_123"
 
-# The Local API answers "Too many request per second" to a burst. That reads
-# like a failure and is only pacing, so every call goes through here.
-RATE_LIMIT_SECONDS = 1.2
+# MEASURED 2026-08-19, because guessing this wrong costs whole profiles.
+#
+#   attempted ~1300/min (no gap)   ->  1 ok,  9 limited
+#   attempted  ~120/min (0.5s gap) ->  5 ok,  5 limited   <- exactly half
+#   attempted   ~57/min (1.05s gap)->  8 ok,  0 limited
+#
+# So the gate is **1 request per second**, not the 120/min it is sometimes
+# described as. At 0.5s spacing precisely half the calls are rejected, which is
+# what a strict 1/sec window looks like from the outside.
+RATE_LIMIT_SECONDS = 1.15
+
+# ⚠️ v1 and v2 keep SEPARATE budgets. Alternating them with no gap, the first
+# call to each family succeeded and only the second of each was limited — so
+# the pacing is per family, and interleaving them is roughly twice as fast as
+# treating the whole API as one queue.
+_last_call = {"v1": 0.0, "v2": 0.0}
+
+# After a rejection the window clears in well under a second (0.3s still
+# limited, 0.6s fine). So a rejected call is worth retrying, not surfacing.
+RATE_LIMIT_BACKOFF = 0.7
+RATE_LIMIT_RETRIES = 4
 
 # What SessionManager requires to consider a profile usable. A profile missing
 # these is signed out, whatever else it carries.
 AUTH_COOKIES = ("_auth", "_pinterest_sess")
 
-_last_call = 0.0
+def _family(path):
+    """Which rate-limit bucket a path belongs to. They are independent."""
+    return "v2" if path.startswith("/api/v2") else "v1"
+
+
+def is_rate_limited(payload):
+    """AdsPower reports throttling as a normal 200 with code -1 and a message.
+
+    It is NOT an HTTP 429 and carries no Retry-After, so the only signal is
+    this string. Treating it as a hard failure aborts a profile for what is
+    purely pacing — which is exactly what the first version did.
+    """
+    return payload.get("code") != 0 and "too many request" in str(
+        payload.get("msg", "")).lower()
 
 
 def ads_call(path, key, timeout=90):
-    """One rate-limited AdsPower Local API call."""
-    global _last_call
-    wait = RATE_LIMIT_SECONDS - (time.monotonic() - _last_call)
-    if wait > 0:
-        time.sleep(wait)
-    req = urllib.request.Request(ADS + path, headers={"api-key": key})
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        payload = json.load(r)
-    _last_call = time.monotonic()
-    if payload.get("code") != 0:
-        raise RuntimeError(f"AdsPower {path.split('?')[0]}: {payload.get('msg')}")
-    return payload.get("data") or {}
+    """One rate-limited AdsPower Local API call, retried through throttling.
+
+    Paces per endpoint family (v1 and v2 have separate budgets) and retries a
+    throttle reply rather than raising, because a rejected call means "you were
+    early", not "this failed".
+    """
+    fam = _family(path)
+    for attempt in range(RATE_LIMIT_RETRIES):
+        wait = RATE_LIMIT_SECONDS - (time.monotonic() - _last_call[fam])
+        if wait > 0:
+            time.sleep(wait)
+        req = urllib.request.Request(ADS + path, headers={"api-key": key})
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            payload = json.load(r)
+        _last_call[fam] = time.monotonic()
+
+        if is_rate_limited(payload):
+            if attempt == RATE_LIMIT_RETRIES - 1:
+                raise RuntimeError(
+                    f"AdsPower {path.split('?')[0]}: still throttled after "
+                    f"{RATE_LIMIT_RETRIES} attempts. The Local API allows ~1 "
+                    f"request/second per family; something else is sharing it.")
+            time.sleep(RATE_LIMIT_BACKOFF * (attempt + 1))
+            continue
+
+        if payload.get("code") != 0:
+            raise RuntimeError(
+                f"AdsPower {path.split('?')[0]}: {payload.get('msg')}")
+        return payload.get("data") or {}
 
 
 def fetch_cookies_v2(user_id, key):

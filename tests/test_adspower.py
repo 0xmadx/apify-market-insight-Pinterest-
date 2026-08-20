@@ -171,6 +171,52 @@ def main():
     check("V6 the UA is omitted (not guessed) when no browser was started",
           'if started else ""' in fn2)
 
+    print("\nGROUP L - rate limiting (measured 1 req/sec, per family)")
+    check("L1 pacing is at least 1s - 0.5s spacing loses half the calls",
+          sc.RATE_LIMIT_SECONDS >= 1.0, sc.RATE_LIMIT_SECONDS)
+    check("L2 v1 and v2 are paced independently (separate budgets)",
+          sc._family("/api/v1/user/list") == "v1"
+          and sc._family("/api/v2/browser-profile/cookies") == "v2"
+          and set(sc._last_call) == {"v1", "v2"})
+    # AdsPower reports throttling as a 200 with code -1 and a message. There is
+    # no 429 and no Retry-After, so the string is the only signal.
+    check("L3 a throttle reply is recognised, not treated as a hard failure",
+          sc.is_rate_limited({"code": -1,
+                              "msg": "Too many request per second, please ch"}))
+    check("L4 ...and a real error is NOT mistaken for throttling",
+          not sc.is_rate_limited({"code": -1, "msg": "user is deleted"}))
+    check("L5 ...and success is never throttling",
+          not sc.is_rate_limited({"code": 0, "msg": "success"}))
+
+    # The bug this guards: raising on a throttle aborts a whole profile for
+    # what is only pacing. With one profile it never fires; with twenty it does.
+    seq = [{"code": -1, "msg": "Too many request per second"},
+           {"code": -1, "msg": "Too many request per second"},
+           {"code": 0, "msg": "success", "data": {"ok": 1}}]
+    calls = {"n": 0}
+
+    class FakeResp:
+        def __init__(self, payload): self.payload = payload
+        def read(self): return json.dumps(self.payload).encode()
+        def __enter__(self): return self
+        def __exit__(self, *a): return False
+
+    import urllib.request as _u
+    real_open, real_sleep = _u.urlopen, sc.time.sleep
+    _u.urlopen = lambda req, timeout=90: FakeResp(seq[min(calls["n"], len(seq) - 1)])
+    sc.time.sleep = lambda s: None                      # keep the test fast
+    orig_json_load = sc.json.load
+    sc.json.load = lambda f: json.loads(f.read().decode())
+    try:
+        def counting(req, timeout=90):
+            r = FakeResp(seq[min(calls["n"], len(seq) - 1)]); calls["n"] += 1; return r
+        _u.urlopen = counting
+        out = sc.ads_call("/api/v1/user/list", "k")
+        check("L6 a throttled call RETRIES instead of raising",
+              out == {"ok": 1} and calls["n"] == 3, f"{calls['n']} attempts")
+    finally:
+        _u.urlopen, sc.time.sleep, sc.json.load = real_open, real_sleep, orig_json_load
+
     print("\nGROUP P — provenance: what reaches the vault")
     body = sc.post_to_vault("ads_test", SIGNED_IN, "UA/1.0", dry_run=True)
     check("P1 dry-run writes nothing and says so", "DRY-RUN" in body, body)
