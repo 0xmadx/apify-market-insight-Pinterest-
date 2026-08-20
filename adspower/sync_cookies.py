@@ -131,19 +131,40 @@ async def read_user_agent(ws_url):
         return (await _cdp(ws, 1, "Browser.getVersion")).get("userAgent")
 
 
-def post_to_vault(profile_id, cookies, user_agent, dry_run=False):
-    """Byte-identical to the extension's payload — see background.js."""
-    cookie_json = {c["name"]: c["value"] for c in cookies}
-    body = {
+def vault_profile_id(user_id):
+    """AdsPower's immutable id -> the vault key suffix.
+
+    Its own function so a test can assert stability against the REAL rule
+    rather than re-implementing it. The extension cannot do this: it invents
+    `profile_<random>` once and remembers it in chrome.storage, which a
+    stateless reader has no access to.
+    """
+    return f"ads_{user_id}"
+
+
+def build_payload(profile_id, cookies, user_agent):
+    """The exact body the Go server receives — byte-identical to the
+    extension's (see background.js). Pure, so it is testable without a socket.
+
+    `cookie_json` is keyed by NAME, so a cookie present on several domains
+    (csrftoken, _ir, g_state all are) collapses to one entry, last wins. The
+    extension does `cookieJson[c.name] = c.value` and collapses identically —
+    that agreement is the point, not an accident.
+    """
+    return {
         "cookie": "; ".join(f"{c['name']}={c['value']}" for c in cookies),
-        "cookie_json": cookie_json,
+        "cookie_json": {c["name"]: c["value"] for c in cookies},
         "platform": "pinterest",
         "cookie_name": "all_cookies",
         "user_agent": user_agent,
         "profile_id": profile_id,
     }
+
+
+def post_to_vault(profile_id, cookies, user_agent, dry_run=False):
+    body = build_payload(profile_id, cookies, user_agent)
     if dry_run:
-        return f"DRY-RUN would POST {len(cookie_json)} cookies"
+        return f"DRY-RUN would POST {len(body['cookie_json'])} cookies"
     req = urllib.request.Request(
         GO_SERVER, data=json.dumps(body).encode(),
         headers={"Content-Type": "application/json",
@@ -155,7 +176,7 @@ def post_to_vault(profile_id, cookies, user_agent, dry_run=False):
 def sync_one(row, key, dry_run=False, log=print):
     user_id = row["user_id"]
     name = row.get("name") or f"(unnamed {user_id})"
-    profile_id = f"ads_{user_id}"
+    profile_id = vault_profile_id(user_id)
 
     started = False
     try:
