@@ -78,6 +78,30 @@ def ads_call(path, key, timeout=90):
     return payload.get("data") or {}
 
 
+def fetch_cookies_v2(user_id, key):
+    """The profile's cookie jar WITHOUT starting a browser.
+
+    `GET /api/v2/browser-profile/cookies` — added by AdsPower specifically so
+    a logged-in profile's cookies can be read programmatically. Measured
+    2026-08-19 on a Base plan (the docs say "Professional or higher"; it
+    answered anyway, so the gate is worth re-testing rather than assumed):
+
+        131 cookies, 16 pinterest, both _auth and _pinterest_sess — and the
+        browser was never started.
+
+    That is the whole win. The CDP path had to start the browser, wait for it,
+    read, and stop it — ~20s and a full Chromium per profile. This is one GET.
+
+    `data.cookies` arrives as a JSON *string*, not a list, so it is decoded
+    here rather than in every caller.
+    """
+    data = ads_call(f"/api/v2/browser-profile/cookies?profile_id={user_id}", key)
+    raw = data.get("cookies")
+    if raw is None:
+        return []
+    return json.loads(raw) if isinstance(raw, str) else raw
+
+
 def list_profiles(key, group=None):
     data = ads_call(f"/api/v1/user/list?page=1&page_size=100", key)
     rows = data.get("list") or []
@@ -173,21 +197,30 @@ def post_to_vault(profile_id, cookies, user_agent, dry_run=False):
         return json.loads(r.read().decode()).get("message", "ok")
 
 
-def sync_one(row, key, dry_run=False, log=print):
+def sync_one(row, key, dry_run=False, with_ua=False, log=print):
     user_id = row["user_id"]
     name = row.get("name") or f"(unnamed {user_id})"
     profile_id = vault_profile_id(user_id)
 
     started = False
     try:
-        data = ads_call(f"/api/v1/browser/start?user_id={user_id}&open_tabs=0", key)
-        started = True
-        ws_url = ((data.get("ws") or {}).get("puppeteer"))
-        if not ws_url:
-            log(f"  {name:22} SKIP — AdsPower started it but returned no CDP url")
-            return False
+        if with_ua:
+            # The UA is only obtainable from a running browser — no v1 or v2
+            # endpoint exposes it (checked: user/list has no ua field, and
+            # browser-profile/detail is 404). So this path costs a full browser
+            # start, and is opt-in for that reason.
+            data = ads_call(
+                f"/api/v1/browser/start?user_id={user_id}&open_tabs=0", key)
+            started = True
+            ws_url = ((data.get("ws") or {}).get("puppeteer"))
+            if not ws_url:
+                log(f"  {name:22} SKIP — started but no CDP url returned")
+                return False
+            cookies = asyncio.run(read_cookies(ws_url))
+        else:
+            # The fast path: one GET, no browser, no CDP, no websocket.
+            cookies = fetch_cookies_v2(user_id, key)
 
-        cookies = asyncio.run(read_cookies(ws_url))
         pin = [c for c in cookies if "pinterest.com" in (c.get("domain") or "")]
         names = {c["name"] for c in pin}
         have = [a for a in AUTH_COOKIES if a in names]
@@ -202,7 +235,11 @@ def sync_one(row, key, dry_run=False, log=print):
                 f"{list(AUTH_COOKIES)}; that is signed OUT, not signed in")
             return False
 
-        ua = asyncio.run(read_user_agent(ws_url))
+        # Omitted deliberately when we did not start a browser: the Go server
+        # only HSETs user_agent when it is non-empty, so a UA captured by an
+        # earlier --with-ua run SURVIVES. Sending "" would not overwrite it
+        # either, but sending a GUESS would — so we send nothing.
+        ua = asyncio.run(read_user_agent(ws_url)) if started else ""
         result = post_to_vault(profile_id, pin, ua, dry_run)
         log(f"  {name:22} OK   — {len(pin)} cookies (auth: {','.join(have)}) "
             f"-> cookie:pinterest:{profile_id} [{result}]")
@@ -225,6 +262,11 @@ def main():
     ap.add_argument("--group", help="only profiles in this AdsPower group")
     ap.add_argument("--dry-run", action="store_true",
                     help="read and report, write nothing to the vault")
+    ap.add_argument("--with-ua", action="store_true",
+                    help="also capture each profile's user agent. Costs a full "
+                         "browser start per profile (~20s); the cookies alone "
+                         "need none. Run it once per profile — the Go server "
+                         "keeps the stored UA when later runs omit it.")
     args = ap.parse_args()
 
     import os
@@ -241,7 +283,8 @@ def main():
     print(f"{len(rows)} profile(s)"
           + (f" in group {args.group!r}" if args.group else "")
           + (" — DRY RUN, nothing will be written" if args.dry_run else ""))
-    synced = sum(sync_one(r, key, args.dry_run) for r in rows)
+    synced = sum(sync_one(r, key, args.dry_run, args.with_ua)
+                 for r in rows)
 
     print(f"\n{synced}/{len(rows)} synced to the vault.")
     if synced == 0:

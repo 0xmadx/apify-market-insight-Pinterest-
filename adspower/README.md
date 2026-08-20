@@ -109,11 +109,44 @@ Same destination, same Redis keys, same `SessionManager` on the other side —
 and no extension to load, no browser to keep in the foreground. The Go server
 and the vault do not change at all.
 
+### The fast path: `/api/v2/browser-profile/cookies`
+
+AdsPower added an endpoint that returns a profile's cookie jar **without
+starting the browser** — which is the whole ballgame for a server:
+
+```
+GET /api/v2/browser-profile/cookies?profile_id=<id>
+```
+
+| | cookies | user agent | time / profile |
+|---|---|---|---|
+| **v2 endpoint** (default) | ✅ | ✗ | **~2s** |
+| browser + CDP (`--with-ua`) | ✅ | ✅ | ~20s + a full Chromium |
+
+Measured 2026-08-19: 131 cookies, 16 pinterest, both `_auth` and
+`_pinterest_sess`, browser never started. Whole run: **2.3s**.
+
+⚠️ The docs say this needs **"Professional plan or higher"**. It answered on a
+Base plan. Treat the gate as unverified rather than absent — if it starts
+returning an error, that is the reason, and `--with-ua` still works.
+
+⚠️ `data.cookies` is a **JSON string**, not a list. Iterating it without
+decoding gives characters, which filter to nothing — a silent empty of exactly
+the kind GROUP R covers. `fetch_cookies_v2()` decodes it; a test pins that.
+
+**The user agent is only obtainable from a running browser.** No v1 or v2
+endpoint exposes it (`user/list` has no UA field; `browser-profile/detail` is
+404). So `--with-ua` starts one. Run it **once per profile**: the Go server
+only HSETs `user_agent` when non-empty, so later fast runs omit it and the
+stored value survives. The fast path sends nothing rather than a guess.
+
 **Built: `sync_cookies.py`.** Run it against a live AdsPower:
 
 ```bash
 export ADS_API_KEY=...
 python3 sync_cookies.py --dry-run           # read and report, write nothing
+python3 sync_cookies.py                     # fast: v2 endpoint, no browser
+python3 sync_cookies.py --with-ua           # slower: also capture the UA
 python3 sync_cookies.py --group pinterest   # only that group
 ```
 

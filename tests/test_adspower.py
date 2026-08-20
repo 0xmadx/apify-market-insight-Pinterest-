@@ -133,6 +133,44 @@ def main():
     check("G3b ...and each is a separate early return",
           fn.count("return False") >= 3)
 
+    print("\nGROUP V - the v2 endpoint (no browser)")
+    # data.cookies arrives as a JSON *string*, not a list. Treating it as a
+    # list yields a string of characters that filters to nothing - a silent
+    # empty, the same shape as the bug in GROUP R.
+    calls = []
+
+    def fake_ads_call(path, key, timeout=90):
+        calls.append(path)
+        return {"cookies": json.dumps(SIGNED_IN)}      # a STRING, as the API sends
+
+    real = sc.ads_call
+    sc.ads_call = fake_ads_call
+    try:
+        got = sc.fetch_cookies_v2("k1fx40wf", "k")
+        check("V1 the JSON-string payload is decoded to a list",
+              isinstance(got, list) and len(got) == len(SIGNED_IN),
+              type(got).__name__)
+        check("V2 ...and the decoded cookies still filter to pinterest",
+              len([c for c in got if "pinterest.com" in c["domain"]]) == 5)
+        check("V3 it hits the v2 cookies endpoint with profile_id",
+              calls and "/api/v2/browser-profile/cookies" in calls[0]
+              and "profile_id=k1fx40wf" in calls[0], calls[:1])
+        sc.ads_call = lambda p, k, timeout=90: {"cookies": SIGNED_IN}
+        check("V4 an already-decoded list passes through unchanged",
+              sc.fetch_cookies_v2("x", "k") == SIGNED_IN)
+        sc.ads_call = lambda p, k, timeout=90: {}
+        check("V5 a missing cookies field is [], not a crash",
+              sc.fetch_cookies_v2("x", "k") == [])
+    finally:
+        sc.ads_call = real
+
+    # The fast path cannot know the UA and must send NOTHING rather than a
+    # guess: the Go server only overwrites user_agent when non-empty, so
+    # omitting it preserves whatever a --with-ua run stored earlier.
+    fn2 = src[src.index("def sync_one"):src.index("def main")]
+    check("V6 the UA is omitted (not guessed) when no browser was started",
+          'if started else ""' in fn2)
+
     print("\nGROUP P — provenance: what reaches the vault")
     body = sc.post_to_vault("ads_test", SIGNED_IN, "UA/1.0", dry_run=True)
     check("P1 dry-run writes nothing and says so", "DRY-RUN" in body, body)
