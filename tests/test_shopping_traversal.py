@@ -108,8 +108,20 @@ def main():
     met_call = next(d for p, d in client.calls if "/metrics/" in p)
     check("E2 metrics asked for all 19 categories in one array",
           len(met_call["product_category_ids"]) == 19)
-    check("E2 detail-page chart params (180d + 28d forecast)",
-          met_call["days"] == 180 and met_call["predicted_days"] == 28)
+    # The default was Pinterest's own 180 (their detail page draws its dashed
+    # band from 180 + a 28-day forecast). Deliberately changed to 730: one year
+    # shows each season exactly ONCE, which cannot distinguish a seasonal
+    # pattern from a one-off — and on the keyword endpoint 730 is the only
+    # window that returns yoy_change at all. It costs the same single request.
+    check("E2 chart asks for 2 years by default, with the 28d forecast kept",
+          met_call["days"] == 730 and met_call["predicted_days"] == 28,
+          f'days={met_call["days"]} predicted={met_call["predicted_days"]}')
+    # 180 must still be reachable for anyone matching Pinterest's own view.
+    from src.shopping import ShoppingScraper as _SS
+    import inspect as _i
+    check("E2 ...and Pinterest's 180 is still available on request",
+          "chartDays=180" in _i.getsource(_SS) or "chart_days" in
+          _i.signature(_SS.__init__).parameters)
     demo_call = next(d for p, d in client.calls if "/demographics/" in p)
     check("E2 demographics asked only for the drilled 2",
           len(demo_call["product_category_ids"]) == 2)

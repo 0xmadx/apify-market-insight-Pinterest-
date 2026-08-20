@@ -144,7 +144,7 @@ reasoning in `docs/DEPLOY.md` §5.
 `shopping`, `keywords`, `moments`, `radar`, and `crawl`, which follows the
 links between them instead of stopping at one page. Both of Pinterest's time
 controls are wired: `endDate` (which date) and `dateRange` (how much history).
-420 offline checks, 0 unread response fields (`probes/coverage.py`).
+422 offline checks, 0 unread response fields (`probes/coverage.py`).
 
 **Both browser captures landed 2026-08-19:**
 - §3.18 moment Age/Gender via the persisted GraphQL query — audience is now

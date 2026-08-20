@@ -24,10 +24,26 @@ from .transport import TrendsAPIError
 
 
 class KeywordScraper:
-    def __init__(self, client, region="US", days=365, predicted_days=91,
+    def __init__(self, client, region="US", days=730, predicted_days=91,
                  end_date=None, log=print):
         self.client = client
         self.region = vocab.region(region)
+        # 730 by default, and this is not a preference — it is the only
+        # window that returns year-over-year. Measured 2026-08-19, same terms
+        # and end date, only `days` changing:
+        #
+        #     days=180 -> yoy_change: None
+        #     days=365 -> yoy_change: None
+        #     days=730 -> yoy_change: 0.09 / 0.05
+        #
+        # The old 365 default made `yoy_change` null for everything, which
+        # reads as "Pinterest does not publish year-over-year" when the truth
+        # is we were not asking for enough history. `docs/API.md` even recorded
+        # "yoy is frequently null" as a fact about the API. It was ours.
+        #
+        # It costs nothing: 730 is the SAME single request and the same ~0.7s
+        # (measured 0.70s at 180 vs 0.73s at 730). Only the payload grows,
+        # 8KB -> 31KB per term.
         self.days = vocab.ceiling("days", days)
         # A customer-chosen point in time, or None for "the newest settled
         # data". Discovery reaches far back; /metrics/ does not, so the two are

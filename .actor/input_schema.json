@@ -138,8 +138,8 @@
     "chartDays": {
       "title": "[shopping] Chart window (days)",
       "type": "integer",
-      "default": 180,
-      "description": "How much history each category's performance chart covers. 60 matches Pinterest's table, 180 their detail page. Max 730."
+      "default": 730,
+      "description": "Days of history in each category's Performance chart. 90 / 180 / 365 / 730. Defaults to 2 years so a full seasonal cycle is visible twice \u2014 one year shows each season once, which cannot tell a trend from a one-off. Same single request either way. 180 matches Pinterest's own detail page if you prefer their view."
     },
     "shoppingAges": {
       "title": "[shopping] Age filter",
@@ -248,8 +248,8 @@
     "days": {
       "title": "[keywords] History window",
       "type": "integer",
-      "default": 365,
-      "description": "Days of history per keyword chart. 90 / 180 / 365 / 730."
+      "default": 730,
+      "description": "Days of history per keyword chart. 90 / 180 / 365 / 730. Defaults to 730 (2 years) because YEAR-OVER-YEAR IS ONLY RETURNED AT 730 \u2014 measured, yoy_change is null at 180 and 365 and populated at 730. Two years costs the same ONE request and the same ~0.7s; only the payload grows. Lower it if you want smaller records and do not need yoy."
     },
     "predictedDays": {
       "title": "Forecast horizon (days)",
@@ -313,8 +313,8 @@
     "lookbackDays": {
       "title": "[moments] History window",
       "type": "integer",
-      "default": 365,
-      "description": "Days of moment history. Max 730."
+      "default": 730,
+      "description": "Days of moment history. Max 730, and 730 is the default: judging when a season starts means comparing it with the same season last year. Costs the same one request."
     },
     "interest": {
       "title": "[radar] Interest filter",
