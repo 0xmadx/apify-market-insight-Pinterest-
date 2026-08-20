@@ -4,14 +4,14 @@ The Chrome extension exists so a HUMAN's browser can volunteer its cookies:
 it lives in the browser, watches `chrome.cookies.onChanged`, and pushes. On a
 headless server there is no human and no reason to wait for a push. AdsPower
 already hands out a CDP port for every profile it starts, and
-`Network.getAllCookies` returns the same cookies the extension would have
+`Storage.getCookies` returns the same cookies the extension would have
 scraped.
 
 So this walks the profiles instead:
 
     GET  /api/v1/user/list              which profiles exist
     GET  /api/v1/browser/start          -> a CDP websocket per profile
-    CDP  Network.getAllCookies          the cookies themselves
+    CDP  Storage.getCookies             the cookies themselves
     POST /update-cookie  (Go server)    byte-identical to what the extension sends
     GET  /api/v1/browser/stop           put it back
 
@@ -86,17 +86,40 @@ def list_profiles(key, group=None):
     return rows
 
 
+async def _cdp(ws, msg_id, method, params=None):
+    """One CDP call that RAISES on an error reply.
+
+    The first version of this ignored `error` and returned
+    `result.get("cookies") or []`. `Network.getAllCookies` does not exist on a
+    browser-level target — CDP answered
+    `-32601 'Network.getAllCookies' wasn't found`, the empty list came back,
+    and every profile was reported "never signed in" while actually holding a
+    live session. A plausible wrong answer, produced by swallowing an error
+    that said exactly what was wrong.
+    """
+    await ws.send(json.dumps({"id": msg_id, "method": method,
+                              "params": params or {}}))
+    while True:
+        msg = json.loads(await ws.recv())
+        if msg.get("id") != msg_id:
+            continue                      # an event, not our reply
+        if msg.get("error"):
+            raise RuntimeError(f"CDP {method}: {msg['error'].get('message')}")
+        return msg.get("result") or {}
+
+
 async def read_cookies(ws_url):
-    """Network.getAllCookies over CDP. Returns the raw cookie list."""
+    """The profile's whole cookie jar, via the browser target.
+
+    `Storage.getCookies` — NOT `Network.getAllCookies`, which only exists on a
+    *page* target. AdsPower hands out a browser-level websocket, so the Network
+    domain method is simply absent there. Measured: Storage 133 cookies,
+    Network -32601.
+    """
     import websockets
     async with websockets.connect(ws_url, max_size=None) as ws:
-        await ws.send(json.dumps({"id": 1, "method": "Network.enable"}))
-        await ws.recv()
-        await ws.send(json.dumps({"id": 2, "method": "Network.getAllCookies"}))
-        while True:
-            msg = json.loads(await ws.recv())
-            if msg.get("id") == 2:
-                return (msg.get("result") or {}).get("cookies") or []
+        result = await _cdp(ws, 1, "Storage.getCookies")
+        return result.get("cookies") or []
 
 
 async def read_user_agent(ws_url):
@@ -105,11 +128,7 @@ async def read_user_agent(ws_url):
     a session replayed under a different UA is a mismatch worth avoiding."""
     import websockets
     async with websockets.connect(ws_url, max_size=None) as ws:
-        await ws.send(json.dumps({"id": 1, "method": "Browser.getVersion"}))
-        while True:
-            msg = json.loads(await ws.recv())
-            if msg.get("id") == 1:
-                return (msg.get("result") or {}).get("userAgent")
+        return (await _cdp(ws, 1, "Browser.getVersion")).get("userAgent")
 
 
 def post_to_vault(profile_id, cookies, user_agent, dry_run=False):

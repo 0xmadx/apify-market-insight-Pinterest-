@@ -68,15 +68,14 @@ localhost or firewall the port before the box is reachable.
 
 Two things are unresolved, and neither is a code problem:
 
-**1. The profiles are not logged in to Pinterest.** The API reports
-`last_open_time: "0"` for `pinterest_2/3/4` — created, never opened. Starting
-one and loading `pinterest.com` gives the logged-out landing page (Google
-sign-in button, reCAPTCHA frame). Only `Default Profile` and one unnamed
-profile have ever been opened.
+**1. A signed-in profile syncs end to end.** ✅ Resolved 2026-08-19 —
+`ads_k1fx40wf` reached the vault with 11 cookies including `_auth` and
+`_pinterest_sess`, and `src.status` reports it usable.
 
-Nothing downstream can work until a human signs those profiles in: no
-cookie-sync mechanism can copy a session that does not exist. This is the
-operator's step — signing in is not something the agent does.
+Profiles that were *created but never opened* (`last_open_time: "0"`) genuinely
+have no session, and the syncer says so. That part was always true. What was
+NOT true was the first run's claim that **every** profile was signed out — see
+the CDP note below.
 
 **2. The Chrome extension does not load into AdsPower's browser** — and it is
 the wrong mechanism anyway, so `sync_cookies.py` replaces it (see below).
@@ -133,21 +132,46 @@ byte-identical to the extension's. Two refusals are deliberate:
 than random like the extension's, so re-running **updates** a profile's vault
 entry instead of growing a new one each time.
 
-First full run, 2026-08-19:
+Working run, 2026-08-19:
 
 ```
-5 profile(s) — DRY RUN
-  pinterest_4        SKIP — no pinterest cookies at all (never signed in)
-  pinterest_3        FAIL — SunBrowser 149 is not ready (kernel still downloading)
-  pinterest_2        SKIP — no pinterest cookies at all (never signed in)
-  (unnamed)          SKIP — no pinterest cookies at all (never signed in)
-  Default Profile    SKIP — no pinterest cookies at all (never signed in)
-  0/5 synced
+1 profile(s)
+  (unnamed k1fx40wf)  OK — 16 cookies (auth: _auth,_pinterest_sess)
+                         -> cookie:pinterest:ads_k1fx40wf
+  1/1 synced to the vault.
 ```
 
-The mechanism is proven — it started each profile, read its cookie jar and
-reported honestly. **0/5 is the true answer**, not a bug: none of these
-profiles has ever signed in to Pinterest.
+```
+$ python -m src.status
+  ads_k1fx40wf   cookies=11   age=4s   [OK]
+```
+
+### ⚠️ The bug this shipped with, and what it looked like
+
+The first version called **`Network.getAllCookies`** and ignored CDP's `error`
+field, returning `result.get("cookies") or []`. That method does not exist on a
+**browser-level** target — AdsPower hands out a browser websocket, so CDP
+replied:
+
+```
+-32601  'Network.getAllCookies' wasn't found
+```
+
+The empty list came back, and every profile was reported
+**"no pinterest cookies at all (never signed in)"** — including one holding a
+live session with `_auth` and `_pinterest_sess`. A plausible wrong answer,
+produced by swallowing an error that said exactly what was wrong.
+
+Two fixes, both worth keeping:
+
+- **`Storage.getCookies`**, not `Network.getAllCookies`. Measured on the same
+  profile: Storage → 133 cookies (16 pinterest), Network → `-32601`.
+- `_cdp()` now **raises** on an `error` reply. A CDP call that fails must not
+  be indistinguishable from one that legitimately found nothing.
+
+Note 16 raw cookies become 11 in the vault: `cookie_json` is keyed by name, and
+`csrftoken` / `_ir` / `g_state` each appear on several domains. The extension
+does the same thing (`cookieJson[c.name] = c.value`), so the two agree.
 
 ## Handy commands
 
