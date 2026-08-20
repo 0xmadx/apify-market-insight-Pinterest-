@@ -90,7 +90,15 @@ winning the lock — not at run start. Today `main.py` wraps the whole run, so a
 run that is entirely cache hits still occupies a profile. Combined with (1),
 only the winner of each key ever needs an identity at all.
 
-**3. Async job API.** Accept the job, return an id, let the worker pool drain
+**3. Async job API.** ⬜ **DESIGNED, NOT BUILT — deliberately.** See
+[CAPACITY.md](CAPACITY.md). What it buys is narrower than it looks: it adds no
+throughput (there is plenty — 100 customers at 5 runs/day is ~5% of capacity),
+it converts the one bad case from "40 customers get an error" into "40
+customers wait 30 seconds". Worth having when bursts are OBSERVED — its
+fairness rules and timeouts need real arrival patterns to tune against, and
+inventing them from a load test would bake in guesses.
+
+*(original plan follows)* Accept the job, return an id, let the worker pool drain
 the queue. This is what makes `VaultEmpty` stop being a customer-visible
 failure: nobody waits 60 seconds for a lease. Apify's own
 `run-sync-get-dataset-items` is a convenience wrapper over an async run — the

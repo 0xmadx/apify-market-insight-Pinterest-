@@ -49,7 +49,17 @@ class Config:
 
     # Bounded, never infinite: an empty vault must fail, not hang.
     WAIT_TIMEOUT: int = int(os.environ.get("VAULT_WAIT_TIMEOUT", "60"))
-    WAIT_INTERVAL: int = 5
+    # How often a waiting run re-checks for a free profile. Was 5s, which
+    # made sense with one profile and long runs and wastes half the pool with
+    # several profiles and short ones: a freed profile sat idle for up to 5
+    # seconds before anyone noticed. Measured, 100 clients on 4 profiles:
+    #
+    #     WAIT_INTERVAL=5s -> 39/100 served
+    #     WAIT_INTERVAL=1s -> 60/100 served
+    #
+    # +50% throughput from one number. Not lower than 1s: below that the poll
+    # itself becomes Redis load, and the win is already banked.
+    WAIT_INTERVAL: int = int(os.environ.get("VAULT_WAIT_INTERVAL", "1"))
 
     # curl_cffi TLS fingerprint. This has to stay plausible against the UA the
     # vault hands back — a Chrome 124 user agent over a Chrome 99 TLS handshake
