@@ -217,6 +217,55 @@ def main():
     finally:
         _u.urlopen, sc.time.sleep, sc.json.load = real_open, real_sleep, orig_json_load
 
+    print("\nGROUP S - what the scraper actually needs")
+    # Three things, and the token is NOT one of the calls: Pinterest's CSRF is
+    # cookie-echo, so session.py reads cookies["csrftoken"] and echoes it as
+    # X-CSRFToken. A separate token fetch would be inventing work.
+    check("S1 csrftoken travels as a COOKIE, not a separate field",
+          sc.CSRF_COOKIE == "csrftoken"
+          and sc.CSRF_COOKIE in {c["name"] for c in SIGNED_IN})
+    body_p = sc.build_payload("ads_x", SIGNED_IN, "UA/1.0")
+    check("S2 ...so the token reaches the vault inside cookie_json",
+          body_p["cookie_json"].get("csrftoken") is not None)
+    check("S3 the payload carries all three: cookies, token, user agent",
+          body_p["cookie_json"] and body_p["cookie_json"].get("csrftoken")
+          and body_p["user_agent"] == "UA/1.0")
+    # A jar with no csrftoken still syncs (reads work) but must be flagged.
+    fn3 = src[src.index("def sync_one"):src.index("def main")]
+    check("S4 a missing csrftoken warns rather than refusing (reads still work)",
+          "no csrftoken" in fn3 and "CSRF_COOKIE in names" in fn3)
+
+    print("\nGROUP M - multi-profile / multi-platform (the operator's plan)")
+    # One AdsPower group per platform. Defaulting to the group keeps an Etsy
+    # account's cookies out of the Pinterest vault by CONSTRUCTION, rather than
+    # relying on the domain filter to catch it later.
+    check("M1 the default group is pinterest, not 'everything'",
+          sc.DEFAULT_GROUP == "pinterest")
+    rows = [{"user_id": "a", "name": "pin1", "group_name": "pinterest"},
+            {"user_id": "b", "name": "etsy1", "group_name": "etsy"},
+            {"user_id": "c", "name": "pin2", "group_name": "pinterest"}]
+    real_call = sc.ads_call
+    sc.ads_call = lambda p, k, timeout=90: {"list": rows}
+    try:
+        got = sc.list_profiles("k", "pinterest")
+        check("M2 an etsy-group profile is never selected for the pinterest sync",
+              [r["name"] for r in got] == ["pin1", "pin2"], [r["name"] for r in got])
+        check("M3 no group means every profile (explicit opt-in to mixing)",
+              len(sc.list_profiles("k", None)) == 3)
+    finally:
+        sc.ads_call = real_call
+    # Distinct profiles must never share a vault entry.
+    check("M4 each profile gets its own vault key",
+          len({sc.vault_profile_id(r["user_id"]) for r in rows}) == 3)
+
+    print("\nGROUP U - the user agent, captured once")
+    check("U1 auto/never/always are the three modes",
+          "auto" in src and '"never"' in src and '"always"' in src)
+    check("U2 a profile that already has a UA does NOT start a browser",
+          sc.vault_has_ua.__doc__ and "once" in sc.vault_has_ua.__doc__)
+    check("U3 unreachable redis degrades to False, never raises",
+          sc.vault_has_ua("x", "redis://127.0.0.1:9/0") is False)
+
     print("\nGROUP P — provenance: what reaches the vault")
     body = sc.post_to_vault("ads_test", SIGNED_IN, "UA/1.0", dry_run=True)
     check("P1 dry-run writes nothing and says so", "DRY-RUN" in body, body)

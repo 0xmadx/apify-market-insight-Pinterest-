@@ -74,9 +74,34 @@ _last_call = {"v1": 0.0, "v2": 0.0}
 RATE_LIMIT_BACKOFF = 0.7
 RATE_LIMIT_RETRIES = 4
 
-# What SessionManager requires to consider a profile usable. A profile missing
-# these is signed out, whatever else it carries.
+# WHAT THE SCRAPER ACTUALLY NEEDS — three things, and only three:
+#
+#   cookies     the session itself.
+#   csrftoken   NOT a separate field. Pinterest's CSRF scheme is cookie-echo:
+#               `session.py` reads identity.cookies["csrftoken"] and sends it
+#               back as the X-CSRFToken header. So the token arrives WITH the
+#               cookies and needs no extra call — but a jar missing it cannot
+#               POST, which is why it is checked rather than assumed.
+#   user_agent  stored beside the cookies so curl_cffi replays the SAME
+#               identity the session belongs to. AdsPower spoofs a different UA
+#               per profile, so borrowing another profile's would be exactly
+#               the mismatch a fingerprinter looks for.
+#
+# (Identity also carries `proxy`, always None in phase 1. AdsPower knows each
+# profile's proxy in `user_proxy_config`, but the Go server has no proxy field,
+# so wiring it needs a change to the session layer — deliberately not done here.)
 AUTH_COOKIES = ("_auth", "_pinterest_sess")
+
+# Needed to POST. Its absence is worth a warning, not a refusal: read-only
+# traversals work fine without it.
+CSRF_COOKIE = "csrftoken"
+
+# This project is Pinterest-only. The operator keeps one AdsPower group per
+# platform — group "pinterest" holds Pinterest accounts, "etsy" holds Etsy —
+# so defaulting to the group rather than "every profile" keeps an Etsy account's
+# cookies out of the Pinterest vault entirely, instead of relying on the
+# domain filter to catch it downstream.
+DEFAULT_GROUP = "pinterest"
 
 def _family(path):
     """Which rate-limit bucket a path belongs to. They are independent."""
@@ -148,6 +173,28 @@ def fetch_cookies_v2(user_id, key):
     if raw is None:
         return []
     return json.loads(raw) if isinstance(raw, str) else raw
+
+
+def vault_has_ua(profile_id, redis_url):
+    """Does the vault already hold a user agent for this profile?
+
+    Read-only, and the ONLY reason the syncer touches Redis. It decides whether
+    a browser has to be started: the UA is obtainable nowhere else (no v1 or v2
+    endpoint exposes it — `fingerprint_config` is write-only, `user/list` has no
+    ua field), but it also never changes unless the profile's fingerprint is
+    edited. So capture it once and skip the ~20s browser start forever after.
+
+    Unreachable Redis returns False rather than raising: the cost of being
+    wrong is one unnecessary browser start, and refusing to sync because a
+    freshness optimisation could not run would be the wrong trade.
+    """
+    try:
+        import redis
+        r = redis.Redis.from_url(redis_url, decode_responses=True,
+                                 socket_connect_timeout=3)
+        return bool(r.hget(f"cookie:pinterest:{profile_id}", "user_agent"))
+    except Exception:
+        return False
 
 
 def list_profiles(key, group=None):
@@ -245,14 +292,27 @@ def post_to_vault(profile_id, cookies, user_agent, dry_run=False):
         return json.loads(r.read().decode()).get("message", "ok")
 
 
-def sync_one(row, key, dry_run=False, with_ua=False, log=print):
+def sync_one(row, key, dry_run=False, ua_mode="auto",
+             redis_url=None, log=print):
     user_id = row["user_id"]
     name = row.get("name") or f"(unnamed {user_id})"
     profile_id = vault_profile_id(user_id)
 
+    # `auto` is the default: start a browser ONLY when the vault has no UA yet.
+    # A first sync pays ~20s once; every later run is the 2s fast path.
+    if ua_mode == "always":
+        need_ua = True
+    elif ua_mode == "never":
+        need_ua = False
+    else:
+        need_ua = not vault_has_ua(profile_id, redis_url)
+        if need_ua:
+            log(f"  {name:22} .... no UA stored yet — starting the browser once "
+                f"to capture it (later runs skip this)")
+
     started = False
     try:
-        if with_ua:
+        if need_ua:
             # The UA is only obtainable from a running browser — no v1 or v2
             # endpoint exposes it (checked: user/list has no ua field, and
             # browser-profile/detail is 404). So this path costs a full browser
@@ -289,8 +349,9 @@ def sync_one(row, key, dry_run=False, with_ua=False, log=print):
         # either, but sending a GUESS would — so we send nothing.
         ua = asyncio.run(read_user_agent(ws_url)) if started else ""
         result = post_to_vault(profile_id, pin, ua, dry_run)
+        csrf = "" if CSRF_COOKIE in names else "  ⚠ no csrftoken — POSTs will fail"
         log(f"  {name:22} OK   — {len(pin)} cookies (auth: {','.join(have)}) "
-            f"-> cookie:pinterest:{profile_id} [{result}]")
+            f"-> cookie:pinterest:{profile_id} [{result}]{csrf}")
         return True
 
     except Exception as exc:
@@ -307,14 +368,25 @@ def sync_one(row, key, dry_run=False, with_ua=False, log=print):
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--key", help="AdsPower api key (or ADS_API_KEY env)")
-    ap.add_argument("--group", help="only profiles in this AdsPower group")
+    ap.add_argument("--group", default=DEFAULT_GROUP,
+                    help=f"AdsPower group to sync (default: "
+                         f"{DEFAULT_GROUP!r}). Pass --group '' for "
+                         f"every profile, but note that mixes "
+                         f"platforms — one group per platform is "
+                         f"the point.")
     ap.add_argument("--dry-run", action="store_true",
                     help="read and report, write nothing to the vault")
-    ap.add_argument("--with-ua", action="store_true",
-                    help="also capture each profile's user agent. Costs a full "
-                         "browser start per profile (~20s); the cookies alone "
-                         "need none. Run it once per profile — the Go server "
-                         "keeps the stored UA when later runs omit it.")
+    ap.add_argument("--ua-mode", choices=("auto", "never", "always"),
+                    default="auto",
+                    help="auto (default): start a browser only for profiles the "
+                         "vault has no user agent for, then never again. "
+                         "never: cookies only, fastest. "
+                         "always: re-capture the UA every run (~20s per "
+                         "profile) — for when a profile's fingerprint changed.")
+    ap.add_argument("--redis-url", default=None,
+                    help="vault URL, read-only, used by --ua-mode auto to see "
+                         "which profiles already have a UA. Defaults to "
+                         "REDIS_URL, then the Windows host from WSL.")
     args = ap.parse_args()
 
     import os
@@ -323,7 +395,7 @@ def main():
         print("no api key — pass --key or set ADS_API_KEY", file=sys.stderr)
         return 2
 
-    rows = list_profiles(key, args.group)
+    rows = list_profiles(key, args.group or None)
     if not rows:
         print("no profiles matched — nothing to do (a real answer, not an error)")
         return 0
@@ -331,7 +403,9 @@ def main():
     print(f"{len(rows)} profile(s)"
           + (f" in group {args.group!r}" if args.group else "")
           + (" — DRY RUN, nothing will be written" if args.dry_run else ""))
-    synced = sum(sync_one(r, key, args.dry_run, args.with_ua)
+    redis_url = (args.redis_url or os.environ.get("REDIS_URL")
+                 or "redis://172.31.144.1:6379/0")
+    synced = sum(sync_one(r, key, args.dry_run, args.ua_mode, redis_url)
                  for r in rows)
 
     print(f"\n{synced}/{len(rows)} synced to the vault.")

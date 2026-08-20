@@ -140,14 +140,62 @@ endpoint exposes it (`user/list` has no UA field; `browser-profile/detail` is
 only HSETs `user_agent` when non-empty, so later fast runs omit it and the
 stored value survives. The fast path sends nothing rather than a guess.
 
+### What the scraper needs — three things, and only three
+
+| | where it comes from | note |
+|---|---|---|
+| **cookies** | v2 endpoint | the session itself |
+| **csrftoken** | **inside the cookies** | Pinterest's CSRF is *cookie-echo*: `session.py` reads `cookies["csrftoken"]` and sends it back as `X-CSRFToken`. There is no token call to make. A jar without it still syncs — reads work — but the run warns, because POSTs will fail |
+| **user_agent** | a browser, **once** | AdsPower spoofs a different UA per profile. Replaying cookies under another profile's UA is exactly the mismatch a fingerprinter looks for, so it is stored beside them |
+
+`Identity` also carries `proxy`, always `None` in phase 1. AdsPower knows each
+profile's proxy (`user_proxy_config`) but the Go server has no proxy field, so
+wiring it means changing the session layer — deliberately not done here.
+
+**Verified end to end 2026-08-19** — an AdsPower-sourced identity driving the
+real API:
+
+```
+identity : <Identity ads_k1fx40wf cookies=11 age=0s>
+UA       : Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 …
+CSRF hdr : a95fb059cc972b572807fdbd        <- echoed from the csrftoken cookie
+terms    : ['nails', 'hairstyles', 'wallpaper', 'nail ideas', 'nail inspo']
+```
+
+### One group per platform
+
+The operator keeps one AdsPower group per platform — `pinterest` holds
+Pinterest accounts, `etsy` holds Etsy. So the syncer **defaults to
+`--group pinterest`**: an Etsy account's cookies are excluded *by
+construction*, not by trusting a domain filter downstream to catch them. Each
+profile gets its own vault key (`ads_<user_id>`), so adding accounts is just
+adding profiles to the group.
+
+### The user agent, captured once
+
+`--ua-mode auto` (the default) reads the vault to see whether this profile
+already has a UA. If it does, no browser starts and the run is ~1.4s. If it
+does not — a new profile — it starts one, captures the UA, and never needs to
+again.
+
+| mode | behaviour |
+|---|---|
+| `auto` *(default)* | browser only for profiles with no stored UA |
+| `never` | cookies only, fastest |
+| `always` | re-capture every run — for when a fingerprint changed |
+
+Unreachable Redis degrades to "no UA stored", costing one unnecessary browser
+start rather than refusing to sync.
+
 **Built: `sync_cookies.py`.** Run it against a live AdsPower:
 
 ```bash
 export ADS_API_KEY=...
+python3 sync_cookies.py                     # group=pinterest, ua-mode=auto
 python3 sync_cookies.py --dry-run           # read and report, write nothing
-python3 sync_cookies.py                     # fast: v2 endpoint, no browser
-python3 sync_cookies.py --with-ua           # slower: also capture the UA
-python3 sync_cookies.py --group pinterest   # only that group
+python3 sync_cookies.py --ua-mode never     # cookies only, fastest
+python3 sync_cookies.py --ua-mode always    # re-capture the UA too
+python3 sync_cookies.py --group ''          # every profile (mixes platforms)
 ```
 
 It walks every profile, starts it, reads cookies over CDP, and POSTs a payload
