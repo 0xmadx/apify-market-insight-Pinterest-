@@ -30,6 +30,7 @@ Four audiences, four doors. Pick the one that matches why you opened this.
 | [TEST-SCENARIOS.md](TEST-SCENARIOS.md) | What "done" means. Scenario ids `A1…G2`, every expected value measured rather than invented, plus a coverage ledger of what is deliberately not implemented. |
 | [BUILD-PLAN.md](BUILD-PLAN.md) | The phases, and the Phase-0 findings that shaped everything: what the wire returns that the docs under-describe. |
 | [DEPLOY.md](DEPLOY.md) | Rehearse locally (`../run_local.sh`), then push. The one open decision is a network-reachable Redis. |
+| [SCALING.md](SCALING.md) | **What breaks first, and at what number.** Measured: concurrent capacity equals profile count. The seven levels in the order they fail, and the fix order — lazy leasing before buying accounts. |
 
 ### Wire — the reverse-engineering corpus
 
