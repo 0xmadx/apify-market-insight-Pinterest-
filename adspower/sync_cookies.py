@@ -87,9 +87,12 @@ RATE_LIMIT_RETRIES = 4
 #               per profile, so borrowing another profile's would be exactly
 #               the mismatch a fingerprinter looks for.
 #
-# (Identity also carries `proxy`, always None in phase 1. AdsPower knows each
-# profile's proxy in `user_proxy_config`, but the Go server has no proxy field,
-# so wiring it needs a change to the session layer — deliberately not done here.)
+#   proxy       AdsPower's `user_proxy_config`, written STRAIGHT TO REDIS by
+#               this script — the Go server has no proxy field to route it
+#               through. The scraper then exits from the same IP the browser
+#               does. The vault refuses to lease a profile without one
+#               (REQUIRE_PROXY), because an unproxied profile exits from the
+#               host and mixes a residential identity into a proxied pool.
 AUTH_COOKIES = ("_auth", "_pinterest_sess")
 
 # Needed to POST. Its absence is worth a warning, not a refusal: read-only
