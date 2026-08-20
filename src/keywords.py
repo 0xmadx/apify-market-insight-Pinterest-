@@ -82,10 +82,26 @@ class KeywordScraper:
             self.client.style_b("/top_trends_filtered/", params, kind="search"))
 
     def seed(self, stem):
-        """/prefix_match/ — the discovery primitive. Whole keyword space."""
+        """/prefix_match/ — the discovery primitive. Whole keyword space.
+
+        This is what the "Search for a keyword" box on Pinterest's own Trends
+        page does, and it is how most customers will actually use a keyword
+        tool: they type. Unlike `discover`, it reaches terms that are not
+        currently trending.
+
+        `kind="typeahead"` (6h), not "search" (15min): suggestions are the
+        slowest-moving data here, and typed stems repeat heavily across
+        customers — "christmas gift" is not a rare query. Measured: a repeat of
+        the same stem costs ZERO wire requests and takes no identity at all.
+
+        ⚠️ This request carries no end_date, so its cache key does not change
+        when Pinterest publishes. Every other endpoint self-invalidates that
+        way; here the TTL is the only control, which is why it is hours and not
+        days.
+        """
         return parsers.parse_prefix_match(self.client.style_b(
             "/prefix_match/", {"query": vocab.keyword(stem),
-                               "country": self.region}, kind="search"))
+                               "country": self.region}, kind="typeahead"))
 
     # ------------------------------------------------------------- the walk
 

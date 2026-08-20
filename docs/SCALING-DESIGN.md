@@ -149,6 +149,37 @@ The honest limit: partial overlap still costs one request (the missing terms
 are batched into a single call), so this saves *payload*, not *requests*, until
 the overlap is total. Full overlap is where it pays.
 
+## Typed queries — the most common use, and the most cacheable
+
+Pinterest's own Trends page has a **"Search for a keyword"** box. That is
+`/prefix_match/` (our `mode: "seed"`), and it is how most people will actually
+use a keyword tool: they type. It reaches the whole keyword space, not just
+what is trending.
+
+```
+typing "macrame"       -> macrame ideas · macrame plant hanger · macrame bracelet
+typing "christmas gift"-> christmas gifts for women · ...diy · ...for mom
+```
+
+Typed stems look unique but repeat heavily — "christmas gift" is not a rare
+query. Measured on the real path:
+
+```
+A types "christmas gift"   wire=3  identity=yes
+B types the same           wire=0  identity=NO     <- free
+C types "boho wall"        wire=3  identity=yes
+D types the same           wire=0  identity=NO
+```
+
+It was sitting on the 15-minute `search` TTL, which is far too short for the
+slowest-moving data in the API. Now `typeahead`, 6h.
+
+⚠️ **This is the one endpoint whose request carries no `end_date`**, so its
+cache key does *not* change when Pinterest publishes. Every other key
+self-invalidates that way; here the TTL is the only control — which is why it
+is hours and not days. Suggestion stability over a full day was not tested;
+6h is a judgement matched to `trends`, not a measurement.
+
 ## Sizing, from the measured ~1s per request
 
 ```

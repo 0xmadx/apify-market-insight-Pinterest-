@@ -95,12 +95,27 @@ class Config:
     # into one such request while still noticing new data within five minutes;
     # Pinterest settles roughly daily, so five minutes costs nothing.
     #
+    # `typeahead` is /prefix_match/ — a customer typing a query, which is the
+    # most common way a keyword tool gets used. It sat on the 15-minute
+    # `search` TTL, which is far too short: autocomplete suggestions are the
+    # slowest-moving thing this API returns ("macrame" -> ideas / plant hanger
+    # / bracelet does not change in a quarter of an hour).
+    #
+    # ⚠️ It is also the ONE endpoint whose request carries no end_date, so its
+    # cache key does NOT change when Pinterest publishes new data. Every other
+    # key self-invalidates that way; this one has only the TTL. 6h is chosen to
+    # match `trends` for that reason — long enough to make repeated queries
+    # free, short enough that a day's new data is never more than a few hours
+    # away. It is a judgement, not a measurement: suggestion stability over a
+    # full day was not tested.
+    #
     # It must stay SHORT for a second reason: every other cache key contains
     # end_date, so this value is what makes the rest of the cache expire. Cache
     # it for hours and the whole cache goes stale together.
     CACHE_TTLS: str = os.environ.get(
         "CACHE_TTLS",
-        "default=3600,trends=21600,search=900,detail=43200,bootstrap=300")
+        "default=3600,trends=21600,search=900,detail=43200,bootstrap=300,"
+        "typeahead=21600")
 
     @property
     def cache_ttls(self) -> dict:
