@@ -175,6 +175,67 @@ def fetch_cookies_v2(user_id, key):
     return json.loads(raw) if isinstance(raw, str) else raw
 
 
+def proxy_url(row):
+    """`user_proxy_config` -> a proxy URL curl_cffi understands, or None.
+
+    AdsPower is the SINGLE SOURCE OF TRUTH for a profile's exit IP, and that is
+    the whole point: the browser that created the cookies and the scraper that
+    replays them both derive their proxy from this one field, so they cannot
+    drift apart. Assigning proxies in our own code instead would create a second
+    source of truth, and the first silent disagreement is a cookie jar sent from
+    an IP it was never born on — exactly the mismatch `Identity` exists to
+    prevent.
+
+    Verified 2026-08-19 that AdsPower returns `proxy_password` in the clear on
+    read, which is what makes this direction possible at all.
+
+    `no_proxy` returns None, and the caller must then CLEAR any stored proxy —
+    see sync_one. A stale proxy is worse than none.
+    """
+    cfg = row.get("user_proxy_config") or {}
+    if cfg.get("proxy_soft") in (None, "", "no_proxy"):
+        return None
+    host, port = cfg.get("proxy_host"), cfg.get("proxy_port")
+    if not host or not port:
+        return None
+    scheme = (cfg.get("proxy_type") or "http").lower()
+    if scheme not in ("http", "https", "socks5", "socks5h"):
+        scheme = "http"
+    user, pwd = cfg.get("proxy_user"), cfg.get("proxy_password")
+    auth = f"{urllib.parse.quote(user, safe='')}:{urllib.parse.quote(pwd, safe='')}@"         if user and pwd else ""
+    return f"{scheme}://{auth}{host}:{port}"
+
+
+def write_proxy(profile_id, proxy, redis_url, dry_run=False):
+    """Mirror the profile's proxy into the vault beside its cookies.
+
+    Written DIRECTLY to Redis, not through the Go cookie server, because that
+    server has no proxy field and it belongs to the extension's path — adding
+    one would be a session-layer change. `vault.py` already reads
+    `data.get("proxy")`, and its own comment anticipated this: phase 2 "changes
+    the writer, not this code".
+
+    Clearing matters as much as setting. If a proxy is removed in AdsPower the
+    stored one MUST go, or the scraper keeps exiting from an IP the browser has
+    stopped using — a mismatch that looks like nothing until it is a ban.
+    """
+    if dry_run:
+        return "proxy: " + (proxy.split("@")[-1] if proxy else "none")
+    try:
+        import redis
+        r = redis.Redis.from_url(redis_url, decode_responses=True,
+                                 socket_connect_timeout=3)
+        key = f"cookie:pinterest:{profile_id}"
+        if proxy:
+            r.hset(key, "proxy", proxy)
+            return "proxy set " + proxy.split("@")[-1]
+        removed = r.hdel(key, "proxy")
+        return "proxy cleared" if removed else "no proxy"
+    except Exception as exc:
+        # Loud, because silently skipping this is how the IPs drift apart.
+        return f"PROXY WRITE FAILED ({type(exc).__name__}) - IPs may now differ"
+
+
 def vault_has_ua(profile_id, redis_url):
     """Does the vault already hold a user agent for this profile?
 
@@ -350,8 +411,11 @@ def sync_one(row, key, dry_run=False, ua_mode="auto",
         ua = asyncio.run(read_user_agent(ws_url)) if started else ""
         result = post_to_vault(profile_id, pin, ua, dry_run)
         csrf = "" if CSRF_COOKIE in names else "  ⚠ no csrftoken — POSTs will fail"
+        # After the cookies, never before: a proxy pointing at a profile with no
+        # session would be a half-written identity.
+        pxy = write_proxy(profile_id, proxy_url(row), redis_url, dry_run)
         log(f"  {name:22} OK   — {len(pin)} cookies (auth: {','.join(have)}) "
-            f"-> cookie:pinterest:{profile_id} [{result}]{csrf}")
+            f"-> cookie:pinterest:{profile_id} [{result}] [{pxy}]{csrf}")
         return True
 
     except Exception as exc:

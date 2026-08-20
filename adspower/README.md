@@ -162,6 +162,59 @@ CSRF hdr : a95fb059cc972b572807fdbd        <- echoed from the csrftoken cookie
 terms    : ['nails', 'hairstyles', 'wallpaper', 'nail ideas', 'nail inspo']
 ```
 
+### Proxies — one per profile, AdsPower owns the truth
+
+```
+Webshare  --assign_proxies.py-->  AdsPower profile
+                                        |
+                            sync_cookies.py mirrors it
+                                        v
+                                   the vault  -->  curl_cffi
+```
+
+**The same proxy must be used by both, and it is not optional.** `Identity`'s
+own docstring says why: *"cookies + the UA + the exit IP … travel together or
+not at all."* Cookies created behind one IP and replayed from another are a
+worse signal than no proxy at all.
+
+So AdsPower is the **single source of truth** for a profile's exit IP.
+`assign_proxies.py` only writes it there; `sync_cookies.py` reads it back and
+mirrors it into the vault. Assigning proxies in our own code would create a
+second truth, and the first silent disagreement is the mismatch above.
+
+**Verified end to end 2026-08-19:**
+
+```
+webshare 163.123.202.173:5458 -> AdsPower profile -> vault -> scraper
+exit IP  : 163.123.202.173          <- the profile's own proxy
+pinterest: ['nails', 'hairstyles', 'wallpaper', 'nail ideas']
+```
+
+AdsPower returns `proxy_password` **in the clear** on read, which is what makes
+this direction possible; if that ever changes, Webshare has to become the
+source of truth instead and the two sides need reconciling.
+
+```bash
+export ADS_API_KEY=... WEBSHARE_API=...
+python3 assign_proxies.py --dry-run   # show the map, change nothing
+python3 assign_proxies.py             # apply, then run sync_cookies.py
+```
+
+**Pairing is by sorted position** — profiles by `user_id`, proxies by
+(address, port) — so it repeats exactly and adding a profile does not reshuffle
+the others. A profile whose exit IP changes between runs looks like a hijacked
+account, which is why this is not round-robin or random.
+
+⚠️ Removing a proxy from the Webshare pool *does* reshuffle everything after
+it. `--dry-run` prints the whole map; check it when the pool has shrunk.
+
+⚠️ **Fewer proxies than profiles is refused, not wrapped.** Two profiles
+sharing an exit IP defeats the separation the proxies are for.
+
+⚠️ A proxy removed in AdsPower **clears** the vault's copy. Leaving a stale one
+would keep the scraper exiting from an IP the browser no longer uses — invisible
+until it is a ban.
+
 ### One group per platform
 
 The operator keeps one AdsPower group per platform — `pinterest` holds

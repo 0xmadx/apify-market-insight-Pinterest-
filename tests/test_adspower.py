@@ -266,6 +266,71 @@ def main():
     check("U3 unreachable redis degrades to False, never raises",
           sc.vault_has_ua("x", "redis://127.0.0.1:9/0") is False)
 
+    print("\nGROUP X - proxy: cookies, UA and exit IP must not drift apart")
+    import assign_proxies as ap   # noqa: E402
+    WS = {"proxy_address": "1.2.3.4", "port": 8000,
+          "username": "u", "password": "p:w@rd", "country_code": "US",
+          "valid": True}
+    cfg = ap.proxy_config(WS)
+    check("X1 a webshare row becomes an AdsPower proxy config",
+          cfg["proxy_host"] == "1.2.3.4" and cfg["proxy_port"] == "8000"
+          and cfg["proxy_soft"] == "other")
+
+    # AdsPower is the single source of truth; the syncer only mirrors it.
+    url = sc.proxy_url({"user_proxy_config": {
+        "proxy_soft": "other", "proxy_type": "http", "proxy_host": "1.2.3.4",
+        "proxy_port": "8000", "proxy_user": "u", "proxy_password": "p:w@rd"}})
+    check("X2 the mirrored url is what curl_cffi wants",
+          url.startswith("http://") and url.endswith("@1.2.3.4:8000"), url)
+    check("X3 credentials are percent-encoded (a ':' or '@' in a password "
+          "would otherwise split the url)",
+          "p%3Aw%40rd" in url, url)
+
+    check("X4 no_proxy means None, not a broken url",
+          sc.proxy_url({"user_proxy_config": {"proxy_soft": "no_proxy"}}) is None)
+    check("X5 a config missing host/port is None, not a half url",
+          sc.proxy_url({"user_proxy_config": {"proxy_soft": "other",
+                                              "proxy_host": "1.2.3.4"}}) is None)
+    check("X6 a profile with no proxy config at all is None",
+          sc.proxy_url({}) is None)
+    # Clearing matters as much as setting: a proxy removed in AdsPower must not
+    # leave the scraper exiting from an IP the browser has stopped using.
+    fnx = src[src.index("def write_proxy"):src.index("def vault_has_ua")]
+    check("X7 removing a proxy CLEARS the stored one (hdel), never leaves it",
+          "hdel" in fnx and "cleared" in fnx)
+    check("X8 a failed proxy write is loud, not silent",
+          "PROXY WRITE FAILED" in fnx)
+
+    print("\nGROUP Y - proxy assignment stays stable as profiles grow")
+    rows = [{"user_id": "b", "name": "p2"}, {"user_id": "a", "name": "p1"}]
+    pool = [{"proxy_address": "9.9.9.9", "port": 1, "username": "u",
+             "password": "p", "valid": True},
+            {"proxy_address": "1.1.1.1", "port": 2, "username": "u",
+             "password": "p", "valid": True}]
+    # Sorted on BOTH sides, so the pairing is reproducible rather than
+    # dependent on the order the APIs happened to return things in.
+    paired = list(zip(sorted(rows, key=lambda r: r["user_id"]),
+                      sorted(pool, key=lambda q: (q["proxy_address"], q["port"]))))
+    check("Y1 pairing is by sorted position, so it repeats exactly",
+          [(r["user_id"], q["proxy_address"]) for r, q in paired]
+          == [("a", "1.1.1.1"), ("b", "9.9.9.9")])
+    check("Y2 an unchanged profile is detected and skipped",
+          ap.already_assigned(
+              {"user_proxy_config": {"proxy_host": "1.2.3.4",
+                                     "proxy_port": "8000", "proxy_user": "u"}},
+              WS))
+    check("Y3 ...and a changed one is not",
+          not ap.already_assigned(
+              {"user_proxy_config": {"proxy_host": "9.9.9.9",
+                                     "proxy_port": "8000", "proxy_user": "u"}},
+              WS))
+    # Wrapping around would give two profiles one exit IP, defeating the point.
+    asrc = open("adspower/assign_proxies.py", encoding="utf-8").read()
+    check("Y4 fewer proxies than profiles is REFUSED, never wrapped",
+          "REFUSED" in asrc and "will not wrap around" in asrc)
+    check("Y5 invalid webshare proxies are filtered out before assigning",
+          'p.get("valid")' in asrc)
+
     print("\nGROUP P — provenance: what reaches the vault")
     body = sc.post_to_vault("ads_test", SIGNED_IN, "UA/1.0", dry_run=True)
     check("P1 dry-run writes nothing and says so", "DRY-RUN" in body, body)
