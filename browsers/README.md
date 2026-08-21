@@ -178,6 +178,83 @@ is the thing AdsPower is actually being paid for, and it is the only one of the
 two that can deliver it. patchright stays as the faster driver for anything that
 does not need a distinct identity.
 
+## Stage 2 — the keepalive service
+
+`browsers/keepalive.py` replaces `adspower/sync_cookies.py`. Same contract, no
+paid product.
+
+**Proven end to end 2026-08-20**, into a vault namespace AdsPower has never
+written to — so nothing about the result depends on AdsPower still running:
+
+```
+7 profile(s) · platform pinterest_ka · one pass
+  ads_k1fx40wf      OK   9 cookies via 163.123.202.173 (6.5s)
+  ads_k1fy47um      OK   9 cookies via 163.123.203.141 (5.9s)
+  ads_k1fy6dnh      OK   8 cookies via 199.187.190.159 (9.2s)
+  ads_k1fy6e67      OK  10 cookies via 45.56.159.126  (8.8s)
+  ads_k1fy6eoy      OK   9 cookies via 45.56.182.90   (7.5s)
+  ads_k1fyn0gc      OK  12 cookies via 72.1.134.148   (8.5s)
+  profile_p5ewxsodn OK  11 cookies                    (5.8s)
+  7 written · 0 skipped · 53s
+```
+
+…then leased from that pool and fetched real authenticated data:
+
+```
+[session] leased <Identity ads_k1fx40wf cookies=9 age=45s>
+  moments  : 5
+  keywords : nails, hairstyles, wallpaper, nail ideas
+```
+
+### The four rules it will not break
+
+Three are inherited from `sync_cookies.py`; the fourth is new.
+
+1. **A signed-out jar is never written.** Cookies can exist and still be logged
+   out, and Pinterest then answers with plausible PUBLIC data — the run
+   "succeeds" while collecting the wrong thing.
+2. **Cookies, user agent and proxy are written together.** One identity. A jar
+   stored without its UA gets replayed under a different browser.
+3. **`last_updated` is stamped only on a verified pass.** The vault reads it as
+   "someone confirmed this recently"; stamping after a failed check would make
+   a dead session look fresh.
+4. **The exit IP is verified BEFORE anything is written.** Chromium falls back
+   to a direct connection when a proxy fails, and every other signal still
+   reports success. A mismatch aborts that profile.
+
+`--interval` is refused if it is not shorter than `PROFILE_MAX_AGE` — a cycle
+longer than the freshness window empties and refills the pool forever while
+looking like it works.
+
+### One DrissionPage trap
+
+`auto_port()` blanks the address and picks a throwaway user-data dir; calling
+`set_user_data_path` afterwards sets `_auto_port = False` and leaves the address
+empty, so `connect_browser` dies on `address.split(':')` — surfacing as a bare
+`ValueError: not enough values to unpack`. Ports are now derived per profile
+and set explicitly, after the data path.
+
+Persistent per-profile directories are better regardless: history, cache and
+localStorage accumulate, so the browser looks like a device that has been here
+before instead of a fresh install every cycle.
+
+## Stage 3 — what a cycle costs
+
+**~7.6s per profile, sequential, single-threaded.**
+
+```
+ 7 profiles   53s   measured
+20 profiles  152s   projected — fits a 300s cycle comfortably
+39 profiles  296s   the ceiling at 5-minute intervals
+```
+
+So **one host holds roughly 35 profiles** with no further work — well past the
+20 that prompted this. Beyond that, in order: run 2–3 browsers in parallel, or
+read cookies from the profile's SQLite store without launching at all.
+
+The read-from-disk optimisation was planned for this stage and is **not
+needed yet**. It is recorded, not built.
+
 ## What patchright does NOT give you
 
 **It removes automation tells. It does not randomise fingerprints.** Twenty
