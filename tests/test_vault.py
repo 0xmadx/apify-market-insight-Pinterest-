@@ -253,6 +253,80 @@ def main():
     check("G8 the default IMPERSONATE is a target curl_cffi actually ships",
           Config().IMPERSONATE in targets, Config().IMPERSONATE)
 
+    print("\nGROUP H — the fingerprint follows the identity, not a constant")
+    # A single IMPERSONATE constant cannot be right for a pool: every profile is
+    # a different browser on its own update schedule, and a constant rots
+    # silently — it was 26 versions adrift when measured on 2026-08-20. The
+    # handshake is now derived per identity from that identity's own UA.
+    from src.session import (browser_family, impersonate_for,  # noqa: E402
+                             impersonate_targets)
+
+    T = impersonate_targets()
+    UA = {
+        "chrome150": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                     " (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36",
+        "chrome146": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                     " (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+        "firefox147": "Mozilla/5.0 (X11; Linux x86_64; rv:147.0) Gecko/20100101"
+                      " Firefox/147.0",
+        "edge120": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                   " (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+                   " Edg/120.0.0.0",
+        "safari18": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"
+                    " AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0"
+                    " Safari/605.1.15",
+        "android131": "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36"
+                      " (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36",
+    }
+
+    check("H1 an exact target is used when one exists",
+          impersonate_for(UA["chrome146"], targets=T) == ("chrome146", "exact"))
+    check("H2 the live vault's Chrome 150 resolves to the newest below it",
+          impersonate_for(UA["chrome150"], targets=T) == ("chrome146", "nearest"))
+    check("H3 Firefox gets a Firefox handshake, never a Chrome one",
+          impersonate_for(UA["firefox147"], targets=T)[0] == "firefox147")
+
+    # ORDER MATTERS in family detection and it is not alphabetical: every
+    # Chromium UA contains "Safari", and Edge's contains "Chrome".
+    check("H4 Edge is Edge, not Chrome (its UA contains 'Chrome/')",
+          browser_family(UA["edge120"]) == "edge"
+          and browser_family(UA["chrome150"]) == "chrome")
+    check("H5 ...and a Chromium UA is not read as Safari",
+          browser_family(UA["chrome150"]) != "safari")
+
+    # A desktop UA must not be handed a mobile fingerprint: the UA already
+    # declared the platform, and the handshake would contradict it.
+    check("H6 mobile and desktop do not cross",
+          impersonate_for(UA["android131"], targets=T)[0].endswith("_android")
+          and not impersonate_for(UA["chrome150"],
+                                  targets=T)[0].endswith("_android"))
+
+    # Safari target names are not comparable numbers — safari155 is 15.5,
+    # safari180 is 18.0, safari260 is 26.0. Guessing a mapping would be
+    # confidently wrong, so it refuses instead.
+    check("H7 Safari refuses rather than guessing an incomparable version",
+          impersonate_for(UA["safari18"], "chrome", targets=T)[1] == "fallback")
+
+    check("H8 an unreadable UA falls back and SAYS it fell back",
+          impersonate_for("opaque", "chrome", targets=T) == ("chrome", "fallback")
+          and impersonate_for(None, "chrome", targets=T)[1] == "fallback")
+
+    # THE REGRESSION. `Mozilla/5.0` is in every UA ever written; a generic
+    # "first number in the string" parse returned 5 for Safari and matched it
+    # to a Safari 15 fingerprint.
+    check("H9 the Mozilla/5.0 compatibility token is never read as the version",
+          browser_major(UA["safari18"]) == 18 and browser_major(UA["chrome150"]) == 150)
+
+    # The target list is read from the installed curl_cffi, so a newer release
+    # is picked up without editing this file.
+    check("H10 targets come from the library, not a hardcoded copy",
+          len(T) > 20 and "chrome146" in T)
+
+    # Every resolved target must be one curl_cffi can actually produce.
+    resolved = {impersonate_for(ua, targets=T)[0] for ua in UA.values()}
+    check("H11 every choice is a real curl_cffi target",
+          resolved <= set(T) | {"chrome"}, sorted(resolved))
+
     print("\nGROUP D — the default is the safe one")
     check("D1 REQUIRE_PROXY defaults to ON", Config().REQUIRE_PROXY is True)
 

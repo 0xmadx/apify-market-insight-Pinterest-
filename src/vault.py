@@ -53,9 +53,17 @@ class Identity:
         self.user_agent = user_agent
         self.proxy = proxy
         self.age = age
+        # Filled in by session.build_session, which derives the TLS fingerprint
+        # from THIS identity's user agent rather than a global constant. Kept on
+        # the identity so a log line, a probe or a test can say which handshake
+        # actually went out and how it was chosen.
+        self.impersonate = None
+        self.impersonate_basis = None
 
     def __repr__(self):
-        return f"<Identity {self.profile_id} cookies={len(self.cookies)} age={int(self.age)}s>"
+        tls = f" tls={self.impersonate}" if self.impersonate else ""
+        return (f"<Identity {self.profile_id} cookies={len(self.cookies)} "
+                f"age={int(self.age)}s{tls}>")
 
 
 class SessionVault:
