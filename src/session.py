@@ -9,6 +9,7 @@ mismatch we can avoid for free.
 No browser, headless or otherwise, ever runs here.
 """
 import contextlib
+import re
 
 from curl_cffi import requests
 
@@ -52,6 +53,45 @@ def classify(response) -> str:
     if code >= 500:
         return "ok"  # server-side; retrying on the same identity is correct
     return "ok"
+
+
+def browser_major(text):
+    """The Chrome/Firefox major version a UA or an impersonate target claims.
+
+    None when there is no version to read — unknown is not zero, and a caller
+    must not treat "cannot tell" as "matches".
+    """
+    if not text:
+        return None
+    match = re.search(r"(?:Chrome|Firefox)/(\d+)", text) or re.search(r"(\d+)", text)
+    return int(match.group(1)) if match else None
+
+
+def fingerprint_drift(user_agent, impersonate):
+    """How many browser versions apart the UA header and the TLS handshake are.
+
+    Three claims about one browser go out on every request: the cookies, the
+    User-Agent, and the TLS/JA3 handshake. A fingerprinter reads all three, and
+    they are cheap to keep consistent — so an inconsistency is pure downside.
+
+    Measured 2026-08-20: the vault's profiles announced Chrome 150 while
+    `IMPERSONATE` was still the old default `chrome124`. Twenty-six versions,
+    on every request, for the life of the project. A small gap is ordinary — a
+    real browser lags its own release train — which is exactly why this returns
+    the DISTANCE and lets the caller decide, instead of a boolean.
+
+    None means one side carried no version and the comparison is unknowable.
+    """
+    ua_major = browser_major(user_agent)
+    imp_major = browser_major(impersonate)
+    if ua_major is None or imp_major is None:
+        return None
+    return abs(ua_major - imp_major)
+
+
+# More than this many versions apart is worth telling the operator about. Two
+# is normal drift; ten is a browser update nobody followed up on.
+DRIFT_WARN_AT = 6
 
 
 def build_session(identity: Identity, config: Config = None):

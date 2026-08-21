@@ -61,10 +61,29 @@ class Config:
     # itself becomes Redis load, and the win is already banked.
     WAIT_INTERVAL: int = int(os.environ.get("VAULT_WAIT_INTERVAL", "1"))
 
-    # curl_cffi TLS fingerprint. This has to stay plausible against the UA the
-    # vault hands back — a Chrome 124 user agent over a Chrome 99 TLS handshake
-    # is a mismatch that costs nothing to avoid.
-    IMPERSONATE: str = os.environ.get("IMPERSONATE", "chrome124")
+    # curl_cffi TLS fingerprint. It has to stay plausible against the UA the
+    # vault hands back: the cookies, the User-Agent header and the TLS/JA3
+    # handshake are three claims about the same browser, and a fingerprinter
+    # reads all three.
+    #
+    # This comment previously warned about "a Chrome 124 UA over a Chrome 99
+    # handshake" while the default WAS chrome124 — and the AdsPower profiles
+    # now announce **Chrome 150**. Twenty-six versions of daylight between what
+    # the header said and what the handshake said, on every request, measured
+    # 2026-08-20.
+    #
+    # chrome146 is the newest target curl_cffi 0.16 ships. Not an exact match
+    # for 150 and it does not need to be — a two-version gap is ordinary (real
+    # browsers lag their own release train), a twenty-six-version gap is not.
+    # Both were verified live against an authenticated Style A call before this
+    # changed; the handshake is accepted either way, so this is about the
+    # signal we send, not about whether it works.
+    #
+    # ⚠️ RE-CHECK THIS when curl_cffi is upgraded or the browsers auto-update:
+    #     python -c "import redis,re,os; ..."  → see docs/LAUNCH-READINESS.md
+    # A silent drift back into mismatch is the failure mode; it costs nothing
+    # while it is right and is invisible when it stops being right.
+    IMPERSONATE: str = os.environ.get("IMPERSONATE", "chrome146")
 
     COOKIE_DOMAIN: str = ".pinterest.com"
     REQUEST_TIMEOUT: int = int(os.environ.get("REQUEST_TIMEOUT", "30"))

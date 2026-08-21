@@ -257,6 +257,9 @@ class SessionVault:
                 "cookie_count": cookie_count,
                 "age_seconds": None if age is None else int(age),
                 "has_user_agent": bool(data.get("user_agent")),
+                # The VALUE, not just its presence: `status` compares the
+                # browser it claims against the TLS fingerprint we impersonate.
+                "user_agent": data.get("user_agent"),
                 "has_proxy": bool((data.get("proxy") or "").strip()),
                 "leased": bool(self.r.exists(f"lease:{platform}:{profile_id}")),
             })

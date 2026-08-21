@@ -214,6 +214,45 @@ def main():
           and "REQUIRE_PROXY=0" in buf.getvalue())
 
     # ------------------------------------------------- GROUP D — the default
+    print("\nGROUP G — the UA header and the TLS handshake are one claim")
+    # Three things go out on every request and all three claim to be the same
+    # browser: the cookies, the User-Agent, and the TLS/JA3 handshake. Measured
+    # 2026-08-20 the vault's profiles announced Chrome 150 while IMPERSONATE
+    # was still chrome124 — 26 versions, on every request, for the life of the
+    # project. Nothing surfaced it because the requests keep working.
+    from src.session import (DRIFT_WARN_AT, browser_major,  # noqa: E402
+                             fingerprint_drift)
+
+    UA150 = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+             "(KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36")
+    check("G1 a Chrome major is read out of a real UA",
+          browser_major(UA150) == 150)
+    check("G2 ...and out of an impersonate target",
+          browser_major("chrome146") == 146)
+    check("G3 the old default was 26 versions adrift",
+          fingerprint_drift(UA150, "chrome124") == 26)
+    check("G4 the new default is close enough not to warn",
+          fingerprint_drift(UA150, "chrome146") < DRIFT_WARN_AT)
+    check("G5 ...and the old one WOULD have warned",
+          fingerprint_drift(UA150, "chrome124") >= DRIFT_WARN_AT)
+
+    # Unknown is not zero. A UA with no version must not read as a match.
+    check("G6 an unreadable UA gives None, never 0",
+          fingerprint_drift("some opaque agent", "chrome146") is None
+          and fingerprint_drift(None, "chrome146") is None)
+    check("G7 Firefox is read too — a Firefox-born cookie jar replayed over a "
+          "Chrome handshake is the same mistake",
+          browser_major("Mozilla/5.0 (X11; Linux x86_64; rv:147.0) "
+                        "Gecko/20100101 Firefox/147.0") == 147)
+
+    # The shipped default must actually be one curl_cffi can produce, or every
+    # request falls back to something unstated.
+    from curl_cffi.requests.impersonate import BrowserTypeLiteral  # noqa: E402
+    import typing as _typing  # noqa: E402
+    targets = set(_typing.get_args(BrowserTypeLiteral))
+    check("G8 the default IMPERSONATE is a target curl_cffi actually ships",
+          Config().IMPERSONATE in targets, Config().IMPERSONATE)
+
     print("\nGROUP D — the default is the safe one")
     check("D1 REQUIRE_PROXY defaults to ON", Config().REQUIRE_PROXY is True)
 
