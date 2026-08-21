@@ -113,6 +113,12 @@ def main():
                   f"{result.seconds}s")
             print(f"      {'✅ AUTHENTICATED' if result.ok else '❌ FAILED'} — "
                   f"{result.detail}")
+            if result.exit_ip is not None:
+                # THE CHECK THAT MATTERS MOST. A browser that fell back to a
+                # direct connection reports every other field as success.
+                print(f"      {'✅' if result.exit_ok else '❌'} exit IP "
+                      f"{result.exit_ip}"
+                      + ("" if result.exit_ok else "  ← NOT the proxy!"))
             if result.detected:
                 print("      ⚠️  the page looks like a bot challenge")
             if result.ua_seen and result.ua_seen != record["user_agent"]:

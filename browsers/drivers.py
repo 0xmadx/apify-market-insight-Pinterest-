@@ -30,9 +30,21 @@ browser that starts.
 import time
 
 PINTEREST = "https://www.pinterest.com/"
+# Answers with the caller's exit IP in plain text. The ONLY way to prove a
+# browser is really behind its proxy: every library here will happily report a
+# successful launch while Chromium has quietly fallen back to a direct
+# connection, and that fallback is invisible from inside the page.
+IP_ECHO = "https://api.ipify.org"
 # Present only on a signed-in session. The same pair the vault requires, so a
 # driver cannot pass a jar the vault would then refuse.
 AUTH_COOKIES = ("_auth", "_pinterest_sess")
+
+
+def expected_exit(proxy_url):
+    """The host a proxy URL should make us appear from."""
+    import urllib.parse
+
+    return urllib.parse.urlparse(proxy_url).hostname or ""
 
 
 def cookie_records(cookies, domain=".pinterest.com"):
@@ -82,6 +94,8 @@ class DriverResult:
         self.error = None
         self.seconds = None
         self.ua_seen = None
+        self.exit_ip = None            # what the BROWSER actually exits from
+        self.exit_ok = None            # does it match the proxy it was given?
 
     @property
     def ok(self):
@@ -137,13 +151,22 @@ def run_drission(record, headless=True, url=PINTEREST):
     result = DriverResult("DrissionPage", record["profile_id"])
     started = time.monotonic()
     page = None
+    relay = None
     try:
         from DrissionPage import Chromium, ChromiumOptions
+
+        from .proxy_relay import ProxyRelay
 
         options = ChromiumOptions().auto_port()
         options.set_user_agent(record["user_agent"])
         if record.get("proxy"):
-            options.set_proxy(record["proxy"])
+            # Chromium's --proxy-server cannot carry credentials, and
+            # DrissionPage only WARNS before passing them through anyway — so
+            # the browser silently fell back to the host IP. The relay strips
+            # that problem out: an unauthenticated proxy on localhost that adds
+            # the password upstream. See browsers/proxy_relay.py.
+            relay = ProxyRelay(record["proxy"]).start()
+            options.set_proxy(relay.url)
         if headless:
             options.headless()
         # A fresh, isolated profile dir per run: reusing one would let a failed
@@ -159,6 +182,16 @@ def run_drission(record, headless=True, url=PINTEREST):
         # decide the session is new.
         for cookie in cookie_records(record["cookies"]):
             page.set.cookies(cookie)
+
+        if record.get("proxy"):
+            page.get(IP_ECHO)
+            # innerText, not .html — the raw document is wrapped in Chromium's
+            # plain-text viewer markup, so reading .html compares an IP against
+            # "<html><head><meta name=..." and reports a mismatch that is not
+            # one. A check that cries wolf gets switched off.
+            result.exit_ip = (page.run_js(
+                "return document.body.innerText") or "").strip()[:45]
+            result.exit_ok = expected_exit(record["proxy"]) in result.exit_ip
 
         page.get(url)
         result.loaded = True
@@ -176,6 +209,9 @@ def run_drission(record, headless=True, url=PINTEREST):
                 page.browser.quit()
         except Exception:
             pass
+    finally:
+        if relay is not None:
+            relay.stop()
     result.seconds = round(time.monotonic() - started, 1)
     return result
 
@@ -206,6 +242,13 @@ def run_patchright(record, headless=True, url=PINTEREST):
             context.add_cookies(cookie_records(record["cookies"]))
 
             page = context.new_page()
+            if record.get("proxy"):
+                page.goto(IP_ECHO, wait_until="domcontentloaded", timeout=45000)
+                result.exit_ip = page.evaluate(
+                    "() => document.body.innerText").strip()[:45]
+                result.exit_ok = expected_exit(
+                    record["proxy"]) in result.exit_ip
+
             page.goto(url, wait_until="domcontentloaded", timeout=45000)
             result.loaded = True
             result.ua_seen = page.evaluate("() => navigator.userAgent")

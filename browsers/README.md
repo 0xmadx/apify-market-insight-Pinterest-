@@ -4,30 +4,69 @@ AdsPower costs money per profile. This directory tests whether a free stack can
 do the same job: hold a Pinterest session behind its own proxy, keep it alive,
 and hand the cookies to the vault.
 
-**Result, measured 2026-08-20: patchright. DrissionPage is disqualified on one
-specific thing.**
+**Result, measured 2026-08-20: both work. patchright is the pick; DrissionPage
+needed one thing built for it and then matched.**
 
-| | proxy w/ auth | cookies survive | authenticated after | time |
+| | proxy w/ auth | exit IP correct | authenticated after | time |
 |---|---|---|---|---|
-| **patchright** | ✅ | ✅ 8–9 back | **4/4** | 3.6–5.9s |
-| **DrissionPage** | ❌ refuses | ✅ (no proxy) | 1/1 no proxy · **0/1 with** | 8.5–10.1s |
+| **patchright** | ✅ native | ✅ per profile | 4/4 | **3.6–9.5s** |
+| **DrissionPage** | ⚠️ via relay | ✅ per profile | 2/2 | 7.1–12.5s |
 
-DrissionPage says it plainly:
+### The DrissionPage problem, and the fix
+
+Chromium's `--proxy-server` **cannot carry credentials** — that is Chromium, not
+the library. AdsPower solves it with a helper extension; Playwright takes
+username/password as separate fields and answers the challenge itself.
+
+DrissionPage does neither. Its `set_proxy` only *warns*, then passes the string
+through regardless:
+
+```python
+if search(r'.*?:.*?@.*?\..*', proxy):
+    print(UNSUPPORTED_USER_PROXY)
+return self.set_argument('--proxy-server', proxy)
+```
+
+So Chromium drops the password, the upstream answers 407, and the browser
+**silently exits from the host IP** while every status field says success.
+
+`browsers/proxy_relay.py` fixes it: an unauthenticated proxy on localhost that
+adds the credentials on the way out.
 
 ```
-You seem to be setting up a proxy that uses the account password, which is not
-supported for the time being, and can be implemented by the plug-in itself.
+browser --(no auth)--> 127.0.0.1:PORT --(Basic auth)--> Webshare
 ```
 
-Chromium cannot take proxy credentials on the command line; AdsPower and
-Playwright both solve it, DrissionPage does not. **It then ignores the proxy and
-carries on** — so the browser exits from the host IP while looking like it
-worked. That is the exact mismatch the whole session layer exists to prevent,
-and it is worse than an error.
+**Why not Webshare's IP whitelist?** It exists
+(`/api/v2/proxy/ipauthorization/`, currently empty) and needs no code. It was
+rejected because it binds the proxies to one public IP, is account-wide, and
+fails in the worst possible way: if the runner's IP ever changes, the proxy
+stops authenticating and Chromium falls back to a **direct connection** — the
+exact mismatch this layer exists to prevent. The relay works from any machine
+and fails loudly instead.
 
-Without a proxy DrissionPage authenticates fine and is architecturally the
-nicer design (CDP-direct, no Playwright control plane). It is not ruled out
-forever — it is ruled out until proxy auth works without a helper extension.
+### The check that actually caught this
+
+Every driver reports "launched, loaded, cookies returned" while exiting from
+the wrong address. So both drivers now fetch `api.ipify.org` first and compare
+the answer to the proxy they were handed:
+
+```
+patchright    ads_k1fx40wf  ✅ exit IP 163.123.202.173
+              ads_k1fy47um  ✅ exit IP 163.123.203.141
+DrissionPage  ads_k1fx40wf  ✅ exit IP 163.123.202.173
+              ads_k1fy47um  ✅ exit IP 163.123.203.141
+```
+
+Distinct per profile, matching each one's assigned proxy. Without this check
+the first DrissionPage run looked like a pass.
+
+### Which to adopt
+
+**patchright**, for now: native proxy auth, roughly twice as fast, no extra
+moving part. DrissionPage is the nicer architecture (CDP-direct, no Playwright
+control plane, and benchmarks favour that class) and is now fully working — keep
+it as the fallback if patchright ever stops tracking upstream Playwright.
 
 ## What is actually being tested
 
