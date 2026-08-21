@@ -61,28 +61,20 @@ class Config:
     # itself becomes Redis load, and the win is already banked.
     WAIT_INTERVAL: int = int(os.environ.get("VAULT_WAIT_INTERVAL", "1"))
 
-    # curl_cffi TLS fingerprint. It has to stay plausible against the UA the
-    # vault hands back: the cookies, the User-Agent header and the TLS/JA3
-    # handshake are three claims about the same browser, and a fingerprinter
-    # reads all three.
+    # FALLBACK ONLY. The TLS fingerprint is chosen PER IDENTITY from that
+    # profile's own user agent — see session.impersonate_for(). This value is
+    # used only when a UA cannot be read at all.
     #
-    # This comment previously warned about "a Chrome 124 UA over a Chrome 99
-    # handshake" while the default WAS chrome124 — and the AdsPower profiles
-    # now announce **Chrome 150**. Twenty-six versions of daylight between what
-    # the header said and what the handshake said, on every request, measured
-    # 2026-08-20.
+    # It used to be the whole story, and that is why it rotted: a constant
+    # cannot track browsers that update themselves. Measured 2026-08-20, the
+    # profiles announced Chrome 150 while this said chrome124 — 26 versions of
+    # daylight between the User-Agent header and the TLS handshake, on every
+    # request, for the life of the project. Nothing surfaced it because the
+    # requests keep working; that is exactly what makes it dangerous.
     #
-    # chrome146 is the newest target curl_cffi 0.16 ships. Not an exact match
-    # for 150 and it does not need to be — a two-version gap is ordinary (real
-    # browsers lag their own release train), a twenty-six-version gap is not.
-    # Both were verified live against an authenticated Style A call before this
-    # changed; the handshake is accepted either way, so this is about the
-    # signal we send, not about whether it works.
-    #
-    # ⚠️ RE-CHECK THIS when curl_cffi is upgraded or the browsers auto-update:
-    #     python -c "import redis,re,os; ..."  → see docs/LAUNCH-READINESS.md
-    # A silent drift back into mismatch is the failure mode; it costs nothing
-    # while it is right and is invisible when it stops being right.
+    # Deriving it instead means the handshake follows the browser forever,
+    # including browsers that do not exist yet. `python -m src.status` prints
+    # the target each profile resolves to and flags any that had to fall back.
     IMPERSONATE: str = os.environ.get("IMPERSONATE", "chrome146")
 
     COOKIE_DOMAIN: str = ".pinterest.com"
