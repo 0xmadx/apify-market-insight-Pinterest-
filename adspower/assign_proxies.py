@@ -44,6 +44,8 @@ import sys
 import time
 import urllib.request
 
+import keys
+
 ADS = "http://127.0.0.1:50325"
 WEBSHARE = "https://proxy.webshare.io"
 DEFAULT_GROUP = "pinterest"
@@ -51,6 +53,10 @@ DEFAULT_GROUP = "pinterest"
 # must agree, or the cookies and the exit IP disagree about where the user
 # is, which is the one thing this whole setup exists to avoid.
 DEFAULT_COUNTRY = "US"
+# Two-letter suffixes only. "pinterest-fr" declares a French group; a longer
+# suffix ("pinterest-backup") is a name, not a country, and falls through to
+# --country / the US default rather than being guessed at.
+GROUP_SEPARATOR = "-"
 RATE_LIMIT_SECONDS = 1.15
 
 _last = 0.0
@@ -99,10 +105,48 @@ def webshare_proxies(key, country=None):
     with urllib.request.urlopen(req, timeout=40) as r:
         rows = json.load(r).get("results") or []
     live = [p for p in rows if p.get("valid")]
+    picked = live
     if country:
-        live = [p for p in live
-                if (p.get("country_code") or "").upper() == country.upper()]
-    return sorted(live, key=lambda p: (p["proxy_address"], p["port"])), len(rows)
+        picked = [p for p in live
+                  if (p.get("country_code") or "").upper() == country.upper()]
+    # The third return value is every valid proxy REGARDLESS of country. It is
+    # what tells us which country a profile's CURRENT proxy is in — that host
+    # is, by definition, usually outside the country being filtered for, so the
+    # filtered list cannot answer it.
+    return (sorted(picked, key=lambda p: (p["proxy_address"], p["port"])),
+            len(rows), live)
+
+
+def country_from_group(group):
+    """A group named `pinterest-fr` declares its own country.
+
+    The country belongs in the group NAME rather than in a flag the operator
+    has to remember, because the flag is the dangerous half: run
+    `--country FR` against the main group by mistake and positional pairing
+    hands the French IP to whichever profile sorts first — an existing, live,
+    US account. Encoding it in the name means the wrong country and the wrong
+    group cannot be selected independently.
+
+    Returns None for a group with no country suffix, which means "fall back to
+    --country".
+    """
+    if not group or GROUP_SEPARATOR not in group:
+        return None
+    suffix = group.rsplit(GROUP_SEPARATOR, 1)[1]
+    return suffix.upper() if len(suffix) == 2 and suffix.isalpha() else None
+
+
+def country_of(host, proxies):
+    """Which country a proxy host sits in, per the Webshare pool. None = gone.
+
+    A host that is no longer in the pool is UNKNOWN, not "some other country":
+    Webshare removing a proxy is the ordinary case, and treating unknown as a
+    mismatch would block every legitimate replacement.
+    """
+    for p in proxies:
+        if p["proxy_address"] == host:
+            return (p.get("country_code") or "").upper() or None
+    return None
 
 
 def proxy_config(p):
@@ -133,10 +177,18 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--group", default=DEFAULT_GROUP,
                     help=f"AdsPower group to assign within (default {DEFAULT_GROUP!r})")
-    ap.add_argument("--country", default=DEFAULT_COUNTRY,
-                    help=f"only use proxies in this country (default "
-                         f"{DEFAULT_COUNTRY!r}). --country '' allows ANY "
+    ap.add_argument("--country", default=None,
+                    help=f"only use proxies in this country. Defaults to the "
+                         f"group's own suffix ('pinterest-fr' -> FR), then to "
+                         f"{DEFAULT_COUNTRY!r}. Passing one that CONTRADICTS "
+                         f"the group name is refused. --country '' allows ANY "
                          f"country, which you almost certainly do not want.")
+    ap.add_argument("--allow-country-move", action="store_true",
+                    help="permit moving an ALREADY SIGNED-IN account to a "
+                         "proxy in a different country. Refused by default: "
+                         "the account's cookies, language and history were all "
+                         "born in one country, and an exit IP in another is "
+                         "the exact mismatch this setup exists to prevent.")
     ap.add_argument("--partial", action="store_true",
                     help="when there are fewer proxies than profiles, assign "
                          "the ones that fit and leave the rest WITHOUT a proxy "
@@ -153,14 +205,37 @@ def main():
                     help="print the pairing, write nothing")
     args = ap.parse_args()
 
-    ads_key = os.environ.get("ADS_API_KEY", "").strip()
-    ws_key = os.environ.get("WEBSHARE_API", "").strip()
+    # The group name is the authority on country when it carries a suffix. A
+    # flag that disagrees with it is a mistake, not an override — the two ways
+    # of saying the same thing must never be able to say different things.
+    declared = country_from_group(args.group)
+    if args.country is None:
+        country = declared or DEFAULT_COUNTRY
+    elif declared and args.country.upper() != declared.upper():
+        print(f"REFUSED: group {args.group!r} declares country {declared}, but "
+              f"--country {args.country!r} was passed. Rename the group or drop "
+              f"the flag; do not let them disagree.", file=sys.stderr)
+        return 2
+    else:
+        country = args.country or None
+    args.country = country
+
+    ads_key = keys.ads_key()
+    ws_key = keys.webshare_key()
     if not ads_key or not ws_key:
-        print("need ADS_API_KEY and WEBSHARE_API in the environment",
-              file=sys.stderr)
+        # Name what WAS found. The old message said only what was missing, and
+        # said it identically whether `.env` was unread or the key was spelled
+        # differently in it — two very different fixes.
+        print(f"missing a key.\n"
+              f"  AdsPower ({'/'.join(keys.ADS_NAMES)}): "
+              f"{keys.describe(keys.ADS_NAMES)}\n"
+              f"  Webshare ({'/'.join(keys.WEBSHARE_NAMES)}): "
+              f"{keys.describe(keys.WEBSHARE_NAMES)}\n"
+              f"`.env` at the repo root is read automatically; an exported "
+              f"variable wins over it.", file=sys.stderr)
         return 2
 
-    proxies, total = webshare_proxies(ws_key, args.country or None)
+    proxies, total, all_valid = webshare_proxies(ws_key, args.country or None)
     rows = [r for r in (ads_call("/api/v1/user/list?page=1&page_size=100",
                                  ads_key).get("list") or [])
             if not args.group or (r.get("group_name") or "") == args.group]
@@ -217,6 +292,29 @@ def main():
         # setup exists to avoid, so it is never silent.
         old_host = (row.get("user_proxy_config") or {}).get("proxy_host")
         signed_in = row.get("last_open_time") not in ("0", "", None)
+        old_country = country_of(old_host, all_valid) if old_host else None
+        new_country = (p.get("country_code") or "").upper() or None
+
+        # A same-country replacement is mild — real people change ISP. A
+        # CROSS-COUNTRY move is not: the account was created behind one
+        # country's IP, and its language, its feed and its cookies all agree
+        # with that. Moving it abroad is the mismatch the proxies exist to
+        # prevent, so it is refused rather than warned about.
+        if (signed_in and old_country and new_country
+                and old_country != new_country and not args.allow_country_move):
+            print(f"\nREFUSED: {name} is a live account on a {old_country} "
+                  f"proxy and this would move it to {new_country}. Its cookies, "
+                  f"language and history were all born in {old_country}; an exit "
+                  f"IP in {new_country} is the mismatch this setup exists to "
+                  f"prevent.\n"
+                  f"A NEW account can be created behind any country — put it in "
+                  f"a group named for that country (e.g. "
+                  f"'{args.group or DEFAULT_GROUP}-{new_country.lower()}') and "
+                  f"assign its proxy BEFORE the first login.\n"
+                  f"Pass --allow-country-move only if you know this account can "
+                  f"survive the move.", file=sys.stderr)
+            return 1
+
         note = (f"   ⚠️ MOVES a live account off {old_host}"
                 if old_host and signed_in else "")
 

@@ -221,7 +221,7 @@ sharing an exit IP defeats the separation the proxies are for.
 would keep the scraper exiting from an IP the browser no longer uses — invisible
 until it is a ban.
 
-### One group per platform
+### One group per platform, one country per group
 
 The operator keeps one AdsPower group per platform — `pinterest` holds
 Pinterest accounts, `etsy` holds Etsy. So the syncer **defaults to
@@ -229,6 +229,83 @@ Pinterest accounts, `etsy` holds Etsy. So the syncer **defaults to
 construction*, not by trusting a domain filter downstream to catch them. Each
 profile gets its own vault key (`ads_<user_id>`), so adding accounts is just
 adding profiles to the group.
+
+A group may also carry a **two-letter country suffix** — `pinterest-fr`,
+`pinterest-de`. That is how a new account gets an exit IP outside the US.
+
+```
+group           country     vault pool
+pinterest       US          pinterest
+pinterest-fr    FR          pinterest      <- same pool
+pinterest-de    DE          pinterest      <- same pool
+etsy            —           etsy           <- never swept by a pinterest run
+```
+
+**One pool, many countries.** Splitting the vault per country would halve
+concurrency for no safety gain: the thing that must stay consistent is *one
+account to one exit IP*, and the per-profile proxy already guarantees that. The
+country is a routing hint for `assign_proxies.py`, nothing more — the trends
+region is a request parameter (`country=US`), never derived from the IP, so a
+French-born account fetches identical US numbers.
+
+`--group pinterest` sweeps the whole **family**: the group itself plus any
+country suffix. It is a family test and not `startswith`, because
+`startswith("etsy")` would also match a group called `etsyshop` — and the whole
+point of grouping is that an Etsy session can never land in the Pinterest pool.
+
+#### Adding an account in another country
+
+The order matters, and it is the only order that is safe:
+
+```bash
+# 1. make the group in AdsPower, named for the country
+#    2. create the profile in it — do NOT sign in yet
+# 3. give it its proxy FIRST
+python3 assign_proxies.py --group pinterest-fr --dry-run
+python3 assign_proxies.py --group pinterest-fr
+# 4. NOW open the profile and sign in to Pinterest, behind that IP
+# 5. the 5-minute timer picks it up; or sync immediately:
+python3 sync_cookies.py --group pinterest
+```
+
+The account is then *born* French — its cookies, its language, its feed and its
+exit IP all agree, and they keep agreeing. Let Pinterest set the account's
+country from the IP at signup; do not set it to US behind a French address.
+
+The country comes from the group name rather than from `--country` because the
+flag is the dangerous half. Run `--country FR` against the main group by
+mistake and positional pairing hands the French IP to whichever profile sorts
+first — an existing, live, US account. With the country in the name, the wrong
+country and the wrong group cannot be selected independently. Passing a
+`--country` that contradicts the group name is refused rather than obeyed.
+
+#### ⚠️ Moving a live account across a border is refused
+
+A same-country replacement is mild — real people change ISP. A cross-country
+move is not: the account was created behind one country's IP and its cookies,
+language and history all agree with that. `assign_proxies.py` **refuses** it:
+
+```
+REFUSED: pin-us-3 is a live account on a US proxy and this would move it to FR.
+Its cookies, language and history were all born in US; an exit IP in FR is the
+mismatch this setup exists to prevent.
+A NEW account can be created behind any country — put it in a group named for
+that country (e.g. 'pinterest-fr') and assign its proxy BEFORE the first login.
+Pass --allow-country-move only if you know this account can survive the move.
+```
+
+A profile whose current proxy is no longer in the Webshare pool has an
+**unknown** country, not a foreign one — Webshare dropping a proxy is ordinary,
+and treating unknown as a mismatch would block every legitimate replacement of
+a dead one.
+
+#### The keys
+
+Both scripts read the repo-root `.env` themselves, and accept either spelling of
+the AdsPower key (`ADS_API_KEY` or `adspower_api`). An exported shell variable
+beats the file. When one is missing the error names which variable *was* found —
+`.env` unread and the key spelled differently in it are two different fixes, and
+the old message said the same thing for both.
 
 ### The user agent, captured once
 

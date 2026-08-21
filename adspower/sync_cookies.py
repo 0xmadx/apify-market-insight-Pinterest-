@@ -38,7 +38,7 @@ REFUSALS, because a plausible wrong result is the failure mode here:
     profile has no cookies yet".
 
     python3 sync_cookies.py --dry-run          # look, change nothing
-    python3 sync_cookies.py --group pinterest  # only that group
+    python3 sync_cookies.py --group pinterest  # that group + pinterest-*
 """
 import argparse
 import asyncio
@@ -105,6 +105,41 @@ CSRF_COOKIE = "csrftoken"
 # cookies out of the Pinterest vault entirely, instead of relying on the
 # domain filter to catch it downstream.
 DEFAULT_GROUP = "pinterest"
+
+# A group may carry a COUNTRY SUFFIX: "pinterest-fr" holds accounts that were
+# created behind a French exit IP. They are the same platform and belong in the
+# same vault pool — an account's country decides which proxy it may wear, not
+# which trends it can fetch (region is a request parameter, never derived from
+# the IP). So the suffix is a routing hint for `assign_proxies.py` and nothing
+# more, and the sync must sweep the whole FAMILY or those accounts never reach
+# the vault at all.
+#
+#   --group pinterest   ->  pinterest, pinterest-fr, pinterest-de   (the family)
+#                       ->  NEVER etsy, and never etsy-anything
+GROUP_SEPARATOR = "-"
+
+
+def platform_of(group):
+    """Which vault pool a group writes into. 'pinterest-fr' -> 'pinterest'.
+
+    One pool, many countries. Splitting the pool per country would halve the
+    concurrency for no safety gain: the thing that must stay consistent is one
+    ACCOUNT to one exit IP, which the per-profile proxy already guarantees.
+    """
+    return (group or DEFAULT_GROUP).split(GROUP_SEPARATOR, 1)[0]
+
+
+def in_family(group_name, family):
+    """Is this profile's group part of the requested family?
+
+    Exact match, or the family plus a suffix. Deliberately NOT a prefix test:
+    `startswith("etsy")` would also match a group called "etsyshop", and the
+    whole point of grouping is that an Etsy session can never land in the
+    Pinterest pool.
+    """
+    group_name = group_name or ""
+    return (group_name == family
+            or group_name.startswith(family + GROUP_SEPARATOR))
 
 def _family(path):
     """Which rate-limit bucket a path belongs to. They are independent."""
@@ -209,7 +244,8 @@ def proxy_url(row):
     return f"{scheme}://{auth}{host}:{port}"
 
 
-def write_proxy(profile_id, proxy, redis_url, dry_run=False):
+def write_proxy(profile_id, proxy, redis_url, dry_run=False,
+                platform="pinterest"):
     """Mirror the profile's proxy into the vault beside its cookies.
 
     Written DIRECTLY to Redis, not through the Go cookie server, because that
@@ -228,7 +264,7 @@ def write_proxy(profile_id, proxy, redis_url, dry_run=False):
         import redis
         r = redis.Redis.from_url(redis_url, decode_responses=True,
                                  socket_connect_timeout=3)
-        key = f"cookie:pinterest:{profile_id}"
+        key = f"cookie:{platform}:{profile_id}"
         if proxy:
             r.hset(key, "proxy", proxy)
             return "proxy set " + proxy.split("@")[-1]
@@ -239,7 +275,7 @@ def write_proxy(profile_id, proxy, redis_url, dry_run=False):
         return f"PROXY WRITE FAILED ({type(exc).__name__}) - IPs may now differ"
 
 
-def vault_has_ua(profile_id, redis_url):
+def vault_has_ua(profile_id, redis_url, platform="pinterest"):
     """Does the vault already hold a user agent for this profile?
 
     Read-only, and the ONLY reason the syncer touches Redis. It decides whether
@@ -256,7 +292,7 @@ def vault_has_ua(profile_id, redis_url):
         import redis
         r = redis.Redis.from_url(redis_url, decode_responses=True,
                                  socket_connect_timeout=3)
-        return bool(r.hget(f"cookie:pinterest:{profile_id}", "user_agent"))
+        return bool(r.hget(f"cookie:{platform}:{profile_id}", "user_agent"))
     except Exception:
         return False
 
@@ -265,7 +301,7 @@ def list_profiles(key, group=None):
     data = ads_call(f"/api/v1/user/list?page=1&page_size=100", key)
     rows = data.get("list") or []
     if group:
-        rows = [r for r in rows if (r.get("group_name") or "") == group]
+        rows = [r for r in rows if in_family(r.get("group_name"), group)]
     return rows
 
 
@@ -325,7 +361,7 @@ def vault_profile_id(user_id):
     return f"ads_{user_id}"
 
 
-def build_payload(profile_id, cookies, user_agent):
+def build_payload(profile_id, cookies, user_agent, platform="pinterest"):
     """The exact body the Go server receives — byte-identical to the
     extension's (see background.js). Pure, so it is testable without a socket.
 
@@ -337,15 +373,16 @@ def build_payload(profile_id, cookies, user_agent):
     return {
         "cookie": "; ".join(f"{c['name']}={c['value']}" for c in cookies),
         "cookie_json": {c["name"]: c["value"] for c in cookies},
-        "platform": "pinterest",
+        "platform": platform,
         "cookie_name": "all_cookies",
         "user_agent": user_agent,
         "profile_id": profile_id,
     }
 
 
-def post_to_vault(profile_id, cookies, user_agent, dry_run=False):
-    body = build_payload(profile_id, cookies, user_agent)
+def post_to_vault(profile_id, cookies, user_agent, dry_run=False,
+                  platform="pinterest"):
+    body = build_payload(profile_id, cookies, user_agent, platform)
     if dry_run:
         return f"DRY-RUN would POST {len(body['cookie_json'])} cookies"
     req = urllib.request.Request(
@@ -357,8 +394,12 @@ def post_to_vault(profile_id, cookies, user_agent, dry_run=False):
 
 
 def sync_one(row, key, dry_run=False, ua_mode="auto",
-             redis_url=None, log=print):
+             redis_url=None, log=print, platform=None):
     user_id = row["user_id"]
+    # The profile's OWN group decides the pool, not the group that was asked
+    # for: a `--group pinterest` sweep picks up `pinterest-fr` profiles too, and
+    # each must land where its own name says.
+    platform = platform or platform_of(row.get("group_name"))
     name = row.get("name") or f"(unnamed {user_id})"
     profile_id = vault_profile_id(user_id)
 
@@ -369,7 +410,7 @@ def sync_one(row, key, dry_run=False, ua_mode="auto",
     elif ua_mode == "never":
         need_ua = False
     else:
-        need_ua = not vault_has_ua(profile_id, redis_url)
+        need_ua = not vault_has_ua(profile_id, redis_url, platform)
         if need_ua:
             log(f"  {name:22} .... no UA stored yet — starting the browser once "
                 f"to capture it (later runs skip this)")
@@ -412,13 +453,14 @@ def sync_one(row, key, dry_run=False, ua_mode="auto",
         # earlier --with-ua run SURVIVES. Sending "" would not overwrite it
         # either, but sending a GUESS would — so we send nothing.
         ua = asyncio.run(read_user_agent(ws_url)) if started else ""
-        result = post_to_vault(profile_id, pin, ua, dry_run)
+        result = post_to_vault(profile_id, pin, ua, dry_run, platform)
         csrf = "" if CSRF_COOKIE in names else "  ⚠ no csrftoken — POSTs will fail"
         # After the cookies, never before: a proxy pointing at a profile with no
         # session would be a half-written identity.
-        pxy = write_proxy(profile_id, proxy_url(row), redis_url, dry_run)
+        pxy = write_proxy(profile_id, proxy_url(row), redis_url, dry_run,
+                          platform)
         log(f"  {name:22} OK   — {len(pin)} cookies (auth: {','.join(have)}) "
-            f"-> cookie:pinterest:{profile_id} [{result}] [{pxy}]{csrf}")
+            f"-> cookie:{platform}:{profile_id} [{result}] [{pxy}]{csrf}")
         return True
 
     except Exception as exc:
@@ -436,7 +478,10 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--key", help="AdsPower api key (or ADS_API_KEY env)")
     ap.add_argument("--group", default=DEFAULT_GROUP,
-                    help=f"AdsPower group to sync (default: "
+                    help=f"AdsPower group FAMILY to sync — the group itself "
+                         f"plus any country suffix, so 'pinterest' also sweeps "
+                         f"'pinterest-fr' and 'pinterest-de'. All of them write "
+                         f"to the one 'pinterest' vault pool. (default: "
                          f"{DEFAULT_GROUP!r}). Pass --group '' for "
                          f"every profile, but note that mixes "
                          f"platforms — one group per platform is "
@@ -457,9 +502,13 @@ def main():
     args = ap.parse_args()
 
     import os
-    key = args.key or os.environ.get("ADS_API_KEY", "").strip()
+    import keys
+    key = args.key or keys.ads_key()
     if not key:
-        print("no api key — pass --key or set ADS_API_KEY", file=sys.stderr)
+        print("no api key — pass --key, or set one of "
+              + "/".join(__import__("keys").ADS_NAMES)
+              + " (the repo-root .env is read automatically)",
+              file=sys.stderr)
         return 2
 
     rows = list_profiles(key, args.group or None)

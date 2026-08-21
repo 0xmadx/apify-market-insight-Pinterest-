@@ -16,6 +16,7 @@ Local API and CDP actually returned on 2026-08-19, not hand-invented ones.
 """
 import asyncio
 import json
+import os
 import sys
 
 sys.path.insert(0, ".")
@@ -362,6 +363,112 @@ def main():
     check("I2 the id is namespaced, so it cannot collide with extension ids",
           next(iter(ids)).startswith("ads_")
           and not next(iter(ids)).startswith("profile_"))
+
+    print("\nGROUP C — country groups: a new account may be born abroad")
+    # An account created behind a French IP is fine — coherent, even. What is
+    # never fine is MOVING an existing account across a border, or letting one
+    # group hold two countries. The country therefore lives in the GROUP NAME,
+    # where it cannot be selected independently of the profiles it applies to.
+    check("C1 a two-letter suffix declares the country",
+          ap.country_from_group("pinterest-fr") == "FR"
+          and ap.country_from_group("pinterest-de") == "DE")
+    check("C2 a longer suffix is a NAME, not a country — never guessed",
+          ap.country_from_group("pinterest-backup") is None)
+    check("C3 no suffix falls back to the flag/default",
+          ap.country_from_group("pinterest") is None
+          and ap.country_from_group(None) is None)
+
+    ws_pool = [{"proxy_address": "1.1.1.1", "country_code": "us"},
+               {"proxy_address": "2.2.2.2", "country_code": "FR"}]
+    check("C4 a profile's current country is read from the pool",
+          ap.country_of("1.1.1.1", ws_pool) == "US")
+    # A host Webshare has dropped is UNKNOWN. Calling that a mismatch would
+    # block every legitimate replacement of a dead proxy.
+    check("C5 a host no longer in the pool is unknown, not 'another country'",
+          ap.country_of("9.9.9.9", ws_pool) is None)
+
+    # Called for real against a stubbed HTTP layer. A source-string check here
+    # would pass on a comment and fail to notice the return arity changing.
+    import io as _io, json as _json, urllib.request as _u
+    rows = {"results": [
+        {"proxy_address": "1.1.1.1", "port": 1, "username": "u", "password": "p",
+         "country_code": "US", "valid": True},
+        {"proxy_address": "2.2.2.2", "port": 2, "username": "u", "password": "p",
+         "country_code": "FR", "valid": True},
+        {"proxy_address": "3.3.3.3", "port": 3, "username": "u", "password": "p",
+         "country_code": "US", "valid": False}]}
+
+    class _Resp(_io.BytesIO):
+        def __enter__(self): return self
+        def __exit__(self, *a): return False
+
+    real_open = _u.urlopen
+    _u.urlopen = lambda *a, **k: _Resp(_json.dumps(rows).encode())
+    try:
+        picked, total, all_valid = ap.webshare_proxies("k", "US")
+    finally:
+        _u.urlopen = real_open
+    check("C6 the filtered list holds only the asked-for country",
+          [q["proxy_address"] for q in picked] == ["1.1.1.1"])
+    check("C6b ...and the third return value keeps EVERY valid country",
+          sorted(q["proxy_address"] for q in all_valid) == ["1.1.1.1", "2.2.2.2"])
+    check("C6c ...so a US-filtered run can still tell a French host is French",
+          ap.country_of("2.2.2.2", all_valid) == "FR")
+    check("C6d invalid proxies are in neither list", total == 3)
+    check("C7 a cross-country move of a LIVE account is REFUSED, not warned",
+          "allow_country_move" in asrc and "is a live account on a" in asrc)
+    check("C8 ...and the refusal points at the safe alternative",
+          "assign its proxy BEFORE the first login" in asrc)
+    check("C9 a --country that contradicts the group name is refused",
+          "declares country" in asrc and "do not let them disagree" in asrc)
+
+    # The sync has to sweep the whole family or a country group never reaches
+    # the vault at all — it would look signed-in in AdsPower and be invisible
+    # to the scraper.
+    fam = [{"user_id": "a", "name": "us1", "group_name": "pinterest"},
+           {"user_id": "b", "name": "fr1", "group_name": "pinterest-fr"},
+           {"user_id": "c", "name": "shop", "group_name": "etsyshop"},
+           {"user_id": "d", "name": "etsy1", "group_name": "etsy"}]
+    real_call = sc.ads_call
+    sc.ads_call = lambda p, k, timeout=90: {"list": fam}
+    try:
+        got = [r["name"] for r in sc.list_profiles("k", "pinterest")]
+    finally:
+        sc.ads_call = real_call
+    check("C10 --group pinterest sweeps the whole family",
+          got == ["us1", "fr1"], got)
+    check("C11 ...and 'etsyshop' is NOT in the etsy family (a prefix test would match)",
+          not sc.in_family("etsyshop", "etsy"))
+    check("C12 every country group writes to ONE vault pool",
+          sc.platform_of("pinterest-fr") == sc.platform_of("pinterest") == "pinterest")
+    check("C13 the payload's platform follows the group, not a constant",
+          sc.build_payload("p", [], "UA", "etsy")["platform"] == "etsy")
+
+    print("\nGROUP K — the keys, and where they are read from")
+    import keys as kmod  # noqa: E402
+    # Neither script loaded .env, and the operator's file spells the AdsPower
+    # key `adspower_api` while the code read `ADS_API_KEY`. The failure was a
+    # flat "need ADS_API_KEY" with the key sitting in .env one directory up.
+    check("K1 both spellings of the AdsPower key are accepted",
+          "ADS_API_KEY" in kmod.ADS_NAMES and "adspower_api" in kmod.ADS_NAMES)
+    os.environ["ADS_API_KEY"] = "exported-wins"
+    try:
+        kmod._loaded = False
+        check("K2 an exported variable beats the .env file",
+              kmod.ads_key() == "exported-wins")
+    finally:
+        del os.environ["ADS_API_KEY"]
+        kmod._loaded = False
+    missing = kmod.describe(("NOTHING_IS_SET_HERE",))
+    check("K3 describe() names which variable is set, never its value",
+          "none of" in missing and "NOTHING_IS_SET_HERE" in missing)
+    os.environ["ZZ_ONE"], os.environ["ZZ_TWO"] = "first", "second"
+    try:
+        check("K4 the first name that holds something wins",
+              kmod.get("ZZ_ONE", "ZZ_TWO") == "first"
+              and kmod.get("ZZ_MISSING", "ZZ_TWO") == "second")
+    finally:
+        del os.environ["ZZ_ONE"], os.environ["ZZ_TWO"]
 
     print("\nGROUP D — degenerate inputs (where the silent bugs live)")
     for label, jar in [("empty jar", []), ("None-ish domain", [{"name": "a",
