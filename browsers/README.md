@@ -130,6 +130,54 @@ making a live authenticated call from a restored identity.
 ⚠️ `browsers/identities.json` holds live sessions and proxy passwords in the
 clear. It is gitignored. Treat it like `.env` and delete it when you are done.
 
+## Stage 1 result — fingerprint diversity flips the choice
+
+`python -m browsers.fingerprint --driver {patchright|drission}`
+
+| | automation hidden | profiles look different | verdict |
+|---|---|---|---|
+| **patchright** | ✅ nothing injected | ❌ **1/3 distinct** | FAIL |
+| **DrissionPage** + patch | ⚠️ injected, leak closed | ✅ **3/3 distinct, 3/3 stable** | PASS |
+
+**patchright silently ignores `add_init_script`.** Measured: the script never
+runs and `navigator.hardwareConcurrency` reports the host's real 12. That is
+patchright working as designed — injected scripts are themselves detectable —
+and it means every profile on one machine shares the host's hardware identity.
+
+Two profiles, signal by signal, under patchright:
+
+```
+SAME   canvas · webglVendor · webglRenderer · fonts
+SAME   hardwareConcurrency (12 — the host's real core count)
+DIFFER screen        1366x768x24x1  vs  1366x768x24x2
+```
+
+Only `screen` differs, and only in the devicePixelRatio digit. Three accounts a
+fingerprinter ties together in one query; the separate exit IPs do not help.
+
+DrissionPage honours `Page.addScriptToEvaluateOnNewDocument`, so
+`browsers/fingerprint_patch.py` can give each profile its own GPU, core count,
+memory, screen and canvas — all derived from a hash of the profile id, so they
+are **stable forever** rather than random per launch. A fingerprint that changes
+every run is worse than one that never changes: it is a new device presenting
+the same login cookies.
+
+### The trade, stated plainly
+
+    patchright     undetectable, but every profile is the same machine
+    DrissionPage   every profile is a different machine, but it is patching JS
+
+The obvious `Function.prototype.toString` leak is closed — all patched
+functions report `[native code]`, including `toString` itself, verified. This
+is **not undetectable**, only not-trivially-detectable, and it does not claim to
+survive a dedicated fingerprinting vendor. That is proportionate here:
+Pinterest, on sessions that log in rarely and load one page per keepalive cycle.
+
+**Recommendation: DrissionPage for the keepalive farm.** Fingerprint diversity
+is the thing AdsPower is actually being paid for, and it is the only one of the
+two that can deliver it. patchright stays as the faster driver for anything that
+does not need a distinct identity.
+
 ## What patchright does NOT give you
 
 **It removes automation tells. It does not randomise fingerprints.** Twenty
