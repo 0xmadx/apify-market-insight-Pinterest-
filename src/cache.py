@@ -187,7 +187,19 @@ class ResponseCache:
     def release_fill(self, kind, url, params=None, body=None):
         if not self.config.CACHE_ENABLED:
             return
-        self.r.delete(self._key(kind, url, params, body) + ":fill")
+        self.release_fill_key(self._key(kind, url, params, body))
+
+    def release_fill_key(self, key):
+        """Release a lock by its already-computed key.
+
+        The FAILURE path needs this form. When a request raises there is no
+        longer a clean (kind, url, params) triple to hand back: style B rebuilds
+        `params` into a `cache_key`, and the GraphQL key is derived from the POST
+        body. The client remembers the exact key it locked, so releasing by key
+        is the only form that cannot quietly miss and leave the lock set."""
+        if not self.config.CACHE_ENABLED:
+            return
+        self.r.delete(key + ":fill")
 
     def wait_for_fill(self, kind, url, params=None, body=None):
         """Poll for the winner's answer. None means give up and fetch it too.

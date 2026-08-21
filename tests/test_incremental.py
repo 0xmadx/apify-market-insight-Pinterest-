@@ -251,6 +251,125 @@ def main():
     check("_demographics DOES use it, and says it was measured safe",
           "get_item" in dsrc and "MEASURED SAFE" in dsrc)
 
+    print("\nGROUP F — the fill lock must not survive a failed request")
+    # FOUND BY probes/stress.py, 2026-08-20. `_store()` releases the fill lock,
+    # and its own docstring claimed that happens "ALWAYS, hit or miss". It does
+    # not: every call site is
+    #
+    #     response = self._request(...)      # can raise
+    #     payload  = self._json(response)    # can raise
+    #     self._store(...)                   # only reached on success
+    #
+    # so ANY failure leaves the lock set for its full 45s TTL. Every other
+    # client asking the same question then sits out the 30s wait_for_fill
+    # timeout and fetches anyway. One failing request becomes a 30s latency
+    # spike plus N duplicate requests — aimed at an endpoint that is already
+    # failing, which is the worst possible moment to retry in a crowd.
+    # NOT `from src.cache import ResponseCache` here: a local import of a name
+    # already imported at module level makes it local for the WHOLE function,
+    # and every earlier use in main() becomes an UnboundLocalError.
+    from src.transport import TrendsClient, TrendsAPIError  # noqa: E402
+
+    F_PLATFORM = "__test_fill"
+    fcfg = replace(Config(), PLATFORM=F_PLATFORM)
+    try:
+        fcache = ResponseCache(fcfg)
+        fcache.r.ping()
+    except Exception as exc:
+        print(f"  cannot reach redis for the fill-lock test: {exc}")
+        fcache = None
+
+    if fcache is not None:
+        class Boom:
+            """A response that is a 200 but whose body will not parse — the
+            exact shape that makes _json raise after _request succeeded."""
+            status_code = 200
+            text = "<html>not json</html>"
+
+            def json(self):
+                raise ValueError("not json")
+
+        class BoomSession:
+            def get(self, *a, **k):
+                return Boom()
+
+            def post(self, *a, **k):
+                return Boom()
+
+        # THROUGH THE PUBLIC METHOD, not the internals. An earlier version of
+        # this test drove _cached/_request/_json/_store by hand, which
+        # reproduced the bug but could never prove the fix: the try/except that
+        # releases the lock lives in style_a/style_b/graphql/pin_resource, and
+        # calling past them skips exactly the code under test.
+        from src.transport import BASE  # noqa: E402
+        path = "/fill-lock/"
+        params = {"q": "1"}
+        fcache.clear()
+        key = fcache._key("trends", BASE + path, params, None)
+        fcache.r.delete(key + ":fill")
+
+        client = TrendsClient(BoomSession(), cache=fcache, delay=0)
+        raised = False
+        try:
+            client.style_b(path, params, kind="trends")
+        except TrendsAPIError:
+            raised = True
+
+        check("F1 a body that will not parse does raise", raised)
+        still_locked = bool(fcache.r.exists(key + ":fill"))
+        if still_locked:
+            print(f"        (lock still set, ttl "
+                  f"{fcache.r.ttl(key + ':fill')}s — every other client waits "
+                  f"{fcfg.FILL_WAIT_TIMEOUT}s then fetches anyway)")
+        check("F2 ...and the fill lock is NOT left behind for other clients",
+              not still_locked)
+
+        # The same must hold when the transport layer itself raises before a
+        # response exists at all — a dead proxy, a timeout, a reset.
+        class DeadSession:
+            def get(self, *a, **k):
+                raise OSError("connection reset")
+
+            def post(self, *a, **k):
+                raise OSError("connection reset")
+
+        fcache.r.delete(key + ":fill")
+        try:
+            TrendsClient(DeadSession(), cache=fcache, delay=0).style_b(
+                path, params, kind="trends")
+        except Exception:
+            pass
+        check("F3 a transport failure does not strand the lock either",
+              not fcache.r.exists(key + ":fill"))
+
+        # Style A takes a different route to the same cache, so it needs its
+        # own proof rather than an assumption that one wrapper covers all four.
+        a_url = f"{BASE}/resource/ApiResource/get/"
+        import json as _json_mod
+        a_params = {"data": _json_mod.dumps(
+            {"options": {"url": "/ads/v4/trends/x", "data": {}}, "context": {}},
+            separators=(",", ":"))}
+        a_key = fcache._key("trends", a_url, a_params, None)
+        fcache.r.delete(a_key + ":fill")
+        try:
+            TrendsClient(BoomSession(), cache=fcache, delay=0).style_a(
+                "/ads/v4/trends/x", kind="trends")
+        except Exception:
+            pass
+        check("F3b style_a releases its lock on failure too",
+              not fcache.r.exists(a_key + ":fill"))
+
+        # And the docstring must stop claiming a guarantee it does not give.
+        import inspect as _inspect
+        store_src = _inspect.getsource(TrendsClient._store)
+        check("F4 _store no longer claims 'ALWAYS' without qualification",
+              "hit or miss" not in store_src or "raise" in store_src.lower())
+
+        fcache.clear()
+        for k in list(fcache.r.scan_iter(f"*{F_PLATFORM}*")):
+            fcache.r.delete(k)
+
+
     failed = [n for n, ok in checks if not ok]
     print(f"\n{len(checks) - len(failed)}/{len(checks)} checks passed")
     if failed:

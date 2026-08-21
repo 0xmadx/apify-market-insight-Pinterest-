@@ -113,9 +113,13 @@ class TrendsClient:
         url = f"{BASE}/resource/ApiResource/get/"
         payload = self._cached(kind, url, params)
         if payload is None:
-            response = self._request("GET", url, params=params, endpoint=path)
-            payload = self._json(response, path)
-            self._store(kind, url, response, params)
+            try:
+                response = self._request("GET", url, params=params, endpoint=path)
+                payload = self._json(response, path)
+                self._store(kind, url, response, params)
+            except Exception:
+                self._release_fills()
+                raise
         wrapper = payload.get("resource_response") or {}
 
         error = wrapper.get("error")
@@ -141,11 +145,15 @@ class TrendsClient:
             if payload is not None:
                 return payload
 
-        response = self._request(method, url, params=params,
-                                 json_body=json_body, endpoint=path)
-        payload = self._json(response, path)
-        if method == "GET":
-            self._store(kind, url, response, cache_key)
+        try:
+            response = self._request(method, url, params=params,
+                                     json_body=json_body, endpoint=path)
+            payload = self._json(response, path)
+            if method == "GET":
+                self._store(kind, url, response, cache_key)
+        except Exception:
+            self._release_fills()
+            raise
         return payload
 
     def graphql(self, query_hash, variables, operation_name, handler, kind=None):
@@ -176,10 +184,14 @@ class TrendsClient:
                 "Accept": "application/json",
                 "Content-Type": "application/json",
             }
-            response = self._request("POST", url, json_body=body,
-                                     endpoint="/_/graphql/", headers=headers)
-            payload = self._json(response, "/_/graphql/")
-            self._store(kind, url, response, body)
+            try:
+                response = self._request("POST", url, json_body=body,
+                                         endpoint="/_/graphql/", headers=headers)
+                payload = self._json(response, "/_/graphql/")
+                self._store(kind, url, response, body)
+            except Exception:
+                self._release_fills()
+                raise
 
         # THREE outcomes, only one an HTTP-level failure. Telling them apart is
         # the whole job:
@@ -237,36 +249,40 @@ class TrendsClient:
 
         payload = self._cached(kind, url, params)
         if payload is None:
-            # The browser capture listed 12 headers on this call. The ones below
-            # are every one we can produce *correctly*; the rest are omitted on
-            # purpose rather than faked:
-            #   X-Pinterest-Platform-BID — an opaque build/session id. A made-up
-            #     value is worse than no value: it is a wrong claim about who we
-            #     are, and it would be checkable.
-            #   X-APP-VERSION — same reasoning; it pins a specific web build.
-            # B3 trace ids ARE generated fresh per request, which is exactly
-            # what a browser does with them (they are distributed-tracing ids,
-            # not identity), so producing our own is honest, not spoofing.
-            trace = uuid.uuid4().hex[:16]
-            span = uuid.uuid4().hex[:16]
-            response = self._request(
-                "GET", url, params=params, endpoint="/resource/PinResource/get/",
-                headers={"X-Pinterest-PWS-Handler": "www/pin/[id].js",
-                         "X-Requested-With": "XMLHttpRequest",
-                         "Accept": "application/json",
-                         # Route context — the www host is stricter than trends
-                         # and this is the page the call legitimately came from.
-                         "X-Pinterest-Source-Url": f"/pin/{pin_id}/",
-                         "X-Pinterest-AppState": "active",
-                         "screen-dpr": "2",
-                         "X-B3-TraceId": trace,
-                         "X-B3-SpanId": span,
-                         "X-B3-ParentSpanId": trace,
-                         "X-B3-Flags": "0",
-                         "Referer": f"{WWW}/pin/{pin_id}/",
-                         "Origin": WWW})
-            payload = self._json(response, "/resource/PinResource/get/")
-            self._store(kind, url, response, params)
+            try:
+                # The browser capture listed 12 headers on this call. The ones below
+                # are every one we can produce *correctly*; the rest are omitted on
+                # purpose rather than faked:
+                #   X-Pinterest-Platform-BID — an opaque build/session id. A made-up
+                #     value is worse than no value: it is a wrong claim about who we
+                #     are, and it would be checkable.
+                #   X-APP-VERSION — same reasoning; it pins a specific web build.
+                # B3 trace ids ARE generated fresh per request, which is exactly
+                # what a browser does with them (they are distributed-tracing ids,
+                # not identity), so producing our own is honest, not spoofing.
+                trace = uuid.uuid4().hex[:16]
+                span = uuid.uuid4().hex[:16]
+                response = self._request(
+                    "GET", url, params=params, endpoint="/resource/PinResource/get/",
+                    headers={"X-Pinterest-PWS-Handler": "www/pin/[id].js",
+                             "X-Requested-With": "XMLHttpRequest",
+                             "Accept": "application/json",
+                             # Route context — the www host is stricter than trends
+                             # and this is the page the call legitimately came from.
+                             "X-Pinterest-Source-Url": f"/pin/{pin_id}/",
+                             "X-Pinterest-AppState": "active",
+                             "screen-dpr": "2",
+                             "X-B3-TraceId": trace,
+                             "X-B3-SpanId": span,
+                             "X-B3-ParentSpanId": trace,
+                             "X-B3-Flags": "0",
+                             "Referer": f"{WWW}/pin/{pin_id}/",
+                             "Origin": WWW})
+                payload = self._json(response, "/resource/PinResource/get/")
+                self._store(kind, url, response, params)
+            except Exception:
+                self._release_fills()
+                raise
 
         wrapper = payload.get("resource_response") or {}
         error = wrapper.get("error")
@@ -324,9 +340,10 @@ class TrendsClient:
         """Only usable 200s are stored — cache.put() enforces that itself, so a
         403 or an empty body can never be replayed for a whole TTL.
 
-        Releasing the fill lock happens here and ALWAYS, hit or miss: a lock
-        left behind makes every waiter sit out the full timeout before fetching
-        anyway, turning one slow request into many.
+        This releases the fill lock on the SUCCESS path. The failure path is
+        `_release_fills()`, and the two together are what make the release
+        unconditional — this method alone is not reached when the request
+        raises, which is exactly when the lock matters most.
         """
         if self.cache and kind:
             self.cache.put(kind, url, response, params)
@@ -334,6 +351,38 @@ class TrendsClient:
             if key in self._holding_fill:
                 self._holding_fill.discard(key)
                 self.cache.release_fill(kind, url, params)
+
+    def _release_fills(self):
+        """Drop every fill lock this client still holds. Safe to call twice.
+
+        THE BUG THIS EXISTS FOR (found by probes/stress.py, 2026-08-20). Every
+        fetch site reads:
+
+            response = self._request(...)     # can raise
+            payload  = self._json(response)   # can raise
+            self._store(...)                  # only reached on success
+
+        so any failure left the lock set for its full FILL_LOCK_TTL (45s), and
+        `_store`'s docstring claimed the opposite. Meanwhile every other client
+        asking that same question sat out the 30s `wait_for_fill` timeout and
+        then fetched anyway — one failed request turning into a half-minute
+        latency spike plus N duplicates, aimed at an endpoint that was already
+        failing. The worst possible moment to retry in a crowd.
+
+        Releasing on failure is right even though it lets the next caller retry
+        immediately: a lock exists to stop a stampede on a key someone is
+        actively filling, and nobody is filling this one any more.
+        """
+        if not self.cache:
+            return
+        for key in list(self._holding_fill):
+            self._holding_fill.discard(key)
+            try:
+                self.cache.release_fill_key(key)
+            except Exception:
+                # Redis is already unhappy; the lock's own TTL is the backstop.
+                # Never let cleanup mask the original exception being raised.
+                pass
 
     # -------------------------------------------------------------- plumbing
 
