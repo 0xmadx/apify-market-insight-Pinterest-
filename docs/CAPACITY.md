@@ -12,6 +12,23 @@ needs the wire.
 
 ## Sustained load is not the problem
 
+> **Reproduce any number here with `python -m probes.stress`.** Until
+> 2026-08-20 these came from scratch files that were never committed, which
+> made the central capacity claims of this project impossible to re-check after
+> a change. A number nobody can re-derive is an opinion with a decimal point.
+>
+> Re-measured that day at the current pool of **6** profiles — the burst
+> figures below were taken at 4 and are kept for the shape, not the value:
+>
+> ```
+> 6 profiles · 100 clients at once · 3s runs   100/100 served, 53.6s wall
+> 6 profiles · 100 clients at once · 10s runs   42/100 served
+> 6 profiles · 100 spread over 60s · 10s runs   70/100 served
+> cache stampede: 50 clients, one cold key      1 request, 0.8s
+> ```
+>
+> Exclusivity held on every run: no profile was ever leased twice at once.
+
 ```
 4 profiles, sustained:
 
