@@ -1,0 +1,41 @@
+# Keep Pinterest sessions fresh in the vault, without AdsPower.
+#
+# WHY THIS EXISTS — the failure it prevents is silent and total:
+#
+# The vault evicts any profile whose `last_updated` is older than
+# PROFILE_MAX_AGE (900s). Nothing else writes that field once AdsPower is gone,
+# so without this service every profile disappears from the pool fifteen
+# minutes after the last manual run — QUIETLY, leaving a scraper that simply
+# never draws one and reports no data rather than an error.
+#
+# Type=oneshot, driven by keepalive.timer: a crashed pass is retried on the
+# next tick rather than leaving a supervisor to decide, and a pass that hangs
+# cannot wedge a long-lived process holding browsers open.
+[Unit]
+Description=Refresh Pinterest session cookies into the vault (DrissionPage)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=devy
+WorkingDirectory=/home/devy/pinterest-apify
+
+# REDIS_URL must NOT be localhost here unless Redis runs in this same netns.
+# On a VPS this is the managed URL; under WSL it is the Windows host address.
+EnvironmentFile=/etc/pinterest-keepalive/env
+
+# --once, because the timer owns the schedule. Running the internal loop under
+# a timer would give two schedulers disagreeing about the interval.
+ExecStart=/home/devy/pinterest-actor/.venv/bin/python -m browsers.keepalive --once
+
+# Headless Chromium needs no display, but it does need a writable HOME for the
+# per-profile user-data directories and the ms-playwright cache.
+Environment=HOME=/home/devy
+
+# One pass over ~35 profiles is ~5 minutes; well short of this. A pass still
+# running at the cap is wedged, not slow.
+TimeoutStartSec=600
+
+[Install]
+WantedBy=multi-user.target

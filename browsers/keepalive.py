@@ -101,7 +101,7 @@ def refresh(record, headless=True, url=PINTEREST):
     from DrissionPage import Chromium, ChromiumOptions
 
     from .fingerprint_patch import build_script
-    from .drivers import cookie_records, expected_exit
+    from .drivers import browser_path, cookie_records, expected_exit
     from .proxy_relay import ProxyRelay
 
     result = Result(record["profile_id"])
@@ -110,6 +110,9 @@ def refresh(record, headless=True, url=PINTEREST):
     browser = None
     try:
         options = ChromiumOptions()
+        chrome = browser_path()
+        if chrome:
+            options.set_browser_path(chrome)
         options.set_user_agent(record["user_agent"])
         options.set_argument("--no-sandbox")
         # Order matters: the data path disables auto-port, so the port must be

@@ -255,6 +255,87 @@ read cookies from the profile's SQLite store without launching at all.
 The read-from-disk optimisation was planned for this stage and is **not
 needed yet**. It is recorded, not built.
 
+## Stage 5 — headless Linux, no root
+
+Proven 2026-08-20 under WSL Ubuntu (the same shape as the eventual GCP VM),
+against the Windows vault over a non-localhost Redis:
+
+```
+3 profile(s) · platform pinterest_linux · one pass
+  ads_k1fx40wf   OK  9 cookies via 163.123.202.173  (9.3s)
+  ads_k1fy47um   OK  9 cookies via 163.123.203.141  (17.6s)
+  ads_k1fy6dnh   OK  8 cookies via 199.187.190.159  (9.4s)
+  3 written · 0 skipped · 37s
+
+LINUX end-to-end: 5 moments · nails, hairstyles, wallpaper, nail ideas
+```
+
+**No root anywhere.** `apt install chromium` needs it; `patchright install
+chromium` does not, and it drops a known-good build under `~/.cache/
+ms-playwright` that `drivers.browser_path()` finds. The browser is therefore
+not a second thing to provision — and it is the same build the Windows tests
+ran against.
+
+Set `CHROME_PATH` to override on a host with its own Chromium.
+
+Linux is slower per profile (~12s vs ~7.6s) because this ran over `/mnt/c`,
+which is a slow filesystem. A native checkout on the VM should land closer to
+the Windows number; re-measure there rather than assuming either.
+
+### One trap, and why the fix is a search
+
+The first `browser_path()` hardcoded `chrome-linux/chrome` — the OLD Playwright
+layout. The current one is `chrome-linux64/chrome`, so it found nothing and
+DrissionPage answered with a Chinese "cannot find browser executable" that names
+no path. It now globs, and sorts by the numeric build (`chromium-1234` sorts
+BEFORE `chromium-1200` as a string, so a lexical sort picks the older browser).
+`chromium_headless_shell-*` is skipped: it starts, and then behaves differently
+from the thing that was tested.
+
+### The units
+
+`browsers/keepalive.service` + `.timer`, modelled on the AdsPower pair.
+`systemd-analyze verify` passes.
+
+Two decisions worth knowing:
+
+- **`Type=oneshot` driven by a timer**, not a long-running loop. A crashed pass
+  is retried on the next tick, and a hung pass cannot wedge a process holding
+  browsers open. `--once` is passed for the same reason: the timer owns the
+  schedule, and running the internal loop under a timer would be two schedulers
+  disagreeing.
+- **5-minute interval is a safety constraint, not taste.** The vault evicts a
+  profile whose heartbeat is older than `PROFILE_MAX_AGE` (900s), so the gap
+  must stay well under it. 5 minutes is a 3x margin.
+
+Install:
+
+```bash
+sudo mkdir -p /etc/pinterest-keepalive
+sudo tee /etc/pinterest-keepalive/env >/dev/null <<'EOF'
+REDIS_URL=rediss://...
+VAULT_PLATFORM=pinterest
+EOF
+sudo cp browsers/keepalive.{service,timer} /etc/systemd/system/
+sudo systemctl daemon-reload && sudo systemctl enable --now keepalive.timer
+```
+
+## Stage 6 — the cutover, when you are ready
+
+Run both writers against **different vault namespaces** for a day and compare,
+rather than switching and hoping:
+
+```bash
+# keepalive writes its own pool; AdsPower keeps writing `pinterest`
+VAULT_PLATFORM=pinterest_new python -m browsers.keepalive
+VAULT_PLATFORM=pinterest_new python -m src.status     # freshness + fingerprint
+python -m src.status                                  # AdsPower's, for contrast
+```
+
+When the new pool holds the same profiles at the same freshness for a day,
+stop `adspower-sync.timer`, point `VAULT_PLATFORM` back at `pinterest`, and
+keep `browsers/identities.json` as the undo.
+
 ## What patchright does NOT give you
 
 **It removes automation tells. It does not randomise fingerprints.** Twenty

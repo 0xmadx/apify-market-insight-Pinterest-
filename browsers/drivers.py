@@ -27,6 +27,7 @@ same check the vault applies, plus a live authenticated API call through
 curl_cffi. That is the thing the product actually needs; anything less is a
 browser that starts.
 """
+import pathlib
 import time
 
 PINTEREST = "https://www.pinterest.com/"
@@ -38,6 +39,54 @@ IP_ECHO = "https://api.ipify.org"
 # Present only on a signed-in session. The same pair the vault requires, so a
 # driver cannot pass a jar the vault would then refuse.
 AUTH_COOKIES = ("_auth", "_pinterest_sess")
+
+
+def browser_path():
+    """Where Chromium lives. None means "let the library find it".
+
+    Windows has Chrome installed where DrissionPage already looks. A Linux VM
+    usually has nothing, and `apt install chromium` needs root — which a deploy
+    script should not assume it has.
+
+    So the fallback is the Chromium **patchright already downloaded**: one
+    `patchright install chromium` puts a known-good build under
+    ~/.cache/ms-playwright with no root at all, and it is the same build these
+    drivers were tested against on Windows. Reusing it means the browser is not
+    a second thing to provision.
+
+    CHROME_PATH overrides everything, for a host that has its own.
+    """
+    import os
+
+    override = (os.environ.get("CHROME_PATH") or "").strip()
+    if override:
+        return override
+
+    cache = pathlib.Path.home() / ".cache" / "ms-playwright"
+    if not cache.is_dir():
+        return None
+
+    # SEARCH, do not hardcode. The first version of this listed
+    # "chrome-linux/chrome" — the OLD Playwright layout. The current one is
+    # "chrome-linux64/chrome", so it found nothing on Linux and DrissionPage
+    # answered with a Chinese "cannot find browser executable" that says
+    # nothing about which path was tried. A glob survives the next rename.
+    def build_number(folder):
+        # Sort by the numeric build, not lexically: "chromium-1200" sorts
+        # after "chromium-1234" as a string, so the older build would win.
+        tail = folder.name.rsplit("-", 1)[-1]
+        return int(tail) if tail.isdigit() else -1
+
+    # `chromium_headless_shell-*` is a cut-down binary with no full browser
+    # surface. Skipped: it can start, and then behaves differently from the
+    # thing that was tested, which is the worst kind of substitute.
+    folders = [f for f in cache.glob("chromium-*") if f.is_dir()]
+    for folder in sorted(folders, key=build_number, reverse=True):
+        for name in ("chrome", "chrome.exe", "Chromium"):
+            for found in folder.rglob(name):
+                if found.is_file():
+                    return str(found)
+    return None
 
 
 def expected_exit(proxy_url):
