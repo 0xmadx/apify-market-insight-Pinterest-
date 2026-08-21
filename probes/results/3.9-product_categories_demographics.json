@@ -7,44 +7,25 @@
     "data": {
       "product_category_distributions": {
         "1408": {
-          "related_search_trends": [
-            "fall halloween decor",
-            "halloween decor",
-            "vintage halloween",
-            "halloween stuff",
-            "diy halloween decorations",
-            "fall halloween",
-            "halloween crafts",
-            "haunted",
-            "halloween ideas",
-            "ornament ideas",
-            "fall decor",
-            "halloween diy",
-            "ornament crafts",
-            "diy christmas ornaments",
-            "pumpkin",
-            "xmas decor",
-            "halloween fun"
-          ],
           "summaries": [
             {
-              "outbound_clicks": {
-                "percent_growth": 0.84,
-                "lookback": 2,
-                "total": 0,
-                "percent_relative_volume": null
-              },
               "saves": {
-                "percent_growth": 0.63,
-                "lookback": 2,
                 "total": 0,
-                "percent_relative_volume": null
+                "percent_relative_volume": null,
+                "percent_growth": 0.63,
+                "lookback": 2
+              },
+              "outbound_clicks": {
+                "total": 0,
+                "percent_relative_volume": null,
+                "percent_growth": 0.84,
+                "lookback": 2
               },
               "engagement": {
-                "percent_growth": 0.71,
-                "lookback": 2,
                 "total": 0,
-                "percent_relative_volume": null
+                "percent_relative_volume": null,
+                "percent_growth": 0.71,
+                "lookback": 2
               }
             }
           ],
@@ -65,6 +46,25 @@
                 "unspecified": 0.11
               }
             }
+          ],
+          "related_search_trends": [
+            "fall halloween decor",
+            "halloween decor",
+            "vintage halloween",
+            "halloween stuff",
+            "diy halloween decorations",
+            "fall halloween",
+            "halloween crafts",
+            "haunted",
+            "halloween ideas",
+            "ornament ideas",
+            "fall decor",
+            "halloween diy",
+            "ornament crafts",
+            "diy christmas ornaments",
+            "pumpkin",
+            "xmas decor",
+            "halloween fun"
           ]
         }
       }
@@ -88,6 +88,6 @@
       }
     }
   },
-  "request_identifier": "1093513695071245",
+  "request_identifier": "1217049827722008",
   "_client_context": "<stripped: account PII, see strip_pii()>"
 }

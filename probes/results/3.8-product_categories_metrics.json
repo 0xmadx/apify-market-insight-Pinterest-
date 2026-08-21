@@ -9,63 +9,63 @@
         {
           "term": "1356",
           "growth_rates": {
-            "mom_change": null,
             "yoy_change": null,
-            "wow_change": null
+            "wow_change": null,
+            "mom_change": null
           },
           "daily_values": [
             {
+              "count": 87,
               "normalized_predicted_upper_bound": null,
               "date": "2026-06-19",
-              "count": 87,
               "normalized_predicted_lower_bound": null
             },
             {
+              "count": 85,
               "normalized_predicted_upper_bound": null,
               "date": "2026-06-26",
-              "count": 85,
               "normalized_predicted_lower_bound": null
             },
             {
+              "count": 83,
               "normalized_predicted_upper_bound": null,
               "date": "2026-07-03",
-              "count": 83,
               "normalized_predicted_lower_bound": null
             },
             {
+              "count": 84,
               "normalized_predicted_upper_bound": null,
               "date": "2026-07-10",
-              "count": 84,
               "normalized_predicted_lower_bound": null
             },
             {
+              "count": 90,
               "normalized_predicted_upper_bound": null,
               "date": "2026-07-17",
-              "count": 90,
               "normalized_predicted_lower_bound": null
             },
             {
+              "count": 90,
               "normalized_predicted_upper_bound": null,
               "date": "2026-07-24",
-              "count": 90,
               "normalized_predicted_lower_bound": null
             },
             {
+              "count": 92,
               "normalized_predicted_upper_bound": null,
               "date": "2026-07-31",
-              "count": 92,
               "normalized_predicted_lower_bound": null
             },
             {
+              "count": 95,
               "normalized_predicted_upper_bound": null,
               "date": "2026-08-07",
-              "count": 95,
               "normalized_predicted_lower_bound": null
             },
             {
+              "count": 100,
               "normalized_predicted_upper_bound": null,
               "date": "2026-08-14",
-              "count": 100,
               "normalized_predicted_lower_bound": null
             }
           ]
@@ -95,6 +95,6 @@
       }
     }
   },
-  "request_identifier": "1618784099395745",
+  "request_identifier": "2918428228766169",
   "_client_context": "<stripped: account PII, see strip_pii()>"
 }
