@@ -1,0 +1,20 @@
+# The repo is edited on Windows and RUNS on Linux — WSL for the rehearsal,
+# `apify/actor-python:3.12` in the cloud. Anything Linux executes must keep LF
+# endings, or the kernel reads the shebang as `/usr/bin/env bash\r` and answers:
+#
+#     /usr/bin/env: 'bash\r': No such file or directory
+#
+# Measured 2026-08-20 on `run_local.sh`, the documented deploy rehearsal — the
+# one command DEPLOY.md tells you to run before pushing. It had been committed
+# with CRLF and could not start at all under WSL.
+*.sh            text eol=lf
+*.service       text eol=lf
+*.timer         text eol=lf
+Dockerfile      text eol=lf
+.dockerignore   text eol=lf
+
+# Python is safe either way (the interpreter accepts both), but the actor image
+# and the Windows checkout should not disagree about file contents.
+*.py            text eol=lf
+*.json          text eol=lf
+*.md            text eol=lf
