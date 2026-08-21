@@ -222,18 +222,18 @@ def main():
     # Three things, and the token is NOT one of the calls: Pinterest's CSRF is
     # cookie-echo, so session.py reads cookies["csrftoken"] and echoes it as
     # X-CSRFToken. A separate token fetch would be inventing work.
-    check("S1 csrftoken travels as a COOKIE, not a separate field",
+    check("W1 csrftoken travels as a COOKIE, not a separate field",
           sc.CSRF_COOKIE == "csrftoken"
           and sc.CSRF_COOKIE in {c["name"] for c in SIGNED_IN})
     body_p = sc.build_payload("ads_x", SIGNED_IN, "UA/1.0")
-    check("S2 ...so the token reaches the vault inside cookie_json",
+    check("W2 ...so the token reaches the vault inside cookie_json",
           body_p["cookie_json"].get("csrftoken") is not None)
-    check("S3 the payload carries all three: cookies, token, user agent",
+    check("W3 the payload carries all three: cookies, token, user agent",
           body_p["cookie_json"] and body_p["cookie_json"].get("csrftoken")
           and body_p["user_agent"] == "UA/1.0")
     # A jar with no csrftoken still syncs (reads work) but must be flagged.
     fn3 = src[src.index("def sync_one"):src.index("def main")]
-    check("S4 a missing csrftoken warns rather than refusing (reads still work)",
+    check("W4 a missing csrftoken warns rather than refusing (reads still work)",
           "no csrftoken" in fn3 and "CSRF_COOKIE in names" in fn3)
 
     print("\nGROUP M - multi-profile / multi-platform (the operator's plan)")
@@ -303,18 +303,26 @@ def main():
           "PROXY WRITE FAILED" in fnx)
 
     print("\nGROUP Y - proxy assignment stays stable as profiles grow")
-    rows = [{"user_id": "b", "name": "p2"}, {"user_id": "a", "name": "p1"}]
+    # This used to rebuild the pairing inside the test with zip+sorted, which
+    # proved that zip and sorted work and nothing about this file. It now calls
+    # the real allocator — and the behaviour it asserts changed with it: the
+    # map is STICKY, not positional. See GROUP W.
     pool = [{"proxy_address": "9.9.9.9", "port": 1, "username": "u",
              "password": "p", "valid": True},
             {"proxy_address": "1.1.1.1", "port": 2, "username": "u",
              "password": "p", "valid": True}]
-    # Sorted on BOTH sides, so the pairing is reproducible rather than
-    # dependent on the order the APIs happened to return things in.
-    paired = list(zip(sorted(rows, key=lambda r: r["user_id"]),
-                      sorted(pool, key=lambda q: (q["proxy_address"], q["port"]))))
-    check("Y1 pairing is by sorted position, so it repeats exactly",
-          [(r["user_id"], q["proxy_address"]) for r, q in paired]
-          == [("a", "1.1.1.1"), ("b", "9.9.9.9")])
+    rows = [{"user_id": "b", "name": "p2"}, {"user_id": "a", "name": "p1"}]
+    first = ap.plan_assignments(rows, pool, 2)[0]
+    # Feed the result back in as the profiles' current config: a second run
+    # must be a no-op, or every run silently moves accounts.
+    settled = [{"user_id": r["user_id"], "name": r["name"],
+                "user_proxy_config": {"proxy_host": q["proxy_address"],
+                                      "proxy_port": str(q["port"])}}
+               for r, q in first]
+    second = ap.plan_assignments(settled, pool, 2)[0]
+    check("Y1 re-running the allocator changes nothing",
+          [(r["user_id"], q["proxy_address"]) for r, q in first]
+          == [(r["user_id"], q["proxy_address"]) for r, q in second])
     check("Y2 an unchanged profile is detected and skipped",
           ap.already_assigned(
               {"user_proxy_config": {"proxy_host": "1.2.3.4",
@@ -327,8 +335,10 @@ def main():
               WS))
     # Wrapping around would give two profiles one exit IP, defeating the point.
     asrc = open("adspower/assign_proxies.py", encoding="utf-8").read()
-    check("Y4 fewer proxies than profiles is REFUSED, never wrapped",
-          "REFUSED" in asrc and "will not wrap around" in asrc)
+    check("Y4 more profiles than the pool can hold is REFUSED",
+          "REFUSED" in asrc and "would have nowhere to" in asrc)
+    check("Y4b ...and it never stacks a third account on one IP",
+          "will NOT stack a third account" in asrc)
     check("Y5 invalid webshare proxies are filtered out before assigning",
           'p.get("valid")' in asrc)
 
@@ -443,6 +453,77 @@ def main():
           sc.platform_of("pinterest-fr") == sc.platform_of("pinterest") == "pinterest")
     check("C13 the payload's platform follows the group, not a constant",
           sc.build_payload("p", [], "UA", "etsy")["platform"] == "etsy")
+
+    print("\nGROUP W — sharing an exit IP, and never moving anyone")
+    # Operator's call 2026-08-20: up to TWO profiles per proxy. The thing that
+    # flags an account is one ACCOUNT seen from two IPs; two different accounts
+    # from one IP is what every household looks like. Two is the ceiling.
+    def _p(host, port, cc="US"):
+        return {"proxy_address": host, "port": port, "username": "u",
+                "password": "w", "country_code": cc, "valid": True}
+
+    def _r(uid, host=None, port=None):
+        row = {"user_id": uid, "name": uid}
+        if host:
+            row["user_proxy_config"] = {"proxy_host": host,
+                                        "proxy_port": str(port)}
+        return row
+
+    pool3 = [_p("1.1.1.1", 1), _p("2.2.2.2", 2), _p("3.3.3.3", 3)]
+
+    pairs, un, usage = ap.plan_assignments([_r(f"p{i}") for i in range(6)],
+                                           pool3, 2)
+    got = [(r["user_id"], q["proxy_address"]) for r, q in pairs]
+    check("W1 six profiles fit on three proxies at 2 each",
+          not un and len(pairs) == 6)
+    # Spread BEFORE doubling. `i // 2` would also be stable and would double up
+    # the first proxies while the last sat idle.
+    check("W2 every proxy is used once before any is used twice",
+          got == [("p0", "1.1.1.1"), ("p1", "2.2.2.2"), ("p2", "3.3.3.3"),
+                  ("p3", "1.1.1.1"), ("p4", "2.2.2.2"), ("p5", "3.3.3.3")], got)
+    check("W3 no proxy carries more than the cap",
+          max(usage.values()) == 2)
+
+    pairs, un, _ = ap.plan_assignments([_r(f"p{i}") for i in range(7)], pool3, 2)
+    check("W4 a seventh profile is REFUSED, never stacked three deep",
+          [r["user_id"] for r in un] == ["p6"] and len(pairs) == 6)
+
+    _, un1, usage1 = ap.plan_assignments([_r(f"p{i}") for i in range(3)],
+                                         pool3, 1)
+    check("W5 --max-share 1 restores one IP per account",
+          not un1 and max(usage1.values()) == 1)
+
+    # THE REGRESSION THAT MATTERED. Pairing by sorted position was stable only
+    # as long as the sort was — and AdsPower user_ids are random strings, so a
+    # new profile can sort into the MIDDLE and shift every profile after it
+    # onto a different proxy. Silently moving live accounts is the exact thing
+    # this file exists to prevent.
+    settled = [_r("p0", "1.1.1.1", 1), _r("p1", "2.2.2.2", 2)]
+    pairs, _, _ = ap.plan_assignments([_r("aaa")] + settled, pool3, 2)
+    placed = {r["user_id"]: q["proxy_address"] for r, q in pairs}
+    check("W6 a NEW profile sorting first does not move the settled ones",
+          placed["p0"] == "1.1.1.1" and placed["p1"] == "2.2.2.2", placed)
+    check("W7 ...and it takes the least-used proxy instead",
+          placed["aaa"] == "3.3.3.3", placed)
+
+    # A proxy Webshare has dropped is not in the pool, so its profile is
+    # re-placed rather than left pointing at a dead address.
+    pairs, _, _ = ap.plan_assignments([_r("gone", "9.9.9.9", 9)], pool3, 2)
+    check("W8 a profile on a proxy that left the pool is re-placed",
+          pairs[0][1]["proxy_address"] in {"1.1.1.1", "2.2.2.2", "3.3.3.3"})
+
+    # Running twice must produce the same map, or every run is a move.
+    twice = [ap.plan_assignments([_r(f"p{i}") for i in range(5)], pool3, 2)[0]
+             for _ in range(2)]
+    check("W9 the same inputs produce the same map, every time",
+          [(r["user_id"], q["proxy_address"]) for r, q in twice[0]]
+          == [(r["user_id"], q["proxy_address"]) for r, q in twice[1]])
+
+    check("W10 the cap is a ceiling the flag cannot raise",
+          ap.MAX_PROFILES_PER_PROXY == 2
+          and "outside" in asrc and "1..{MAX_PROFILES_PER_PROXY}" in asrc)
+    check("W11 sharing is reported to the operator, never silent",
+          "carrying" in asrc and "household" in asrc)
 
     print("\nGROUP K — the keys, and where they are read from")
     import keys as kmod  # noqa: E402

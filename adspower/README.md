@@ -201,21 +201,68 @@ this direction possible; if that ever changes, Webshare has to become the
 source of truth instead and the two sides need reconciling.
 
 ```bash
-export ADS_API_KEY=... WEBSHARE_API=...
 python3 assign_proxies.py --dry-run   # show the map, change nothing
 python3 assign_proxies.py             # apply, then run sync_cookies.py
 ```
 
-**Pairing is by sorted position** — profiles by `user_id`, proxies by
-(address, port) — so it repeats exactly and adding a profile does not reshuffle
-the others. A profile whose exit IP changes between runs looks like a hijacked
-account, which is why this is not round-robin or random.
+**The map is sticky.** A profile that already has a proxy still in the pool
+keeps it — always, no exceptions. Only profiles with no proxy (or one Webshare
+has dropped) get placed, and they go to the least-used proxy, ties broken by
+(host, port) so the result repeats exactly.
 
-⚠️ Removing a proxy from the Webshare pool *does* reshuffle everything after
-it. `--dry-run` prints the whole map; check it when the pool has shrunk.
+Nothing that has an exit IP is ever handed a different one: not when a profile
+is added, not when the pool grows, not when it shrinks.
 
-⚠️ **Fewer proxies than profiles is refused, not wrapped.** Two profiles
-sharing an exit IP defeats the separation the proxies are for.
+> An earlier version paired by **sorted position** — profiles by `user_id`,
+> proxies by (address, port). That is stable only as long as the sort is, and
+> AdsPower `user_id`s are random strings: a new profile could sort into the
+> *middle* and shift every profile after it onto a different proxy. Silently
+> moving live accounts is the one thing this file exists to prevent. Position
+> pairing was right when no profile had a proxy yet; now that they do, what
+> they already have is the authority.
+
+### ⚠️ Up to TWO profiles may share one exit IP
+
+`MAX_PROFILES_PER_PROXY = 2`. Operator's call, 2026-08-20.
+
+The asymmetry is the whole reason this is safe:
+
+| | reads as |
+|---|---|
+| one **account** seen from two IPs | a stolen session — the thing that gets you banned |
+| two **accounts** seen from one IP | a household, an office, a shared wifi |
+
+Pinterest cannot treat the second as fraud without banning families. It can and
+does treat the first as compromise. Sharing an IP between two *different*
+accounts is therefore cheap; replaying one account's cookies from a second
+address is not, and remains impossible here — the proxy lives in the profile's
+own hash beside its cookies.
+
+**Two is a ceiling, not a default to tune upward.** Three, five, ten accounts
+on one residential-looking address is a farm and the correlation is trivial to
+see. `--max-share` can only *lower* it; `--max-share 3` is refused.
+
+What it costs: the two profiles sharing an address can be leased at the same
+time, so that IP can carry double the request rate of a single-account one.
+Acceptable at this volume — a run is 3–38s and a few dozen requests — and the
+first thing to reconsider if Pinterest ever starts answering 429.
+
+What it buys, at 6 US proxies:
+
+```
+--max-share 1      6 US accounts    (what it was)
+--max-share 2     12 US accounts    (what it is)
+```
+
+Profiles are spread one-per-proxy before any proxy is doubled, so a pool that
+comfortably fits never shares at all. Every run prints how many IPs are
+carrying two, so sharing is never something you find out about later.
+
+⚠️ **More profiles than the pool can hold is refused, never stacked deeper.**
+`--partial` assigns what fits and leaves the rest with **no** proxy — safe,
+because they exit from the host, and the browser and the scraper still agree.
+Note the vault will not lease a profile without a proxy (`REQUIRE_PROXY`), so
+those profiles are parked, not silently exposed.
 
 ⚠️ A proxy removed in AdsPower **clears** the vault's copy. Leaving a stale one
 would keep the scraper exiting from an IP the browser no longer uses — invisible

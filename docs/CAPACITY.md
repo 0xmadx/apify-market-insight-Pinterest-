@@ -139,8 +139,27 @@ address they were never born behind. **A smaller pool delays a run; an
 unproxied identity risks the account.** The refusal is a skip, not an eviction,
 so the profile stays visible in `python -m src.status` with the reason attached.
 
-Every profile added from here needs a proxy *before* its first login. Buying
-accounts without buying proxies does not grow this number.
+Every profile added from here needs a proxy *before* its first login — but not
+a proxy of its own. Since 2026-08-20 **two profiles may share one exit IP**
+(`MAX_PROFILES_PER_PROXY`, operator's call), so the ceiling is:
+
+```
+6 US proxies x 2 = 12 concurrent US accounts
+```
+
+That is the cheap way to grow this number, and it is cheap because of an
+asymmetry: one ACCOUNT seen from two IPs reads as a stolen session, while two
+different accounts from one IP reads as a household. Pinterest cannot treat the
+second as fraud without banning families.
+
+Two is a ceiling, not a starting point — three or more on one
+residential-looking address is a farm. Profiles are spread one-per-proxy before
+any proxy is doubled, so a pool that comfortably fits never shares.
+
+The cost is concentration, not identity: two profiles sharing an address can be
+leased at once, so that IP can carry double the request rate. At 3-38s per run
+that is fine, and it is the first thing to revisit if 429s ever appear — which
+they never have in this project.
 
 ### A crash does NOT ban an account
 

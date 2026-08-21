@@ -14,23 +14,25 @@ was never born on.
 
 THE PAIRING MUST BE STABLE, and that is the whole design constraint. A profile
 whose exit IP changes between runs looks like a hijacked account — worse than
-having no proxy. So the assignment is by **sorted position**, not round-robin
-from a counter and not random:
+having no proxy. So the assignment is **sticky**:
 
-    profiles sorted by user_id  x  proxies sorted by (address, port)
+    1. a profile that already has a proxy still in the pool KEEPS it
+    2. everything left over goes to the least-used proxy, ties by (host, port)
 
-Same inputs always produce the same pairing. Adding a profile at the end does
-not reshuffle the ones before it; adding a proxy does not either, as long as
-the pool only grows.
+Nothing that already has an exit IP is ever given a different one — not when a
+profile is added, not when the pool grows, not when it shrinks. (An earlier
+version paired by sorted position, which was stable only as long as the sort
+was: AdsPower user_ids are random, so a new profile could sort into the middle
+and shift every profile after it onto a different proxy.)
 
-⚠️ REMOVING a proxy from the Webshare pool DOES reshuffle everything after it.
-That is unavoidable with positional pairing and is why `--dry-run` prints the
-whole map: check it before applying when the pool has shrunk.
+⚠️ UP TO TWO PROFILES MAY SHARE AN EXIT IP (`MAX_PROFILES_PER_PROXY`).
+The danger is one ACCOUNT seen from two IPs, not two accounts from one IP —
+the latter is every household and office. Two is where that stops being
+believable, so it is a ceiling and `--max-share` can only tighten it.
 
-⚠️ FEWER PROXIES THAN PROFILES is refused, not wrapped around. Two profiles
-sharing an exit IP defeats the point of separate identities, and silently
-doubling up is exactly the kind of plausible-looking wrong state this codebase
-refuses elsewhere.
+⚠️ MORE PROFILES THAN THE POOL CAN HOLD is refused, never stacked deeper.
+`--partial` assigns what fits and leaves the rest with NO proxy, which is safe:
+they exit from the host, and the browser and the scraper still agree.
 
     python3 assign_proxies.py --dry-run     # show the map, change nothing
     python3 assign_proxies.py               # apply it
@@ -53,6 +55,22 @@ DEFAULT_GROUP = "pinterest"
 # must agree, or the cookies and the exit IP disagree about where the user
 # is, which is the one thing this whole setup exists to avoid.
 DEFAULT_COUNTRY = "US"
+# How many profiles may sit behind ONE exit IP. Operator's call, 2026-08-20.
+#
+# The thing that gets an account flagged is ONE ACCOUNT seen from two IPs — its
+# cookies replayed from an address they were not born behind. The reverse, two
+# DIFFERENT accounts from one IP, is what every household and office looks
+# like, and Pinterest cannot treat it as fraud without banning families.
+#
+# 2 is where that stops being true. Three, five, ten accounts on one
+# residential-looking address is a farm, and the correlation is trivial to see.
+# So this is a hard ceiling, not a default to tune upward.
+#
+# What it costs: the two profiles sharing an IP can be leased at the same time,
+# so that address can carry double the request rate of a single-account one.
+# Acceptable at this volume (a run is 3-38s and a few dozen requests), and the
+# first thing to reconsider if Pinterest ever starts answering with 429s.
+MAX_PROFILES_PER_PROXY = 2
 # Two-letter suffixes only. "pinterest-fr" declares a French group; a longer
 # suffix ("pinterest-backup") is a name, not a country, and falls through to
 # --country / the US default rather than being guessed at.
@@ -149,6 +167,60 @@ def country_of(host, proxies):
     return None
 
 
+def proxy_key(p):
+    """Identity of a proxy as (host, port). Port is stringified because
+    AdsPower stores it as a string and Webshare returns an int."""
+    return (p["proxy_address"], str(p["port"]))
+
+
+def plan_assignments(rows, proxies, max_share=MAX_PROFILES_PER_PROXY):
+    """Decide which proxy each profile gets. Pure — no API calls, so testable.
+
+    Two rules, in this order, and the order is the whole design:
+
+    1. **STICKY.** A profile that already points at a proxy still in the pool
+       KEEPS it. Nothing that has an exit IP ever gets a different one.
+    2. **LEAST-USED FIRST** for everything left over, ties broken by
+       (host, port) so the result is reproducible.
+
+    Sticky-first replaces the old pairing-by-sorted-position, which was stable
+    only as long as the sorted order was. AdsPower user_ids are random strings,
+    so a NEW profile could sort into the middle and shift every profile after
+    it onto a different proxy — silently moving live accounts, which is exactly
+    what this file exists to prevent. Position pairing was the right call when
+    no profile had a proxy yet; now that they do, what they have is the
+    authority.
+
+    Returns (pairs, unassignable, usage).
+    """
+    by_key = {proxy_key(p): p for p in proxies}
+    usage = {proxy_key(p): 0 for p in proxies}
+
+    pairs, pending = [], []
+    for row in rows:
+        cfg = row.get("user_proxy_config") or {}
+        key = (cfg.get("proxy_host"), str(cfg.get("proxy_port")))
+        if key in by_key and usage[key] < max_share:
+            usage[key] += 1
+            pairs.append((row, by_key[key]))
+        else:
+            pending.append(row)
+
+    unassignable = []
+    for row in pending:
+        free = sorted((k for k, n in usage.items() if n < max_share),
+                      key=lambda k: (usage[k], k))
+        if not free:
+            unassignable.append(row)
+            continue
+        usage[free[0]] += 1
+        pairs.append((row, by_key[free[0]]))
+
+    order = {id(r): i for i, r in enumerate(rows)}
+    pairs.sort(key=lambda rp: order[id(rp[0])])
+    return pairs, unassignable, usage
+
+
 def proxy_config(p):
     """A Webshare row -> AdsPower's `user_proxy_config`."""
     return {
@@ -189,12 +261,18 @@ def main():
                          "the account's cookies, language and history were all "
                          "born in one country, and an exit IP in another is "
                          "the exact mismatch this setup exists to prevent.")
+    ap.add_argument("--max-share", type=int, default=MAX_PROFILES_PER_PROXY,
+                    dest="max_share",
+                    help=f"how many profiles may share one exit IP (default "
+                         f"{MAX_PROFILES_PER_PROXY}, hard maximum "
+                         f"{MAX_PROFILES_PER_PROXY}). Two different accounts "
+                         f"from one address is a household; three or more is a "
+                         f"farm. Lower it to 1 for one IP per account.")
     ap.add_argument("--partial", action="store_true",
-                    help="when there are fewer proxies than profiles, assign "
-                         "the ones that fit and leave the rest WITHOUT a proxy "
-                         "instead of refusing. Never shares a proxy between two "
-                         "profiles — the leftovers exit from the host, which is "
-                         "what they already do today.")
+                    help="when even --max-share cannot cover every profile, "
+                         "assign the ones that fit and leave the rest WITHOUT "
+                         "a proxy instead of refusing. The leftovers exit from "
+                         "the host, which is what they already do today.")
     ap.add_argument("--no-sync", action="store_true",
                     help="do NOT refresh the vault afterwards. By default a "
                          "change is synced immediately, because while "
@@ -204,6 +282,17 @@ def main():
     ap.add_argument("--dry-run", action="store_true",
                     help="print the pairing, write nothing")
     args = ap.parse_args()
+
+    # A ceiling, not a default. Anyone can ask for FEWER profiles per IP; the
+    # flag exists to tighten the rule, never to loosen it past what was
+    # reasoned about. A flag that can raise its own maximum is not a limit.
+    if not 1 <= args.max_share <= MAX_PROFILES_PER_PROXY:
+        print(f"REFUSED: --max-share {args.max_share} is outside "
+              f"1..{MAX_PROFILES_PER_PROXY}. Two different accounts behind one "
+              f"address is what a household looks like and Pinterest cannot "
+              f"treat it as fraud; three or more on one residential-looking IP "
+              f"is a farm, and correlating them is trivial.", file=sys.stderr)
+        return 2
 
     # The group name is the authority on country when it carries a suffix. A
     # flag that disagrees with it is a mistake, not an override — the two ways
@@ -251,37 +340,48 @@ def main():
     if not rows:
         print("no profiles — nothing to do (a real answer, not an error)")
         return 0
-    unassigned = []
-    if len(proxies) < len(rows) and args.partial:
-        # SAFE, and categorically different from wrapping: the leftover
-        # profiles get NOTHING rather than a shared IP. A profile with no proxy
-        # exits from the host, which is still coherent — its browser and its
-        # scraper agree, because both use that host. What is never allowed is
-        # two profiles pointing at one proxy.
-        unassigned = rows[len(proxies):]
-        rows = rows[:len(proxies)]
-
-    if len(proxies) < len(rows):
-        # Wrapping around would give two profiles one exit IP, which defeats
-        # the separation the proxies are FOR.
+    if not proxies:
         where = f" in {args.country}" if args.country else ""
-        print(f"\nREFUSED: {len(rows)} profiles but only {len(proxies)} valid "
-              f"proxies{where}. Two profiles sharing an exit IP defeats the "
-              f"point of separate identities, so this will not wrap around. "
-              f"Buy {len(rows) - len(proxies)} more{where}, or move profiles "
-              f"out of the group.\n"
-              f"Do NOT reach for --country '' to make the numbers work: an "
-              f"account signed in from one country exiting through another is "
-              f"a worse signal than no proxy at all.\n"
-              f"Pass --partial to assign the {len(proxies)} that DO fit and "
-              f"leave the rest without one — safe, because they exit from "
-              f"the host, which is what they do today.", file=sys.stderr)
+        print(f"\nREFUSED: no valid proxies{where} at all — there is nothing to "
+              f"assign.", file=sys.stderr)
         return 1
 
+    pairs, unassigned, usage = plan_assignments(rows, proxies, args.max_share)
+
+    if unassigned and not args.partial:
+        where = f" in {args.country}" if args.country else ""
+        capacity = len(proxies) * args.max_share
+        print(f"\nREFUSED: {len(rows)} profiles but only {len(proxies)} valid "
+              f"proxies{where}, which hold {capacity} at {args.max_share} "
+              f"profiles per exit IP. {len(unassigned)} would have nowhere to "
+              f"go.\n"
+              f"This will NOT stack a third account on an IP: two different "
+              f"accounts from one address is a household, three or more is a "
+              f"farm, and the correlation is trivial to see.\n"
+              f"Buy {-(-len(unassigned) // args.max_share)} more{where}, move "
+              f"profiles out of the group, or pass --partial to assign the "
+              f"{len(pairs)} that fit and leave the rest with NO proxy — safe, "
+              f"because they exit from the host, which is what they do today.\n"
+              f"Do NOT reach for --country '' to make the numbers work: an "
+              f"account signed in from one country exiting through another is "
+              f"a worse signal than no proxy at all.", file=sys.stderr)
+        return 1
+
+    shared = sum(1 for n in usage.values() if n > 1)
+    if shared:
+        # Never silent. The operator asked for sharing; they should still see
+        # exactly how much of it they got, every run.
+        print(f"  ({shared} exit IP(s) carrying {args.max_share} profiles each "
+              f"— two different accounts per address, which is what a household "
+              f"looks like)")
+
     changed = 0
-    for row, p in zip(rows, proxies):
+    for row, p in pairs:
         name = row.get("name") or row["user_id"]
-        where = f"{p['proxy_address']}:{p['port']} {p.get('country_code', '??')}"
+        sharers = usage[proxy_key(p)]
+        tag = f" ×{sharers}" if sharers > 1 else ""
+        where = (f"{p['proxy_address']}:{p['port']} "
+                 f"{p.get('country_code', '??')}{tag}")
         if already_assigned(row, p):
             print(f"  {name:22} = {where}   (unchanged)")
             continue
