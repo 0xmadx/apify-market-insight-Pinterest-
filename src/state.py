@@ -3,8 +3,14 @@
 Two things live here, both in Redis so they survive across Apify runs (an actor's
 own filesystem does not):
 
-    seen:{platform}:{scope}      HASH  record_id -> "fingerprint|ts|fields_sig"
-    watermark:{platform}:{scope} STRING  a cursor/date the scraper defines
+    seen:{platform}:{tenant}:{scope}      HASH  id -> "fingerprint|ts|sig"
+    watermark:{platform}:{tenant}:{scope} STRING  a cursor the scraper defines
+
+**{tenant} is Config.DEDUP_SCOPE**, and leaving it out was a real bug. The
+seen-set records what has already been DELIVERED, which is a per-customer fact;
+without the tenant every customer on the shared vault suppressed every other
+customer's results for SEEN_TTL (7 days). The response cache is shared on
+purpose — sharing an answer is free — but sharing a delivery receipt is not.
 
 **Why a fingerprint and not just an id.** A Pinterest record is not immutable — a
 pin seen last week has different save and impression counts today. Keying dedup
@@ -66,7 +72,11 @@ class RunState:
         self._warned = set()
 
     def _key(self, scope):
-        return f"seen:{self.config.PLATFORM}:{scope}"
+        return f"seen:{self.config.PLATFORM}:{self.config.DEDUP_SCOPE}:{scope}"
+
+    def _watermark_key(self, scope):
+        return (f"watermark:{self.config.PLATFORM}:"
+                f"{self.config.DEDUP_SCOPE}:{scope}")
 
     # ------------------------------------------------------------- dedup
 
@@ -142,11 +152,11 @@ class RunState:
 
     def get_watermark(self, scope: str):
         """The cursor/date the last run reached, or None on a first run."""
-        return self.r.get(f"watermark:{self.config.PLATFORM}:{scope}")
+        return self.r.get(self._watermark_key(scope))
 
     def set_watermark(self, scope: str, value: str):
         """Only ever move this forward, and only after the data behind it landed."""
-        self.r.set(f"watermark:{self.config.PLATFORM}:{scope}", str(value))
+        self.r.set(self._watermark_key(scope), str(value))
 
     # ------------------------------------------------------------ admin
 
@@ -162,5 +172,5 @@ class RunState:
     def reset(self, scope: str):
         """Forget everything about a scope, forcing a full re-pull next run."""
         removed = self.r.delete(self._key(scope))
-        self.r.delete(f"watermark:{self.config.PLATFORM}:{scope}")
+        self.r.delete(self._watermark_key(scope))
         print(f"[state] reset scope '{scope}' ({removed} key(s) dropped)")

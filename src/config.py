@@ -96,6 +96,31 @@ class Config:
     REQUIRE_PROXY: bool = os.environ.get("REQUIRE_PROXY", "1") not in (
         "0", "false", "False", "no", "")
 
+    # ---- who the incremental state belongs to ----------------------------
+
+    # THE SEEN-SET IS PER CUSTOMER. THE CACHE IS NOT. That asymmetry is the
+    # whole point and it is easy to get backwards:
+    #
+    #   response cache   SHARED is the economics. Two customers asking the same
+    #                    question in the same hour should cost Pinterest one
+    #                    request, not two. Sharing an ANSWER is free.
+    #   seen-set         SHARED is a product bug. It records what has already
+    #                    been DELIVERED, and delivery is per customer.
+    #
+    # Measured 2026-08-20 in the container rehearsal: a second radar run
+    # reported `pushed 0 · skipped 11 already held`. On the marketplace that is
+    # customer B paying for an empty dataset because customer A ran the same
+    # operation first — and SEEN_TTL is 7 days, so it would stay empty for a
+    # week and look exactly like a broken actor.
+    #
+    # `APIFY_USER_ID` is set by the platform on every cloud run. Falling back to
+    # "local" rather than to a shared bucket is deliberate: an unidentified
+    # tenant gets its own namespace, so the failure mode of not knowing who is
+    # asking is a duplicate delivery, never a silent empty one.
+    DEDUP_SCOPE: str = (os.environ.get("DEDUP_SCOPE")
+                        or os.environ.get("APIFY_USER_ID")
+                        or "local")
+
     # ---- not pulling old data -------------------------------------------
 
     # How long before an already-collected record is worth re-reading. Pinterest

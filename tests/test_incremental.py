@@ -251,6 +251,57 @@ def main():
     check("_demographics DOES use it, and says it was measured safe",
           "get_item" in dsrc and "MEASURED SAFE" in dsrc)
 
+    print("\nGROUP T — one customer must not empty another customer's dataset")
+    # FOUND 2026-08-20 in the container rehearsal, which reported
+    # `pushed 0 · skipped 11 already held` on a second run. The seen-set key was
+    # `seen:{platform}:{scope}` with no tenant in it, and on Apify every
+    # customer shares one Redis — so the second customer to ask a question got
+    # an EMPTY DATASET and paid for it, for up to SEEN_TTL (7 days).
+    #
+    # Not a wrong number. A missing one, which is worse here: a wrong number
+    # gets argued with, an empty dataset just reads as "this actor is broken".
+    alice = RunState(replace(base, PLATFORM=TEST_PLATFORM, DEDUP_SCOPE="alice"))
+    bob = RunState(replace(base, PLATFORM=TEST_PLATFORM, DEDUP_SCOPE="bob"))
+    for who in (alice, bob):
+        who.reset("radar")
+
+    rec = {"id": "spot-1", "growth": 12}
+    check("T1 a record is new to the first customer",
+          alice.is_new("radar", "spot-1", fingerprint(rec)))
+    alice.mark_seen("radar", [rec], id_key="id")
+    check("T2 ...and not new to that same customer again",
+          not alice.is_new("radar", "spot-1", fingerprint(rec)))
+    check("T3 ...but STILL new to a different customer",
+          bob.is_new("radar", "spot-1", fingerprint(rec)))
+
+    # Watermarks carry the same risk: a shared cursor would make one customer's
+    # progress skip another customer's history.
+    alice.set_watermark("radar", "2026-08-20")
+    check("T4 watermarks are per customer too",
+          alice.get_watermark("radar") == "2026-08-20"
+          and bob.get_watermark("radar") is None)
+
+    # Resetting one customer must not clear another's.
+    bob.mark_seen("radar", [rec], id_key="id")
+    alice.reset("radar")
+    check("T5 one customer's reset leaves the other's state intact",
+          alice.is_new("radar", "spot-1", fingerprint(rec))
+          and not bob.is_new("radar", "spot-1", fingerprint(rec)))
+
+    # The cache is the OPPOSITE and must stay that way: sharing an answer is
+    # the economics of the whole product. Only the delivery receipt is private.
+    shared_a = ResponseCache(replace(base, PLATFORM=TEST_PLATFORM,
+                                     DEDUP_SCOPE="alice"))
+    shared_b = ResponseCache(replace(base, PLATFORM=TEST_PLATFORM,
+                                     DEDUP_SCOPE="bob"))
+    check("T6 the response cache key does NOT split by customer",
+          shared_a._key("trends", "https://x/y", {"a": 1}, None)
+          == shared_b._key("trends", "https://x/y", {"a": 1}, None))
+
+    check("T7 an unidentified tenant gets its own bucket, not a shared one",
+          Config().DEDUP_SCOPE == "local")
+    bob.reset("radar")
+
     print("\nGROUP F — the fill lock must not survive a failed request")
     # FOUND BY probes/stress.py, 2026-08-20. `_store()` releases the fill lock,
     # and its own docstring claimed that happens "ALWAYS, hit or miss". It does

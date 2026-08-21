@@ -2,7 +2,10 @@
 .venv/
 storage/
 apify_storage/
-__pycache__/
+# `__pycache__/` alone matches only the ROOT one — Docker does not walk it
+# down the tree the way .gitignore does. Verified 2026-08-20: the built image
+# carried adspower/__pycache__ and src/__pycache__ with it.
+**/__pycache__
 *.pyc
 .git/
 
@@ -20,3 +23,11 @@ tests/
 api_sim.py
 run_local.sh
 *.md
+
+# Operator tooling for the machine that FILLS the vault — the AdsPower Local
+# API client, the Webshare proxy assigner, the systemd units. `src/` imports
+# none of it (checked: no `import adspower` anywhere) and the actor's CMD never
+# reaches it, so in the cloud image it is dead weight that also describes the
+# operator's own infrastructure. It belongs on the host that runs the browsers,
+# not inside the artefact shipped to Apify.
+adspower/
