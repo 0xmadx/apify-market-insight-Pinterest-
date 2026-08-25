@@ -31,6 +31,7 @@ Four audiences, four doors. Pick the one that matches why you opened this.
 | [BUILD-PLAN.md](BUILD-PLAN.md) | The phases, and the Phase-0 findings that shaped everything: what the wire returns that the docs under-describe. |
 | [DEPLOY.md](DEPLOY.md) | Rehearse locally (`../run_local.sh`), then push. The one open decision is a network-reachable Redis. |
 | [LAUNCH-READINESS.md](LAUNCH-READINESS.md) | **Is it shippable?** The 2026-08-20 review: four defects found (one a blocker that returned empty datasets to paying customers), what is still open, and the measured capacity behind the answer. |
+| [SESSION_SOURCES.md](SESSION_SOURCES.md) | which of the three session-source options (extension / AdsPower / stealth-browsers) is live, deferred, or ruled out — and what a fourth (Donut Browser) would need to prove |
 | [CAPACITY.md](CAPACITY.md) | **What actually breaks, measured.** Sustained load is ~5% of capacity; bursts are the only failure. Reproduce any of it with `python -m probes.stress`. |
 | [SCALING-DESIGN.md](SCALING-DESIGN.md) | **10 profiles serving 100 clients.** The cache stampede is the real ceiling, not the profile count — measured 8 clients, 8 identical fetches. Singleflight, lazy leasing, async jobs, fair share, with what ScraperAPI and Bright Data actually do. |
 | [SCALING.md](SCALING.md) | **What breaks first, and at what number.** Measured: concurrent capacity equals profile count. The seven levels in the order they fail, and the fix order — lazy leasing before buying accounts. |

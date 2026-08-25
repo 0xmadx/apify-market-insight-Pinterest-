@@ -124,6 +124,7 @@ docs/                      product docs + the reverse-engineering corpus
 | Doc | Purpose |
 |---|---|
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | ⭐ **start here** — the endpoint graph (nodes, edges, decision points), the 4-actor product, the shared-vault economics |
+| [docs/SESSION_SOURCES.md](docs/SESSION_SOURCES.md) | ⭐ **which writer fills the vault** — extension vs AdsPower vs stealth-browsers, what each costs, what's proven, what's deferred |
 | [docs/wire/07-API-REFERENCE.md](docs/wire/07-API-REFERENCE.md) | every endpoint, param, and measured limit |
 | [docs/wire/08-BUILD-GUIDE.md](docs/wire/08-BUILD-GUIDE.md) | call chains, normalisation rules, validation checklist |
 | [docs/API.md](docs/API.md) | ⭐ **the reference** — endpoint, all 45 inputs, every output field, errors, cost |
