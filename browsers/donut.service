@@ -52,3 +52,21 @@ TimeoutStopSec=20
 
 [Install]
 WantedBy=multi-user.target
+
+# ⚠️ THE LOCAL API IS OFF BY DEFAULT AND ITS TOKEN CANNOT BE SET HEADLESSLY.
+#
+# `app_settings.json` ships `api_enabled: false`, and while that flag can be
+# flipped in the file, the TOKEN cannot: the server reads an Argon2 + AES-GCM
+# encrypted `api_token.dat`, not the `api_token` field in settings (that field
+# is only what the GUI displays for copying). Writing a value there produces a
+# server that answers 403 to it — measured.
+#
+# So the token has to be generated once from the GUI. That is not the
+# imposition it first looks like: opening the GUI IS the job this tool is for
+# (a human logging an account in by hand), and WSLg puts a real window on the
+# Windows desktop from WSL:
+#
+#   cd ~/squashfs-root && ./AppRun --no-sandbox --disable-gpu
+#
+# Enable the API + copy the token there once, then this unit serves every run
+# after.
