@@ -1,0 +1,54 @@
+# Donut Browser, headless, as a service — the free stand-in for AdsPower.
+#
+# Deliberately the same shape as adspower/adspower.service, because it does the
+# same job: hold browser profiles a human logs into by hand, and expose a local
+# API so cookies can be pulled out afterwards. Only the binary differs.
+#
+# Install (the AppImage needs NO root; only this unit does):
+#   cd ~ && curl -sLO https://github.com/zhom/donutbrowser/releases/download/v0.29.6/Donut_0.29.6_amd64.AppImage
+#   chmod +x Donut_0.29.6_amd64.AppImage && ./Donut_0.29.6_amd64.AppImage --appimage-extract
+#   sudo cp browsers/donut.service /etc/systemd/system/
+#   sudo systemctl daemon-reload && sudo systemctl enable --now donut
+#
+# ⚠️ RUN VIA ./AppRun, NEVER usr/bin/donutbrowser DIRECTLY. Measured
+# 2026-08-25: the raw binary starts and then dies with
+#
+#   Unable to spawn a new child process: Failed to spawn child process
+#   "././/lib/x86_64-linux-gnu/webkit2gtk-4.1/WebKitNetworkProcess"
+#
+# because an extracted AppImage keeps WebKit's path relative to APPDIR, which
+# only AppRun sets. It fails ~1s in, after printing a page of harmless-looking
+# INFO lines, so it reads as a crash rather than a wiring mistake.
+[Unit]
+Description=Donut Browser (headless, local API)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=devy
+WorkingDirectory=/home/devy/squashfs-root
+
+# The same two flags AdsPower needs under WSL, for the same measured reasons:
+#   xvfb-run       the app needs a display even headless; without one it exits.
+#   --disable-gpu  the GPU process cannot initialise under WSL and Chromium
+#                  aborts, ~20s in, having printed nothing that looks fatal.
+ExecStart=/usr/bin/xvfb-run -a --server-args=-screen\x200\x201920x1080x24 \
+  /home/devy/squashfs-root/AppRun --no-sandbox --disable-gpu \
+  --disable-software-rasterizer --disable-dev-shm-usage
+
+# First start downloads Wayfern — ~939MB — before the API is fully useful.
+# A short TimeoutStartSec would kill it mid-download and retry forever, each
+# attempt discarding the partial file.
+TimeoutStartSec=1800
+
+# Without a service the process dies the moment the last WSL session closes,
+# which looks exactly like a crash but leaves a clean log. Measured: the first
+# manual run died at 181MB of 939MB for precisely this reason.
+Restart=on-failure
+RestartSec=10
+KillMode=mixed
+TimeoutStopSec=20
+
+[Install]
+WantedBy=multi-user.target
