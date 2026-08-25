@@ -31,3 +31,15 @@ run_local.sh
 # operator's own infrastructure. It belongs on the host that runs the browsers,
 # not inside the artefact shipped to Apify.
 adspower/
+
+# The AdsPower replacement under test on the `stealth-browsers` branch — a
+# browser farm that FILLS the vault. Same reasoning as adspower/: `src/`
+# never imports it (checked), the actor's CMD never reaches it, and it
+# belongs on the host that runs the browsers, not inside the artefact
+# shipped to Apify.
+#
+# Listed here BEFORE that branch merges, and it is not hypothetical:
+# Docker builds from the WORKING TREE, not from git, so the untracked
+# browsers/ left behind by a branch checkout was already being copied in —
+# a 497MB image measured at 649MB with a browser farm inside it.
+browsers/
