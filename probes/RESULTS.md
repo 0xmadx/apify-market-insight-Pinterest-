@@ -1,27 +1,27 @@
 # Endpoint probe — live results
 
-One small call per endpoint in [docs/wire/07-API-REFERENCE.md](../docs/wire/07-API-REFERENCE.md), run against profile `ads_k1fy47um` on 2026-08-20 19:56.
+One small call per endpoint in [docs/wire/07-API-REFERENCE.md](../docs/wire/07-API-REFERENCE.md), run against profile `ads_k1fy6dnh` on 2026-08-25 12:46.
 
 `OK` = 200 with a non-empty payload. `EMPTY` = 200 but nothing in it, which is a real answer and not a failure. `FAIL`/`API ERROR` = the endpoint refused.
 
 | § | Endpoint | Style | HTTP | Verdict | ms | Shape returned |
 |---|---|---|---|---|---|---|
-| 3.1 | latest_available_date — CALL THIS FIRST | B | 200 | **OK** | 0 | `{date: "2026-08-14"}` |
-| 3.2 | topics/featured — Trends in the spotlight | A | 200 | **OK** | 349 | `[5x {pins: [9x dict(6 keys)], description: "Embroidery gifts are stitching their way…", id: "25425957424843324` |
-| 3.3 | moment/available — Moments list | A | 200 | **OK** | 594 | `{moments: [13x "thanksgiving"], peaks: [13x dict(3 keys)], historical_peaks: [13x dict(3 keys)], moment_next_o` |
-| 3.4 | moment/metrics — Moment chart (only DAILY source) | A | 200 | **OK** | 566 | `{moments: [1x dict(3 keys)]}` |
-| 3.5 | editorial/content — Editors' Picks | A | 200 | **OK** | 621 | `[6x {pins: [6x dict(6 keys)], is_published: bool, body: "Could cross stitch be your new favorite …", id: "eaa3` |
-| 3.6 | shopping/product_categories — taxonomy | A | 200 | **OK** | 425 | `{categories: {1002: dict(5 keys), 1003: dict(4 keys), 1008: dict(5 keys), 1009: dict(5 keys), 1010: dict(5 key` |
-| 3.7 | product_categories/top — trending categories | A | 200 | **OK** | 639 | `{ordered_values: [19x dict(4 keys)], total_num_product_categories: int}` |
-| 3.8 | product_categories/metrics — sparklines | A | 200 | **OK** | 307 | `{values: [1x dict(3 keys)]}` |
-| 3.9 | product_categories/demographics — 3 sections in one | A | 200 | **OK** | 403 | `{product_category_distributions: {1408: dict(3 keys)}}` |
-| 3.10 | product_categories/top_products | A | 200 | **OK** | 563 | `{top_products: [33x dict(4 keys)]}` |
-| 3.12 | top_trends_filtered — keyword discovery | B | 200 | **OK** | 351 | `{values: [10x dict(9 keys)], endDate: "2026-08-14"}` |
-| 3.13 | metrics — keyword chart + forecast | B | 200 | **OK** | 306 | `[1x {has_prediction: bool, growth_rates: dict(3 keys), counts: [66x dict(5 keys)], term: "nails", hasPredictio` |
-| 3.14 | demographics — keyword audience | B | 200 | **OK** | 339 | `{term_distributions: {nails: dict(2 keys)}}` |
-| 3.15 | related_terms — 5 related keywords | B | 200 | **OK** | 419 | `[5x {term: "family cartoon", counts: [53x int], hasPrediction: bool}]` |
-| 3.16 | term_images — Popular Pins (only POST) | B | 200 | **OK** | 1372 | `{family: [9x "https://i.pinimg.com/236x/21/23/73/21237…"]}` |
-| 3.17 | prefix_match — typeahead (case-sensitive) | B | 200 | **OK** | 476 | `[10x {term: "hallow", counts: [52x int]}]` |
+| 3.1 | latest_available_date — CALL THIS FIRST | B | 200 | **OK** | 0 | `{date: "2026-08-21"}` |
+| 3.2 | topics/featured — Trends in the spotlight | A | 200 | **OK** | 434 | `[5x {related_search_trends: [10x "mini clay figures"], interests: [1x "934876475639"], pins: [6x dict(6 keys)]` |
+| 3.3 | moment/available — Moments list | A | 200 | **OK** | 519 | `{moments: [13x "thanksgiving"], peaks: [13x dict(3 keys)], historical_peaks: [13x dict(3 keys)], moment_next_o` |
+| 3.4 | moment/metrics — Moment chart (only DAILY source) | A | 200 | **OK** | 747 | `{moments: [1x dict(3 keys)]}` |
+| 3.5 | editorial/content — Editors' Picks | A | 200 | **OK** | 775 | `[6x {end_date: "", is_ready_for_translation: bool, is_published: bool, regions: [3x "US"], pins: [6x dict(6 ke` |
+| 3.6 | shopping/product_categories — taxonomy | A | 200 | **OK** | 292 | `{categories: {1002: dict(5 keys), 1003: dict(4 keys), 1008: dict(5 keys), 1009: dict(5 keys), 1010: dict(5 key` |
+| 3.7 | product_categories/top — trending categories | A | 200 | **OK** | 415 | `{total_num_product_categories: int, ordered_values: [16x dict(4 keys)]}` |
+| 3.8 | product_categories/metrics — sparklines | A | 200 | **OK** | 517 | `{values: [1x dict(3 keys)]}` |
+| 3.9 | product_categories/demographics — 3 sections in one | A | 200 | **OK** | 332 | `{product_category_distributions: {1408: dict(3 keys)}}` |
+| 3.10 | product_categories/top_products | A | 200 | **OK** | 500 | `{top_products: [36x dict(4 keys)]}` |
+| 3.12 | top_trends_filtered — keyword discovery | B | 200 | **OK** | 355 | `{values: [10x dict(9 keys)], endDate: "2026-08-21"}` |
+| 3.13 | metrics — keyword chart + forecast | B | 200 | **OK** | 351 | `[1x {growth_rates: dict(3 keys), counts: [66x dict(5 keys)], has_prediction: bool, term: "nails", hasPredictio` |
+| 3.14 | demographics — keyword audience | B | 200 | **OK** | 274 | `{term_distributions: {nails: dict(2 keys)}}` |
+| 3.15 | related_terms — 5 related keywords | B | 200 | **OK** | 567 | `[5x {term: "family of three", counts: [53x int], hasPrediction: bool}]` |
+| 3.16 | term_images — Popular Pins (only POST) | B | 200 | **OK** | 260 | `{family: [9x "https://i.pinimg.com/236x/ac/5f/67/ac5f6…"]}` |
+| 3.17 | prefix_match — typeahead (case-sensitive) | B | 200 | **OK** | 471 | `[10x {term: "hallow", counts: [52x int]}]` |
 
 ## Not probed, with the reason
 

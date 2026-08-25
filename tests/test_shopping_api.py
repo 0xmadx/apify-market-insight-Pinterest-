@@ -76,8 +76,16 @@ def main():
     top_fix = fixture("3.7-*.json")
     if top_fix:
         n = len(parsers.parse_top_categories(top_fix)["categories"])
-        check("C2b fixture 3.7 row count matches EXPECTED_ROWS[1181]",
-              n == vocab.EXPECTED_ROWS["1181"], f"{n} vs {vocab.EXPECTED_ROWS['1181']}")
+        # NOT `== EXPECTED_ROWS["1181"]`. On 2026-08-25 the live vertical
+        # returned 16 where the doc recorded 19 — Pinterest's catalogue moved,
+        # nothing here did. `total_num_product_categories` is the response's
+        # OWN count, so comparing the parsed rows against it catches the thing
+        # this check is for (a parser silently dropping rows) without asserting
+        # a number Pinterest is free to change. EXPECTED_ROWS stays as recorded
+        # history; it is no longer a pass/fail gate.
+        stated = parsers.parse_top_categories(top_fix)["total_in_vertical"]
+        check("C2b the parser surfaces every row the response carried",
+              n == stated, f"parsed {n} vs response total {stated}")
         check("C2b 1181 is Fashion, not Home decor (doc #7 §4.3)",
               vocab.VERTICALS["1181"] == "Fashion", vocab.VERTICALS["1181"])
         check("C2b 1250 is Home decor — it returned 9 rows live",

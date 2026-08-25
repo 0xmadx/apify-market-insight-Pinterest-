@@ -7,51 +7,12 @@
     "data": {
       "product_category_distributions": {
         "1408": {
-          "summaries": [
-            {
-              "saves": {
-                "total": 0,
-                "percent_relative_volume": null,
-                "percent_growth": 0.63,
-                "lookback": 2
-              },
-              "outbound_clicks": {
-                "total": 0,
-                "percent_relative_volume": null,
-                "percent_growth": 0.84,
-                "lookback": 2
-              },
-              "engagement": {
-                "total": 0,
-                "percent_relative_volume": null,
-                "percent_growth": 0.71,
-                "lookback": 2
-              }
-            }
-          ],
-          "demographics": [
-            {
-              "age_distribution": {
-                "18-24": 0.08,
-                "25-34": 0.13,
-                "35-44": 0.13,
-                "45-49": 0.07,
-                "50-54": 0.08,
-                "55-64": 0.22,
-                "65+": 0.32
-              },
-              "gender_distribution": {
-                "male": 0.07,
-                "female": 0.82,
-                "unspecified": 0.11
-              }
-            }
-          ],
           "related_search_trends": [
             "fall halloween decor",
             "halloween decor",
             "vintage halloween",
             "halloween stuff",
+            "diy halloween",
             "diy halloween decorations",
             "fall halloween",
             "halloween crafts",
@@ -59,12 +20,51 @@
             "halloween ideas",
             "ornament ideas",
             "fall decor",
-            "halloween diy",
             "ornament crafts",
             "diy christmas ornaments",
             "pumpkin",
             "xmas decor",
             "halloween fun"
+          ],
+          "summaries": [
+            {
+              "outbound_clicks": {
+                "lookback": 2,
+                "percent_growth": 0.72,
+                "percent_relative_volume": null,
+                "total": 0
+              },
+              "engagement": {
+                "lookback": 2,
+                "percent_growth": 0.64,
+                "percent_relative_volume": null,
+                "total": 0
+              },
+              "saves": {
+                "lookback": 2,
+                "percent_growth": 0.53,
+                "percent_relative_volume": null,
+                "total": 0
+              }
+            }
+          ],
+          "demographics": [
+            {
+              "gender_distribution": {
+                "male": 0.07,
+                "female": 0.82,
+                "unspecified": 0.11
+              },
+              "age_distribution": {
+                "18-24": 0.08,
+                "25-34": 0.13,
+                "35-44": 0.14,
+                "45-49": 0.07,
+                "50-54": 0.08,
+                "55-64": 0.22,
+                "65+": 0.31
+              }
+            }
           ]
         }
       }
@@ -84,10 +84,10 @@
           "1408"
         ],
         "event": "OUTBOUND_CLICK",
-        "end_date": "2026-08-14"
+        "end_date": "2026-08-21"
       }
     }
   },
-  "request_identifier": "1217049827722008",
+  "request_identifier": "8306052350777277",
   "_client_context": "<stripped: account PII, see strip_pii()>"
 }

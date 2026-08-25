@@ -104,10 +104,15 @@ Everything is a module run from the repo root. The venv is local to this repo.
 - Shopping `top/`+`metrics/` take `age_bucket`/`gender` in the **enum** form
   (`AGE_25_34`/`FEMALE`) while keyword discovery takes numeric codes for the
   same bands — one customer input, two wire schemes (scenario C6).
-- **7 verticals carry trend data, not 3** — settled on the wire 2026-08-19, all
-  seven counts exact (19/9/6/3/2/2/1). Doc #5's table says 3 and is WRONG; #7
-  §4.3 is right. The four extra (DIY, Arts & entertainment, Wedding, Media) are
-  hidden from Pinterest's UI — exactly what a UI-reading competitor cannot see.
+- **7 verticals carry trend data, not 3** — settled on the wire 2026-08-19.
+  Doc #5's table says 3 and is WRONG; #7 §4.3 is right. The four extra (DIY,
+  Arts & entertainment, Wedding, Media) are hidden from Pinterest's UI —
+  exactly what a UI-reading competitor cannot see.
+  ⚠️ The per-vertical row counts recorded that day (19/9/6/3/2/2/1) are a
+  SNAPSHOT, not a constant: 1181 returned **16** on 2026-08-25. Three tests
+  asserted 19 and failed on a day nothing in this repo changed. Use the
+  response's own `total_num_product_categories`; `vocab.EXPECTED_ROWS` is
+  recorded history, not a gate.
 - Moment Age/Gender IS reachable (§3.18, captured): a persisted GraphQL POST
   with `queryHash` + `X-Pinterest-GraphQL-Name`, handler `trends/moments/
   [momentId].js` — page-specific, NOT the global `trends/index.js`. The hash
