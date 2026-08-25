@@ -9,6 +9,7 @@ inherited from this project's parent: **a plausible wrong number, not a crash**.
 
 | Question | Read |
 |---|---|
+| **Which browser tool are we using, and for what** | `docs/OPERATING_MODEL.md` — **read this before answering anything about AdsPower vs stealth-browsers**; there are four jobs, not one, and the answer differs per job |
 | What do I build first, and in what order | `docs/BUILD-PLAN.md` — **Phase 0 (run + mine all endpoints) precedes any code** |
 | How do the 20 endpoints link, what is the product | `docs/ARCHITECTURE.md` |
 | Exact params, limits, measured traps | `docs/wire/07-API-REFERENCE.md` |
@@ -38,16 +39,24 @@ Everything is a module run from the repo root. The venv is local to this repo.
 
 ## Sessions — the part that must not be broken
 
-- Cookies come from a **Redis vault** filled by the operator's Chrome extension
-  (via the Go cookie server in the *parent* Etsy repo). This repo only READS the
-  vault. `src/vault.py`, `src/session.py`: use, never extend, without the
-  operator saying so.
-- **No Playwright, no headless browsers, ever.** Transport is `curl_cffi`
-  impersonating Chrome (TLS/JA3). The real browser earns the session; the code
-  replays it.
-- The extension only beacons **while a Pinterest tab is open**. Profiles go
-  stale after 15 min without one — `src.status` reporting 0/2 usable usually
-  means "no tab open", not an outage.
+- Cookies come from a **Redis vault**. Three writers can fill it — the Chrome
+  extension, AdsPower, or `browsers/keepalive.py` — and the read side does not
+  care which. `docs/OPERATING_MODEL.md` says which is live; `src/vault.py`,
+  `src/session.py`: use, never extend, without the operator saying so.
+- **The ACTOR never runs a browser.** Transport is `curl_cffi` impersonating
+  Chrome (TLS/JA3). The real browser earns the session; the actor replays it.
+  `.dockerignore` keeps `browsers/` and `adspower/` out of the image, which is
+  why it is ~497MB and not a Playwright base.
+
+  ⚠️ This used to read "no Playwright, no headless browsers, **ever**", and
+  that is now false for half the system. The *vault writer* on GCP is a
+  headless Chromium (`browsers/`, branch `stealth-browsers`) — deliberately, to
+  stop paying AdsPower. The rule was always about the actor's cost and attack
+  surface, not a ban on browsers anywhere in the project.
+- Freshness depends on the writer. The extension beacons only **while a
+  Pinterest tab is open**; `keepalive.py` runs on a 5-minute timer. Either way
+  a profile older than `PROFILE_MAX_AGE` (900s) is evicted, so `src.status`
+  reporting 0 usable usually means "the writer stopped", not an outage.
 - `classify()` verdicts: `malformed` = our request is wrong (missing
   PWS-handler header — never evict a profile over it) · `auth_expired` = fix is
   in Chrome · `rate_limited` = back off blindly (this API has NO rate-limit
