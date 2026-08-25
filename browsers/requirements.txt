@@ -1,0 +1,14 @@
+# Deps for the keepalive farm only — NOT for the Apify actor.
+#
+# The actor's requirements.txt is deliberately separate and stays browser-free:
+# `.dockerignore` excludes browsers/, and the actor image runs on
+# apify/actor-python:3.12 at ~497MB precisely because no browser is in it.
+# Merging these two files would put a Chromium download into every actor build.
+#
+# Pinned to what was actually measured on 2026-08-20 (browsers/README.md
+# Stages 1-5), not to "latest": DrissionPage 4.1.1.4 is the version whose
+# auto_port/set_user_data_path interaction is documented in keepalive.py, and
+# patchright is what supplies the Chromium build that drivers.browser_path()
+# finds. An unpinned upgrade could change either without warning.
+DrissionPage==4.1.1.4
+patchright==1.62.1
