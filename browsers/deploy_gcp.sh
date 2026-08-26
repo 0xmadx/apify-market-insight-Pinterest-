@@ -136,15 +136,15 @@ cat <<EOF
 
 ==> provisioned.
 
-STILL REQUIRED — this host has no sessions yet:
+NOTHING TO COPY. keepalive reads its profile list from the VAULT, so this
+host needs no identities.json and no scp. Whatever is in Redis is what it
+refreshes — including an account you add tomorrow, on the next 5-minute cycle.
 
-  browsers/identities.json is NOT in the repo (gitignored: it holds live
-  Pinterest sessions and proxy passwords in clear text). Copy it from the
-  machine that has AdsPower:
-
-    gcloud compute scp browsers/identities.json <vm>:$REPO_DIR/browsers/
-
-  Until it exists, every pass writes nothing and says so.
+  Adding account #9 later:
+    1. create the profile + assign its proxy, on the desktop
+    2. log in by hand
+    3. adspower/sync_cookies.py  ->  writes it to the vault
+    4. this host picks it up automatically. No file moves.
 
 Then verify:
   systemctl list-timers keepalive.timer

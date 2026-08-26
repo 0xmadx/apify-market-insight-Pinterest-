@@ -173,6 +173,41 @@ def refresh(record, headless=True, url=PINTEREST):
         result.seconds = round(time.monotonic() - started, 1)
 
 
+def load_from_vault(vault, platform):
+    """The profile list, read from the vault instead of a file.
+
+    THE POINT: adding an account should not mean copying a file to a server.
+    With `--file`, a new profile reaches the vault (AdsPower syncs it) and then
+    sits there unnoticed, because this service was reading a snapshot taken
+    before it existed — so every new account required re-exporting
+    identities.json and scp-ing it to the VM, by hand, forever.
+
+    The vault already holds the same three fields `identities.json` carries, so
+    reading them straight from it makes a new account appear on the next cycle
+    with nothing copied.
+
+    Profiles with no cookies or no user agent are skipped rather than attempted:
+    a half-written profile is a real state (someone is mid-setup), not an error,
+    and launching a browser for it would waste ~8s to discover that.
+    """
+    records = []
+    for profile_id in sorted(vault.r.smembers(f"valid_profiles:{platform}") or []):
+        data = vault.r.hgetall(f"cookie:{platform}:{profile_id}")
+        if not data:
+            continue
+        try:
+            cookies = json.loads(data.get("cookies_json") or "{}")
+        except (ValueError, TypeError):
+            cookies = {}
+        if not cookies or not data.get("user_agent"):
+            continue
+        records.append({"profile_id": profile_id,
+                        "cookies": cookies,
+                        "user_agent": data.get("user_agent"),
+                        "proxy": data.get("proxy")})
+    return records
+
+
 def write(vault, platform, record, cookies):
     """Store the identity. Mirrors browsers/identities.py:restore()."""
     profile_id = record["profile_id"]
@@ -209,7 +244,14 @@ def one_pass(records, vault, platform, headless=True, log=print):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--file", default="browsers/identities.json")
+    ap.add_argument("--file", default=None,
+                    help="read the profile list from this exported file "
+                         "instead of the vault. The vault is the default "
+                         "because a file is a SNAPSHOT: a newly added account "
+                         "reaches the vault and then sits unnoticed until "
+                         "someone re-exports and copies the file to the host. "
+                         "Use this only to run against identities the vault "
+                         "does not have — a restore, or a test.")
     ap.add_argument("--once", action="store_true",
                     help="one pass and exit, instead of looping")
     ap.add_argument("--interval", type=int, default=300,
@@ -226,12 +268,25 @@ def main():
     from .bench import load
 
     config = Config()
-    records = load(args.file)
+    vault = SessionVault(config)
+    try:
+        vault.r.ping()
+    except Exception as exc:
+        print(f"cannot reach Redis — {exc}", file=sys.stderr)
+        return 2
+
+    if args.file:
+        records = load(args.file)
+        source = args.file
+    else:
+        records = load_from_vault(vault, config.PLATFORM)
+        source = f"the vault ({config.PLATFORM})"
     if args.profiles:
         records = records[:args.profiles]
     if not records:
-        print(f"no identities in {args.file} — run "
-              f"`python -m browsers.identities export`", file=sys.stderr)
+        print(f"no usable identities in {source}.\n"
+              f"A profile needs cookies AND a user agent to be refreshed; one "
+              f"with neither has not been signed into yet.", file=sys.stderr)
         return 2
 
     if args.interval >= config.PROFILE_MAX_AGE:
@@ -243,14 +298,7 @@ def main():
               f"stale between passes.", file=sys.stderr)
         return 2
 
-    vault = SessionVault(config)
-    try:
-        vault.r.ping()
-    except Exception as exc:
-        print(f"cannot reach Redis — {exc}", file=sys.stderr)
-        return 2
-
-    print(f"{len(records)} profile(s) · platform {config.PLATFORM} · "
+    print(f"{len(records)} profile(s) from {source} · "
           f"{'one pass' if args.once else f'every {args.interval}s'}")
 
     while True:
