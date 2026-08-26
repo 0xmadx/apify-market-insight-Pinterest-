@@ -83,9 +83,38 @@ def profile_shape(profile_id):
     }
 
 
-def build_script(profile_id):
+def platform_for(user_agent):
+    """`navigator.platform` that AGREES with the user agent.
+
+    Derived, never varied per profile. It is not a diversity knob — it is a
+    consistency one, and the two are opposites here: the UA already declares an
+    OS, so platform has exactly one correct value and any other is a
+    contradiction a single line of JavaScript can catch.
+
+    Measured on Linux 2026-08-25, before this existed: profiles served a
+    Windows UA and Windows-only ANGLE/Direct3D11 WebGL strings while
+    `navigator.platform` answered "Linux x86_64". Invisible on the Windows
+    laptop that built them; guaranteed on the GCP VM they are headed for.
+    """
+    ua = user_agent or ""
+    if "Windows" in ua:
+        return "Win32"
+    if "Macintosh" in ua or "Mac OS X" in ua:
+        return "MacIntel"
+    if "Android" in ua:
+        return "Linux armv8l"
+    if "iPhone" in ua or "iPad" in ua:
+        return "iPhone"
+    # Unknown UA: leave the real value alone rather than assert a wrong one.
+    return None
+
+
+def build_script(profile_id, user_agent=None):
     """The init script for one profile."""
     shape = profile_shape(profile_id)
+    platform = platform_for(user_agent)
+    platform_js = (
+        f"define(navigator, 'platform', '{platform}');" if platform else "")
     return _TEMPLATE.format(
         vendor=shape["webgl_vendor"].replace("'", ""),
         renderer=shape["webgl_renderer"].replace("'", ""),
@@ -94,6 +123,7 @@ def build_script(profile_id):
         width=shape["width"],
         height=shape["height"],
         seed=shape["canvas_seed"],
+        platform_js=platform_js,
     )
 
 
@@ -131,6 +161,7 @@ _TEMPLATE = """
 
   define(navigator, 'hardwareConcurrency', {cores});
   define(navigator, 'deviceMemory', {memory});
+  {platform_js}
   define(screen, 'width', {width});
   define(screen, 'height', {height});
   define(screen, 'availWidth', {width});

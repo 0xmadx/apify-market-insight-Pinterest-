@@ -69,6 +69,35 @@ echo "==> chromium (no root for the browser itself)"
 sudo "$VENV_DIR/bin/python" -m patchright install-deps chromium || \
   echo "    ⚠️  install-deps failed — if Chromium exits instantly later, this is why"
 
+echo "==> windows fonts"
+# NOT cosmetic, and not optional. Profiles carry a Windows user agent and
+# Windows-only ANGLE/Direct3D11 WebGL strings; a box without Windows fonts
+# answers font-metric probes with the SAME fallback width for every family,
+# which is a Linux tell sitting underneath a Windows claim.
+#
+# Measured 2026-08-25. Before: 432,374,376,376,376,413,376,376 (3 distinct of
+# 8 — everything falling back). After: 432,374,464,436,506,413,413,410, which
+# is byte-identical to what a real Windows host produced. Installing the real
+# fonts is strictly better than spoofing the measurement: nothing is being
+# lied about, so there is nothing to catch.
+if sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq \
+     ttf-mscorefonts-installer fontconfig 2>/dev/null; then
+  fc-cache -f >/dev/null 2>&1 || true
+  echo "    installed"
+else
+  cat <<'FONTS'
+    ⚠️  ttf-mscorefonts-installer unavailable (it needs the contrib repo and
+        an interactive EULA accept). Fall back to copying the real files:
+
+          scp /c/Windows/Fonts/{arial,georgia,tahoma,verdana,times,comic,impact,cour}.ttf \
+              <vm>:~/.local/share/fonts/
+          ssh <vm> fc-cache -f
+
+        Verify with:  python -m browsers.fingerprint --driver drission
+        Fewer than ~5 distinct font widths means they are still missing.
+FONTS
+fi
+
 echo "==> secrets at $ENV_DIR"
 sudo mkdir -p "$ENV_DIR"
 sudo tee "$ENV_DIR/env" >/dev/null <<EOF

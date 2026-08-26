@@ -129,7 +129,7 @@ def refresh(record, headless=True, url=PINTEREST):
         browser = Chromium(options)
         page = browser.latest_tab
         page.run_cdp("Page.addScriptToEvaluateOnNewDocument",
-                     source=build_script(record["profile_id"]))
+                     source=build_script(record["profile_id"], record["user_agent"]))
 
         # RULE 4, and it comes first: everything after this would report
         # success over a direct connection.

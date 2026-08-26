@@ -200,12 +200,19 @@ def collect_drission(record, vary=True, headless=True):
     from DrissionPage import Chromium, ChromiumOptions
 
     from .fingerprint_patch import build_script
+    from .drivers import browser_path
     from .proxy_relay import ProxyRelay
 
     relay = None
     browser = None
     try:
         options = ChromiumOptions().auto_port()
+        # Same discovery keepalive.py uses. Without it this module cannot run on
+        # a machine with no system Chrome — which is every Linux host, i.e. the
+        # only place the fingerprint actually needs measuring.
+        chrome = browser_path()
+        if chrome:
+            options.set_browser_path(chrome)
         options.set_user_agent(record["user_agent"])
         options.set_argument("--no-sandbox")
         if headless:
@@ -218,7 +225,7 @@ def collect_drission(record, vary=True, headless=True):
         page = browser.latest_tab
         if vary:
             page.run_cdp("Page.addScriptToEvaluateOnNewDocument",
-                         source=build_script(record["profile_id"]))
+                         source=build_script(record["profile_id"], record["user_agent"]))
         page.get("about:blank")
         return page.run_js("return (" + FP_SCRIPT + ")()"), None
     except Exception as exc:
