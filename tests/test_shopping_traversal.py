@@ -84,7 +84,15 @@ def main():
     scraper = ShoppingScraper(client, region="US", drill_top_n=2, log=lambda *a: None)
     records = list(scraper.run(verticals=["1181"]))
 
-    check("E2 yields one record per trending category", len(records) == 19, len(records))
+    # NOT `== 19`. That number is Pinterest's, and on 2026-08-25 vertical 1181
+    # returned 16 where it had returned 19 — the fixture's own
+    # `total_num_product_categories` moved with it. The invariant that actually
+    # matters is that the traversal emits one record per category the response
+    # carried, i.e. drops none; a hardcoded count tests Pinterest's catalogue
+    # instead, and fails on a day nothing in this repo changed.
+    expected = len(client.top["ordered_values"])
+    check("E2 yields one record per trending category, dropping none",
+          len(records) == expected, f"{len(records)} vs {expected}")
 
     paths = [c[0] for c in client.calls]
     check("E2 taxonomy fetched exactly once",
@@ -106,8 +114,9 @@ def main():
     check("A4 end_date came from bootstrap, not today()",
           top_call["end_date"] == "2026-08-14")
     met_call = next(d for p, d in client.calls if "/metrics/" in p)
-    check("E2 metrics asked for all 19 categories in one array",
-          len(met_call["product_category_ids"]) == 19)
+    check("E2 metrics asked for EVERY category in one array, not a subset",
+          len(met_call["product_category_ids"]) == expected,
+          f"{len(met_call['product_category_ids'])} vs {expected}")
     # The default was Pinterest's own 180 (their detail page draws its dashed
     # band from 180 + a 28-day forecast). Deliberately changed to 730: one year
     # shows each season exactly ONCE, which cannot distinguish a seasonal

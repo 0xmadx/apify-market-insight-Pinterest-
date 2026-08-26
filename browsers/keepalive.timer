@@ -1,0 +1,23 @@
+# Fires keepalive.service. The interval is a SAFETY constraint, not a taste:
+# the vault evicts a profile whose heartbeat is older than PROFILE_MAX_AGE
+# (900s), so the gap between passes must stay comfortably under that.
+#
+# 5 minutes gives a 3x margin. A pass that overruns is reported by the service
+# itself ("the pass took longer than the interval"), which is the signal to
+# either split the profiles across hosts or raise both numbers together.
+[Unit]
+Description=Refresh Pinterest sessions every 5 minutes
+Requires=keepalive.service
+
+[Timer]
+# Not OnBootSec=0: the network and any proxy relay need a moment, and a pass
+# that starts before them fails every profile and writes nothing.
+OnBootSec=2min
+OnUnitActiveSec=5min
+AccuracySec=30s
+# A missed window (host asleep, reboot) runs immediately rather than waiting
+# out the full interval with a pool that is already stale.
+Persistent=true
+
+[Install]
+WantedBy=timers.target

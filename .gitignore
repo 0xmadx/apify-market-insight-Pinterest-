@@ -4,4 +4,17 @@ storage/
 apify_storage/
 __pycache__/
 *.pyc
+# Scratch files (_geo.py and friends). This rule exists because four of them
+# were swept into commits by `git add -A`.
 _*.py
+# ...but it also matched __init__.py, silently leaving browsers/ untracked as a
+# package. It kept working via PEP 420 namespace packages, which is luck rather
+# than design — the file existed locally and would simply be absent in a fresh
+# clone, so the gap could not surface on the machine that created it.
+!**/__init__.py
+
+# Live Pinterest sessions and proxy passwords, in clear text.
+browsers/*.json
+# Per-profile Chromium user-data: cookies, history, cache. Same sensitivity as
+# identities.json, and hundreds of megabytes besides.
+browsers/profiles/

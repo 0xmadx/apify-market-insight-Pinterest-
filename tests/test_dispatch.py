@@ -421,9 +421,21 @@ def main():
     # it only walks top-level and _meta keys; nested fields need real asserts.
     mrec, _c = drive({"operation": "moments", "drill": False})
     peaks = [r.data.get("next_peak") for r in mrec if r.data.get("next_peak")]
+    # The promise is PAIRING — wherever an epoch is emitted, a readable date is
+    # emitted beside it — NOT that every moment has every field. This used to
+    # require `takeoff_at` on all of them, and broke on 2026-08-25 when
+    # `valentines day` came back with `takeoff_at: None`. Pinterest simply has
+    # no takeoff for that moment; the parser reporting None is the codebase's
+    # own "absent is not zero" rule working correctly, so the test was wrong,
+    # not the code. Demanding a field Pinterest may omit would have pushed
+    # someone toward fabricating one.
     check("a moment's peak carries a readable date beside the epoch",
-          bool(peaks) and all(p.get("peak_date") and p.get("takeoff_at")
-                              for p in peaks), len(peaks))
+          bool(peaks) and all(p.get("peak_date") for p in peaks), len(peaks))
+    check("...and takeoff is paired too WHEN Pinterest supplies one",
+          all(bool(p.get("takeoff_date")) == bool(p.get("takeoff_at"))
+              for p in peaks),
+          [(p.get("takeoff_at"), p.get("takeoff_date")) for p in peaks
+           if bool(p.get("takeoff_date")) != bool(p.get("takeoff_at"))])
     check("...formatted YYYY-MM-DD",
           all(len(p["peak_date"]) == 10 and p["peak_date"][4] == "-"
               for p in peaks), peaks[0].get("peak_date") if peaks else None)
