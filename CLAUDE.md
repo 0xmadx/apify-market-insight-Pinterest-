@@ -9,6 +9,7 @@ inherited from this project's parent: **a plausible wrong number, not a crash**.
 
 | Question | Read |
 |---|---|
+| **I need to deploy this** | `DEPLOY.md` at the repo root — the ordered runbook, credentials, and the traps |
 | **Which browser tool are we using, and for what** | `docs/OPERATING_MODEL.md` — **read this before answering anything about AdsPower vs stealth-browsers**; there are four jobs, not one, and the answer differs per job |
 | What do I build first, and in what order | `docs/BUILD-PLAN.md` — **Phase 0 (run + mine all endpoints) precedes any code** |
 | How do the 20 endpoints link, what is the product | `docs/ARCHITECTURE.md` |
@@ -173,8 +174,24 @@ controls are wired: `endDate` (which date) and `dateRange` (how much history).
 on Linux 3.12 against a NON-localhost Redis (the Upstash shape), exit 0,
 records on disk. Nothing in the project is unverified any more.
 
-**Remaining:** only the Apify cloud itself, which needs a network-reachable
-Redis (`docs/DEPLOY.md`). The operator is running local for now.
+**The free session farm is built and measured** (`browsers/`, on `main`):
+`keepalive.py` replaces `adspower/sync_cookies.py` — per-profile fingerprints
+(3/3 distinct and stable), authenticated proxies via a local relay, headless
+Linux with no root, 7 profiles in 53s. It reads the profile list from the
+VAULT, not a file, so adding an account copies nothing anywhere.
+
+**This project has its own Redis** since 2026-08-25 — `pinterest-redis` on
+6380, migrated out of the Etsy project's shared container with
+`browsers/migrate_vault.py`. `cookie:etsy*` was left untouched.
+
+**Remaining:** the Apify cloud and the GCP VM, both of which need the vault on
+a network-reachable Redis (Upstash). **`DEPLOY.md` at the repo root is the
+ordered runbook** — read it before deploying anything; `docs/DEPLOY.md` holds
+the reasoning behind it.
+
+Three tools do the deploying, none of which existed before 2026-08-25:
+`ship.sh` (gated push to Apify or GCP), `browsers/deploy_gcp.sh` (provisions a
+VM), `browsers/migrate_vault.py` (moves the vault between Redises).
 
 ## Working style that has paid off
 

@@ -17,7 +17,7 @@ question you have to re-derive each time.
 | **Proxy auth** | n/a (human's own connection) | ✅ native | ⚠️ Chromium can't carry credentials; `browsers/proxy_relay.py` adds them |
 | **Headless / server** | n/a (needs a human's Chrome open) | ✅ (`adspower/*.service`) | ✅ proven on WSL, no root (`browsers/keepalive.service`) |
 | **Login automation** | n/a (human logs in) | manual, in the AdsPower UI | ❌ not built (Stage 4, deferred — see below) |
-| **Code** | none — the Etsy repo's extension, shared vault schema only | `adspower/` | `browsers/` (branch `stealth-browsers`) |
+| **Code** | none — the Etsy repo's extension, shared vault schema only | `adspower/` | `browsers/` (on `main` since 2026-08-25) |
 
 ## Why the extension isn't a real option here
 

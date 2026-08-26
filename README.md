@@ -123,6 +123,7 @@ docs/                      product docs + the reverse-engineering corpus
 
 | Doc | Purpose |
 |---|---|
+| [DEPLOY.md](DEPLOY.md) | ⭐ **deploying it** — the ordered runbook: GitHub, Upstash, Apify, GCP, and what bites |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | ⭐ **start here** — the endpoint graph (nodes, edges, decision points), the 4-actor product, the shared-vault economics |
 | [docs/SESSION_SOURCES.md](docs/SESSION_SOURCES.md) | ⭐ **which writer fills the vault** — extension vs AdsPower vs stealth-browsers, what each costs, what's proven, what's deferred |
 | [docs/wire/07-API-REFERENCE.md](docs/wire/07-API-REFERENCE.md) | every endpoint, param, and measured limit |

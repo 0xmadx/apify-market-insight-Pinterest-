@@ -34,7 +34,7 @@ separate namespace, the same shape as an Apify container reaching Upstash.
 ```
 
 **Proven this way on 2026-08-19** (Ubuntu WSL, `REDIS_URL` pointed at
-`172.31.144.1:6379`, never localhost):
+`172.31.144.1:6380`, never localhost):
 
 - all 509 offline checks pass on Linux — the code had only ever run on Windows
 - the actor boots the real Apify SDK, reads `INPUT.json`, and reaches a
@@ -159,7 +159,7 @@ but the credential reaches them by different paths, on purpose.
 
 ### The one thing that differs in the cloud
 
-A local run reaches Redis at `localhost:6379`; a Docker run reaches it at
+A local run reaches Redis at `localhost:6380` (container `pinterest-redis`); a Docker run reaches it at
 `host.docker.internal`. **An Apify container can reach neither.** That is the §1
 blocker, and it is the only reason a cloud run can fail while every local check
 passes. If a deployed run hangs or reports an empty vault, suspect `REDIS_URL`
@@ -246,7 +246,7 @@ and "works in the cloud".
 
 ```bash
 docker build -t pinterest-actor .
-docker run --rm   -e REDIS_URL="redis://host.docker.internal:6379/0"   -e VAULT_PLATFORM=pinterest -e VAULT_WAIT_TIMEOUT=30   -v "<abs-path>/_actorstore:/usr/src/app/storage"   --add-host=host.docker.internal:host-gateway   pinterest-actor
+docker run --rm   -e REDIS_URL="redis://host.docker.internal:6380/0"   -e VAULT_PLATFORM=pinterest -e VAULT_WAIT_TIMEOUT=30   -v "<abs-path>/_actorstore:/usr/src/app/storage"   --add-host=host.docker.internal:host-gateway   pinterest-actor
 ```
 
 Put the input at `_actorstore/key_value_stores/default/INPUT.json`. Results:
