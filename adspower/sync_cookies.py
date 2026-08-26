@@ -380,8 +380,54 @@ def build_payload(profile_id, cookies, user_agent, platform="pinterest"):
     }
 
 
+def write_cookies(profile_id, cookies, user_agent, redis_url, dry_run=False,
+                  platform="pinterest"):
+    """Write the identity straight to Redis, no Go server in the middle.
+
+    WHY THIS EXISTS. `post_to_vault` posts to the Go cookie server, which lives
+    in the *Etsy* project and writes to whichever Redis IT was configured for.
+    That was fine while both projects shared one Redis. The moment this project
+    got its own (`pinterest-redis`, port 6380), it stopped being fine in the
+    worst way: `write_proxy` writes DIRECTLY and would land in the new vault,
+    while cookies went through the Go server into the OLD one. Half an identity
+    in each — and `src.status` would show a profile with a proxy and no
+    cookies, which reads as "never signed in" rather than "split brain".
+
+    Same fields, same key schema, same shape `browsers/identities.py:restore()`
+    already writes. Nothing new is invented here; the hop is simply removed.
+    """
+    if dry_run:
+        return f"DRY-RUN would write {len(cookies)} cookies"
+    try:
+        import redis
+
+        r = redis.Redis.from_url(redis_url, decode_responses=True,
+                                 socket_connect_timeout=3)
+        # `cookie_json` is keyed by NAME, collapsing a cookie that exists on
+        # several domains to one entry — byte-identical to what the extension
+        # and the Go server produce, so all three writers agree.
+        jar = {c["name"]: c["value"] for c in cookies}
+        r.hset(f"cookie:{platform}:{profile_id}", mapping={
+            "cookies_json": json.dumps(jar),
+            "cookie": "; ".join(f"{n}={v}" for n, v in jar.items()),
+            "user_agent": user_agent or "",
+            "last_updated": str(time.time()),
+            "is_valid": "1",
+        })
+        r.sadd(f"valid_profiles:{platform}", profile_id)
+        return f"{len(jar)} cookies -> redis"
+    except Exception as exc:
+        return f"COOKIE WRITE FAILED ({type(exc).__name__})"
+
+
 def post_to_vault(profile_id, cookies, user_agent, dry_run=False,
                   platform="pinterest"):
+    """The original path, through the Etsy project's Go cookie server.
+
+    Kept because the Chrome extension still uses that server and this is the
+    only code that proves the payload shape stays compatible with it. Not used
+    by the sync any more — see write_cookies().
+    """
     body = build_payload(profile_id, cookies, user_agent, platform)
     if dry_run:
         return f"DRY-RUN would POST {len(body['cookie_json'])} cookies"
@@ -453,7 +499,9 @@ def sync_one(row, key, dry_run=False, ua_mode="auto",
         # earlier --with-ua run SURVIVES. Sending "" would not overwrite it
         # either, but sending a GUESS would — so we send nothing.
         ua = asyncio.run(read_user_agent(ws_url)) if started else ""
-        result = post_to_vault(profile_id, pin, ua, dry_run, platform)
+        # Direct, so cookies land in the SAME Redis write_proxy uses.
+        result = write_cookies(profile_id, pin, ua, redis_url, dry_run,
+                               platform)
         csrf = "" if CSRF_COOKIE in names else "  ⚠ no csrftoken — POSTs will fail"
         # After the cookies, never before: a proxy pointing at a profile with no
         # session would be a half-written identity.

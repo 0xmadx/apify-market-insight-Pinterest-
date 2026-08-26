@@ -18,3 +18,9 @@ browsers/*.json
 # Per-profile Chromium user-data: cookies, history, cache. Same sensitivity as
 # identities.json, and hundreds of megabytes besides.
 browsers/profiles/
+
+# Every .env variant, not just `.env`. A `.env.backup-premigration` was
+# committed on 2026-08-25 because the rule only matched the exact name — it
+# was a verbatim copy of .env, API keys included.
+.env*
+!.env.example
