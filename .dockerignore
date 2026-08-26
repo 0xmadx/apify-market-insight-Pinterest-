@@ -22,6 +22,7 @@ tests/
 .claude/
 api_sim.py
 run_local.sh
+ship.sh
 *.md
 
 # Operator tooling for the machine that FILLS the vault — the AdsPower Local
