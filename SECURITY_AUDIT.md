@@ -49,6 +49,22 @@ is not.
 
 **Verdict: safe to push.**
 
+## The near-miss that changed the ignore rule — 2026-08-25
+
+`.gitignore` said `.env`. Exact name only. So when the Redis migration made a
+safety copy called `.env.backup-premigration` — a verbatim copy, API keys
+included — `git add -A` staged it and it landed in a commit.
+
+Caught on the same turn, removed with `git rm --cached`, and the commit
+amended before anything was pushed. The full-history value scan above was
+re-run afterwards and stayed clean, and the only `.env*` ever committed is
+`.env.example`.
+
+The rule is now `.env*` with `!.env.example`, because the lesson is not "be
+careful with backups" — it is that **an ignore rule matching one exact
+filename protects one exact filename.** Any variant a future step invents
+(`.env.bak`, `.env.old`, `.env.20260825`) walks straight past it.
+
 ## If a future scan finds something
 
 Do **not** push and fix afterwards. A published commit is public the moment it
