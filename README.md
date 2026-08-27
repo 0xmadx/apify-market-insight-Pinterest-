@@ -29,6 +29,61 @@ honestly ·
 
 ---
 
+## What is in here, and where each part runs
+
+This repo holds three different things that never run on the same machine.
+Confusing them is the fastest way to get lost, so:
+
+| | Runs on | Who needs it | Ships to Apify |
+|---|---|---|---|
+| `src/` | **Apify** | everyone | ✅ **the only code that ships** |
+| `.actor/` | **Apify** | everyone | ✅ manifest + input schema |
+| `browsers/` | **a GCP VM** | whoever runs the session farm | ✗ |
+| `adspower/` | **the operator's laptop** | whoever logs accounts in | ✗ |
+| `probes/` `tests/` | anywhere, **before** a release | whoever changes the code | ✗ |
+| `docs/` | nowhere — it is the reference | everyone | ✗ |
+
+`src/` imports **none** of the others, and the image excludes them, so the
+actor cannot accidentally depend on operator tooling.
+[docs/VAULT_SEPARATION.md](docs/VAULT_SEPARATION.md) explains why that boundary
+is enforced rather than assumed.
+
+### The lab is not in this repo
+
+The **lab** is the operator's own machine: AdsPower with the logged-in profiles,
+and a local Redis container. Neither is code, neither is committed, and neither
+is needed to run or deploy the actor. `adspower/` is only the *client* that
+talks to it.
+
+That is the separation to keep straight:
+
+| | What it is | Where it lives |
+|---|---|---|
+| **the lab** | AdsPower + a local Redis. Where a human signs an account in | the operator's laptop, **not in git** |
+| **this repo** | all the code, docs and deploy tooling | GitHub, cloned anywhere |
+| **production** | Apify (the actor) + Upstash (the vault) + a GCP VM (keepalive) | the cloud |
+
+Sessions move lab → vault → actor. Code moves repo → production. The two flows
+meet only at the vault, which is why the actor never needs the lab and the lab
+never needs Apify.
+
+### Using this yourself
+
+Everything except the sessions is reproducible from this repo alone:
+
+```bash
+./preflight.sh        # what is missing on this machine
+./ship.sh check       # 16/16 live endpoints, then 551 offline checks
+./run_local.sh        # the real actor, locally, against a real vault
+```
+
+What you must bring is a **vault with a live Pinterest session in it** — that is
+the one thing no code here can create for you, by design.
+[DEPLOY.md](DEPLOY.md) is the ordered runbook; its first section is the
+deployment model, which is worth reading before any command.
+
+---
+
 ## Where we are
 
 **Phase 2 landed.** Eight AdsPower profiles, each on its own Webshare exit IP,
