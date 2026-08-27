@@ -94,6 +94,11 @@ class Result:
         self.cookies = {}
         self.exit_ip = None
         self.seconds = None
+        # "measured" once AdsPower's real fingerprint has been captured for
+        # this profile, "synthetic" while it is still the sha1(profile_id)
+        # shape. Recorded so a silent fallback is visible in the journal
+        # instead of being indistinguishable from the real thing.
+        self.fp_basis = "synthetic"
 
 
 def refresh(record, headless=True, url=PINTEREST):
@@ -105,6 +110,8 @@ def refresh(record, headless=True, url=PINTEREST):
     from .proxy_relay import ProxyRelay
 
     result = Result(record["profile_id"])
+    if record.get("fingerprint"):
+        result.fp_basis = "measured"
     started = time.monotonic()
     relay = None
     browser = None
@@ -129,7 +136,9 @@ def refresh(record, headless=True, url=PINTEREST):
         browser = Chromium(options)
         page = browser.latest_tab
         page.run_cdp("Page.addScriptToEvaluateOnNewDocument",
-                     source=build_script(record["profile_id"], record["user_agent"]))
+                     source=build_script(record["profile_id"],
+                                         record["user_agent"],
+                                         record.get("fingerprint")))
 
         # RULE 4, and it comes first: everything after this would report
         # success over a direct connection.
@@ -201,10 +210,20 @@ def load_from_vault(vault, platform):
             cookies = {}
         if not cookies or not data.get("user_agent"):
             continue
+        # AdsPower's real fingerprint, captured at login by
+        # `adspower/sync_cookies.py`. Absent for profiles synced before that
+        # existed, and absent is fine -- build_script falls back to the
+        # synthetic shape rather than refusing.
+        try:
+            measured = json.loads(data.get("fingerprint_json") or "null")
+        except (ValueError, TypeError):
+            measured = None
         records.append({"profile_id": profile_id,
                         "cookies": cookies,
                         "user_agent": data.get("user_agent"),
-                        "proxy": data.get("proxy")})
+                        "proxy": data.get("proxy"),
+                        "fingerprint": measured if isinstance(measured, dict)
+                                       else None})
     return records
 
 

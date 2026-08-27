@@ -568,6 +568,52 @@ def main():
     check("D3 rate limiter is a real pause, not a no-op",
           sc.RATE_LIMIT_SECONDS >= 1.0, sc.RATE_LIMIT_SECONDS)
 
+    print("")
+    print("GROUP FP — AdsPower's real fingerprint travels with the session")
+    from browsers.fingerprint_patch import build_script, profile_shape
+
+    syn = profile_shape("ads_t")
+    measured = {"webglVendor": "Google Inc. (NVIDIA)",
+                "webglRenderer": "ANGLE (NVIDIA GeForce RTX 4070)",
+                "hardwareConcurrency": 24, "deviceMemory": 8,
+                "timezone": "Europe/Madrid", "screen": "2560x1440x24x1"}
+    mea = profile_shape("ads_t", measured)
+    check("FP1 a measured GPU replaces the synthetic one",
+          mea["webgl_renderer"] != syn["webgl_renderer"]
+          and "RTX 4070" in mea["webgl_renderer"], mea["webgl_renderer"])
+    check("FP2 cores, memory, timezone and viewport all carry over",
+          (mea["cores"], mea["memory"], mea["timezone"],
+           mea["width"], mea["height"]) == (24, 8, "Europe/Madrid", 2560, 1440),
+          mea)
+    # The whole point: the device that keeps the session warm must match the
+    # one that signed in, so the script actually emitted has to carry it.
+    check("FP3 build_script emits the measured values, not the synthetic",
+          "RTX 4070" in build_script("ads_t", "UA", measured)
+          and "RTX 4070" not in build_script("ads_t", "UA", None))
+    # Canvas is noise from AdsPower's own seeded function. We can read the hash
+    # and cannot regenerate it, so copying it would be cargo-culting a number.
+    check("FP4 canvas seed is NOT copied — it cannot be reproduced",
+          mea["canvas_seed"] == syn["canvas_seed"])
+    # Absent is not zero, applied to fingerprints: a failed probe must fall
+    # back, never overwrite a working shape with an empty one.
+    junk = profile_shape("ads_t", {"webglVendor": "ERR:TypeError", "screen": "",
+                                   "hardwareConcurrency": None,
+                                   "deviceMemory": "not-a-number"})
+    check("FP5 ERR / empty / null / unparseable are ignored, not applied",
+          (junk["webgl_vendor"], junk["width"], junk["cores"], junk["memory"])
+          == (syn["webgl_vendor"], syn["width"], syn["cores"], syn["memory"]))
+    # Half a viewport is worse than none: a real width beside an invented
+    # height is a shape no machine has.
+    half = profile_shape("ads_t", {"screen": "2560"})
+    check("FP6 a half-parsed viewport is refused whole",
+          (half["width"], half["height"]) == (syn["width"], syn["height"]))
+    # Same invariant the user_agent wipe taught: a run that started no browser
+    # has nothing to say, and must not erase an earlier capture.
+    body = sc.write_cookies("ads_t", SIGNED_IN, "UA", "redis://localhost:6380/0",
+                            dry_run=True, fingerprint=None)
+    check("FP7 write_cookies accepts an absent fingerprint without crashing",
+          "DRY-RUN" in body, body)
+
     failed = [n for n, ok in checks if not ok]
     print(f"\n{len(checks) - len(failed)}/{len(checks)} checks passed")
     for name in failed:

@@ -64,12 +64,42 @@ CORES = [4, 6, 8, 12, 16]
 MEMORY = [4, 8, 8, 16, 16, 32]        # 8 and 16 weighted: they are the common ones
 
 
-def profile_shape(profile_id):
-    """The machine this profile claims to be. Deterministic from the id."""
+def _usable(value):
+    """A measured signal we can trust. Null, empty and the probe's own "ERR:"
+    marker all mean "not measured" — and a missing measurement must fall back
+    to the synthetic shape, never write an empty value over a working one."""
+    if value is None:
+        return False
+    text = str(value).strip()
+    return bool(text) and not text.startswith("ERR:")
+
+
+def profile_shape(profile_id, measured=None):
+    """The machine this profile claims to be.
+
+    Synthetic by default, derived from a hash of the profile id. When
+    `measured` is supplied it is the fingerprint CAPTURED FROM ADSPOWER at
+    login time, and it wins for every signal it actually carries.
+
+    WHY THIS MATTERS. The account signs in through AdsPower wearing AdsPower's
+    fingerprint. Without this, keepalive then re-presents those same cookies
+    every five minutes wearing a machine invented from sha1(profile_id) — a
+    different GPU, screen, core count and memory than the device that logged
+    in. The UA and exit IP travelled with the session; the hardware did not.
+    That is a device change on a live session, which is precisely the signal
+    the session layer exists to avoid.
+
+    CANVAS IS DELIBERATELY NOT CARRIED OVER. AdsPower perturbs it with a seeded
+    noise function; the probe can read the resulting hash but cannot reproduce
+    it without that function, so copying the value would be cargo-culting a
+    number we cannot regenerate. The synthetic per-profile seed stays — it is
+    stable per profile, which is what matters, even though it does not match
+    what AdsPower produced.
+    """
     digest = hashlib.sha1(f"fp::{profile_id}".encode()).digest()
     vendor, renderer = GPUS[digest[0] % len(GPUS)]
     width, height = VIEWPORTS[digest[1] % len(VIEWPORTS)]
-    return {
+    shape = {
         "webgl_vendor": vendor,
         "webgl_renderer": renderer,
         "width": width,
@@ -81,6 +111,33 @@ def profile_shape(profile_id):
         # to change the hash, too small to be visible or to break rendering.
         "canvas_seed": digest[5],
     }
+    if not measured:
+        return shape
+
+    if _usable(measured.get("webglVendor")):
+        shape["webgl_vendor"] = str(measured["webglVendor"])
+    if _usable(measured.get("webglRenderer")):
+        shape["webgl_renderer"] = str(measured["webglRenderer"])
+    if _usable(measured.get("timezone")):
+        shape["timezone"] = str(measured["timezone"])
+    for key, field in (("hardwareConcurrency", "cores"),
+                       ("deviceMemory", "memory")):
+        if _usable(measured.get(key)):
+            try:
+                shape[field] = int(measured[key])
+            except (TypeError, ValueError):
+                pass
+    # `screen` arrives as "WxHxdepthxdpr" from the probe. Take only the first
+    # two, and only if BOTH parse -- a half-applied viewport is worse than the
+    # synthetic one, because it pairs a real width with an invented height.
+    if _usable(measured.get("screen")):
+        parts = str(measured["screen"]).split("x")
+        if len(parts) >= 2:
+            try:
+                shape["width"], shape["height"] = int(parts[0]), int(parts[1])
+            except (TypeError, ValueError):
+                pass
+    return shape
 
 
 def platform_for(user_agent):
@@ -109,9 +166,13 @@ def platform_for(user_agent):
     return None
 
 
-def build_script(profile_id, user_agent=None):
-    """The init script for one profile."""
-    shape = profile_shape(profile_id)
+def build_script(profile_id, user_agent=None, measured=None):
+    """The init script for one profile.
+
+    `measured` is the fingerprint captured from AdsPower at login, if the vault
+    has one. Absent, the shape is synthetic -- see profile_shape().
+    """
+    shape = profile_shape(profile_id, measured)
     platform = platform_for(user_agent)
     platform_js = (
         f"define(navigator, 'platform', '{platform}');" if platform else "")
