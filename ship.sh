@@ -94,7 +94,24 @@ if [ "$TARGET" = "apify" ] || [ "$TARGET" = "all" ]; then
     [yY]*) echo "    bump \`version\` in .actor/actor.json first. Stopping." >&2; exit 1 ;;
   esac
   apify push
-  echo "    smoke it:  apify call --input '{\"operation\":\"radar\",\"region\":\"US\"}'"
+
+  # Smoke the DEPLOYED actor, not the local one. The gate above proves the code
+  # is right; only this proves the deployment is — REDIS_URL missing from the
+  # Apify console fails here and nowhere else. Printing the command instead of
+  # running it made this the step that gets skipped.
+  echo
+  echo "==> smoke (deployed)"
+  if [ "${SKIP_SMOKE:-}" = "1" ]; then
+    echo "    SKIPPED (SKIP_SMOKE=1) — the push is live and UNVERIFIED" >&2
+  else
+    ./smoke.sh radar || {
+      echo >&2
+      echo "    The push is LIVE and the smoke failed. Customers are on it now." >&2
+      echo "    Roll back by pushing the last good commit:" >&2
+      echo "      git checkout <last-good-sha> && ./ship.sh apify" >&2
+      exit 1
+    }
+  fi
 fi
 
 # -------------------------------------------------------------------- gcp
