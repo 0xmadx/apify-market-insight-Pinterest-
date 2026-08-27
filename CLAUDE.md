@@ -66,7 +66,7 @@ Everything is a module run from the repo root. The venv is local to this repo.
 - **The ACTOR never runs a browser.** Transport is `curl_cffi` impersonating
   Chrome (TLS/JA3). The real browser earns the session; the actor replays it.
   `.dockerignore` keeps `browsers/` and `adspower/` out of the image, which is
-  why it is ~497MB and not a Playwright base.
+  why it is ~335MB and not a Playwright base.
 
   ⚠️ This used to read "no Playwright, no headless browsers, **ever**", and
   that is now false for half the system. The *vault writer* on GCP is a

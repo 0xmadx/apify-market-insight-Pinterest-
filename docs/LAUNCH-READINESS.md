@@ -98,7 +98,7 @@ did not, and now does. **Still missing: lease renewal.** A crashed run strands
 its profile for 900s. That is the over-cautious failure, not the dangerous one,
 so it is a scaling item and not a blocker.
 
-**Cloud.** The image builds (497MB) and runs the real actor against a
+**Cloud.** The image builds (335MB) and runs the real actor against a
 non-localhost Redis, leasing an identity and fetching live. That is the deploy
 shape. Two things to know:
 

@@ -104,7 +104,7 @@ develop + test locally  →  release gate  →  push  →  smoke the real thing
 Two targets now instead of one, and they are independent:
 
 - **Apify** gets `src/` only. `.dockerignore` excludes `browsers/` and
-  `adspower/`; the image is ~497MB precisely because no browser is in it.
+  `adspower/`; the image is ~335MB precisely because no browser is in it.
 - **GCP** gets `browsers/` and never gets pushed to Apify.
 
 A change to `browsers/` cannot affect a customer, and a change to `src/` cannot

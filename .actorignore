@@ -1,0 +1,41 @@
+# WHAT APIFY IS ALLOWED TO HOLD.
+#
+# `.dockerignore` controls what goes into the IMAGE. It does NOT control what
+# `apify push` uploads: the CLI's own help says "Files matched by .gitignore and
+# .actorignore are excluded" — .dockerignore is not in that list. So for the
+# first deploy, on 2026-08-27, all 176 tracked files went to Apify's servers
+# including docs/wire/ and probes/results/, while the image itself correctly
+# held 26. The guard was real; it was just pointed at the wrong layer.
+#
+# THIS FILE IS THE SAME RULE, APPLIED WHERE THE UPLOAD HAPPENS. Keep the two in
+# step: anything added to .dockerignore belongs here too.
+
+# Dev material. `src/` imports none of it and the actor's CMD is
+# `python -m src.main`, so none of it is reachable at runtime. Two reasons to
+# withhold it, and the second is the important one:
+#   1. an artefact should contain what it runs and nothing else
+#   2. docs/wire/ and probes/results/ ARE the reverse-engineering — the measured
+#      map of an API with no contract. That is the product. It does not belong
+#      on a third party's servers as a side effect of deploying.
+docs/
+probes/
+tests/
+.claude/
+api_sim.py
+
+# Operator tooling for the machines that FILL the vault. Describes the
+# operator's own infrastructure — proxies, profile ids, systemd units — and
+# `src/` never imports it.
+adspower/
+browsers/
+
+# Scripts and prose. A PATTERN, not a list of names: .dockerignore named
+# run_local.sh and ship.sh individually and silently shipped preflight.sh and
+# smoke.sh the day they were added.
+*.sh
+*.md
+
+# Never, under any circumstance.
+.env
+.env.*
+!.env.example
