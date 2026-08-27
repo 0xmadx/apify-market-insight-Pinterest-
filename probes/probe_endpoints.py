@@ -281,7 +281,8 @@ def main():
         })
         print(f"  3.1  {'OK' if date else 'FAIL'}  latest_available_date -> {date}")
         (OUT / "3.1-latest_available_date.json").write_text(
-            json.dumps(strip_pii(_safe_json(r)), indent=2), encoding="utf-8")
+            json.dumps(strip_pii(_safe_json(r)), indent=2, sort_keys=True),
+            encoding="utf-8")
 
         if not date:
             print("\nNo date — every other call needs it. Stopping.")
@@ -300,8 +301,19 @@ def main():
                 print(f"        -> {row['detail'][:120]}")
             if raw is not None:
                 slug = name.split(" —")[0].replace("/", "_").strip()
+                # sort_keys, and it is load-bearing rather than tidiness.
+                # Pinterest returns object keys in a NON-DETERMINISTIC order, so
+                # writing them as received made every probe run rewrite every
+                # fixture: 2,301 insertions against 2,301 deletions, pure
+                # reordering. Two costs. `ship.sh apify` could never pass its own
+                # clean-tree guard, because the gate it runs first always dirtied
+                # the tree. And a REAL wire change -- a field appearing, a value
+                # moving -- was invisible inside that noise, which defeats the
+                # one check this project relies on most: diffing what the wire
+                # returns against what the code reads.
                 (OUT / f"{probe_id}-{slug}.json").write_text(
-                    json.dumps(strip_pii(raw), indent=2)[:400000], encoding="utf-8")
+                    json.dumps(strip_pii(raw), indent=2,
+                               sort_keys=True)[:400000], encoding="utf-8")
             time.sleep(DELAY)
 
     _write_summary(rows, identity)

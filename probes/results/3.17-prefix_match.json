@@ -1,6 +1,5 @@
 [
   {
-    "term": "hallow",
     "counts": [
       43,
       46,
@@ -54,10 +53,10 @@
       28,
       35,
       33
-    ]
+    ],
+    "term": "hallow"
   },
   {
-    "term": "halloween nails",
     "counts": [
       16,
       23,
@@ -111,10 +110,10 @@
       5,
       7,
       10
-    ]
+    ],
+    "term": "halloween nails"
   },
   {
-    "term": "halloween costume ideas",
     "counts": [
       45,
       51,
@@ -168,10 +167,10 @@
       28,
       32,
       40
-    ]
+    ],
+    "term": "halloween costume ideas"
   },
   {
-    "term": "halloween decor",
     "counts": [
       59,
       83,
@@ -225,10 +224,10 @@
       78,
       87,
       100
-    ]
+    ],
+    "term": "halloween decor"
   },
   {
-    "term": "halloween wallpaper",
     "counts": [
       23,
       39,
@@ -282,10 +281,10 @@
       12,
       13,
       18
-    ]
+    ],
+    "term": "halloween wallpaper"
   },
   {
-    "term": "halloween aesthetic",
     "counts": [
       40,
       47,
@@ -339,10 +338,10 @@
       30,
       31,
       35
-    ]
+    ],
+    "term": "halloween aesthetic"
   },
   {
-    "term": "halloween costumes duo",
     "counts": [
       51,
       63,
@@ -396,10 +395,10 @@
       21,
       30,
       36
-    ]
+    ],
+    "term": "halloween costumes duo"
   },
   {
-    "term": "halloween party ideas",
     "counts": [
       14,
       20,
@@ -453,10 +452,10 @@
       11,
       14,
       19
-    ]
+    ],
+    "term": "halloween party ideas"
   },
   {
-    "term": "halloween crafts",
     "counts": [
       38,
       40,
@@ -510,10 +509,10 @@
       19,
       23,
       31
-    ]
+    ],
+    "term": "halloween crafts"
   },
   {
-    "term": "halloween costumes black women",
     "counts": [
       30,
       37,
@@ -567,6 +566,7 @@
       68,
       79,
       100
-    ]
+    ],
+    "term": "halloween costumes black women"
   }
 ]

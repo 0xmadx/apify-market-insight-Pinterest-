@@ -1,476 +1,476 @@
 [
   {
-    "term": "nails",
-    "growth_rates": {
-      "yoy_change": null,
-      "mom_change": 0.08,
-      "wow_change": -0.04
-    },
-    "has_prediction": true,
     "counts": [
       {
         "count": 55,
         "date": "2025-08-24",
         "normalizedCount": 55,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 51,
         "date": "2025-08-31",
         "normalizedCount": 51,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 43,
         "date": "2025-09-07",
         "normalizedCount": 43,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 41,
         "date": "2025-09-14",
         "normalizedCount": 41,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 39,
         "date": "2025-09-21",
         "normalizedCount": 39,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 38,
         "date": "2025-09-28",
         "normalizedCount": 38,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 36,
         "date": "2025-10-05",
         "normalizedCount": 36,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 35,
         "date": "2025-10-12",
         "normalizedCount": 35,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 35,
         "date": "2025-10-19",
         "normalizedCount": 35,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 35,
         "date": "2025-10-26",
         "normalizedCount": 35,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 32,
         "date": "2025-11-02",
         "normalizedCount": 32,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 43,
         "date": "2025-11-09",
         "normalizedCount": 43,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 42,
         "date": "2025-11-16",
         "normalizedCount": 42,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 43,
         "date": "2025-11-23",
         "normalizedCount": 43,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 39,
         "date": "2025-11-30",
         "normalizedCount": 39,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 34,
         "date": "2025-12-07",
         "normalizedCount": 34,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 36,
         "date": "2025-12-14",
         "normalizedCount": 36,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 42,
         "date": "2025-12-21",
         "normalizedCount": 42,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 47,
         "date": "2025-12-28",
         "normalizedCount": 47,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 49,
         "date": "2026-01-04",
         "normalizedCount": 49,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 50,
         "date": "2026-01-11",
         "normalizedCount": 50,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 50,
         "date": "2026-01-18",
         "normalizedCount": 50,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 46,
         "date": "2026-01-25",
         "normalizedCount": 46,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 43,
         "date": "2026-02-01",
         "normalizedCount": 43,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 44,
         "date": "2026-02-08",
         "normalizedCount": 44,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 50,
         "date": "2026-02-15",
         "normalizedCount": 50,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 57,
         "date": "2026-02-22",
         "normalizedCount": 57,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 56,
         "date": "2026-03-01",
         "normalizedCount": 56,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 53,
         "date": "2026-03-08",
         "normalizedCount": 53,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 53,
         "date": "2026-03-15",
         "normalizedCount": 53,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 51,
         "date": "2026-03-22",
         "normalizedCount": 51,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 49,
         "date": "2026-03-29",
         "normalizedCount": 49,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 48,
         "date": "2026-04-05",
         "normalizedCount": 48,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 51,
         "date": "2026-04-12",
         "normalizedCount": 51,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 51,
         "date": "2026-04-19",
         "normalizedCount": 51,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 53,
         "date": "2026-04-26",
         "normalizedCount": 53,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 53,
         "date": "2026-05-03",
         "normalizedCount": 53,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 52,
         "date": "2026-05-10",
         "normalizedCount": 52,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 55,
         "date": "2026-05-17",
         "normalizedCount": 55,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 47,
         "date": "2026-05-24",
         "normalizedCount": 47,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 42,
         "date": "2026-05-31",
         "normalizedCount": 42,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 45,
         "date": "2026-06-07",
         "normalizedCount": 45,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 49,
         "date": "2026-06-14",
         "normalizedCount": 49,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 51,
         "date": "2026-06-21",
         "normalizedCount": 51,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 51,
         "date": "2026-06-28",
         "normalizedCount": 51,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 50,
         "date": "2026-07-05",
         "normalizedCount": 50,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 56,
         "date": "2026-07-12",
         "normalizedCount": 56,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 59,
         "date": "2026-07-19",
         "normalizedCount": 59,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 59,
         "date": "2026-07-26",
         "normalizedCount": 59,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 61,
         "date": "2026-08-02",
         "normalizedCount": 61,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 64,
         "date": "2026-08-09",
         "normalizedCount": 64,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 59,
         "date": "2026-08-16",
         "normalizedCount": 59,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 57,
         "date": "2026-08-23",
         "normalizedCount": 57,
-        "predictedUpperBoundNormalizedCount": null,
-        "predictedLowerBoundNormalizedCount": null
+        "predictedLowerBoundNormalizedCount": null,
+        "predictedUpperBoundNormalizedCount": null
       },
       {
         "count": 56,
         "date": "2026-08-30",
         "normalizedCount": 56,
-        "predictedUpperBoundNormalizedCount": 85,
-        "predictedLowerBoundNormalizedCount": 38
+        "predictedLowerBoundNormalizedCount": 38,
+        "predictedUpperBoundNormalizedCount": 85
       },
       {
         "count": 54,
         "date": "2026-09-06",
         "normalizedCount": 54,
-        "predictedUpperBoundNormalizedCount": 86,
-        "predictedLowerBoundNormalizedCount": 33
+        "predictedLowerBoundNormalizedCount": 33,
+        "predictedUpperBoundNormalizedCount": 86
       },
       {
         "count": 49,
         "date": "2026-09-13",
         "normalizedCount": 49,
-        "predictedUpperBoundNormalizedCount": 79,
-        "predictedLowerBoundNormalizedCount": 31
+        "predictedLowerBoundNormalizedCount": 31,
+        "predictedUpperBoundNormalizedCount": 79
       },
       {
         "count": 47,
         "date": "2026-09-20",
         "normalizedCount": 47,
-        "predictedUpperBoundNormalizedCount": 76,
-        "predictedLowerBoundNormalizedCount": 29
+        "predictedLowerBoundNormalizedCount": 29,
+        "predictedUpperBoundNormalizedCount": 76
       },
       {
         "count": 47,
         "date": "2026-09-27",
         "normalizedCount": 47,
-        "predictedUpperBoundNormalizedCount": 75,
-        "predictedLowerBoundNormalizedCount": 29
+        "predictedLowerBoundNormalizedCount": 29,
+        "predictedUpperBoundNormalizedCount": 75
       },
       {
         "count": 48,
         "date": "2026-10-04",
         "normalizedCount": 48,
-        "predictedUpperBoundNormalizedCount": 78,
-        "predictedLowerBoundNormalizedCount": 29
+        "predictedLowerBoundNormalizedCount": 29,
+        "predictedUpperBoundNormalizedCount": 78
       },
       {
         "count": 47,
         "date": "2026-10-11",
         "normalizedCount": 47,
-        "predictedUpperBoundNormalizedCount": 77,
-        "predictedLowerBoundNormalizedCount": 29
+        "predictedLowerBoundNormalizedCount": 29,
+        "predictedUpperBoundNormalizedCount": 77
       },
       {
         "count": 44,
         "date": "2026-10-18",
         "normalizedCount": 44,
-        "predictedUpperBoundNormalizedCount": 72,
-        "predictedLowerBoundNormalizedCount": 27
+        "predictedLowerBoundNormalizedCount": 27,
+        "predictedUpperBoundNormalizedCount": 72
       },
       {
         "count": 43,
         "date": "2026-10-25",
         "normalizedCount": 43,
-        "predictedUpperBoundNormalizedCount": 72,
-        "predictedLowerBoundNormalizedCount": 26
+        "predictedLowerBoundNormalizedCount": 26,
+        "predictedUpperBoundNormalizedCount": 72
       },
       {
         "count": 44,
         "date": "2026-11-01",
         "normalizedCount": 44,
-        "predictedUpperBoundNormalizedCount": 75,
-        "predictedLowerBoundNormalizedCount": 26
+        "predictedLowerBoundNormalizedCount": 26,
+        "predictedUpperBoundNormalizedCount": 75
       },
       {
         "count": 53,
         "date": "2026-11-08",
         "normalizedCount": 53,
-        "predictedUpperBoundNormalizedCount": 90,
-        "predictedLowerBoundNormalizedCount": 30
+        "predictedLowerBoundNormalizedCount": 30,
+        "predictedUpperBoundNormalizedCount": 90
       },
       {
         "count": 57,
         "date": "2026-11-15",
         "normalizedCount": 57,
-        "predictedUpperBoundNormalizedCount": 100,
-        "predictedLowerBoundNormalizedCount": 32
+        "predictedLowerBoundNormalizedCount": 32,
+        "predictedUpperBoundNormalizedCount": 100
       },
       {
         "count": 55,
         "date": "2026-11-22",
         "normalizedCount": 55,
-        "predictedUpperBoundNormalizedCount": 100,
-        "predictedLowerBoundNormalizedCount": 31
+        "predictedLowerBoundNormalizedCount": 31,
+        "predictedUpperBoundNormalizedCount": 100
       }
     ],
-    "hasPrediction": true
+    "growth_rates": {
+      "mom_change": 0.08,
+      "wow_change": -0.04,
+      "yoy_change": null
+    },
+    "hasPrediction": true,
+    "has_prediction": true,
+    "term": "nails"
   }
 ]

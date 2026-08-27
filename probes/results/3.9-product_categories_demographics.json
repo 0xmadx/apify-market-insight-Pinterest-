@@ -1,41 +1,29 @@
 {
+  "_client_context": "<stripped: account PII, see strip_pii()>",
+  "request_identifier": "9306027803512207",
+  "resource": {
+    "name": "ApiResource",
+    "options": {
+      "bookmarks": [
+        "-end-"
+      ],
+      "data": {
+        "end_date": "2026-08-23",
+        "event": "OUTBOUND_CLICK",
+        "product_category_ids": [
+          "1408"
+        ]
+      },
+      "url": "/ads/v4/trends/shopping/product_categories/demographics/US"
+    }
+  },
   "resource_response": {
-    "status": "success",
     "code": 0,
-    "message": "ok",
-    "endpoint_name": "get_product_category_demographics",
     "data": {
       "product_category_distributions": {
         "1408": {
-          "summaries": [
-            {
-              "outbound_clicks": {
-                "lookback": 2,
-                "percent_relative_volume": null,
-                "percent_growth": 0.7,
-                "total": 0
-              },
-              "saves": {
-                "lookback": 2,
-                "percent_relative_volume": null,
-                "percent_growth": 0.51,
-                "total": 0
-              },
-              "engagement": {
-                "lookback": 2,
-                "percent_relative_volume": null,
-                "percent_growth": 0.63,
-                "total": 0
-              }
-            }
-          ],
           "demographics": [
             {
-              "gender_distribution": {
-                "male": 0.07,
-                "female": 0.82,
-                "unspecified": 0.11
-              },
               "age_distribution": {
                 "18-24": 0.08,
                 "25-34": 0.13,
@@ -44,6 +32,11 @@
                 "50-54": 0.08,
                 "55-64": 0.22,
                 "65+": 0.31
+              },
+              "gender_distribution": {
+                "female": 0.82,
+                "male": 0.07,
+                "unspecified": 0.11
               }
             }
           ],
@@ -65,29 +58,36 @@
             "pumpkin",
             "xmas decor",
             "halloween fun"
+          ],
+          "summaries": [
+            {
+              "engagement": {
+                "lookback": 2,
+                "percent_growth": 0.63,
+                "percent_relative_volume": null,
+                "total": 0
+              },
+              "outbound_clicks": {
+                "lookback": 2,
+                "percent_growth": 0.7,
+                "percent_relative_volume": null,
+                "total": 0
+              },
+              "saves": {
+                "lookback": 2,
+                "percent_growth": 0.51,
+                "percent_relative_volume": null,
+                "total": 0
+              }
+            }
           ]
         }
       }
     },
-    "x_pinterest_sli_endpoint_name": "get_product_category_demographics",
-    "http_status": 200
-  },
-  "resource": {
-    "name": "ApiResource",
-    "options": {
-      "bookmarks": [
-        "-end-"
-      ],
-      "url": "/ads/v4/trends/shopping/product_categories/demographics/US",
-      "data": {
-        "product_category_ids": [
-          "1408"
-        ],
-        "event": "OUTBOUND_CLICK",
-        "end_date": "2026-08-23"
-      }
-    }
-  },
-  "request_identifier": "3448111403111757",
-  "_client_context": "<stripped: account PII, see strip_pii()>"
+    "endpoint_name": "get_product_category_demographics",
+    "http_status": 200,
+    "message": "ok",
+    "status": "success",
+    "x_pinterest_sli_endpoint_name": "get_product_category_demographics"
+  }
 }

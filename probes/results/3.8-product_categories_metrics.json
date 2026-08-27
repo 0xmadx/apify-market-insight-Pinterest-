@@ -1,100 +1,100 @@
 {
-  "resource_response": {
-    "status": "success",
-    "code": 0,
-    "message": "ok",
-    "endpoint_name": "get_product_category_metrics",
-    "data": {
-      "values": [
-        {
-          "term": "1356",
-          "daily_values": [
-            {
-              "normalized_predicted_lower_bound": null,
-              "normalized_predicted_upper_bound": null,
-              "date": "2026-06-28",
-              "count": 84
-            },
-            {
-              "normalized_predicted_lower_bound": null,
-              "normalized_predicted_upper_bound": null,
-              "date": "2026-07-05",
-              "count": 82
-            },
-            {
-              "normalized_predicted_lower_bound": null,
-              "normalized_predicted_upper_bound": null,
-              "date": "2026-07-12",
-              "count": 85
-            },
-            {
-              "normalized_predicted_lower_bound": null,
-              "normalized_predicted_upper_bound": null,
-              "date": "2026-07-19",
-              "count": 91
-            },
-            {
-              "normalized_predicted_lower_bound": null,
-              "normalized_predicted_upper_bound": null,
-              "date": "2026-07-26",
-              "count": 90
-            },
-            {
-              "normalized_predicted_lower_bound": null,
-              "normalized_predicted_upper_bound": null,
-              "date": "2026-08-02",
-              "count": 92
-            },
-            {
-              "normalized_predicted_lower_bound": null,
-              "normalized_predicted_upper_bound": null,
-              "date": "2026-08-09",
-              "count": 96
-            },
-            {
-              "normalized_predicted_lower_bound": null,
-              "normalized_predicted_upper_bound": null,
-              "date": "2026-08-16",
-              "count": 100
-            },
-            {
-              "normalized_predicted_lower_bound": null,
-              "normalized_predicted_upper_bound": null,
-              "date": "2026-08-23",
-              "count": 95
-            }
-          ],
-          "growth_rates": {
-            "yoy_change": null,
-            "mom_change": null,
-            "wow_change": null
-          }
-        }
-      ]
-    },
-    "x_pinterest_sli_endpoint_name": "get_product_category_metrics",
-    "http_status": 200
-  },
+  "_client_context": "<stripped: account PII, see strip_pii()>",
+  "request_identifier": "3617587895733340",
   "resource": {
     "name": "ApiResource",
     "options": {
       "bookmarks": [
         "-end-"
       ],
-      "url": "/ads/v4/trends/shopping/product_categories/metrics/US",
       "data": {
+        "age_bucket": [],
+        "days": 60,
+        "end_date": "2026-08-23",
+        "event": "ENGAGEMENT",
+        "gender": [],
+        "predicted_days": 0,
         "product_category_ids": [
           "1356"
-        ],
-        "event": "ENGAGEMENT",
-        "end_date": "2026-08-23",
-        "days": 60,
-        "predicted_days": 0,
-        "age_bucket": [],
-        "gender": []
-      }
+        ]
+      },
+      "url": "/ads/v4/trends/shopping/product_categories/metrics/US"
     }
   },
-  "request_identifier": "1243966450470220",
-  "_client_context": "<stripped: account PII, see strip_pii()>"
+  "resource_response": {
+    "code": 0,
+    "data": {
+      "values": [
+        {
+          "daily_values": [
+            {
+              "count": 84,
+              "date": "2026-06-28",
+              "normalized_predicted_lower_bound": null,
+              "normalized_predicted_upper_bound": null
+            },
+            {
+              "count": 82,
+              "date": "2026-07-05",
+              "normalized_predicted_lower_bound": null,
+              "normalized_predicted_upper_bound": null
+            },
+            {
+              "count": 85,
+              "date": "2026-07-12",
+              "normalized_predicted_lower_bound": null,
+              "normalized_predicted_upper_bound": null
+            },
+            {
+              "count": 91,
+              "date": "2026-07-19",
+              "normalized_predicted_lower_bound": null,
+              "normalized_predicted_upper_bound": null
+            },
+            {
+              "count": 90,
+              "date": "2026-07-26",
+              "normalized_predicted_lower_bound": null,
+              "normalized_predicted_upper_bound": null
+            },
+            {
+              "count": 92,
+              "date": "2026-08-02",
+              "normalized_predicted_lower_bound": null,
+              "normalized_predicted_upper_bound": null
+            },
+            {
+              "count": 96,
+              "date": "2026-08-09",
+              "normalized_predicted_lower_bound": null,
+              "normalized_predicted_upper_bound": null
+            },
+            {
+              "count": 100,
+              "date": "2026-08-16",
+              "normalized_predicted_lower_bound": null,
+              "normalized_predicted_upper_bound": null
+            },
+            {
+              "count": 95,
+              "date": "2026-08-23",
+              "normalized_predicted_lower_bound": null,
+              "normalized_predicted_upper_bound": null
+            }
+          ],
+          "growth_rates": {
+            "mom_change": null,
+            "wow_change": null,
+            "yoy_change": null
+          },
+          "term": "1356"
+        }
+      ]
+    },
+    "endpoint_name": "get_product_category_metrics",
+    "http_status": 200,
+    "message": "ok",
+    "status": "success",
+    "x_pinterest_sli_endpoint_name": "get_product_category_metrics"
+  }
 }
