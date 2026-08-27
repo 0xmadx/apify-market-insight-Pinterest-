@@ -26,23 +26,32 @@ wrong figures. Most of the guards exist for that.
 | Job | Where | What runs | How often |
 |---|---|---|---|
 | Log an account in | operator's laptop | AdsPower, **by hand** | once per account, ever |
-| Keep sessions alive | **local WSL (Ubuntu)** | `adspower-sync.timer` | every 5 min |
+| Keep sessions alive | **GCP VM** | `browsers/keepalive.py` | every 5 min, forever |
 | Serve customers | Apify | `src/` | per run |
 | The vault | Upstash | Redis | always |
 
-**The session keeper is local WSL, not GCP.** GCP (`browsers/keepalive.py`,
-Step 4) is the eventual replacement and remains optional — it saves the
-AdsPower subscription and takes the laptop off the critical path, but it earns
-nothing. Until it is cut over, the laptop being asleep means the pool goes
-stale in 15 minutes (`PROFILE_MAX_AGE`).
+**AdsPower is a login station and a spare tyre, not the session keeper.**
+Signing in is the one thing that cannot be automated safely — Pinterest's login
+is its most defended surface and a flagged login burns the account — so a human
+does it by hand, behind that account's proxy, once per account. GCP does
+everything after that.
 
-### Why a local writer is enough — and the one thing it requires
+⚠️ The GCP farm runs **DrissionPage**, not Playwright. `patchright` is in
+`browsers/requirements.txt` only to supply the Chromium binary.
+`browsers/keepalive.py:12` records why: patchright silently ignores init
+scripts, so every profile reported the host's real hardware — measured **1/3
+distinct**. DrissionPage honours `Page.addScriptToEvaluateOnNewDocument` and
+gets **3/3 distinct and stable**. Fingerprint diversity is what AdsPower is
+actually paid for, so it decides the driver.
 
-The vault is a network Redis, so **where the writer runs is irrelevant to the
-reader.** WSL writes to Upstash over TLS; Apify reads the same table. Neither
-knows about the other, nothing is tunnelled, and no port on the WSL box is ever
-exposed. This is the "one shared table, independent writers and readers" model
-in [`docs/OPERATING_MODEL.md`](docs/OPERATING_MODEL.md).
+### Where the writer runs is irrelevant to the reader
+
+The vault is a network Redis, so a writer anywhere works: it writes to Upstash
+over TLS, Apify reads the same table, neither knows about the other, nothing is
+tunnelled, and no port on the writer's box is ever exposed. That is the "one
+shared table, independent writers and readers" model in
+[`docs/OPERATING_MODEL.md`](docs/OPERATING_MODEL.md), and it is what makes
+Step 2b's temporary bridge and Step 4's GCP cutover interchangeable.
 
 What it requires is the part that is easy to miss: **migrating the vault copies
 the data, it does not move the writer.** Both must point at the same Redis, or
@@ -53,10 +62,10 @@ Measured on 2026-08-26, immediately after the Upstash migration:
 
 ```
 Upstash          0/8 usable   ages ~13,400s   ← what Apify would have read
-local 6380       6/6 usable   ages ~280s      ← where WSL was still writing
+local 6380       6/6 usable   ages ~280s      ← where the writer still pointed
 ```
 
-Both are "the vault". Only one was alive. See § Point the WSL writer at Upstash.
+Both are "the vault". Only one was alive. See § Step 2b.
 
 Read [`docs/OPERATING_MODEL.md`](docs/OPERATING_MODEL.md) before answering any
 question about AdsPower vs the free stack. The answer differs per job, and it
@@ -129,11 +138,17 @@ commands/day** (288 passes × 8 profiles × ~3 writes). Free tiers commonly cap
 near 10k. Either pay — it is cents at this volume — or widen `--interval`, but
 never past `PROFILE_MAX_AGE` (900s), which `keepalive.py` already refuses.
 
-## Step 2b — Point the WSL writer at Upstash
+## Step 2b — Bridge: point the WSL writer at Upstash
 
 **Do this before Step 3.** Until it is done the Upstash vault is a frozen
 snapshot, and a deployed actor reading it will fail with `VaultEmpty` — or
 worse, lease a stale profile.
+
+This is a **temporary bridge, not the target state.** GCP (Step 4) is the
+session keeper; this exists so Apify can be deployed and proven today, before a
+VM is provisioned. It is not throwaway work either — `docs/OPERATING_MODEL.md`
+keeps the AdsPower syncer as the documented failover writer, so this path has to
+work regardless.
 
 The syncer resolves its target as `--redis-url` → `$REDIS_URL` → a
 WSL-to-Windows-host fallback (`sync_cookies.py`). systemd supplies it from
@@ -213,10 +228,14 @@ git checkout <last-good-sha> && ./ship.sh apify
 There is no "undo" on Apify — rolling back is pushing the previous commit
 forward. Know the SHA before you push, not after.
 
-**You are live after this step.** Everything below saves money; nothing below
-earns it.
+**You are live after this step.** Everything below stops the laptop being
+load-bearing; nothing below earns more.
 
-## Step 4 — GCP (the laptop leaves the critical path)
+## Step 4 — GCP: the session keeper the model actually calls for
+
+This retires the Step 2b bridge and puts the farm where it belongs. It also
+ends the AdsPower subscription for session-keeping — AdsPower stays installed
+for job 1 (logging accounts in) and as failover.
 
 ```bash
 gcloud compute scp browsers/deploy_gcp.sh <vm>:~/
@@ -224,6 +243,16 @@ gcloud compute ssh <vm>
 git clone <your-repo> ~/pinterest-apify
 REDIS_URL='rediss://...' bash deploy_gcp.sh
 ```
+
+⚠️ **The repo is private, so the VM cannot clone it anonymously.** Generate an
+SSH key on the VM and add it under repo Settings → Deploy keys, read-only — not
+a personal access token, which would grant the VM far more than it needs.
+
+**Running both writers at once is safe.** `keepalive.py` reads its profile list
+from `valid_profiles:{platform}` in the vault and carries the stored
+`cookies_json`, `user_agent` and `proxy` forward rather than inventing new ones,
+so it refreshes AdsPower-created `ads_*` profiles wearing the same identity.
+Both writers verify before stamping `last_updated`.
 
 It provisions Python, Chromium (no root — `patchright install chromium`),
 Windows fonts, and the systemd timer. It refuses to run without `REDIS_URL` and
