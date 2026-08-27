@@ -304,6 +304,39 @@ never copies to a server — so the runbook was recommending a check that could
 not run on the host it was meant to check. Fixed 2026-08-27: it now reads the
 vault by default, exactly as `keepalive` does, and `--file` is opt-in.
 
+⚠️ **On the VM you must hand it the environment first.** There is no `.env`
+there: the vault URL lives in `/etc/pinterest-keepalive/env`, and systemd
+supplies it to `keepalive.service` through `EnvironmentFile`. An interactive
+shell inherits none of that, so `Config` falls back to its localhost default
+and the tool reports a Redis it was never asked to use:
+
+```
+cannot reach Redis — Error 111 connecting to localhost:6380. Connection refused.
+```
+
+That message is about the *default*, not about the vault, on a host whose
+service is refreshing profiles correctly every five minutes. Source the env
+file and it works:
+
+```bash
+cd ~/pinterest-apify
+set -a; . <(sudo cat /etc/pinterest-keepalive/env); set +a
+./.venv/bin/python -m browsers.fingerprint --driver drission --profiles 3
+```
+
+Measured on the VM 2026-08-27 — three profiles, three machines:
+
+```
+ads_k1fx40wf  1280x720  cores=4   ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Direct3D11
+ads_k1fy47um  1440x900  cores=6   ANGLE (AMD, AMD Radeon(TM) Graphics Direct3D11
+ads_k1fy6dnh  1280x720  cores=12  ANGLE (AMD, AMD Radeon(TM) Graphics Direct3D11
+
+DISTINCT 3/3 on the strong signals · STABLE 3/3 across launches · PASS
+```
+
+`Direct3D11` on a Linux VM is the Windows claim holding up, and the fonts are
+what keep it holding — see the section above.
+
 Measure fonts directly too, because that is the failure that hides best —
 render one string per family and compare widths. Anything under ~5 distinct
 values means they are collapsing to a fallback. Measured after the fix, 9
