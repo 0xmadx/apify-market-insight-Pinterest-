@@ -7,6 +7,7 @@
     "data": {
       "ordered_values": [
         {
+          "product_category": "1239",
           "related_search_trends": [
             "bag inspo",
             "pretty bags",
@@ -34,32 +35,32 @@
             "crossbody bag",
             "cute bags"
           ],
-          "parent_product_categories": [
-            "1024"
-          ],
           "summary": {
             "saves": {
-              "percent_relative_volume": 0.96,
               "total": 0,
               "percent_growth": -0.04,
-              "lookback": 2
-            },
-            "engagement": {
-              "percent_relative_volume": 1,
-              "total": 0,
-              "percent_growth": 0.02,
-              "lookback": 2
+              "lookback": 2,
+              "percent_relative_volume": 0.96
             },
             "outbound_clicks": {
-              "percent_relative_volume": 1,
               "total": 0,
               "percent_growth": 0.12,
-              "lookback": 2
+              "lookback": 2,
+              "percent_relative_volume": 1
+            },
+            "engagement": {
+              "total": 0,
+              "percent_growth": 0.02,
+              "lookback": 2,
+              "percent_relative_volume": 1
             }
           },
-          "product_category": "1239"
+          "parent_product_categories": [
+            "1024"
+          ]
         },
         {
+          "product_category": "1350",
           "related_search_trends": [
             "winter fashion",
             "leather jacket",
@@ -86,33 +87,33 @@
             "quilted jacket",
             "jean jacket",
             "fleece jacket"
-          ],
-          "parent_product_categories": [
-            "1104"
           ],
           "summary": {
             "saves": {
-              "percent_relative_volume": 1,
               "total": 0,
               "percent_growth": 0.13,
-              "lookback": 2
-            },
-            "engagement": {
-              "percent_relative_volume": 0.93,
-              "total": 0,
-              "percent_growth": 0.3,
-              "lookback": 2
+              "lookback": 2,
+              "percent_relative_volume": 1
             },
             "outbound_clicks": {
-              "percent_relative_volume": 0.98,
               "total": 0,
               "percent_growth": 0.45,
-              "lookback": 2
+              "lookback": 2,
+              "percent_relative_volume": 0.98
+            },
+            "engagement": {
+              "total": 0,
+              "percent_growth": 0.3,
+              "lookback": 2,
+              "percent_relative_volume": 0.93
             }
           },
-          "product_category": "1350"
+          "parent_product_categories": [
+            "1104"
+          ]
         },
         {
+          "product_category": "1108",
           "related_search_trends": [
             "winter fashion",
             "leather jacket",
@@ -140,33 +141,33 @@
             "jean jacket",
             "fleece jacket"
           ],
+          "summary": {
+            "saves": {
+              "total": 0,
+              "percent_growth": 0.12,
+              "lookback": 2,
+              "percent_relative_volume": 0.99
+            },
+            "outbound_clicks": {
+              "total": 0,
+              "percent_growth": 0.44,
+              "lookback": 2,
+              "percent_relative_volume": 0.97
+            },
+            "engagement": {
+              "total": 0,
+              "percent_growth": 0.3,
+              "lookback": 2,
+              "percent_relative_volume": 0.92
+            }
+          },
           "parent_product_categories": [
             "1104",
             "1350"
-          ],
-          "summary": {
-            "saves": {
-              "percent_relative_volume": 0.99,
-              "total": 0,
-              "percent_growth": 0.12,
-              "lookback": 2
-            },
-            "engagement": {
-              "percent_relative_volume": 0.92,
-              "total": 0,
-              "percent_growth": 0.3,
-              "lookback": 2
-            },
-            "outbound_clicks": {
-              "percent_relative_volume": 0.97,
-              "total": 0,
-              "percent_growth": 0.44,
-              "lookback": 2
-            }
-          },
-          "product_category": "1108"
+          ]
         },
         {
+          "product_category": "1452",
           "related_search_trends": [
             "crochet clothes",
             "tricot",
@@ -194,33 +195,33 @@
             "winter fashion",
             "cardigan sweater"
           ],
+          "summary": {
+            "saves": {
+              "total": 0,
+              "percent_growth": 0.07,
+              "lookback": 2,
+              "percent_relative_volume": 0.7
+            },
+            "outbound_clicks": {
+              "total": 0,
+              "percent_growth": 0.43,
+              "lookback": 2,
+              "percent_relative_volume": 0.73
+            },
+            "engagement": {
+              "total": 0,
+              "percent_growth": 0.24,
+              "lookback": 2,
+              "percent_relative_volume": 0.6
+            }
+          },
           "parent_product_categories": [
             "1478",
             "1104"
-          ],
-          "summary": {
-            "saves": {
-              "percent_relative_volume": 0.7,
-              "total": 0,
-              "percent_growth": 0.07,
-              "lookback": 2
-            },
-            "engagement": {
-              "percent_relative_volume": 0.6,
-              "total": 0,
-              "percent_growth": 0.24,
-              "lookback": 2
-            },
-            "outbound_clicks": {
-              "percent_relative_volume": 0.73,
-              "total": 0,
-              "percent_growth": 0.43,
-              "lookback": 2
-            }
-          },
-          "product_category": "1452"
+          ]
         },
         {
+          "product_category": "1069",
           "related_search_trends": [
             "shoes boots",
             "cute cowgirl boots",
@@ -248,32 +249,32 @@
             "fashion boots",
             "suede boots"
           ],
-          "parent_product_categories": [
-            "1416"
-          ],
           "summary": {
             "saves": {
-              "percent_relative_volume": 0.46,
               "total": 0,
               "percent_growth": 0.09,
-              "lookback": 2
-            },
-            "engagement": {
-              "percent_relative_volume": 0.41,
-              "total": 0,
-              "percent_growth": 0.22,
-              "lookback": 2
+              "lookback": 2,
+              "percent_relative_volume": 0.46
             },
             "outbound_clicks": {
-              "percent_relative_volume": 0.44,
               "total": 0,
               "percent_growth": 0.34,
-              "lookback": 2
+              "lookback": 2,
+              "percent_relative_volume": 0.44
+            },
+            "engagement": {
+              "total": 0,
+              "percent_growth": 0.22,
+              "lookback": 2,
+              "percent_relative_volume": 0.41
             }
           },
-          "product_category": "1069"
+          "parent_product_categories": [
+            "1416"
+          ]
         },
         {
+          "product_category": "1123",
           "related_search_trends": [
             "costume inspo",
             "fun halloween outfits",
@@ -301,30 +302,30 @@
             "disney costumes",
             "halloween costume inspo"
           ],
-          "parent_product_categories": [],
           "summary": {
             "saves": {
-              "percent_relative_volume": 0.37,
               "total": 0,
               "percent_growth": 0.07,
-              "lookback": 2
-            },
-            "engagement": {
-              "percent_relative_volume": 0.4,
-              "total": 0,
-              "percent_growth": 0.27,
-              "lookback": 2
+              "lookback": 2,
+              "percent_relative_volume": 0.37
             },
             "outbound_clicks": {
-              "percent_relative_volume": 0.43,
               "total": 0,
               "percent_growth": 0.51,
-              "lookback": 2
+              "lookback": 2,
+              "percent_relative_volume": 0.43
+            },
+            "engagement": {
+              "total": 0,
+              "percent_growth": 0.27,
+              "lookback": 2,
+              "percent_relative_volume": 0.4
             }
           },
-          "product_category": "1123"
+          "parent_product_categories": []
         },
         {
+          "product_category": "1424",
           "related_search_trends": [
             "pajama set",
             "silk pajamas",
@@ -350,32 +351,32 @@
             "bathrobe",
             "satin pajamas"
           ],
-          "parent_product_categories": [
-            "1104"
-          ],
           "summary": {
             "saves": {
-              "percent_relative_volume": 0.25,
               "total": 0,
               "percent_growth": -0.05,
-              "lookback": 2
-            },
-            "engagement": {
-              "percent_relative_volume": 0.26,
-              "total": 0,
-              "percent_growth": 0.04,
-              "lookback": 2
+              "lookback": 2,
+              "percent_relative_volume": 0.25
             },
             "outbound_clicks": {
-              "percent_relative_volume": 0.32,
               "total": 0,
               "percent_growth": 0.12,
-              "lookback": 2
+              "lookback": 2,
+              "percent_relative_volume": 0.32
+            },
+            "engagement": {
+              "total": 0,
+              "percent_growth": 0.04,
+              "lookback": 2,
+              "percent_relative_volume": 0.26
             }
           },
-          "product_category": "1424"
+          "parent_product_categories": [
+            "1104"
+          ]
         },
         {
+          "product_category": "1102",
           "related_search_trends": [
             "crocs",
             "birks",
@@ -403,32 +404,32 @@
             "ugg",
             "shoes"
           ],
-          "parent_product_categories": [
-            "1416"
-          ],
           "summary": {
             "saves": {
-              "percent_relative_volume": 0.12,
               "total": 0,
               "percent_growth": 0.03,
-              "lookback": 2
-            },
-            "engagement": {
-              "percent_relative_volume": 0.14,
-              "total": 0,
-              "percent_growth": 0.19,
-              "lookback": 2
+              "lookback": 2,
+              "percent_relative_volume": 0.12
             },
             "outbound_clicks": {
-              "percent_relative_volume": 0.16,
               "total": 0,
               "percent_growth": 0.32,
-              "lookback": 2
+              "lookback": 2,
+              "percent_relative_volume": 0.16
+            },
+            "engagement": {
+              "total": 0,
+              "percent_growth": 0.19,
+              "lookback": 2,
+              "percent_relative_volume": 0.14
             }
           },
-          "product_category": "1102"
+          "parent_product_categories": [
+            "1416"
+          ]
         },
         {
+          "product_category": "1354",
           "related_search_trends": [
             "shoes boots",
             "formal shoes",
@@ -456,32 +457,32 @@
             "dr martens",
             "women shoes"
           ],
-          "parent_product_categories": [
-            "1416"
-          ],
           "summary": {
             "saves": {
-              "percent_relative_volume": 0.06,
               "total": 0,
               "percent_growth": 0.17,
-              "lookback": 2
-            },
-            "engagement": {
-              "percent_relative_volume": 0.09,
-              "total": 0,
-              "percent_growth": 0.16,
-              "lookback": 2
+              "lookback": 2,
+              "percent_relative_volume": 0.06
             },
             "outbound_clicks": {
-              "percent_relative_volume": 0.12,
               "total": 0,
               "percent_growth": 0.21,
-              "lookback": 2
+              "lookback": 2,
+              "percent_relative_volume": 0.12
+            },
+            "engagement": {
+              "total": 0,
+              "percent_growth": 0.16,
+              "lookback": 2,
+              "percent_relative_volume": 0.09
             }
           },
-          "product_category": "1354"
+          "parent_product_categories": [
+            "1416"
+          ]
         },
         {
+          "product_category": "1404",
           "related_search_trends": [
             "tricot",
             "knitting ideas",
@@ -509,32 +510,32 @@
             "shawl knitting patterns",
             "shawls and wraps"
           ],
-          "parent_product_categories": [
-            "1003"
-          ],
           "summary": {
             "saves": {
-              "percent_relative_volume": 0.13,
               "total": 0,
               "percent_growth": 0.17,
-              "lookback": 2
-            },
-            "engagement": {
-              "percent_relative_volume": 0.11,
-              "total": 0,
-              "percent_growth": 0.19,
-              "lookback": 2
+              "lookback": 2,
+              "percent_relative_volume": 0.13
             },
             "outbound_clicks": {
-              "percent_relative_volume": 0.11,
               "total": 0,
               "percent_growth": 0.32,
-              "lookback": 2
+              "lookback": 2,
+              "percent_relative_volume": 0.11
+            },
+            "engagement": {
+              "total": 0,
+              "percent_growth": 0.19,
+              "lookback": 2,
+              "percent_relative_volume": 0.11
             }
           },
-          "product_category": "1404"
+          "parent_product_categories": [
+            "1003"
+          ]
         },
         {
+          "product_category": "1432",
           "related_search_trends": [
             "leg warmers",
             "ankle socks",
@@ -562,32 +563,32 @@
             "lace socks",
             "tights"
           ],
-          "parent_product_categories": [
-            "1255"
-          ],
           "summary": {
             "saves": {
-              "percent_relative_volume": 0.17,
               "total": 0,
               "percent_growth": -0.02,
-              "lookback": 2
-            },
-            "engagement": {
-              "percent_relative_volume": 0.1,
-              "total": 0,
-              "percent_growth": 0.08,
-              "lookback": 2
+              "lookback": 2,
+              "percent_relative_volume": 0.17
             },
             "outbound_clicks": {
-              "percent_relative_volume": 0.1,
               "total": 0,
               "percent_growth": 0.22,
-              "lookback": 2
+              "lookback": 2,
+              "percent_relative_volume": 0.1
+            },
+            "engagement": {
+              "total": 0,
+              "percent_growth": 0.08,
+              "lookback": 2,
+              "percent_relative_volume": 0.1
             }
           },
-          "product_category": "1432"
+          "parent_product_categories": [
+            "1255"
+          ]
         },
         {
+          "product_category": "1099",
           "related_search_trends": [
             "jewlery",
             "pandora charms",
@@ -615,32 +616,32 @@
             "charm bracelet",
             "diamond"
           ],
-          "parent_product_categories": [
-            "1263"
-          ],
           "summary": {
             "saves": {
-              "percent_relative_volume": 0.1,
               "total": 0,
               "percent_growth": 0.01,
-              "lookback": 2
-            },
-            "engagement": {
-              "percent_relative_volume": 0.08,
-              "total": 0,
-              "percent_growth": 0.03,
-              "lookback": 2
+              "lookback": 2,
+              "percent_relative_volume": 0.1
             },
             "outbound_clicks": {
-              "percent_relative_volume": 0.07,
               "total": 0,
               "percent_growth": 0.16,
-              "lookback": 2
+              "lookback": 2,
+              "percent_relative_volume": 0.07
+            },
+            "engagement": {
+              "total": 0,
+              "percent_growth": 0.03,
+              "lookback": 2,
+              "percent_relative_volume": 0.08
             }
           },
-          "product_category": "1099"
+          "parent_product_categories": [
+            "1263"
+          ]
         },
         {
+          "product_category": "1052",
           "related_search_trends": [
             "muscle",
             "stud belt",
@@ -668,32 +669,32 @@
             "black belt",
             "leather belt"
           ],
-          "parent_product_categories": [
-            "1003"
-          ],
           "summary": {
             "saves": {
-              "percent_relative_volume": 0.1,
               "total": 0,
               "percent_growth": 0.05,
-              "lookback": 2
-            },
-            "engagement": {
-              "percent_relative_volume": 0.06,
-              "total": 0,
-              "percent_growth": 0.05,
-              "lookback": 2
+              "lookback": 2,
+              "percent_relative_volume": 0.1
             },
             "outbound_clicks": {
-              "percent_relative_volume": 0.05,
               "total": 0,
               "percent_growth": 0.13,
-              "lookback": 2
+              "lookback": 2,
+              "percent_relative_volume": 0.05
+            },
+            "engagement": {
+              "total": 0,
+              "percent_growth": 0.05,
+              "lookback": 2,
+              "percent_relative_volume": 0.06
             }
           },
-          "product_category": "1052"
+          "parent_product_categories": [
+            "1003"
+          ]
         },
         {
+          "product_category": "1482",
           "related_search_trends": [
             "indian clothing",
             "traditional indian outfits",
@@ -721,32 +722,32 @@
             "sharara",
             "sari"
           ],
-          "parent_product_categories": [
-            "1104"
-          ],
           "summary": {
             "saves": {
-              "percent_relative_volume": 0.05,
               "total": 0,
               "percent_growth": -0.04,
-              "lookback": 2
-            },
-            "engagement": {
-              "percent_relative_volume": 0.08,
-              "total": 0,
-              "percent_growth": -0.03,
-              "lookback": 2
+              "lookback": 2,
+              "percent_relative_volume": 0.05
             },
             "outbound_clicks": {
-              "percent_relative_volume": 0.05,
               "total": 0,
               "percent_growth": 0.11,
-              "lookback": 2
+              "lookback": 2,
+              "percent_relative_volume": 0.05
+            },
+            "engagement": {
+              "total": 0,
+              "percent_growth": -0.03,
+              "lookback": 2,
+              "percent_relative_volume": 0.08
             }
           },
-          "product_category": "1482"
+          "parent_product_categories": [
+            "1104"
+          ]
         },
         {
+          "product_category": "1417",
           "related_search_trends": [
             "handbags",
             "bag inspo",
@@ -774,32 +775,32 @@
             "everyday bag",
             "bag ideas"
           ],
-          "parent_product_categories": [
-            "1024"
-          ],
           "summary": {
             "saves": {
-              "percent_relative_volume": 0.06,
               "total": 0,
               "percent_growth": -0.1,
-              "lookback": 2
-            },
-            "engagement": {
-              "percent_relative_volume": 0.05,
-              "total": 0,
-              "percent_growth": -0.02,
-              "lookback": 2
+              "lookback": 2,
+              "percent_relative_volume": 0.06
             },
             "outbound_clicks": {
-              "percent_relative_volume": 0.04,
               "total": 0,
               "percent_growth": 0.12,
-              "lookback": 2
+              "lookback": 2,
+              "percent_relative_volume": 0.04
+            },
+            "engagement": {
+              "total": 0,
+              "percent_growth": -0.02,
+              "lookback": 2,
+              "percent_relative_volume": 0.05
             }
           },
-          "product_category": "1417"
+          "parent_product_categories": [
+            "1024"
+          ]
         },
         {
+          "product_category": "1152",
           "related_search_trends": [
             "pantalon",
             "linen pants",
@@ -827,31 +828,30 @@
             "pleated trousers",
             "satin pants"
           ],
+          "summary": {
+            "saves": {
+              "total": 0,
+              "percent_growth": 0.12,
+              "lookback": 2,
+              "percent_relative_volume": 0.01
+            },
+            "outbound_clicks": {
+              "total": 0,
+              "percent_growth": 0.17,
+              "lookback": 2,
+              "percent_relative_volume": 0.03
+            },
+            "engagement": {
+              "total": 0,
+              "percent_growth": 0.14,
+              "lookback": 2,
+              "percent_relative_volume": 0.02
+            }
+          },
           "parent_product_categories": [
             "1356",
             "1104"
-          ],
-          "summary": {
-            "saves": {
-              "percent_relative_volume": 0.01,
-              "total": 0,
-              "percent_growth": 0.12,
-              "lookback": 2
-            },
-            "engagement": {
-              "percent_relative_volume": 0.02,
-              "total": 0,
-              "percent_growth": 0.14,
-              "lookback": 2
-            },
-            "outbound_clicks": {
-              "percent_relative_volume": 0.03,
-              "total": 0,
-              "percent_growth": 0.17,
-              "lookback": 2
-            }
-          },
-          "product_category": "1152"
+          ]
         }
       ],
       "total_num_product_categories": 16
@@ -879,6 +879,6 @@
       }
     }
   },
-  "request_identifier": "1624555955363312",
+  "request_identifier": "4455745754731083",
   "_client_context": "<stripped: account PII, see strip_pii()>"
 }

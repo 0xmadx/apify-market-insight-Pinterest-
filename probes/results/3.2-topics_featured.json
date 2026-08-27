@@ -6,10 +6,156 @@
     "endpoint_name": "get_featured_topics_handler",
     "data": [
       {
+        "name": "Clay Figure Ideas",
+        "id": "2751594656627954036",
+        "time_series": [
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 5,
+            "date": "2026-05-29",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 3,
+            "date": "2026-06-05",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 3,
+            "date": "2026-06-12",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 5,
+            "date": "2026-06-19",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 1,
+            "date": "2026-06-26",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 5,
+            "date": "2026-07-03",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 3,
+            "date": "2026-07-10",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 3,
+            "date": "2026-07-17",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 0,
+            "date": "2026-07-24",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 4,
+            "date": "2026-07-31",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 88,
+            "date": "2026-08-07",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 85,
+            "date": "2026-08-14",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 100,
+            "date": "2026-08-21",
+            "normalized_count": null
+          }
+        ],
+        "pct_growth_mom": 40,
+        "description": "Sculpt your imagination into cute mini clay figures: from tiny humans to whimsical creatures, clay art is crafting a playful, tactile world. The soft press of fingers shaping vibrant colors connects makers to their creative spirit. Dive into this trend with kits and tutorials that invite everyone to mold their own little masterpieces.",
         "interests": [
           "934876475639"
         ],
-        "id": "2751594656627954036",
+        "pins": [
+          {
+            "color": "#b2b2ad",
+            "height": 419,
+            "id": "14144186326995054",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/bc/51/06/bc5106e84cff5b0433c5586fead4f658.jpg",
+            "vertical_offset": null
+          },
+          {
+            "color": "#7f7e7d",
+            "height": 314,
+            "id": "332562753758367378",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/27/5d/5a/275d5a898960877b67380e840301c961.jpg",
+            "vertical_offset": null
+          },
+          {
+            "color": "#d19e9b",
+            "height": 291,
+            "id": "774124930525120",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/cf/61/d8/cf61d8e87d7ab3b22b64b1b72755285f.jpg",
+            "vertical_offset": null
+          },
+          {
+            "color": "#785a35",
+            "height": 295,
+            "id": "669840144615440847",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/f4/be/49/f4be49a4cd2afd4016234176ea2925fb.jpg",
+            "vertical_offset": null
+          },
+          {
+            "color": "#c4936c",
+            "height": 295,
+            "id": "760475087113805801",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/cc/ea/ad/cceaadee809819849ce143db7f94a7f5.jpg",
+            "vertical_offset": null
+          },
+          {
+            "color": "#95593f",
+            "height": 289,
+            "id": "693976623885856600",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/3d/45/c0/3d45c00ca2eb7c9494d3b8ac481a8583.jpg",
+            "vertical_offset": null
+          }
+        ],
         "related_search_trends": [
           "mini clay figures",
           "clay figure ideas",
@@ -22,159 +168,183 @@
           "cute clay figures",
           "figures ideas"
         ],
-        "pct_growth_mom": 40,
-        "is_published": true,
-        "name": "Clay Figure Ideas",
-        "pins": [
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/bc/51/06/bc5106e84cff5b0433c5586fead4f658.jpg",
-            "id": "14144186326995054",
-            "color": "#b2b2ad",
-            "width": 236,
-            "height": 419
-          },
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/27/5d/5a/275d5a898960877b67380e840301c961.jpg",
-            "id": "332562753758367378",
-            "color": "#7f7e7d",
-            "width": 236,
-            "height": 314
-          },
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/cf/61/d8/cf61d8e87d7ab3b22b64b1b72755285f.jpg",
-            "id": "774124930525120",
-            "color": "#d19e9b",
-            "width": 236,
-            "height": 291
-          },
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/f4/be/49/f4be49a4cd2afd4016234176ea2925fb.jpg",
-            "id": "669840144615440847",
-            "color": "#785a35",
-            "width": 236,
-            "height": 295
-          },
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/cc/ea/ad/cceaadee809819849ce143db7f94a7f5.jpg",
-            "id": "760475087113805801",
-            "color": "#c4936c",
-            "width": 236,
-            "height": 295
-          },
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/3d/45/c0/3d45c00ca2eb7c9494d3b8ac481a8583.jpg",
-            "id": "693976623885856600",
-            "color": "#95593f",
-            "width": 236,
-            "height": 289
-          }
-        ],
-        "time_series": [
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 5,
-            "normalized_count": null,
-            "date": "2026-05-29",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 3,
-            "normalized_count": null,
-            "date": "2026-06-05",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 3,
-            "normalized_count": null,
-            "date": "2026-06-12",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 5,
-            "normalized_count": null,
-            "date": "2026-06-19",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 1,
-            "normalized_count": null,
-            "date": "2026-06-26",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 5,
-            "normalized_count": null,
-            "date": "2026-07-03",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 3,
-            "normalized_count": null,
-            "date": "2026-07-10",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 3,
-            "normalized_count": null,
-            "date": "2026-07-17",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 0,
-            "normalized_count": null,
-            "date": "2026-07-24",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 4,
-            "normalized_count": null,
-            "date": "2026-07-31",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 88,
-            "normalized_count": null,
-            "date": "2026-08-07",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 85,
-            "normalized_count": null,
-            "date": "2026-08-14",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 100,
-            "normalized_count": null,
-            "date": "2026-08-21",
-            "normalized_predicted_upper_bound": null
-          }
-        ],
-        "description": "Sculpt your imagination into cute mini clay figures: from tiny humans to whimsical creatures, clay art is crafting a playful, tactile world. The soft press of fingers shaping vibrant colors connects makers to their creative spirit. Dive into this trend with kits and tutorials that invite everyone to mold their own little masterpieces."
+        "is_published": true
       },
       {
+        "name": "Embroidery Gifts",
+        "id": "2542595742484332416",
+        "time_series": [
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 4,
+            "date": "2026-05-29",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 5,
+            "date": "2026-06-05",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 3,
+            "date": "2026-06-12",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 3,
+            "date": "2026-06-19",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 2,
+            "date": "2026-06-26",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 2,
+            "date": "2026-07-03",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 2,
+            "date": "2026-07-10",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 3,
+            "date": "2026-07-17",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 4,
+            "date": "2026-07-24",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 2,
+            "date": "2026-07-31",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 97,
+            "date": "2026-08-07",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 100,
+            "date": "2026-08-14",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 95,
+            "date": "2026-08-21",
+            "normalized_count": null
+          }
+        ],
+        "pct_growth_mom": 30,
+        "description": "Embroidery gifts are stitching their way into hearts with handmade charm and machine magic. From delicate florals to cheeky quotes, these projects turn thread into treasured tokens. Feel the texture of cozy stitches and the joy of giving something truly personal. Brands should weave this trend into gift guides and DIY kits for heartfelt campaigns.",
         "interests": [
           "934876475639"
         ],
-        "id": "2542595742484332416",
+        "pins": [
+          {
+            "color": "#a49080",
+            "height": 317,
+            "id": "1970393584571434",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/a1/60/71/a16071bf56a543f107b16a952bd5f0c5.jpg",
+            "vertical_offset": null
+          },
+          {
+            "color": "#dfd7d0",
+            "height": 288,
+            "id": "1266706141772364",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/54/d6/5f/54d65fc4e167a457849905416095e1e9.jpg",
+            "vertical_offset": null
+          },
+          {
+            "color": "#c3c1bb",
+            "height": 317,
+            "id": "422281212864557",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/b1/bf/5f/b1bf5f51397961d3ffa4d45540d8371f.jpg",
+            "vertical_offset": null
+          },
+          {
+            "color": "#986e51",
+            "height": 419,
+            "id": "4925880839683280",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/1d/d0/73/1dd073965a1dde4bd5cc7cd7fd3be7d6.jpg",
+            "vertical_offset": null
+          },
+          {
+            "color": "#b9b7b1",
+            "height": 314,
+            "id": "456130268532481821",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/87/82/55/87825587f52b251f0b92c9f8c9c793c8.jpg",
+            "vertical_offset": null
+          },
+          {
+            "color": "#654f3d",
+            "height": 419,
+            "id": "774124930183475",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/a8/0b/67/a80b67c5834c63c93474f1cba73c866e.jpg",
+            "vertical_offset": null
+          },
+          {
+            "color": "#9f8976",
+            "height": 419,
+            "id": "5840674511199188",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/6c/f7/c2/6cf7c22663778ba6cd87000b3692d5ce.jpg",
+            "vertical_offset": null
+          },
+          {
+            "color": "#a9a8a6",
+            "height": 295,
+            "id": "196539971234492646",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/4c/89/51/4c8951e9e58f92b2d145c51ee8200282.jpg",
+            "vertical_offset": null
+          },
+          {
+            "color": "#e1d2c2",
+            "height": 314,
+            "id": "666955026109334714",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/36/0e/5c/360e5c6739f63e83eca3858922891d3e.jpg",
+            "vertical_offset": null
+          }
+        ],
         "related_search_trends": [
           "how to embroider by hand",
           "embroidery projects",
@@ -189,179 +359,106 @@
           "embroidery crafts",
           "embroidery gifts for friends"
         ],
-        "pct_growth_mom": 30,
-        "is_published": true,
-        "name": "Embroidery Gifts",
-        "pins": [
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/a1/60/71/a16071bf56a543f107b16a952bd5f0c5.jpg",
-            "id": "1970393584571434",
-            "color": "#a49080",
-            "width": 236,
-            "height": 317
-          },
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/54/d6/5f/54d65fc4e167a457849905416095e1e9.jpg",
-            "id": "1266706141772364",
-            "color": "#dfd7d0",
-            "width": 236,
-            "height": 288
-          },
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/b1/bf/5f/b1bf5f51397961d3ffa4d45540d8371f.jpg",
-            "id": "422281212864557",
-            "color": "#c3c1bb",
-            "width": 236,
-            "height": 317
-          },
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/1d/d0/73/1dd073965a1dde4bd5cc7cd7fd3be7d6.jpg",
-            "id": "4925880839683280",
-            "color": "#986e51",
-            "width": 236,
-            "height": 419
-          },
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/87/82/55/87825587f52b251f0b92c9f8c9c793c8.jpg",
-            "id": "456130268532481821",
-            "color": "#b9b7b1",
-            "width": 236,
-            "height": 314
-          },
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/a8/0b/67/a80b67c5834c63c93474f1cba73c866e.jpg",
-            "id": "774124930183475",
-            "color": "#654f3d",
-            "width": 236,
-            "height": 419
-          },
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/6c/f7/c2/6cf7c22663778ba6cd87000b3692d5ce.jpg",
-            "id": "5840674511199188",
-            "color": "#9f8976",
-            "width": 236,
-            "height": 419
-          },
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/4c/89/51/4c8951e9e58f92b2d145c51ee8200282.jpg",
-            "id": "196539971234492646",
-            "color": "#a9a8a6",
-            "width": 236,
-            "height": 295
-          },
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/36/0e/5c/360e5c6739f63e83eca3858922891d3e.jpg",
-            "id": "666955026109334714",
-            "color": "#e1d2c2",
-            "width": 236,
-            "height": 314
-          }
-        ],
-        "time_series": [
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 4,
-            "normalized_count": null,
-            "date": "2026-05-29",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 5,
-            "normalized_count": null,
-            "date": "2026-06-05",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 3,
-            "normalized_count": null,
-            "date": "2026-06-12",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 3,
-            "normalized_count": null,
-            "date": "2026-06-19",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 2,
-            "normalized_count": null,
-            "date": "2026-06-26",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 2,
-            "normalized_count": null,
-            "date": "2026-07-03",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 2,
-            "normalized_count": null,
-            "date": "2026-07-10",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 3,
-            "normalized_count": null,
-            "date": "2026-07-17",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 4,
-            "normalized_count": null,
-            "date": "2026-07-24",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 2,
-            "normalized_count": null,
-            "date": "2026-07-31",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 97,
-            "normalized_count": null,
-            "date": "2026-08-07",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 100,
-            "normalized_count": null,
-            "date": "2026-08-14",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 95,
-            "normalized_count": null,
-            "date": "2026-08-21",
-            "normalized_predicted_upper_bound": null
-          }
-        ],
-        "description": "Embroidery gifts are stitching their way into hearts with handmade charm and machine magic. From delicate florals to cheeky quotes, these projects turn thread into treasured tokens. Feel the texture of cozy stitches and the joy of giving something truly personal. Brands should weave this trend into gift guides and DIY kits for heartfelt campaigns."
+        "is_published": true
       },
       {
+        "name": "Kids Denim Jackets",
+        "id": "2735849096243466623",
+        "time_series": [
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 10,
+            "date": "2026-05-29",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 5,
+            "date": "2026-06-05",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 1,
+            "date": "2026-06-12",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 6,
+            "date": "2026-06-19",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 13,
+            "date": "2026-06-26",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 13,
+            "date": "2026-07-03",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 1,
+            "date": "2026-07-10",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 5,
+            "date": "2026-07-17",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 10,
+            "date": "2026-07-24",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 1,
+            "date": "2026-07-31",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 60,
+            "date": "2026-08-07",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 100,
+            "date": "2026-08-14",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 53,
+            "date": "2026-08-21",
+            "normalized_count": null
+          }
+        ],
+        "pct_growth_mom": 20,
+        "description": "Kids denim jackets are getting a cool makeover with patches, paint, and personality-packed designs. From rugged blues to rainbow splashes, these mini statement pieces shout fun and fearless style. Tap into this trend by launching customizable jacket projects that let kids wear their creativity loud and proud.",
         "interests": [
           "948967005229",
           "924581335376",
@@ -371,7 +468,64 @@
           "903733943146",
           "934876475639"
         ],
-        "id": "2735849096243466623",
+        "pins": [
+          {
+            "color": "#79747a",
+            "height": 314,
+            "id": "164451823884695660",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/6a/a0/0d/6aa00d1d07927e9a429f0e71cb555a2a.jpg",
+            "vertical_offset": null
+          },
+          {
+            "color": "#5d5d60",
+            "height": 236,
+            "id": "515802963597469402",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/50/ee/6e/50ee6e948f2577a6b3b5d54a2f6b37ae.jpg",
+            "vertical_offset": null
+          },
+          {
+            "color": "#63513e",
+            "height": 314,
+            "id": "1130755419060574593",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/00/98/e4/0098e41d57a1b55659799d6b0294e0dd.jpg",
+            "vertical_offset": null
+          },
+          {
+            "color": "#48576c",
+            "height": 223,
+            "id": "506232814374435241",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/77/18/de/7718de2dcdf34d0f57e9cd03c8f3bce4.jpg",
+            "vertical_offset": null
+          },
+          {
+            "color": "#826753",
+            "height": 382,
+            "id": "58054282687068725",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/7f/1e/a2/7f1ea2bc21df7e3582b6debf984aae85.jpg",
+            "vertical_offset": null
+          },
+          {
+            "color": "#a7a090",
+            "height": 236,
+            "id": "389631805262137480",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/d7/5c/23/d75c2393a13ffbc5d790986bd89cb881.jpg",
+            "vertical_offset": null
+          },
+          {
+            "color": "#8c8668",
+            "height": 293,
+            "id": "608478599688220100",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/e6/f6/e3/e6f6e3a531e65a430332b0a097f90b76.jpg",
+            "vertical_offset": null
+          }
+        ],
         "related_search_trends": [
           "kids jean jacket",
           "denim jacket with patches",
@@ -386,167 +540,159 @@
           "kids jeans jacket",
           "hand painted denim"
         ],
-        "pct_growth_mom": 20,
-        "is_published": true,
-        "name": "Kids Denim Jackets",
-        "pins": [
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/6a/a0/0d/6aa00d1d07927e9a429f0e71cb555a2a.jpg",
-            "id": "164451823884695660",
-            "color": "#79747a",
-            "width": 236,
-            "height": 314
-          },
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/50/ee/6e/50ee6e948f2577a6b3b5d54a2f6b37ae.jpg",
-            "id": "515802963597469402",
-            "color": "#5d5d60",
-            "width": 236,
-            "height": 236
-          },
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/00/98/e4/0098e41d57a1b55659799d6b0294e0dd.jpg",
-            "id": "1130755419060574593",
-            "color": "#63513e",
-            "width": 236,
-            "height": 314
-          },
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/77/18/de/7718de2dcdf34d0f57e9cd03c8f3bce4.jpg",
-            "id": "506232814374435241",
-            "color": "#48576c",
-            "width": 236,
-            "height": 223
-          },
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/7f/1e/a2/7f1ea2bc21df7e3582b6debf984aae85.jpg",
-            "id": "58054282687068725",
-            "color": "#826753",
-            "width": 236,
-            "height": 382
-          },
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/d7/5c/23/d75c2393a13ffbc5d790986bd89cb881.jpg",
-            "id": "389631805262137480",
-            "color": "#a7a090",
-            "width": 236,
-            "height": 236
-          },
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/e6/f6/e3/e6f6e3a531e65a430332b0a097f90b76.jpg",
-            "id": "608478599688220100",
-            "color": "#8c8668",
-            "width": 236,
-            "height": 293
-          }
-        ],
-        "time_series": [
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 10,
-            "normalized_count": null,
-            "date": "2026-05-29",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 5,
-            "normalized_count": null,
-            "date": "2026-06-05",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 1,
-            "normalized_count": null,
-            "date": "2026-06-12",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 6,
-            "normalized_count": null,
-            "date": "2026-06-19",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 13,
-            "normalized_count": null,
-            "date": "2026-06-26",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 13,
-            "normalized_count": null,
-            "date": "2026-07-03",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 1,
-            "normalized_count": null,
-            "date": "2026-07-10",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 5,
-            "normalized_count": null,
-            "date": "2026-07-17",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 10,
-            "normalized_count": null,
-            "date": "2026-07-24",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 1,
-            "normalized_count": null,
-            "date": "2026-07-31",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 60,
-            "normalized_count": null,
-            "date": "2026-08-07",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 100,
-            "normalized_count": null,
-            "date": "2026-08-14",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 53,
-            "normalized_count": null,
-            "date": "2026-08-21",
-            "normalized_predicted_upper_bound": null
-          }
-        ],
-        "description": "Kids denim jackets are getting a cool makeover with patches, paint, and personality-packed designs. From rugged blues to rainbow splashes, these mini statement pieces shout fun and fearless style. Tap into this trend by launching customizable jacket projects that let kids wear their creativity loud and proud."
+        "is_published": true
       },
       {
+        "name": "Pumpkin Carving and Stencils",
+        "id": "165814932429971299",
+        "time_series": [
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 21,
+            "date": "2026-05-29",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 21,
+            "date": "2026-06-05",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 25,
+            "date": "2026-06-12",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 30,
+            "date": "2026-06-19",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 31,
+            "date": "2026-06-26",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 32,
+            "date": "2026-07-03",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 40,
+            "date": "2026-07-10",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 44,
+            "date": "2026-07-17",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 55,
+            "date": "2026-07-24",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 88,
+            "date": "2026-07-31",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 77,
+            "date": "2026-08-07",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 89,
+            "date": "2026-08-14",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 100,
+            "date": "2026-08-21",
+            "normalized_count": null
+          }
+        ],
+        "pct_growth_mom": 1,
+        "description": "Pumpkin carving season is lighting up porches everywhere with quirky stencils and glow-up designs. The crisp autumn air and the scent of pumpkin spice set the scene for creative carving nights. Brands can carve out spooky-fun campaigns by sharing fresh templates and painting ideas that bring fall vibes to life.",
         "interests": [
           "934876475639"
         ],
-        "id": "165814932429971299",
+        "pins": [
+          {
+            "color": "#895d3c",
+            "height": 314,
+            "id": "1146799492643537096",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/98/3d/2e/983d2e9241c345faff1ea504a5ecb265.jpg",
+            "vertical_offset": null
+          },
+          {
+            "color": "#56240d",
+            "height": 717,
+            "id": "51439620739019104",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/ea/b6/0b/eab60bb524cdbea98728caba8829a8aa.jpg",
+            "vertical_offset": null
+          },
+          {
+            "color": "#b5741e",
+            "height": 313,
+            "id": "68748798653",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/2b/29/89/2b29890b3a7ca1c692fd3e34e2ae979d.jpg",
+            "vertical_offset": null
+          },
+          {
+            "color": "#8c6532",
+            "height": 315,
+            "id": "73957618877692923",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/38/51/dd/3851dde7ae8adb4872535b3ba914bf66.jpg",
+            "vertical_offset": null
+          },
+          {
+            "color": "#98704d",
+            "height": 314,
+            "id": "3729612242970961",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/8a/c6/7f/8ac67fe0f6ec69113adfcafe3d3c7fba.jpg",
+            "vertical_offset": null
+          },
+          {
+            "color": "#6d441e",
+            "height": 236,
+            "id": "281543721763461",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/b2/08/3c/b2083c64340aaac766930ba7d48e1f2c.jpg",
+            "vertical_offset": null
+          }
+        ],
         "related_search_trends": [
           "easy pumpkin carving ideas",
           "pumpkin painting ideas easy",
@@ -561,159 +707,159 @@
           "funny pumpkin carving ideas",
           "simple pumpkin carving ideas"
         ],
-        "pct_growth_mom": 1,
-        "is_published": true,
-        "name": "Pumpkin Carving and Stencils",
-        "pins": [
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/98/3d/2e/983d2e9241c345faff1ea504a5ecb265.jpg",
-            "id": "1146799492643537096",
-            "color": "#895d3c",
-            "width": 236,
-            "height": 314
-          },
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/ea/b6/0b/eab60bb524cdbea98728caba8829a8aa.jpg",
-            "id": "51439620739019104",
-            "color": "#56240d",
-            "width": 236,
-            "height": 717
-          },
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/2b/29/89/2b29890b3a7ca1c692fd3e34e2ae979d.jpg",
-            "id": "68748798653",
-            "color": "#b5741e",
-            "width": 236,
-            "height": 313
-          },
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/38/51/dd/3851dde7ae8adb4872535b3ba914bf66.jpg",
-            "id": "73957618877692923",
-            "color": "#8c6532",
-            "width": 236,
-            "height": 315
-          },
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/8a/c6/7f/8ac67fe0f6ec69113adfcafe3d3c7fba.jpg",
-            "id": "3729612242970961",
-            "color": "#98704d",
-            "width": 236,
-            "height": 314
-          },
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/b2/08/3c/b2083c64340aaac766930ba7d48e1f2c.jpg",
-            "id": "281543721763461",
-            "color": "#6d441e",
-            "width": 236,
-            "height": 236
-          }
-        ],
-        "time_series": [
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 21,
-            "normalized_count": null,
-            "date": "2026-05-29",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 21,
-            "normalized_count": null,
-            "date": "2026-06-05",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 25,
-            "normalized_count": null,
-            "date": "2026-06-12",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 30,
-            "normalized_count": null,
-            "date": "2026-06-19",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 31,
-            "normalized_count": null,
-            "date": "2026-06-26",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 32,
-            "normalized_count": null,
-            "date": "2026-07-03",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 40,
-            "normalized_count": null,
-            "date": "2026-07-10",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 44,
-            "normalized_count": null,
-            "date": "2026-07-17",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 55,
-            "normalized_count": null,
-            "date": "2026-07-24",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 88,
-            "normalized_count": null,
-            "date": "2026-07-31",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 77,
-            "normalized_count": null,
-            "date": "2026-08-07",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 89,
-            "normalized_count": null,
-            "date": "2026-08-14",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 100,
-            "normalized_count": null,
-            "date": "2026-08-21",
-            "normalized_predicted_upper_bound": null
-          }
-        ],
-        "description": "Pumpkin carving season is lighting up porches everywhere with quirky stencils and glow-up designs. The crisp autumn air and the scent of pumpkin spice set the scene for creative carving nights. Brands can carve out spooky-fun campaigns by sharing fresh templates and painting ideas that bring fall vibes to life."
+        "is_published": true
       },
       {
+        "name": "Sewing Tips and Tricks",
+        "id": "257053895397477232",
+        "time_series": [
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 70,
+            "date": "2026-05-29",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 70,
+            "date": "2026-06-05",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 73,
+            "date": "2026-06-12",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 72,
+            "date": "2026-06-19",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 70,
+            "date": "2026-06-26",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 68,
+            "date": "2026-07-03",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 67,
+            "date": "2026-07-10",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 60,
+            "date": "2026-07-17",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 53,
+            "date": "2026-07-24",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 21,
+            "date": "2026-07-31",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 100,
+            "date": "2026-08-07",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 97,
+            "date": "2026-08-14",
+            "normalized_count": null
+          },
+          {
+            "normalized_predicted_upper_bound": null,
+            "normalized_predicted_lower_bound": null,
+            "count": 95,
+            "date": "2026-08-21",
+            "normalized_count": null
+          }
+        ],
+        "pct_growth_mom": 0.3,
+        "description": "Sewing hacks are threading through the DIY scene\u2014think clever shortcuts, perfect hems, and upcycled wardrobe magic. The hum of the machine and the swipe of scissors make every project feel like a cozy craft escape. Stitch this trend into content that empowers beginners and pros alike to create wearable art.",
         "interests": [
           "934876475639"
         ],
-        "id": "257053895397477232",
+        "pins": [
+          {
+            "color": "#737475",
+            "height": 418,
+            "id": "4714774605877743",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/ac/80/99/ac80998d84286db8e5842c6ec83a5ad2.jpg",
+            "vertical_offset": null
+          },
+          {
+            "color": "#9c9fa7",
+            "height": 419,
+            "id": "9148005522481849",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/ec/c3/b0/ecc3b0c18618023f939a2db025c12f49.jpg",
+            "vertical_offset": null
+          },
+          {
+            "color": "#9eac9c",
+            "height": 314,
+            "id": "1125968743749491",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/cd/69/3d/cd693d6366164e14232945a1cd2f0d6b.jpg",
+            "vertical_offset": null
+          },
+          {
+            "color": "#aba19b",
+            "height": 419,
+            "id": "774124931863248",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/44/60/0f/44600fed548e563f737d71e8254024f7.jpg",
+            "vertical_offset": null
+          },
+          {
+            "color": "#95887f",
+            "height": 419,
+            "id": "1548181186930312",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/6f/24/d4/6f24d4b9f24e278f8b6739705fbeb339.jpg",
+            "vertical_offset": null
+          },
+          {
+            "color": "#626064",
+            "height": 354,
+            "id": "44895327535624284",
+            "width": 236,
+            "src": "https://i.pinimg.com/236x/c6/e5/db/c6e5db051e42b661abef736741486e06.jpg",
+            "vertical_offset": null
+          }
+        ],
         "related_search_trends": [
           "sewing projects",
           "sewing ideas",
@@ -728,153 +874,7 @@
           "diy sewing projects",
           "diy sewing clothes"
         ],
-        "pct_growth_mom": 0.3,
-        "is_published": true,
-        "name": "Sewing Tips and Tricks",
-        "pins": [
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/ac/80/99/ac80998d84286db8e5842c6ec83a5ad2.jpg",
-            "id": "4714774605877743",
-            "color": "#737475",
-            "width": 236,
-            "height": 418
-          },
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/ec/c3/b0/ecc3b0c18618023f939a2db025c12f49.jpg",
-            "id": "9148005522481849",
-            "color": "#9c9fa7",
-            "width": 236,
-            "height": 419
-          },
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/cd/69/3d/cd693d6366164e14232945a1cd2f0d6b.jpg",
-            "id": "1125968743749491",
-            "color": "#9eac9c",
-            "width": 236,
-            "height": 314
-          },
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/44/60/0f/44600fed548e563f737d71e8254024f7.jpg",
-            "id": "774124931863248",
-            "color": "#aba19b",
-            "width": 236,
-            "height": 419
-          },
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/6f/24/d4/6f24d4b9f24e278f8b6739705fbeb339.jpg",
-            "id": "1548181186930312",
-            "color": "#95887f",
-            "width": 236,
-            "height": 419
-          },
-          {
-            "vertical_offset": null,
-            "src": "https://i.pinimg.com/236x/c6/e5/db/c6e5db051e42b661abef736741486e06.jpg",
-            "id": "44895327535624284",
-            "color": "#626064",
-            "width": 236,
-            "height": 354
-          }
-        ],
-        "time_series": [
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 70,
-            "normalized_count": null,
-            "date": "2026-05-29",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 70,
-            "normalized_count": null,
-            "date": "2026-06-05",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 73,
-            "normalized_count": null,
-            "date": "2026-06-12",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 72,
-            "normalized_count": null,
-            "date": "2026-06-19",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 70,
-            "normalized_count": null,
-            "date": "2026-06-26",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 68,
-            "normalized_count": null,
-            "date": "2026-07-03",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 67,
-            "normalized_count": null,
-            "date": "2026-07-10",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 60,
-            "normalized_count": null,
-            "date": "2026-07-17",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 53,
-            "normalized_count": null,
-            "date": "2026-07-24",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 21,
-            "normalized_count": null,
-            "date": "2026-07-31",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 100,
-            "normalized_count": null,
-            "date": "2026-08-07",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 97,
-            "normalized_count": null,
-            "date": "2026-08-14",
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "normalized_predicted_lower_bound": null,
-            "count": 95,
-            "normalized_count": null,
-            "date": "2026-08-21",
-            "normalized_predicted_upper_bound": null
-          }
-        ],
-        "description": "Sewing hacks are threading through the DIY scene\u2014think clever shortcuts, perfect hems, and upcycled wardrobe magic. The hum of the machine and the swipe of scissors make every project feel like a cozy craft escape. Stitch this trend into content that empowers beginners and pros alike to create wearable art."
+        "is_published": true
       }
     ],
     "x_pinterest_sli_endpoint_name": "get_featured_topics_handler",
@@ -895,6 +895,6 @@
       }
     }
   },
-  "request_identifier": "1649414159357802",
+  "request_identifier": "5739273278014311",
   "_client_context": "<stripped: account PII, see strip_pii()>"
 }

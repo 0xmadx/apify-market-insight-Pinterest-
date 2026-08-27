@@ -7,6 +7,28 @@
     "data": {
       "product_category_distributions": {
         "1408": {
+          "summaries": [
+            {
+              "outbound_clicks": {
+                "percent_growth": 0.72,
+                "lookback": 2,
+                "percent_relative_volume": null,
+                "total": 0
+              },
+              "engagement": {
+                "percent_growth": 0.64,
+                "lookback": 2,
+                "percent_relative_volume": null,
+                "total": 0
+              },
+              "saves": {
+                "percent_growth": 0.53,
+                "lookback": 2,
+                "percent_relative_volume": null,
+                "total": 0
+              }
+            }
+          ],
           "demographics": [
             {
               "gender_distribution": {
@@ -43,28 +65,6 @@
             "pumpkin",
             "xmas decor",
             "halloween fun"
-          ],
-          "summaries": [
-            {
-              "saves": {
-                "percent_growth": 0.53,
-                "lookback": 2,
-                "total": 0,
-                "percent_relative_volume": null
-              },
-              "engagement": {
-                "percent_growth": 0.64,
-                "lookback": 2,
-                "total": 0,
-                "percent_relative_volume": null
-              },
-              "outbound_clicks": {
-                "percent_growth": 0.72,
-                "lookback": 2,
-                "total": 0,
-                "percent_relative_volume": null
-              }
-            }
           ]
         }
       }
@@ -88,6 +88,6 @@
       }
     }
   },
-  "request_identifier": "1257665409526876",
+  "request_identifier": "5197752560256581",
   "_client_context": "<stripped: account PII, see strip_pii()>"
 }

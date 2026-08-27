@@ -7,409 +7,410 @@
     "data": {
       "moments": [
         {
+          "name": "halloween",
           "moment": {
             "daily_values": [
               {
                 "predicted_normalized_upper_bound_count": 3,
-                "timestamp": 1795132800000,
                 "predicted_normalized_lower_bound_count": 2,
+                "timestamp": 1795132800000,
                 "normal_counts": 2
               },
               {
                 "predicted_normalized_upper_bound_count": 7,
-                "timestamp": 1794528000000,
                 "predicted_normalized_lower_bound_count": 4,
+                "timestamp": 1794528000000,
                 "normal_counts": 6
               },
               {
                 "predicted_normalized_upper_bound_count": 49,
-                "timestamp": 1793923200000,
                 "predicted_normalized_lower_bound_count": 31,
+                "timestamp": 1793923200000,
                 "normal_counts": 39
               },
               {
                 "predicted_normalized_upper_bound_count": 62,
-                "timestamp": 1793318400000,
                 "predicted_normalized_lower_bound_count": 40,
+                "timestamp": 1793318400000,
                 "normal_counts": 50
               },
               {
                 "predicted_normalized_upper_bound_count": 100,
-                "timestamp": 1792713600000,
                 "predicted_normalized_lower_bound_count": 64,
+                "timestamp": 1792713600000,
                 "normal_counts": 80
               },
               {
                 "predicted_normalized_upper_bound_count": 97,
-                "timestamp": 1792108800000,
                 "predicted_normalized_lower_bound_count": 62,
+                "timestamp": 1792108800000,
                 "normal_counts": 77
               },
               {
                 "predicted_normalized_upper_bound_count": 76,
-                "timestamp": 1791504000000,
                 "predicted_normalized_lower_bound_count": 49,
+                "timestamp": 1791504000000,
                 "normal_counts": 61
               },
               {
                 "predicted_normalized_upper_bound_count": 68,
-                "timestamp": 1790899200000,
                 "predicted_normalized_lower_bound_count": 44,
+                "timestamp": 1790899200000,
                 "normal_counts": 54
               },
               {
                 "predicted_normalized_upper_bound_count": 64,
-                "timestamp": 1790294400000,
                 "predicted_normalized_lower_bound_count": 41,
+                "timestamp": 1790294400000,
                 "normal_counts": 51
               },
               {
                 "predicted_normalized_upper_bound_count": 60,
-                "timestamp": 1789689600000,
                 "predicted_normalized_lower_bound_count": 39,
+                "timestamp": 1789689600000,
                 "normal_counts": 48
               },
               {
                 "predicted_normalized_upper_bound_count": 54,
-                "timestamp": 1789084800000,
                 "predicted_normalized_lower_bound_count": 35,
+                "timestamp": 1789084800000,
                 "normal_counts": 43
               },
               {
                 "predicted_normalized_upper_bound_count": 43,
-                "timestamp": 1788480000000,
                 "predicted_normalized_lower_bound_count": 28,
+                "timestamp": 1788480000000,
                 "normal_counts": 34
               },
               {
                 "predicted_normalized_upper_bound_count": 33,
-                "timestamp": 1787875200000,
                 "predicted_normalized_lower_bound_count": 24,
+                "timestamp": 1787875200000,
                 "normal_counts": 28
               },
               {
                 "predicted_normalized_upper_bound_count": null,
-                "timestamp": 1787270400000,
                 "predicted_normalized_lower_bound_count": null,
+                "timestamp": 1787270400000,
                 "normal_counts": 23
               },
               {
                 "predicted_normalized_upper_bound_count": null,
-                "timestamp": 1786665600000,
                 "predicted_normalized_lower_bound_count": null,
+                "timestamp": 1786665600000,
                 "normal_counts": 19
               },
               {
                 "predicted_normalized_upper_bound_count": null,
-                "timestamp": 1786060800000,
                 "predicted_normalized_lower_bound_count": null,
+                "timestamp": 1786060800000,
                 "normal_counts": 17
               },
               {
                 "predicted_normalized_upper_bound_count": null,
-                "timestamp": 1785456000000,
                 "predicted_normalized_lower_bound_count": null,
+                "timestamp": 1785456000000,
                 "normal_counts": 15
               },
               {
                 "predicted_normalized_upper_bound_count": null,
-                "timestamp": 1784851200000,
                 "predicted_normalized_lower_bound_count": null,
+                "timestamp": 1784851200000,
                 "normal_counts": 12
               },
               {
                 "predicted_normalized_upper_bound_count": null,
-                "timestamp": 1784246400000,
                 "predicted_normalized_lower_bound_count": null,
+                "timestamp": 1784246400000,
                 "normal_counts": 11
               },
               {
                 "predicted_normalized_upper_bound_count": null,
-                "timestamp": 1783641600000,
                 "predicted_normalized_lower_bound_count": null,
+                "timestamp": 1783641600000,
                 "normal_counts": 8
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1783036800000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 5
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1782432000000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 5
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1781827200000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 5
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1781222400000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 5
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1780617600000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 4
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1780012800000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 4
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1779408000000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 4
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1778803200000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 3
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1778198400000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 4
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1777593600000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 4
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1776988800000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 4
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1776384000000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 4
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1775779200000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 3
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1775174400000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 3
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1774569600000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 3
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1773964800000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 3
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1773360000000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 3
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1772755200000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 3
               },
               {
                 "predicted_normalized_upper_bound_count": null,
-                "timestamp": 1772150400000,
                 "predicted_normalized_lower_bound_count": null,
+                "timestamp": 1772150400000,
                 "normal_counts": 4
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1771545600000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 3
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1770940800000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 2
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1770336000000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 2
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1769731200000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 3
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1769126400000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 3
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1768521600000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 3
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1767916800000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 3
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1767312000000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 2
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1766707200000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 1
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1766102400000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 1
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1765497600000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 1
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1764892800000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 1
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1764288000000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 1
               },
               {
                 "predicted_normalized_upper_bound_count": null,
-                "timestamp": 1763683200000,
                 "predicted_normalized_lower_bound_count": null,
+                "timestamp": 1763683200000,
                 "normal_counts": 2
               },
               {
                 "predicted_normalized_upper_bound_count": null,
-                "timestamp": 1763078400000,
                 "predicted_normalized_lower_bound_count": null,
+                "timestamp": 1763078400000,
                 "normal_counts": 3
               },
               {
                 "predicted_normalized_upper_bound_count": null,
-                "timestamp": 1762473600000,
                 "predicted_normalized_lower_bound_count": null,
+                "timestamp": 1762473600000,
                 "normal_counts": 16
               },
               {
                 "predicted_normalized_upper_bound_count": null,
-                "timestamp": 1761868800000,
                 "predicted_normalized_lower_bound_count": null,
+                "timestamp": 1761868800000,
                 "normal_counts": 67
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1761264000000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 60
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1760659200000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 60
               },
               {
                 "predicted_normalized_upper_bound_count": null,
+                "predicted_normalized_lower_bound_count": null,
                 "timestamp": 1760054400000,
-                "predicted_normalized_lower_bound_count": null,
                 "normal_counts": 60
               },
               {
                 "predicted_normalized_upper_bound_count": null,
-                "timestamp": 1759449600000,
                 "predicted_normalized_lower_bound_count": null,
+                "timestamp": 1759449600000,
                 "normal_counts": 56
               },
               {
                 "predicted_normalized_upper_bound_count": null,
-                "timestamp": 1758844800000,
                 "predicted_normalized_lower_bound_count": null,
+                "timestamp": 1758844800000,
                 "normal_counts": 47
               },
               {
                 "predicted_normalized_upper_bound_count": null,
-                "timestamp": 1758240000000,
                 "predicted_normalized_lower_bound_count": null,
+                "timestamp": 1758240000000,
                 "normal_counts": 42
               },
               {
                 "predicted_normalized_upper_bound_count": null,
-                "timestamp": 1757635200000,
                 "predicted_normalized_lower_bound_count": null,
+                "timestamp": 1757635200000,
                 "normal_counts": 40
               },
               {
                 "predicted_normalized_upper_bound_count": null,
-                "timestamp": 1757030400000,
                 "predicted_normalized_lower_bound_count": null,
+                "timestamp": 1757030400000,
                 "normal_counts": 34
               },
               {
                 "predicted_normalized_upper_bound_count": null,
-                "timestamp": 1756425600000,
                 "predicted_normalized_lower_bound_count": null,
+                "timestamp": 1756425600000,
                 "normal_counts": 27
               },
               {
                 "predicted_normalized_upper_bound_count": null,
-                "timestamp": 1755820800000,
                 "predicted_normalized_lower_bound_count": null,
+                "timestamp": 1755820800000,
                 "normal_counts": 3
               }
             ],
             "peaks": [
               {
-                "takeoff_timestamp_millis": "1785456000000",
                 "peak_length_in_days": 91,
+                "takeoff_timestamp_millis": "1785456000000",
                 "peak_timestamp_millis": "1792713600000"
               }
             ]
@@ -419,398 +420,398 @@
               "daily_values": [
                 {
                   "predicted_normalized_upper_bound_count": 3,
-                  "timestamp": 1795132800000,
                   "predicted_normalized_lower_bound_count": 2,
+                  "timestamp": 1795132800000,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": 8,
-                  "timestamp": 1794528000000,
                   "predicted_normalized_lower_bound_count": 5,
+                  "timestamp": 1794528000000,
                   "normal_counts": 6
                 },
                 {
                   "predicted_normalized_upper_bound_count": 29,
-                  "timestamp": 1793923200000,
                   "predicted_normalized_lower_bound_count": 17,
+                  "timestamp": 1793923200000,
                   "normal_counts": 22
                 },
                 {
                   "predicted_normalized_upper_bound_count": 67,
-                  "timestamp": 1793318400000,
                   "predicted_normalized_lower_bound_count": 40,
+                  "timestamp": 1793318400000,
                   "normal_counts": 52
                 },
                 {
                   "predicted_normalized_upper_bound_count": 100,
-                  "timestamp": 1792713600000,
                   "predicted_normalized_lower_bound_count": 60,
+                  "timestamp": 1792713600000,
                   "normal_counts": 78
                 },
                 {
                   "predicted_normalized_upper_bound_count": 90,
-                  "timestamp": 1792108800000,
                   "predicted_normalized_lower_bound_count": 54,
+                  "timestamp": 1792108800000,
                   "normal_counts": 70
                 },
                 {
                   "predicted_normalized_upper_bound_count": 69,
-                  "timestamp": 1791504000000,
                   "predicted_normalized_lower_bound_count": 41,
+                  "timestamp": 1791504000000,
                   "normal_counts": 53
                 },
                 {
                   "predicted_normalized_upper_bound_count": 59,
-                  "timestamp": 1790899200000,
                   "predicted_normalized_lower_bound_count": 36,
+                  "timestamp": 1790899200000,
                   "normal_counts": 46
                 },
                 {
                   "predicted_normalized_upper_bound_count": 57,
-                  "timestamp": 1790294400000,
                   "predicted_normalized_lower_bound_count": 34,
+                  "timestamp": 1790294400000,
                   "normal_counts": 44
                 },
                 {
                   "predicted_normalized_upper_bound_count": 55,
-                  "timestamp": 1789689600000,
                   "predicted_normalized_lower_bound_count": 33,
+                  "timestamp": 1789689600000,
                   "normal_counts": 42
                 },
                 {
                   "predicted_normalized_upper_bound_count": 48,
-                  "timestamp": 1789084800000,
                   "predicted_normalized_lower_bound_count": 29,
+                  "timestamp": 1789084800000,
                   "normal_counts": 37
                 },
                 {
                   "predicted_normalized_upper_bound_count": 38,
-                  "timestamp": 1788480000000,
                   "predicted_normalized_lower_bound_count": 23,
+                  "timestamp": 1788480000000,
                   "normal_counts": 29
                 },
                 {
                   "predicted_normalized_upper_bound_count": 28,
-                  "timestamp": 1787875200000,
                   "predicted_normalized_lower_bound_count": 20,
+                  "timestamp": 1787875200000,
                   "normal_counts": 24
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1787270400000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1787270400000,
                   "normal_counts": 19
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1786665600000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1786665600000,
                   "normal_counts": 16
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1786060800000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1786060800000,
                   "normal_counts": 14
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1785456000000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1785456000000,
                   "normal_counts": 12
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1784851200000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1784851200000,
                   "normal_counts": 10
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1784246400000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1784246400000,
                   "normal_counts": 12
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1783641600000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1783641600000,
                   "normal_counts": 7
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1783036800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 5
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1782432000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 5
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1781827200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 5
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1781222400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 5
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1780617600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 4
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1780012800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 5
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1779408000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 5
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1778803200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 4
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1778198400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 4
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1777593600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 5
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1776988800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 5
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1776384000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 5
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1775779200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 4
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1775174400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1774569600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 4
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1773964800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 4
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1773360000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 4
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1772755200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 5
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1772150400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 5
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1771545600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 4
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1770940800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1770336000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1769731200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 4
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1769126400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 4
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1768521600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 4
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1767916800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 4
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1767312000000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1767312000000,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1766707200000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1766707200000,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1766102400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1765497600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1764892800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1764288000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1763683200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1763078400000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1763078400000,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1762473600000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1762473600000,
                   "normal_counts": 15
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1761868800000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1761868800000,
                   "normal_counts": 65
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1761264000000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1761264000000,
                   "normal_counts": 53
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1760659200000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1760659200000,
                   "normal_counts": 49
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1760054400000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1760054400000,
                   "normal_counts": 46
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1759449600000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1759449600000,
                   "normal_counts": 42
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1758844800000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1758844800000,
                   "normal_counts": 36
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1758240000000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1758240000000,
                   "normal_counts": 32
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1757635200000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1757635200000,
                   "normal_counts": 30
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1757030400000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1757030400000,
                   "normal_counts": 25
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1756425600000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1756425600000,
                   "normal_counts": 20
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1755820800000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1755820800000,
                   "normal_counts": 2
                 }
               ],
@@ -820,398 +821,398 @@
               "daily_values": [
                 {
                   "predicted_normalized_upper_bound_count": 8,
-                  "timestamp": 1795132800000,
                   "predicted_normalized_lower_bound_count": 4,
+                  "timestamp": 1795132800000,
                   "normal_counts": 6
                 },
                 {
                   "predicted_normalized_upper_bound_count": 15,
-                  "timestamp": 1794528000000,
                   "predicted_normalized_lower_bound_count": 8,
+                  "timestamp": 1794528000000,
                   "normal_counts": 11
                 },
                 {
                   "predicted_normalized_upper_bound_count": 37,
-                  "timestamp": 1793923200000,
                   "predicted_normalized_lower_bound_count": 19,
+                  "timestamp": 1793923200000,
                   "normal_counts": 26
                 },
                 {
                   "predicted_normalized_upper_bound_count": 73,
-                  "timestamp": 1793318400000,
                   "predicted_normalized_lower_bound_count": 39,
+                  "timestamp": 1793318400000,
                   "normal_counts": 54
                 },
                 {
                   "predicted_normalized_upper_bound_count": 100,
-                  "timestamp": 1792713600000,
                   "predicted_normalized_lower_bound_count": 53,
+                  "timestamp": 1792713600000,
                   "normal_counts": 72
                 },
                 {
                   "predicted_normalized_upper_bound_count": 88,
-                  "timestamp": 1792108800000,
                   "predicted_normalized_lower_bound_count": 47,
+                  "timestamp": 1792108800000,
                   "normal_counts": 64
                 },
                 {
                   "predicted_normalized_upper_bound_count": 67,
-                  "timestamp": 1791504000000,
                   "predicted_normalized_lower_bound_count": 36,
+                  "timestamp": 1791504000000,
                   "normal_counts": 49
                 },
                 {
                   "predicted_normalized_upper_bound_count": 57,
-                  "timestamp": 1790899200000,
                   "predicted_normalized_lower_bound_count": 30,
+                  "timestamp": 1790899200000,
                   "normal_counts": 41
                 },
                 {
                   "predicted_normalized_upper_bound_count": 51,
-                  "timestamp": 1790294400000,
                   "predicted_normalized_lower_bound_count": 28,
+                  "timestamp": 1790294400000,
                   "normal_counts": 37
                 },
                 {
                   "predicted_normalized_upper_bound_count": 45,
-                  "timestamp": 1789689600000,
                   "predicted_normalized_lower_bound_count": 24,
+                  "timestamp": 1789689600000,
                   "normal_counts": 33
                 },
                 {
                   "predicted_normalized_upper_bound_count": 36,
-                  "timestamp": 1789084800000,
                   "predicted_normalized_lower_bound_count": 19,
+                  "timestamp": 1789084800000,
                   "normal_counts": 26
                 },
                 {
                   "predicted_normalized_upper_bound_count": 27,
-                  "timestamp": 1788480000000,
                   "predicted_normalized_lower_bound_count": 14,
+                  "timestamp": 1788480000000,
                   "normal_counts": 19
                 },
                 {
                   "predicted_normalized_upper_bound_count": 20,
-                  "timestamp": 1787875200000,
                   "predicted_normalized_lower_bound_count": 13,
+                  "timestamp": 1787875200000,
                   "normal_counts": 16
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1787270400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 16
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1786665600000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1786665600000,
                   "normal_counts": 14
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1786060800000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1786060800000,
                   "normal_counts": 13
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1785456000000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1785456000000,
                   "normal_counts": 10
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1784851200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1784246400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1783641600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1783036800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1782432000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1781827200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1781222400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1780617600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1780012800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1779408000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1778803200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1778198400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1777593600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1776988800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1776384000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1775779200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1775174400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1774569600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1773964800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1773360000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1772755200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1772150400000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1772150400000,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1771545600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1770940800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1770336000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1769731200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1769126400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1768521600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1767916800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1767312000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1766707200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1766102400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1765497600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1764892800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1764288000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1763683200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1763078400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1762473600000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1762473600000,
                   "normal_counts": 4
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1761868800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 9
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1761264000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 9
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1760659200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 10
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1760054400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 10
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1759449600000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1759449600000,
                   "normal_counts": 9
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1758844800000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1758844800000,
                   "normal_counts": 8
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1758240000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 7
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1757635200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 7
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1757030400000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1757030400000,
                   "normal_counts": 6
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1756425600000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1756425600000,
                   "normal_counts": 5
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1755820800000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1755820800000,
                   "normal_counts": 1
                 }
               ],
@@ -1221,398 +1222,398 @@
               "daily_values": [
                 {
                   "predicted_normalized_upper_bound_count": 2,
-                  "timestamp": 1795132800000,
                   "predicted_normalized_lower_bound_count": 1,
+                  "timestamp": 1795132800000,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": 4,
-                  "timestamp": 1794528000000,
                   "predicted_normalized_lower_bound_count": 2,
+                  "timestamp": 1794528000000,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": 30,
-                  "timestamp": 1793923200000,
                   "predicted_normalized_lower_bound_count": 17,
+                  "timestamp": 1793923200000,
                   "normal_counts": 22
                 },
                 {
                   "predicted_normalized_upper_bound_count": 52,
-                  "timestamp": 1793318400000,
                   "predicted_normalized_lower_bound_count": 30,
+                  "timestamp": 1793318400000,
                   "normal_counts": 39
                 },
                 {
                   "predicted_normalized_upper_bound_count": 94,
-                  "timestamp": 1792713600000,
                   "predicted_normalized_lower_bound_count": 54,
+                  "timestamp": 1792713600000,
                   "normal_counts": 72
                 },
                 {
                   "predicted_normalized_upper_bound_count": 100,
-                  "timestamp": 1792108800000,
                   "predicted_normalized_lower_bound_count": 57,
+                  "timestamp": 1792108800000,
                   "normal_counts": 76
                 },
                 {
                   "predicted_normalized_upper_bound_count": 84,
-                  "timestamp": 1791504000000,
                   "predicted_normalized_lower_bound_count": 48,
+                  "timestamp": 1791504000000,
                   "normal_counts": 64
                 },
                 {
                   "predicted_normalized_upper_bound_count": 74,
-                  "timestamp": 1790899200000,
                   "predicted_normalized_lower_bound_count": 43,
+                  "timestamp": 1790899200000,
                   "normal_counts": 57
                 },
                 {
                   "predicted_normalized_upper_bound_count": 77,
-                  "timestamp": 1790294400000,
                   "predicted_normalized_lower_bound_count": 44,
+                  "timestamp": 1790294400000,
                   "normal_counts": 58
                 },
                 {
                   "predicted_normalized_upper_bound_count": 78,
-                  "timestamp": 1789689600000,
                   "predicted_normalized_lower_bound_count": 45,
+                  "timestamp": 1789689600000,
                   "normal_counts": 59
                 },
                 {
                   "predicted_normalized_upper_bound_count": 69,
-                  "timestamp": 1789084800000,
                   "predicted_normalized_lower_bound_count": 40,
+                  "timestamp": 1789084800000,
                   "normal_counts": 53
                 },
                 {
                   "predicted_normalized_upper_bound_count": 60,
-                  "timestamp": 1788480000000,
                   "predicted_normalized_lower_bound_count": 34,
+                  "timestamp": 1788480000000,
                   "normal_counts": 45
                 },
                 {
                   "predicted_normalized_upper_bound_count": 55,
-                  "timestamp": 1787875200000,
                   "predicted_normalized_lower_bound_count": 39,
+                  "timestamp": 1787875200000,
                   "normal_counts": 46
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1787270400000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1787270400000,
                   "normal_counts": 48
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1786665600000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1786665600000,
                   "normal_counts": 39
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1786060800000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1786060800000,
                   "normal_counts": 35
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1785456000000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1785456000000,
                   "normal_counts": 28
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1784851200000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1784851200000,
                   "normal_counts": 17
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1784246400000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1784246400000,
                   "normal_counts": 15
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1783641600000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1783641600000,
                   "normal_counts": 11
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1783036800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 6
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1782432000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 6
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1781827200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 6
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1781222400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 6
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1780617600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 5
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1780012800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 5
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1779408000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 5
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1778803200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 4
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1778198400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 5
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1777593600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 5
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1776988800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 5
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1776384000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 5
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1775779200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1775174400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1774569600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1773964800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1773360000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1772755200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 4
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1772150400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 4
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1771545600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1770940800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1770336000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1769731200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 4
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1769126400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 4
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1768521600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 4
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1767916800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1767312000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1766707200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1766102400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1765497600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1764892800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1764288000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1763683200000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1763683200000,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1763078400000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1763078400000,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1762473600000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1762473600000,
                   "normal_counts": 18
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1761868800000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1761868800000,
                   "normal_counts": 90
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1761264000000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1761264000000,
                   "normal_counts": 86
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1760659200000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1760659200000,
                   "normal_counts": 84
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1760054400000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1760054400000,
                   "normal_counts": 85
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1759449600000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1759449600000,
                   "normal_counts": 78
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1758844800000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1758844800000,
                   "normal_counts": 69
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1758240000000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1758240000000,
                   "normal_counts": 64
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1757635200000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1757635200000,
                   "normal_counts": 61
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1757030400000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1757030400000,
                   "normal_counts": 51
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1756425600000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1756425600000,
                   "normal_counts": 41
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1755820800000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1755820800000,
                   "normal_counts": 5
                 }
               ],
@@ -1622,398 +1623,398 @@
               "daily_values": [
                 {
                   "predicted_normalized_upper_bound_count": 10,
-                  "timestamp": 1795132800000,
                   "predicted_normalized_lower_bound_count": 6,
+                  "timestamp": 1795132800000,
                   "normal_counts": 8
                 },
                 {
                   "predicted_normalized_upper_bound_count": 18,
-                  "timestamp": 1794528000000,
                   "predicted_normalized_lower_bound_count": 10,
+                  "timestamp": 1794528000000,
                   "normal_counts": 14
                 },
                 {
                   "predicted_normalized_upper_bound_count": 55,
-                  "timestamp": 1793923200000,
                   "predicted_normalized_lower_bound_count": 30,
+                  "timestamp": 1793923200000,
                   "normal_counts": 40
                 },
                 {
                   "predicted_normalized_upper_bound_count": 71,
-                  "timestamp": 1793318400000,
                   "predicted_normalized_lower_bound_count": 40,
+                  "timestamp": 1793318400000,
                   "normal_counts": 53
                 },
                 {
                   "predicted_normalized_upper_bound_count": 100,
-                  "timestamp": 1792713600000,
                   "predicted_normalized_lower_bound_count": 56,
+                  "timestamp": 1792713600000,
                   "normal_counts": 74
                 },
                 {
                   "predicted_normalized_upper_bound_count": 100,
-                  "timestamp": 1792108800000,
                   "predicted_normalized_lower_bound_count": 57,
+                  "timestamp": 1792108800000,
                   "normal_counts": 75
                 },
                 {
                   "predicted_normalized_upper_bound_count": 86,
-                  "timestamp": 1791504000000,
                   "predicted_normalized_lower_bound_count": 49,
+                  "timestamp": 1791504000000,
                   "normal_counts": 64
                 },
                 {
                   "predicted_normalized_upper_bound_count": 73,
-                  "timestamp": 1790899200000,
                   "predicted_normalized_lower_bound_count": 42,
+                  "timestamp": 1790899200000,
                   "normal_counts": 55
                 },
                 {
                   "predicted_normalized_upper_bound_count": 62,
-                  "timestamp": 1790294400000,
                   "predicted_normalized_lower_bound_count": 35,
+                  "timestamp": 1790294400000,
                   "normal_counts": 47
                 },
                 {
                   "predicted_normalized_upper_bound_count": 52,
-                  "timestamp": 1789689600000,
                   "predicted_normalized_lower_bound_count": 30,
+                  "timestamp": 1789689600000,
                   "normal_counts": 39
                 },
                 {
                   "predicted_normalized_upper_bound_count": 42,
-                  "timestamp": 1789084800000,
                   "predicted_normalized_lower_bound_count": 24,
+                  "timestamp": 1789084800000,
                   "normal_counts": 32
                 },
                 {
                   "predicted_normalized_upper_bound_count": 31,
-                  "timestamp": 1788480000000,
                   "predicted_normalized_lower_bound_count": 17,
+                  "timestamp": 1788480000000,
                   "normal_counts": 23
                 },
                 {
                   "predicted_normalized_upper_bound_count": 20,
-                  "timestamp": 1787875200000,
                   "predicted_normalized_lower_bound_count": 14,
+                  "timestamp": 1787875200000,
                   "normal_counts": 17
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1787270400000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1787270400000,
                   "normal_counts": 13
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1786665600000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1786665600000,
                   "normal_counts": 10
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1786060800000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1786060800000,
                   "normal_counts": 9
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1785456000000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1785456000000,
                   "normal_counts": 7
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1784851200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1784246400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1783641600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1783036800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1782432000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1781827200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1781222400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1780617600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1780012800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1779408000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1778803200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1778198400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1777593600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1776988800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1776384000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1775779200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1775174400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1774569600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1773964800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1773360000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1772755200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1772150400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1771545600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1770940800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1770336000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1769731200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1769126400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1768521600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1767916800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1767312000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1766707200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1766102400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1765497600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1764892800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1764288000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1763683200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1763078400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1762473600000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1762473600000,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1761868800000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1761868800000,
                   "normal_counts": 9
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1761264000000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1761264000000,
                   "normal_counts": 10
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1760659200000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1760659200000,
                   "normal_counts": 12
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1760054400000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1760054400000,
                   "normal_counts": 13
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1759449600000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1759449600000,
                   "normal_counts": 14
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1758844800000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1758844800000,
                   "normal_counts": 11
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1758240000000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1758240000000,
                   "normal_counts": 10
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1757635200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 9
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1757030400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 9
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1756425600000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1756425600000,
                   "normal_counts": 7
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1755820800000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1755820800000,
                   "normal_counts": 1
                 }
               ],
@@ -2023,398 +2024,398 @@
               "daily_values": [
                 {
                   "predicted_normalized_upper_bound_count": 2,
-                  "timestamp": 1795132800000,
                   "predicted_normalized_lower_bound_count": 1,
+                  "timestamp": 1795132800000,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": 5,
-                  "timestamp": 1794528000000,
                   "predicted_normalized_lower_bound_count": 3,
+                  "timestamp": 1794528000000,
                   "normal_counts": 4
                 },
                 {
                   "predicted_normalized_upper_bound_count": 34,
-                  "timestamp": 1793923200000,
                   "predicted_normalized_lower_bound_count": 21,
+                  "timestamp": 1793923200000,
                   "normal_counts": 27
                 },
                 {
                   "predicted_normalized_upper_bound_count": 56,
-                  "timestamp": 1793318400000,
                   "predicted_normalized_lower_bound_count": 35,
+                  "timestamp": 1793318400000,
                   "normal_counts": 45
                 },
                 {
                   "predicted_normalized_upper_bound_count": 97,
-                  "timestamp": 1792713600000,
                   "predicted_normalized_lower_bound_count": 60,
+                  "timestamp": 1792713600000,
                   "normal_counts": 77
                 },
                 {
                   "predicted_normalized_upper_bound_count": 100,
-                  "timestamp": 1792108800000,
                   "predicted_normalized_lower_bound_count": 62,
+                  "timestamp": 1792108800000,
                   "normal_counts": 79
                 },
                 {
                   "predicted_normalized_upper_bound_count": 82,
-                  "timestamp": 1791504000000,
                   "predicted_normalized_lower_bound_count": 50,
+                  "timestamp": 1791504000000,
                   "normal_counts": 64
                 },
                 {
                   "predicted_normalized_upper_bound_count": 71,
-                  "timestamp": 1790899200000,
                   "predicted_normalized_lower_bound_count": 43,
+                  "timestamp": 1790899200000,
                   "normal_counts": 55
                 },
                 {
                   "predicted_normalized_upper_bound_count": 68,
-                  "timestamp": 1790294400000,
                   "predicted_normalized_lower_bound_count": 42,
+                  "timestamp": 1790294400000,
                   "normal_counts": 53
                 },
                 {
                   "predicted_normalized_upper_bound_count": 65,
-                  "timestamp": 1789689600000,
                   "predicted_normalized_lower_bound_count": 41,
+                  "timestamp": 1789689600000,
                   "normal_counts": 52
                 },
                 {
                   "predicted_normalized_upper_bound_count": 57,
-                  "timestamp": 1789084800000,
                   "predicted_normalized_lower_bound_count": 36,
+                  "timestamp": 1789084800000,
                   "normal_counts": 45
                 },
                 {
                   "predicted_normalized_upper_bound_count": 48,
-                  "timestamp": 1788480000000,
                   "predicted_normalized_lower_bound_count": 29,
+                  "timestamp": 1788480000000,
                   "normal_counts": 37
                 },
                 {
                   "predicted_normalized_upper_bound_count": 39,
-                  "timestamp": 1787875200000,
                   "predicted_normalized_lower_bound_count": 28,
+                  "timestamp": 1787875200000,
                   "normal_counts": 33
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1787270400000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1787270400000,
                   "normal_counts": 28
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1786665600000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1786665600000,
                   "normal_counts": 19
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1786060800000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1786060800000,
                   "normal_counts": 16
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1785456000000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1785456000000,
                   "normal_counts": 13
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1784851200000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1784851200000,
                   "normal_counts": 11
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1784246400000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1784246400000,
                   "normal_counts": 9
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1783641600000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1783641600000,
                   "normal_counts": 7
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1783036800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 4
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1782432000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 4
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1781827200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 4
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1781222400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 4
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1780617600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1780012800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1779408000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1778803200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1778198400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1777593600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1776988800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1776384000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1775779200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1775174400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1774569600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1773964800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1773360000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1772755200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1772150400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1771545600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1770940800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1770336000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1769731200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1769126400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1768521600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1767916800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1767312000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1766707200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1766102400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1765497600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1764892800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1764288000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1763683200000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1763683200000,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1763078400000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1763078400000,
                   "normal_counts": 3
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1762473600000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1762473600000,
                   "normal_counts": 10
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1761868800000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1761868800000,
                   "normal_counts": 61
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1761264000000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1761264000000,
                   "normal_counts": 64
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1760659200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 63
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1760054400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 63
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1759449600000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1759449600000,
                   "normal_counts": 61
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1758844800000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1758844800000,
                   "normal_counts": 54
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1758240000000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1758240000000,
                   "normal_counts": 49
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1757635200000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1757635200000,
                   "normal_counts": 46
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1757030400000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1757030400000,
                   "normal_counts": 38
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1756425600000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1756425600000,
                   "normal_counts": 31
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1755820800000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1755820800000,
                   "normal_counts": 4
                 }
               ],
@@ -2424,405 +2425,404 @@
               "daily_values": [
                 {
                   "predicted_normalized_upper_bound_count": 3,
-                  "timestamp": 1795132800000,
                   "predicted_normalized_lower_bound_count": 2,
+                  "timestamp": 1795132800000,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": 9,
-                  "timestamp": 1794528000000,
                   "predicted_normalized_lower_bound_count": 4,
+                  "timestamp": 1794528000000,
                   "normal_counts": 6
                 },
                 {
                   "predicted_normalized_upper_bound_count": 32,
-                  "timestamp": 1793923200000,
                   "predicted_normalized_lower_bound_count": 15,
+                  "timestamp": 1793923200000,
                   "normal_counts": 22
                 },
                 {
                   "predicted_normalized_upper_bound_count": 70,
-                  "timestamp": 1793318400000,
                   "predicted_normalized_lower_bound_count": 33,
+                  "timestamp": 1793318400000,
                   "normal_counts": 48
                 },
                 {
                   "predicted_normalized_upper_bound_count": 100,
-                  "timestamp": 1792713600000,
                   "predicted_normalized_lower_bound_count": 47,
+                  "timestamp": 1792713600000,
                   "normal_counts": 69
                 },
                 {
                   "predicted_normalized_upper_bound_count": 87,
-                  "timestamp": 1792108800000,
                   "predicted_normalized_lower_bound_count": 41,
+                  "timestamp": 1792108800000,
                   "normal_counts": 60
                 },
                 {
                   "predicted_normalized_upper_bound_count": 61,
-                  "timestamp": 1791504000000,
                   "predicted_normalized_lower_bound_count": 29,
+                  "timestamp": 1791504000000,
                   "normal_counts": 42
                 },
                 {
                   "predicted_normalized_upper_bound_count": 48,
-                  "timestamp": 1790899200000,
                   "predicted_normalized_lower_bound_count": 23,
+                  "timestamp": 1790899200000,
                   "normal_counts": 33
                 },
                 {
                   "predicted_normalized_upper_bound_count": 39,
-                  "timestamp": 1790294400000,
                   "predicted_normalized_lower_bound_count": 19,
+                  "timestamp": 1790294400000,
                   "normal_counts": 27
                 },
                 {
                   "predicted_normalized_upper_bound_count": 33,
-                  "timestamp": 1789689600000,
                   "predicted_normalized_lower_bound_count": 16,
+                  "timestamp": 1789689600000,
                   "normal_counts": 22
                 },
                 {
                   "predicted_normalized_upper_bound_count": 26,
-                  "timestamp": 1789084800000,
                   "predicted_normalized_lower_bound_count": 12,
+                  "timestamp": 1789084800000,
                   "normal_counts": 18
                 },
                 {
                   "predicted_normalized_upper_bound_count": 19,
-                  "timestamp": 1788480000000,
                   "predicted_normalized_lower_bound_count": 9,
+                  "timestamp": 1788480000000,
                   "normal_counts": 13
                 },
                 {
                   "predicted_normalized_upper_bound_count": 20,
-                  "timestamp": 1787875200000,
                   "predicted_normalized_lower_bound_count": 15,
+                  "timestamp": 1787875200000,
                   "normal_counts": 17
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1787270400000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1787270400000,
                   "normal_counts": 19
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1786665600000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1786665600000,
                   "normal_counts": 6
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1786060800000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1786060800000,
                   "normal_counts": 5
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1785456000000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1785456000000,
                   "normal_counts": 4
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1784851200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1784246400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 2
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1783641600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1783036800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1782432000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1781827200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1781222400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1780617600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1780012800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1779408000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1778803200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1778198400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1777593600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1776988800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1776384000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1775779200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1775174400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1774569600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1773964800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1773360000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1772755200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1772150400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1771545600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1770940800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1770336000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1769731200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1769126400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1768521600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1767916800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1767312000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1766707200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 0
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1766102400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 0
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1765497600000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 0
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1764892800000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 0
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1764288000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1763683200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1763078400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 1
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1762473600000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1762473600000,
                   "normal_counts": 7
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1761868800000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1761868800000,
                   "normal_counts": 25
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1761264000000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1761264000000,
                   "normal_counts": 15
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1760659200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 14
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1760054400000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 14
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1759449600000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1759449600000,
                   "normal_counts": 12
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1758844800000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1758844800000,
                   "normal_counts": 9
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1758240000000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 7
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
+                  "predicted_normalized_lower_bound_count": null,
                   "timestamp": 1757635200000,
-                  "predicted_normalized_lower_bound_count": null,
                   "normal_counts": 7
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1757030400000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1757030400000,
                   "normal_counts": 5
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1756425600000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1756425600000,
                   "normal_counts": 4
                 },
                 {
                   "predicted_normalized_upper_bound_count": null,
-                  "timestamp": 1755820800000,
                   "predicted_normalized_lower_bound_count": null,
+                  "timestamp": 1755820800000,
                   "normal_counts": 0
                 }
               ],
               "peaks": []
             }
-          },
-          "name": "halloween"
+          }
         }
       ]
     },
@@ -2849,6 +2849,6 @@
       }
     }
   },
-  "request_identifier": "5236881004816533",
+  "request_identifier": "3905696030125968",
   "_client_context": "<stripped: account PII, see strip_pii()>"
 }
