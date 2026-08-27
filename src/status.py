@@ -51,6 +51,11 @@ def main():
             problems.append("no proxy — would exit from this host")
         if row["leased"]:
             problems.append("currently leased")
+        # Last, and it is the actionable one: the others say a profile is
+        # unusable, this says what to DO about it. "signed OUT" means log in
+        # again; "not the proxy" means fix the proxy. Different jobs.
+        if row.get("last_error"):
+            problems.append(f"last error: {row['last_error']}")
 
         if not problems:
             usable += 1

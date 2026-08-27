@@ -242,6 +242,9 @@ def write(vault, platform, record, cookies):
         # RULE 3: only reached on a verified pass.
         "last_updated": str(time.time()),
         "is_valid": "1",
+        # Cleared here, inside the HSET we are already sending, so a fixed
+        # profile stops reporting yesterday's failure at no extra cost.
+        "last_error": "",
     }
     if record.get("proxy"):
         fields["proxy"] = record["proxy"]
@@ -251,6 +254,30 @@ def write(vault, platform, record, cookies):
     # set did not already contain.
     if not record.get("in_set"):
         vault.r.sadd(f"valid_profiles:{platform}", profile_id)
+
+
+def note_failure(vault, platform, profile_id, reason):
+    """Put the reason a profile failed WHERE THE OPERATOR CAN SEE IT.
+
+    `refresh()` already works out exactly what went wrong -- "signed OUT --
+    missing _auth" is a different job from "exit IP is not the proxy": one needs
+    a fresh login, the other needs a proxy fixed. Until this existed that
+    sentence went to this host's journal and no further, so from the operator's
+    laptop a profile simply went quiet and `src.status` could say "stale" and
+    nothing more. Finding out why meant SSH-ing into the VM.
+
+    One extra command, and only on a failure -- successes clear the field inside
+    the HSET they already send. Failures are meant to be rare; if this is
+    costing you commands, that is the alarm working.
+    """
+    try:
+        vault.r.hset(f"cookie:{platform}:{profile_id}",
+                     mapping={"last_error": reason[:200],
+                              "last_error_at": str(time.time())})
+    except Exception:
+        # Never let bookkeeping break the pass that is still refreshing the
+        # other profiles.
+        pass
 
 
 def one_pass(records, vault, platform, headless=True, log=print):
@@ -263,6 +290,7 @@ def one_pass(records, vault, platform, headless=True, log=print):
             written += 1
             mark = "OK  "
         else:
+            note_failure(vault, platform, result.profile_id, result.reason)
             skipped += 1
             mark = "SKIP"
         ip = f" via {result.exit_ip}" if result.exit_ip else ""

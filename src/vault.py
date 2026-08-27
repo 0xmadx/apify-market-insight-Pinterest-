@@ -269,6 +269,10 @@ class SessionVault:
                 # browser it claims against the TLS fingerprint we impersonate.
                 "user_agent": data.get("user_agent"),
                 "has_proxy": bool((data.get("proxy") or "").strip()),
+                # Written by browsers/keepalive.py when a refresh fails, so the
+                # REASON travels to whoever runs `src.status` instead of staying
+                # in the VM's journal. Empty once a later pass succeeds.
+                "last_error": (data.get("last_error") or "").strip(),
                 "leased": bool(self.r.exists(f"lease:{platform}:{profile_id}")),
             })
         return out

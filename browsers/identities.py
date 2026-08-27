@@ -117,8 +117,10 @@ def clear(vault, platform):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("action", choices=("export", "restore", "clear", "show"))
-    ap.add_argument("file", nargs="?", default=DEFAULT_FILE)
+    ap.add_argument("action",
+                    choices=("export", "restore", "clear", "show", "remove"))
+    ap.add_argument("file", nargs="?", default=DEFAULT_FILE,
+                    help="for `remove`, the profile id to drop")
     ap.add_argument("--out", default=DEFAULT_FILE)
     ap.add_argument("--platform", default=None)
     args = ap.parse_args()
@@ -131,6 +133,38 @@ def main():
     except Exception as exc:
         print(f"cannot reach Redis — {exc}", file=sys.stderr)
         return 2
+
+    if args.action == "remove":
+        # The other half of the loop keepalive's last_error opens: you can now
+        # see WHY a profile died, so you need a way to retire it and start over.
+        # Deliberately one profile at a time and named explicitly -- `clear`
+        # already exists for wiping a whole pool, and confusing the two would be
+        # expensive.
+        profile_id = args.file
+        if not profile_id or profile_id == DEFAULT_FILE:
+            print("which profile? e.g. "
+                  "`python -m browsers.identities remove ads_k1fy6dnh`",
+                  file=sys.stderr)
+            return 1
+        key = f"cookie:{platform}:{profile_id}"
+        data = vault.r.hgetall(key) or {}
+        if not data and not vault.r.sismember(f"valid_profiles:{platform}",
+                                              profile_id):
+            print(f"{profile_id} is not in the {platform} pool — nothing to do")
+            return 0
+        # Say what is being destroyed BEFORE destroying it. These are live
+        # login sessions; a wrong id here costs a manual re-login.
+        err = (data.get("last_error") or "").strip()
+        print(f"removing {profile_id} from {platform}:")
+        print(f"  cookies      {len(json.loads(data.get('cookies_json') or '{}'))}")
+        print(f"  last error   {err or '(none recorded)'}")
+        vault.r.srem(f"valid_profiles:{platform}", profile_id)
+        vault.r.delete(key)
+        vault.r.delete(f"lease:{platform}:{profile_id}")
+        print(f"  removed. Create a replacement in AdsPower, log in BY HAND, "
+              f"then `python adspower/sync_cookies.py --group {platform}`. "
+              f"keepalive picks it up on the next cycle — nothing to copy.")
+        return 0
 
     if args.action == "show":
         path = pathlib.Path(args.file)

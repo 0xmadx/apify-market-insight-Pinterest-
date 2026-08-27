@@ -42,7 +42,7 @@ one-vertical-per-call, the double-spelled `has_prediction`). It is not advisory.
 Or all of it, in the order the release gate requires:
 
 ```bash
-./ship.sh check      # probes the live wire FIRST, then the 551 checks
+./ship.sh check      # probes the live wire FIRST, then the 555 checks
 ```
 
 Everything is a module run from the repo root. The venv is local to this repo.
@@ -178,7 +178,7 @@ reasoning in `docs/DEPLOY.md` §5.
 `shopping`, `keywords`, `moments`, `radar`, and `crawl`, which follows the
 links between them instead of stopping at one page. Both of Pinterest's time
 controls are wired: `endDate` (which date) and `dateRange` (how much history).
-551 checks, 0 unread response fields (`probes/coverage.py`).
+555 checks, 0 unread response fields (`probes/coverage.py`).
 
 **Both browser captures landed 2026-08-19:**
 - §3.18 moment Age/Gender via the persisted GraphQL query — audience is now
@@ -235,10 +235,30 @@ is absent from `valid_profiles`, ~7 days stale and proxy-less — an AdsPower
 profile that was never validated. It belongs to an account, so it is the
 operator's call to log in and assign a proxy, or delete it.
 
-**Remaining:** the Apify cloud and the GCP VM, both of which need the vault on
-a network-reachable Redis (Upstash). **`DEPLOY.md` at the repo root is the
-ordered runbook** — read it before deploying anything; `docs/DEPLOY.md` holds
-the reasoning behind it.
+**Where it stands 2026-08-27.** Upstash holds the vault (6/6 usable, TLS,
+remote). The GCP VM runs `keepalive.timer` and is a proven writer — attributed
+by cookie-count signature, not by a fresh-looking heartbeat. AdsPower still
+writes too; the overlap is the rollback window for Step 5, not a steady state.
+
+**Remaining: one thing.** `apify login` + `REDIS_URL` as an Actor secret, then
+`./ship.sh apify`. Both are credentials, so both are the operator's. **`DEPLOY.md`
+at the repo root is the ordered runbook** — its first section is the deployment
+model, which is what makes the steps make sense; `docs/DEPLOY.md` holds the
+reasoning and `docs/DEPLOY-LOG.md` the evidence.
+
+**Running the pool is now three commands, not an SSH session.** `src.status`
+shows *why* a profile died (`keepalive` writes the reason into the vault — one
+command, only on failure; before this it stayed in the VM's journal),
+`browsers.identities remove <id>` retires one, and the AdsPower sync adds a
+replacement that GCP picks up in 5 minutes with nothing copied. Deliberately no
+dashboard at six accounts.
+
+⚠️ **Upstash bills per command and the free tier is ~10,000/day.** Both writers
+running is ~12,400 — over it. The readers are noise; do not optimise them, and
+in particular do not cache identities on Apify: that defeats the lease, which is
+the only thing stopping two runs driving one Pinterest session from two IPs.
+Retiring the AdsPower writer halves it. `tests/test_vault.py` is pinned to a
+LOCAL Redis for the same reason — the gate must never bill production.
 
 Five tools do the deploying, none of which existed before 2026-08-25:
 `preflight.sh` (is the project deployable at all), `ship.sh` (the gate, then a

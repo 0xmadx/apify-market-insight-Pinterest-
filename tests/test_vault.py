@@ -355,6 +355,47 @@ def main():
     importlib.reload(config_module)
 
     wipe(vault)
+    print("")
+    print("GROUP E — a dead profile says WHY, not just that it is dead")
+    from browsers.keepalive import note_failure
+
+    wipe(vault)
+    seed(vault, "ads_broke", proxy="http://p:1@1.2.3.4:9", age=30)
+    note_failure(vault, TEST_PLATFORM, "ads_broke",
+                 "signed OUT — missing _auth, _pinterest_sess")
+    row = [r for r in vault.describe(TEST_PLATFORM)
+           if r["profile_id"] == "ads_broke"][0]
+    # The whole point. "stale" tells you a profile is unusable; only the reason
+    # tells you whether to re-login or fix a proxy -- and before this it lived
+    # in the VM's journal where nobody reading src.status would ever see it.
+    check("E1 the failure reason reaches the vault",
+          "signed OUT" in row["last_error"], row["last_error"])
+    check("E2 ...and is truncated, so a stack trace cannot bloat the record",
+          len(row["last_error"]) <= 200)
+
+    # A profile that recovers must stop reporting yesterday's failure, or the
+    # operator retires a healthy account.
+    vault.r.hset(f"cookie:{TEST_PLATFORM}:ads_broke",
+                 mapping={"last_error": "", "last_updated": str(time.time())})
+    row = [r for r in vault.describe(TEST_PLATFORM)
+           if r["profile_id"] == "ads_broke"][0]
+    check("E3 a recovered profile reports no error", row["last_error"] == "")
+
+    # note_failure must never be the reason a pass dies: it is bookkeeping
+    # running inside a loop that is still refreshing other profiles.
+    class Broken:
+        class r:
+            @staticmethod
+            def hset(*a, **k):
+                raise RuntimeError("redis is down")
+    try:
+        note_failure(Broken(), TEST_PLATFORM, "ads_broke", "anything")
+        survived = True
+    except Exception:
+        survived = False
+    check("E4 a failure to record the failure does not break the pass", survived)
+    wipe(vault)
+
     failed = [n for n, ok in checks if not ok]
     print(f"\n{len(checks) - len(failed)}/{len(checks)} checks passed")
     for name in failed:

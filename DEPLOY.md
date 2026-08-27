@@ -74,7 +74,7 @@ takes two seconds and is the entire discipline.
 | Step 3 Apify | ⬅ **the remaining blocker.** Needs `apify login`, then `./ship.sh apify` |
 | Step 4 GCP | ✅ **done** — `keepalive.timer` live on `pinterest-keepalive`, confirmed writing to Upstash |
 | Step 5 retire AdsPower writer | not yet — let GCP hold the pool for a day first |
-| The gate | **551 checks** across seven suites, 16/16 endpoints — last green 2026-08-27 |
+| The gate | **555 checks** across seven suites, 16/16 endpoints — last green 2026-08-27 |
 | The vault | Upstash, **6/6 usable**, written by BOTH AdsPower and GCP on 5-minute timers |
 
 **Both writers are live at once, and that is deliberate.** They carry the same
@@ -168,7 +168,7 @@ Each answers a different question, and none substitutes for another:
 | | Proves | Fails when |
 |---|---|---|
 | `preflight.sh` | tooling, auth, `.env` hygiene, and that a **live writer** is filling the vault | credentials missing, `REDIS_URL` local, pool stale |
-| `ship.sh check` | 16/16 live endpoints, then 551 offline checks | Pinterest moved, or you broke something |
+| `ship.sh check` | 16/16 live endpoints, then 555 offline checks | Pinterest moved, or you broke something |
 | `ship.sh apify` | the push itself — asks the `buildTag` question first | dirty tree, red gate |
 | `smoke.sh` | the **deployed** actor returns real records; a zero-record success is a FAILURE | vault unreachable from Apify, secret unset |
 
@@ -424,12 +424,68 @@ and re-enabling that one timer is the entire rollback.
 
 ---
 
-## Adding an account later
+## Running the account pool
+
+Accounts die. A session gets signed out, a proxy expires, a login gets
+challenged. The pool is not a thing you set up once — it is a thing you keep.
+Three commands cover the whole life of an account.
+
+### 1. See what is wrong — from anywhere
+
+```bash
+python -m src.status
+```
+
+Every profile, and for a broken one **why**:
+
+```
+ads_k1fy6dnh   cookies=8   age=1240s  [stale 1240s, last error: signed OUT — missing _auth]
+```
+
+That last part is the actionable half, and it decides what you do next:
+
+| What it says | What it means | What to do |
+|---|---|---|
+| `signed OUT — missing _auth` | the account is logged out | re-login by hand, or retire it |
+| `exit IP ... is not the proxy` | the proxy is dead; Chromium fell back to a direct connection | fix the proxy, keep the account |
+| `no proxy` | never finished being set up | assign one, then sync |
+| `stale` with no error | the writer stopped, not the account | check `keepalive.timer` |
+
+⚠️ Before 2026-08-27 that reason existed only in the **VM's journal**. From the
+laptop a profile just went quiet, and `src.status` could say "stale" and nothing
+more — so every diagnosis started with an SSH session. `keepalive` now writes
+the reason into the vault (one extra command, and only on a failure), which is
+why it shows up here at all.
+
+### 2. Retire one that is finished
+
+```bash
+python -m browsers.identities remove ads_k1fy6dnh
+```
+
+Prints what it is about to destroy before it does — these are live login
+sessions, and a wrong id costs a manual re-login. Drops the profile from the
+pool, its cookies and its lease. One profile at a time and named explicitly;
+`clear` is the one that wipes a whole pool, and confusing the two would be
+expensive.
+
+### 3. Add a replacement
 
 1. Create the profile in AdsPower, assign its proxy (`adspower/assign_proxies.py`)
 2. **Log in by hand** — never automated, this is Pinterest's most defended flow
-3. `python adspower/sync_cookies.py --group pinterest`
-4. GCP picks it up on the next 5-minute cycle. **No files are copied.**
+3. `python adspower/sync_cookies.py --group pinterest` — this is also what
+   captures the fingerprint, so run it with a browser start at least once
+4. GCP picks it up on the next 5-minute cycle. **No files are copied**, because
+   `keepalive` reads the pool from the vault rather than from a snapshot
+
+**Capacity is the profile count**, so this loop is also how you scale: six
+profiles means six concurrent customer runs, and no configuration changes that.
+
+### What this deliberately is not
+
+There is no dashboard and no management service. At six accounts a UI would be
+another thing to host, secure and patch, to replace three commands. Revisit at
+roughly fifty, or when someone other than the operator has to run the pool.
 
 ---
 
