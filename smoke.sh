@@ -31,36 +31,56 @@ ACTOR="${APIFY_ACTOR:-pinterest-vault-scraper}"
 # The token is read from the environment or from what `apify login` stored. It
 # is never echoed: this script's output is the sort of thing that gets pasted
 # into an issue.
-TOKEN="${APIFY_TOKEN:-}"
-if [ -z "$TOKEN" ]; then
-  CFG="$HOME/.apify/auth.json"
-  [ -f "$CFG" ] && TOKEN=$(python3 -c "import json,sys;print(json.load(open(sys.argv[1])).get('token',''))" "$CFG" 2>/dev/null || true)
-fi
-[ -n "$TOKEN" ] || { echo "no APIFY_TOKEN and no ~/.apify/auth.json — run \`apify login\`" >&2; exit 2; }
+# A WORKING python, not merely one on PATH. Windows ships a `python3` STUB in
+# WindowsApps that exits silently, so `command -v python3` says yes and every
+# call through it produces nothing -- which is how this script reported "no
+# token" while `apify info` was happily logged in.
+PY=""
+for cand in python3 python py "./.venv/Scripts/python.exe" "./.venv/bin/python"; do
+  if "$cand" -c "print(1)" >/dev/null 2>&1; then PY="$cand"; break; fi
+done
+[ -n "$PY" ] || { echo "no working python found (tried python3, python, py, ./.venv)" >&2; exit 2; }
+
+# Authentication is the CLI's job, not this script's. It used to read a bearer
+# token out of ~/.apify/auth.json and curl the API directly -- but apify-cli
+# 1.8 keeps the token in the OS credential store, so that file has no `token`
+# key at all and the read silently produced "". Handing the whole problem to
+# `apify call` also means this script never touches a credential.
+command -v apify >/dev/null || { echo "apify CLI not installed" >&2; exit 2; }
+apify info >/dev/null 2>&1 || { echo "not logged in — run \`apify login\`" >&2; exit 2; }
 
 # `~` in the actor id is how Apify addresses another user's actor; for your own
 # the bare name works once the token identifies you.
 case "$OP" in
-  radar)    INPUT='{"operation":"radar","region":"US"}' ; MIN=1 ;;
-  keywords) INPUT='{"operation":"keywords","region":"US"}' ; MIN=1 ;;
-  shopping) INPUT='{"operation":"shopping","verticals":["1042"],"drillTopN":1,"maxRecords":10}' ; MIN=1 ;;
+# fullRescan on EVERY input, and it is not optional. The seen-set is per
+# customer and remembers for SEEN_TTL (7 days), so the second smoke of the day
+# legitimately has nothing new to deliver and returns zero rows. Without this
+# the script then shouts "SMOKE FAILED -- returned NOTHING" at a system that is
+# working perfectly, which is worse than no smoke test: it teaches you to
+# ignore the one alarm that means the vault is empty.
+#
+# Measured 2026-08-27: first run 11 records, second run 0, same actor, same
+# minute, nothing wrong.
+  radar)    INPUT='{"operation":"radar","region":"US","fullRescan":true}' ; MIN=1 ;;
+  keywords) INPUT='{"operation":"keywords","region":"US","fullRescan":true}' ; MIN=1 ;;
+  shopping) INPUT='{"operation":"shopping","verticals":["1042"],"drillTopN":1,"maxRecords":10,"fullRescan":true}' ; MIN=1 ;;
   *) echo "unknown operation: $OP (radar|keywords|shopping)" >&2; exit 2 ;;
 esac
 
 echo "==> calling deployed actor '$ACTOR' with $OP"
 BODY=$(mktemp)
-trap 'rm -f "$BODY"' EXIT
+trap 'rm -f "$BODY" "$BODY.err"' EXIT
 
-CODE=$(curl -s -X POST \
-  "https://api.apify.com/v2/acts/${ACTOR}/run-sync-get-dataset-items" \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer ${TOKEN}" \
-  -d "$INPUT" \
-  -o "$BODY" -w '%{http_code}')
+if apify call "$ACTOR" -i "$INPUT" -o -s >"$BODY" 2>"$BODY.err"; then
+  CODE=ok
+else
+  CODE=failed
+fi
 
-if [ "$CODE" != "200" ] && [ "$CODE" != "201" ]; then
-  echo "    HTTP $CODE — the run did not complete" >&2
-  head -c 600 "$BODY" >&2; echo >&2
+if [ "$CODE" != "ok" ]; then
+  echo "    the run did not complete" >&2
+  head -c 600 "$BODY.err" >&2; echo >&2
+  head -c 400 "$BODY" >&2; echo >&2
   echo >&2
   echo "    If this is a 400/408 with an empty vault, REDIS_URL is the suspect:" >&2
   echo "    it must be set as an Actor SECRET in the Apify console, and it must" >&2
@@ -71,7 +91,7 @@ fi
 
 # A JSON array is what this endpoint returns. Count it, and refuse to call an
 # empty one a pass.
-N=$(python3 -c '
+N=$($PY -c '
 import json, sys
 try:
     d = json.load(open(sys.argv[1]))
@@ -82,7 +102,7 @@ if not isinstance(d, list):
 print(len(d))
 ' "$BODY") || { echo "    could not read the dataset" >&2; exit 1; }
 
-echo "    HTTP $CODE · $N record(s)"
+echo "    $N record(s) from the DEPLOYED actor"
 
 if [ "$N" -lt "$MIN" ]; then
   echo >&2
