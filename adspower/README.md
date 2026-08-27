@@ -117,12 +117,16 @@ So the shape that fits a VPS is a small syncer that:
 1. lists profiles — `GET /api/v1/user/list`
 2. starts each — `GET /api/v1/browser/start?user_id=…` → CDP port
 3. pulls cookies over CDP — `Network.getAllCookies`
-4. POSTs them to the Go cookie server exactly as the extension does
-   (`Authorization: Bearer …`, `platform: "pinterest"`, a stable `profile_id`)
+4. writes them **straight into our own Redis** (`write_cookies`), under the
+   same keys the extension used (`platform: "pinterest"`, a stable `profile_id`)
 
-Same destination, same Redis keys, same `SessionManager` on the other side —
-and no extension to load, no browser to keep in the foreground. The Go server
-and the vault do not change at all.
+Same Redis keys, same `SessionManager` on the other side — and no extension to
+load, no browser to keep in the foreground.
+
+> Until 2026-08-26 step 4 POSTed to the **Etsy project's** Go cookie server.
+> That hop is gone: it wrote to whichever Redis *it* was configured for, which
+> stopped being ours the day this project got its own container. See
+> [`../docs/VAULT_SEPARATION.md`](../docs/VAULT_SEPARATION.md).
 
 ### The fast path: `/api/v2/browser-profile/cookies`
 
@@ -151,9 +155,15 @@ the kind GROUP R covers. `fetch_cookies_v2()` decodes it; a test pins that.
 
 **The user agent is only obtainable from a running browser.** No v1 or v2
 endpoint exposes it (`user/list` has no UA field; `browser-profile/detail` is
-404). So `--with-ua` starts one. Run it **once per profile**: the Go server
+404). So `--with-ua` starts one. Run it **once per profile**: `write_cookies`
 only HSETs `user_agent` when non-empty, so later fast runs omit it and the
 stored value survives. The fast path sends nothing rather than a guess.
+
+> That conditional is load-bearing and was learned the hard way. The Go server
+> this replaced had the same rule; the first version of `write_cookies` wrote
+> `user_agent or ""` unconditionally and wiped every UA in the pool. The vault
+> then refused all six profiles — correctly — for having no UA. Fresh cookies,
+> zero usable.
 
 ### What the scraper needs — three things, and only three
 
@@ -163,7 +173,7 @@ stored value survives. The fast path sends nothing rather than a guess.
 | **csrftoken** | **inside the cookies** | Pinterest's CSRF is *cookie-echo*: `session.py` reads `cookies["csrftoken"]` and sends it back as `X-CSRFToken`. There is no token call to make. A jar without it still syncs — reads work — but the run warns, because POSTs will fail |
 | **user_agent** | a browser, **once** | AdsPower spoofs a different UA per profile. Replaying cookies under another profile's UA is exactly the mismatch a fingerprinter looks for, so it is stored beside them |
 
-| **proxy** | AdsPower's `user_proxy_config` | written straight to Redis by this script, because the Go server has no proxy field. The scraper then exits from the same IP the browser does |
+| **proxy** | AdsPower's `user_proxy_config` | written straight to Redis by this script, alongside the cookies. The scraper then exits from the same IP the browser does |
 
 Since 2026-08-20 the vault **refuses to lease a profile with no proxy**
 (`REQUIRE_PROXY`, default on). A profile without one exits from whatever host

@@ -69,7 +69,7 @@ and now no shared process.
 
 | Taken | Why |
 |---|---|
-| The Redis key schema (`cookie:{platform}:{id}`, `valid_profiles:{platform}`) | Unchanged, so the existing Chrome extension and Go cookie server keep working with no edit |
+| The Redis key schema (`cookie:{platform}:{id}`, `valid_profiles:{platform}`) | Unchanged, so any writer that produced it still works. The **schema** was taken; the parent's Redis, Go server and extension were not — this project runs its own container and its own writer ([`docs/VAULT_SEPARATION.md`](docs/VAULT_SEPARATION.md)) |
 | The vault read path, narrowed | Etsy platforms, the seller-token guard and `shop_id` all deleted — none of it applies |
 | `curl_cffi` with Chrome impersonation | The point is the TLS/JA3 handshake. A plain Python client announces itself at the transport layer no matter how correct the headers above it are, and these are the operator's real logged-in cookies — too expensive to burn on a fingerprint mismatch that costs nothing to avoid |
 | Bounded waiting | An empty vault must fail, never hang |
@@ -134,6 +134,7 @@ docs/                      product docs + the reverse-engineering corpus
 |---|---|
 | [DEPLOY.md](DEPLOY.md) | ⭐ **deploying it** — the ordered runbook: GitHub, Upstash, Apify, GCP, and what bites |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | ⭐ **start here** — the endpoint graph (nodes, edges, decision points), the 4-actor product, the shared-vault economics |
+| [docs/VAULT_SEPARATION.md](docs/VAULT_SEPARATION.md) | ⭐ **before touching any Redis** — the standing rule that this lab never reaches into the Etsy project, who owns which container, and the couplings that had to be cut |
 | [docs/SESSION_SOURCES.md](docs/SESSION_SOURCES.md) | ⭐ **which writer fills the vault** — extension vs AdsPower vs stealth-browsers, what each costs, what's proven, what's deferred |
 | [docs/wire/07-API-REFERENCE.md](docs/wire/07-API-REFERENCE.md) | every endpoint, param, and measured limit |
 | [docs/wire/08-BUILD-GUIDE.md](docs/wire/08-BUILD-GUIDE.md) | call chains, normalisation rules, validation checklist |
@@ -159,11 +160,20 @@ questions and compose.
 Run everything offline — **544 checks, no network**:
 
 ```bash
-.venv/Scripts/python.exe -m tests.test_incremental          #  20 — freshness layer
+.venv/Scripts/python.exe -m tests.test_incremental          #  55 — freshness layer
 .venv/Scripts/python.exe -m tests.test_shopping_api         #  54 — vocab + parsers
-.venv/Scripts/python.exe -m tests.test_shopping_traversal   #  33 — shopping walk
+.venv/Scripts/python.exe -m tests.test_shopping_traversal   #  34 — shopping walk
 .venv/Scripts/python.exe -m tests.test_full_project         #  95 — keywords/moments/radar
-.venv/Scripts/python.exe -m tests.test_dispatch             # 137 — the customer-facing path
+.venv/Scripts/python.exe -m tests.test_dispatch             # 164 — the customer-facing path
+.venv/Scripts/python.exe -m tests.test_adspower             #  90 — the cookie syncer
+.venv/Scripts/python.exe -m tests.test_vault                #  52 — the lease path (needs Redis)
+```
+
+Or the whole gate in the order a release requires — live probes first, because
+they rewrite the fixtures the suites then read:
+
+```bash
+./ship.sh check
 ```
 
 ## Not pulling old data
@@ -246,11 +256,16 @@ the actor's own container, so it will connect to nothing. Options:
 | Small VPS running the vault | ~$5/mo | you already have the compose file; needs firewall + `requirepass` + TLS |
 | Tunnel from this machine | free | fragile: the actor fails whenever the desk machine sleeps |
 
-Whichever you pick, the Chrome extension keeps posting to the Go server and the
-Go server writes to that Redis instead of the local one. Nothing else changes.
+Whichever you pick, `adspower/sync_cookies.py` writes to that Redis instead of
+the local one — one `REDIS_URL`. Nothing else changes.
 
-**A consequence worth being explicit about:** the actor only works while a Chrome
-somewhere is beaming a live Pinterest session. If you list this on the Apify
+⚠️ `REDIS_URL` lives in **four** places that disagree by default, and the
+systemd `EnvironmentFile` beats both `.env` and the code. Moving the vault means
+grepping all four; missing one killed the pool for 90 minutes while both halves
+reported success. `docs/VAULT_SEPARATION.md` lists them.
+
+**A consequence worth being explicit about:** the actor only works while a real
+browser somewhere is keeping a live Pinterest session warm. If you list this on the Apify
 store, every customer's run draws on *your* session — that is a shared-account
 model, not a per-customer one, and it caps concurrency at the number of live
 profiles you keep. Worth deciding deliberately before it becomes the design by
