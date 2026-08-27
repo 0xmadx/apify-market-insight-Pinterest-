@@ -303,7 +303,7 @@ def list_profiles(key, group=None):
     return rows
 
 
-async def _cdp(ws, msg_id, method, params=None):
+async def _cdp(ws, msg_id, method, params=None, session_id=None):
     """One CDP call that RAISES on an error reply.
 
     The first version of this ignored `error` and returned
@@ -314,8 +314,10 @@ async def _cdp(ws, msg_id, method, params=None):
     live session. A plausible wrong answer, produced by swallowing an error
     that said exactly what was wrong.
     """
-    await ws.send(json.dumps({"id": msg_id, "method": method,
-                              "params": params or {}}))
+    payload = {"id": msg_id, "method": method, "params": params or {}}
+    if session_id:
+        payload["sessionId"] = session_id      # flattened session, see below
+    await ws.send(json.dumps(payload))
     while True:
         msg = json.loads(await ws.recv())
         if msg.get("id") != msg_id:
@@ -346,6 +348,57 @@ async def read_user_agent(ws_url):
     import websockets
     async with websockets.connect(ws_url, max_size=None) as ws:
         return (await _cdp(ws, 1, "Browser.getVersion")).get("userAgent")
+
+
+async def read_fingerprint(ws_url):
+    """AdsPower's ACTUAL fingerprint for this profile, measured in its browser.
+
+    WHY MEASURE RATHER THAN ASK. AdsPower's `fingerprint_config` is write-only
+    over the API — you can set it, you cannot read it back. But `--ua-mode`
+    already starts the browser once per profile (the UA is only obtainable from
+    a running one), so the expensive part is already paid for: the same session
+    can read the whole shape for free.
+
+    WHY IT IS WORTH STORING. The account signs in wearing this fingerprint.
+    Without it, `keepalive` on the VM replays those cookies wearing a machine
+    invented from sha1(profile_id) — a different GPU, screen, cores and memory
+    than the device that logged in. Cookies, UA and exit IP travelled together;
+    the hardware did not.
+
+    Runtime.evaluate does NOT exist on a browser-level target, and AdsPower
+    hands out a browser-level websocket — the same trap that made
+    `Network.getAllCookies` return an empty list. So: find a page target,
+    attach flattened, and evaluate against that session.
+
+    Returns None on any failure. None means "not measured", and the caller
+    falls back to the synthetic shape — never writes an empty over a good one.
+    """
+    try:
+        import websockets
+
+        from browsers.fingerprint import FP_SCRIPT
+    except ImportError:
+        return None
+    try:
+        async with websockets.connect(ws_url, max_size=None) as ws:
+            targets = (await _cdp(ws, 1, "Target.getTargets")).get("targetInfos") or []
+            pages = [t for t in targets if t.get("type") == "page"]
+            if not pages:
+                return None
+            attached = await _cdp(ws, 2, "Target.attachToTarget",
+                                  {"targetId": pages[0]["targetId"],
+                                   "flatten": True})
+            session_id = attached.get("sessionId")
+            if not session_id:
+                return None
+            result = await _cdp(ws, 3, "Runtime.evaluate",
+                                {"expression": f"({FP_SCRIPT})()",
+                                 "returnByValue": True, "awaitPromise": True},
+                                session_id=session_id)
+            value = (result.get("result") or {}).get("value")
+            return value if isinstance(value, dict) else None
+    except Exception:
+        return None
 
 
 def vault_profile_id(user_id):
@@ -381,7 +434,7 @@ def build_payload(profile_id, cookies, user_agent, platform="pinterest"):
 
 
 def write_cookies(profile_id, cookies, user_agent, redis_url, dry_run=False,
-                  platform="pinterest"):
+                  platform="pinterest", fingerprint=None):
     """Write the identity straight to Redis, no Go server in the middle.
 
     WHY THIS EXISTS. Cookies used to go through the Go cookie server, which
@@ -430,6 +483,11 @@ def write_cookies(profile_id, cookies, user_agent, redis_url, dry_run=False,
         # 0 usable.
         if user_agent:
             fields["user_agent"] = user_agent
+        # Same rule, same reason: only when we actually measured one. A run
+        # that started no browser has nothing to say about the fingerprint,
+        # and writing "" would erase a good capture from an earlier run.
+        if fingerprint:
+            fields["fingerprint_json"] = json.dumps(fingerprint)
         r.hset(f"cookie:{platform}:{profile_id}", mapping=fields)
         r.sadd(f"valid_profiles:{platform}", profile_id)
         return f"{len(jar)} cookies -> redis"
@@ -497,16 +555,21 @@ def sync_one(row, key, dry_run=False, ua_mode="auto",
         # earlier --with-ua run SURVIVES. Sending "" would not overwrite it
         # either, but sending a GUESS would — so we send nothing.
         ua = asyncio.run(read_user_agent(ws_url)) if started else ""
+        # Free while the browser is up, and only obtainable while it is: this
+        # is AdsPower's real fingerprint, which keepalive replays on the VM so
+        # the device that keeps the session warm matches the one that signed in.
+        fp = asyncio.run(read_fingerprint(ws_url)) if started else None
         # Direct, so cookies land in the SAME Redis write_proxy uses.
         result = write_cookies(profile_id, pin, ua, redis_url, dry_run,
-                               platform)
+                               platform, fingerprint=fp)
         csrf = "" if CSRF_COOKIE in names else "  ⚠ no csrftoken — POSTs will fail"
         # After the cookies, never before: a proxy pointing at a profile with no
         # session would be a half-written identity.
         pxy = write_proxy(profile_id, proxy_url(row), redis_url, dry_run,
                           platform)
+        fpn = f" [fp {len(fp)} signals]" if fp else ""
         log(f"  {name:22} OK   — {len(pin)} cookies (auth: {','.join(have)}) "
-            f"-> cookie:{platform}:{profile_id} [{result}] [{pxy}]{csrf}")
+            f"-> cookie:{platform}:{profile_id} [{result}] [{pxy}]{fpn}{csrf}")
         return True
 
     except Exception as exc:

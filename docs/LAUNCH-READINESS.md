@@ -86,7 +86,7 @@ Singleflight holds.
 
 ## By discipline
 
-**Engineering.** 544 offline checks across seven suites; 16/16 endpoints
+**Engineering.** 551 offline checks across seven suites; 16/16 endpoints
 answered live today. The codebase's own habit — refuse rather than guess, absent
 is not zero, provenance on every number — is real and consistently applied. The
 weak spot found was that guards were not always *tested*: the vault lease path

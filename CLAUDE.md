@@ -42,13 +42,23 @@ one-vertical-per-call, the double-spelled `has_prediction`). It is not advisory.
 Or all of it, in the order the release gate requires:
 
 ```bash
-./ship.sh check      # probes the live wire FIRST, then the 544 checks
+./ship.sh check      # probes the live wire FIRST, then the 551 checks
 ```
 
 Everything is a module run from the repo root. The venv is local to this repo.
 
 ## Sessions — the part that must not be broken
 
+- **An `Identity` is cookies + UA + exit IP + fingerprint**, and all four travel
+  together. The fourth arrived 2026-08-27 and closed a real gap: the account
+  signed in through AdsPower wearing AdsPower's fingerprint, then `keepalive`
+  replayed those cookies every 5 minutes wearing a machine invented from
+  `sha1(profile_id)`. Same cookies, same UA, same IP, different GPU/screen/
+  cores — a device change on a live session. `sync_cookies` now measures the
+  real one over CDP while the browser is already up for the UA, stores it as
+  `fingerprint_json`, and `build_script` replays it. Absent → synthetic, never
+  refused. **Canvas is deliberately NOT carried**: AdsPower perturbs it with a
+  seeded function we can read but not regenerate.
 - Cookies come from a **Redis vault**. Three writers can fill it — the Chrome
   extension, AdsPower, or `browsers/keepalive.py` — and the read side does not
   care which. `docs/OPERATING_MODEL.md` says which is live; `src/vault.py`,
@@ -168,7 +178,7 @@ reasoning in `docs/DEPLOY.md` §5.
 `shopping`, `keywords`, `moments`, `radar`, and `crawl`, which follows the
 links between them instead of stopping at one page. Both of Pinterest's time
 controls are wired: `endDate` (which date) and `dateRange` (how much history).
-544 checks, 0 unread response fields (`probes/coverage.py`).
+551 checks, 0 unread response fields (`probes/coverage.py`).
 
 **Both browser captures landed 2026-08-19:**
 - §3.18 moment Age/Gender via the persisted GraphQL query — audience is now

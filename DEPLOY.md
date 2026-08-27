@@ -17,7 +17,7 @@ Branch: **`main`**. It is the only branch. Both deploy targets come from it.
 | Step 3 Apify | ⬅ **the remaining blocker.** Needs `apify login`, then `./ship.sh apify` |
 | Step 4 GCP | ✅ **done** — `keepalive.timer` live on `pinterest-keepalive`, confirmed writing to Upstash |
 | Step 5 retire AdsPower writer | not yet — let GCP hold the pool for a day first |
-| The gate | **544 checks** across seven suites, 16/16 endpoints — last green 2026-08-27 |
+| The gate | **551 checks** across seven suites, 16/16 endpoints — last green 2026-08-27 |
 | The vault | Upstash, **6/6 usable**, written by BOTH AdsPower and GCP on 5-minute timers |
 
 **Both writers are live at once, and that is deliberate.** They carry the same
@@ -102,7 +102,7 @@ Only `smoke.sh` exercises the deployed actor — nothing local can.
 ./ship.sh check          # runs the full gate, deploys nothing
 ```
 
-Expect **16/16 endpoints OK** and **544 checks passing**. If the gate fails,
+Expect **16/16 endpoints OK** and **551 checks passing**. If the gate fails,
 stop — do not deploy around it. A failing probe usually means Pinterest changed
 something, and the fix is to reconcile the code with today's wire, not to skip
 the check.
