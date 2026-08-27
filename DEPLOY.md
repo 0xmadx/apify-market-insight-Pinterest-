@@ -6,6 +6,27 @@ is the order of operations.
 
 Branch: **`main`**. It is the only branch. Both deploy targets come from it.
 
+## State as of 2026-08-26 — read this before the runbook
+
+| | |
+|---|---|
+| Step 1 GitHub | ✅ **done** — `git@github.com:0xmadx/pinterest-apify.git`, private, 113 commits |
+| Step 2 Upstash | ⚠️ database exists, **copy is stale**, writer still points at the lab. This is the blocker |
+| Steps 3–6 | not started |
+| The gate | **544 checks** across seven suites (not 529 — older docs and the architecture artifact still say 529) |
+| The lab vault | 21 keys, 7 profiles, **6/6 usable**, all `ads_*` |
+
+Three things changed on 2026-08-26 that older notes do not reflect:
+
+1. **The Chrome extension is no longer one of our writers.** It belongs to the
+   Etsy project and writes into their Redis. Anything describing three writers
+   — extension, AdsPower, keepalive — is out of date; we have two.
+   [`docs/VAULT_SEPARATION.md`](docs/VAULT_SEPARATION.md).
+2. **Two extension-origin profiles were removed from the vault**, so it is
+   `6/6` now, not `6/8`. Upstash's copy predates that.
+3. **`maxRecords` now reports whether it cut the answer short.** Additive, so
+   safe on `buildTag: latest` — no version bump needed.
+
 ---
 
 ## What this is, in one paragraph
@@ -34,6 +55,20 @@ Read [`docs/OPERATING_MODEL.md`](docs/OPERATING_MODEL.md) before answering any
 question about AdsPower vs the free stack. The answer differs per job, and it
 has been re-litigated more than once.
 
+### The operator's machine is the LAB, not a deploy target
+
+Nothing is deployed *from* the laptop and nothing production runs *on* it. It
+holds AdsPower (manual login only), a local `pinterest-redis` on 6380, and the
+working copy. Deployment happens from a clone of the GitHub repo, against
+Upstash and Apify. When this runbook says "the vault", it means **Upstash** —
+the local 6380 is the lab's own copy and is not what customers read.
+
+Corollary: **the Chrome extension is not one of our writers.** It belongs to the
+Etsy project and writes into *their* Redis. Our writers are AdsPower today and
+`keepalive.py` on GCP after step 5. See
+[`docs/VAULT_SEPARATION.md`](docs/VAULT_SEPARATION.md) — read it before pointing
+anything at any Redis.
+
 ---
 
 ## Before you start
@@ -61,23 +96,37 @@ keepalive reads the vault directly.
 
 ---
 
-## Step 1 — GitHub
+## Step 1 — GitHub — ✅ DONE 2026-08-26
 
-History has been scanned (see [`SECURITY_AUDIT.md`](SECURITY_AUDIT.md)): no
-secret was ever committed. Re-run the scan if in doubt; do not skip it, because
-a push publishes every commit ever made.
+Pushed to **`git@github.com:0xmadx/pinterest-apify.git`**, private, 113 commits
+on `main`. Clone that; do not work from a copy of the operator's laptop.
 
-**Make the repo private.** `docs/wire/` is the reverse-engineered endpoint
-corpus. That research is the actual product.
+Verified at push time: `.env`, `browsers/identities.json` and
+`.env.backup-premigration` are all untracked.
 
-```bash
-gh auth login
-gh repo create pinterest-apify --private --source=. --remote=origin --push
-```
+⚠️ **One credential IS in history and should be rotated.**
+`GO_TOKEN = "super_secret_key_123"` — the *Etsy* project's Go cookie server
+bearer token — was committed in `fe4a60c` and removed in `3ad4a80`. Scope is
+small: private repo, and the service it opens is bound to `172.31.144.1:8000`
+on the operator's own WSL box, not the internet. **Rotate it in the Etsy
+project** rather than rewriting history — rotating makes the published value
+worthless, which beats hiding it. Everything else in history came back clean:
+the `ADS_API_KEY` / `WEBSHARE` hits are all `...` placeholders in docs.
 
 ## Step 2 — Upstash (the only real blocker)
 
-Create a database, take the `rediss://` URL, then move the vault:
+⚠️ **A database already exists and its copy is STALE.** It was migrated before
+2026-08-26 and holds 23 keys / 8 profiles, including two extension-origin
+profiles (`profile_ldu6ypke8`, `profile_p5ewxsodn`) that have since been removed
+from the lab vault. The lab is now **21 keys / 7 profiles / 6 usable, all
+`ads_*`**. Re-migrate before trusting it; do not deploy against the old copy.
+
+Re-migrating is safe and self-correcting: `copy_key` replaces
+`valid_profiles:pinterest` wholesale and the lease path reads that set, so the
+two extension profiles drop out of the pool on their own. Their hash keys linger
+at the destination as dead weight — invisible and harmless.
+
+Take the `rediss://` URL, then move the vault:
 
 ```bash
 python -m browsers.migrate_vault --to 'rediss://...' --dry-run   # look first
@@ -88,11 +137,26 @@ It copies only this project's keys, leaves `cookie:etsy*` alone, and **copies
 rather than moves** — the local vault keeps working as a fallback until the new
 one is proven.
 
-Then point `.env` at it and verify **before** trusting it:
+Then point the **writer** at it, not just `.env`. This is the step that has
+failed twice, both times with both halves reporting success:
 
 ```bash
-python -m src.status        # expect 6/8 usable, TLS resolved per profile
+# 1. the reader
+sed -i "s|^REDIS_URL=.*|REDIS_URL=rediss://...|" .env
+
+# 2. the WRITER — root-owned, and it BEATS .env and the code default
+sudo sed -i "s|^REDIS_URL=.*|REDIS_URL=rediss://...|" /etc/adspower/api.env
+sudo systemctl start adspower-sync.service
 ```
+
+Verify **before** trusting it — and the number to expect is `6/6`, not `6/8`:
+
+```bash
+python -m src.status        # expect 6/6 usable, TLS resolved per profile
+```
+
+If it reads `0/6` while the sync says `6/6 synced`, the writer and the reader
+are pointed at different Redises. That is the failure, every time.
 
 ⚠️ **Check the command budget.** Keepalive alone is roughly **7,000
 commands/day** (288 passes × 8 profiles × ~3 writes). Free tiers commonly cap
