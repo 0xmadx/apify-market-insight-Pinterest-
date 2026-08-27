@@ -291,19 +291,23 @@ gcloud compute scp /c/Windows/Fonts/{arial,arialbd,georgia,tahoma,verdana,times,
 gcloud compute ssh <vm> --tunnel-through-iap --command 'fc-cache -f'
 ```
 
-### Verify — and `browsers.fingerprint` cannot do it here
+### Verify
 
 ```bash
 systemctl list-timers keepalive.timer
 sudo journalctl -u keepalive.service -n 30 --no-pager
 ```
 
-⚠️ `python -m browsers.fingerprint` **fails on the VM**: it loads
-`browsers/identities.json`, the one file this design deliberately never copies
-there (`keepalive` reads the vault instead). It is a laptop tool. Measure fonts
-in-browser instead — render one string per family and compare widths. Anything
-under ~5 distinct values means they are collapsing to a fallback. Measured
-after the fix, 9 distinct of 9:
+`python -m browsers.fingerprint` **used to fail here** and no longer does. It
+defaulted to `browsers/identities.json` — the one file this design deliberately
+never copies to a server — so the runbook was recommending a check that could
+not run on the host it was meant to check. Fixed 2026-08-27: it now reads the
+vault by default, exactly as `keepalive` does, and `--file` is opt-in.
+
+Measure fonts directly too, because that is the failure that hides best —
+render one string per family and compare widths. Anything under ~5 distinct
+values means they are collapsing to a fallback. Measured after the fix, 9
+distinct of 9:
 
 ```
 Arial=648  Times New Roman=620  Verdana=760  Georgia=697  Tahoma=654
@@ -406,7 +410,8 @@ this repo — do the same anywhere else that runs this code.
 
 **Never `scp` a shell script from the Windows checkout — clone on the VM.**
 Measured 2026-08-27: `deploy_gcp.sh` copied from the laptop died at line 21 with
-`set: pipefail: invalid option name`, because bash read `pipefail`. The
+`set: pipefail: invalid option name`, because bash read `pipefail
+`. The
 committed blob is clean LF (`.gitattributes` says `*.sh text eol=lf`); it was
 the *working-tree* copy that was CRLF, checked out before that rule existed —
 git does not re-check-out files when attributes change. It was the only such
