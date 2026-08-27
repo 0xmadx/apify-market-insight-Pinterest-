@@ -199,10 +199,16 @@ Pushed to **`git@github.com:0xmadx/pinterest-apify.git`**, private, full
 history on `main`. **Clone that one.** Do not work from a copy of the
 operator's laptop.
 
-A second private repo, `0xmadx/apify-market-insight-Pinterest-`, is kept as a
-**mirror of the same history** — same commits, pushed from the same working
-copy. It is a copy, not a fork: never push to it directly and never treat it as
-a second source of truth. If the two ever disagree, `pinterest-apify` wins.
+**One repo, one remote, one branch.** There was briefly a second private repo,
+`0xmadx/apify-market-insight-Pinterest-`, kept as a mirror. It is no longer a
+push target: two remotes with nothing enforcing sync is a drift waiting to
+happen, and a stale duplicate of a private commercial scraper is how a future
+session clones the wrong thing. Both were identical at `74d7fba` when the mirror
+was dropped, so nothing was lost — that repo is frozen at that commit and should
+be deleted on GitHub.
+
+If you see any remote here other than `origin -> pinterest-apify`, that is the
+defect, not a feature.
 
 Verified at push time: `.env`, `browsers/identities.json` and
 `.env.backup-premigration` are all untracked.
