@@ -197,6 +197,23 @@ Nothing surfaced the mismatch, because neither side can see the other. When
 you change where the vault lives, grep for the URL in **all four** places:
 `.env`, the code default, any `EnvironmentFile`, and the systemd unit itself.
 
+**From WSL, use `127.0.0.1`, not the gateway IP, to reach a Docker port.**
+Measured 2026-08-26: `172.31.144.1:6380` and `127.0.0.1:6380` reached
+DIFFERENT Redis instances from inside WSL — dbsize 8 versus 23. A marker key
+written through the gateway was invisible to the container. Docker Desktop's
+WSL integration forwards published ports to `127.0.0.1` inside the distro, and
+that is the path that actually lands. The gateway happened to work for 6379,
+which is exactly why it was trusted for 6380.
+
+**A writer that replaces another must not drop fields the old one preserved.**
+`write_cookies` replaced a POST to the Go cookie server. The Go server HSET
+`user_agent` only when it had one, so a UA captured by an earlier run SURVIVED
+a later run that started no browser — and `sync_one` says so in a comment. The
+replacement wrote `user_agent or ""` unconditionally and wiped every UA in the
+pool. The vault then refused all six profiles ("no user_agent"), correctly:
+replaying a cookie jar under an unknown browser is the mismatch the session
+layer exists to prevent. Fresh cookies, zero usable.
+
 **The code the timer runs may not be the code you edited.** The WSL sync runs
 from `~/pinterest-apify/`, a SEPARATE copy of this repo. It had drifted far
 enough to be missing `write_cookies` entirely. `deploy_gcp.sh` avoids this by

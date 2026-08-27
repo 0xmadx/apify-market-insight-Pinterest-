@@ -407,13 +407,25 @@ def write_cookies(profile_id, cookies, user_agent, redis_url, dry_run=False,
         # several domains to one entry — byte-identical to what the extension
         # and the Go server produce, so all three writers agree.
         jar = {c["name"]: c["value"] for c in cookies}
-        r.hset(f"cookie:{platform}:{profile_id}", mapping={
+        fields = {
             "cookies_json": json.dumps(jar),
             "cookie": "; ".join(f"{n}={v}" for n, v in jar.items()),
-            "user_agent": user_agent or "",
             "last_updated": str(time.time()),
             "is_valid": "1",
-        })
+        }
+        # ⚠️ ONLY when non-empty. The Go server this replaced HSET user_agent
+        # only if it had one, so a UA captured by an earlier --ua-mode run
+        # SURVIVED a later run that did not start a browser. sync_one() relies
+        # on that and says so; the first version of this function wrote
+        # `user_agent or ""` unconditionally and wiped every UA in the pool.
+        #
+        # The vault then refuses the profile ("no user_agent") — correctly,
+        # because replaying a jar under an unknown browser is the mismatch the
+        # whole session layer exists to avoid. Measured: 6 fresh profiles,
+        # 0 usable.
+        if user_agent:
+            fields["user_agent"] = user_agent
+        r.hset(f"cookie:{platform}:{profile_id}", mapping=fields)
         r.sadd(f"valid_profiles:{platform}", profile_id)
         return f"{len(jar)} cookies -> redis"
     except Exception as exc:
