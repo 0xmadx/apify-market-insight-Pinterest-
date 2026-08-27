@@ -256,7 +256,14 @@ def strong_hash(signals):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--file", default="browsers/identities.json")
+    # Defaults to the VAULT, not a file. `browsers/identities.json` is the one
+    # thing this architecture deliberately never copies to a server, so a
+    # file-only default made this tool unrunnable on the GCP VM -- the exact
+    # host whose fingerprints most need checking. Found 2026-08-27, after the
+    # runbook had been recommending it there. `keepalive.py` reads the vault
+    # for the same reason; this now matches it.
+    ap.add_argument("--file", default=None,
+                    help="read identities from a file instead of the vault")
     ap.add_argument("--profiles", type=int, default=4)
     ap.add_argument("--passes", type=int, default=2,
                     help="launches per profile — 2 is the minimum that can "
@@ -270,11 +277,31 @@ def main():
                          "can apply the identity patch")
     args = ap.parse_args()
 
-    records = load(args.file)[:args.profiles]
+    if args.file:
+        records, source = load(args.file), args.file
+    else:
+        from src.config import Config
+        from src.vault import SessionVault
+        from .keepalive import load_from_vault
+
+        config = Config()
+        vault = SessionVault(config)
+        try:
+            vault.r.ping()
+        except Exception as exc:
+            print(f"cannot reach Redis — {exc}", file=sys.stderr)
+            return 2
+        records = load_from_vault(vault, config.PLATFORM)
+        source = f"the vault ({config.PLATFORM})"
+
+    records = records[:args.profiles]
     if not records:
-        print(f"no identities in {args.file} — run "
-              f"`python -m browsers.identities export`", file=sys.stderr)
+        print(f"no usable identities in {source}. A profile needs cookies AND a "
+              f"user agent; one with neither has not been signed into yet.",
+              file=sys.stderr)
         return 2
+
+    print(f"reading identities from {source}")
 
     mode = "NO variation (baseline)" if args.plain else "per-profile variation"
     collector = COLLECTORS[args.driver]
