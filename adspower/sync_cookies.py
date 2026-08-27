@@ -49,8 +49,6 @@ import urllib.parse
 import urllib.request
 
 ADS = "http://127.0.0.1:50325"
-GO_SERVER = "http://172.31.144.1:8000/update-cookie"
-GO_TOKEN = "super_secret_key_123"
 
 # MEASURED 2026-08-19, because guessing this wrong costs whole profiles.
 #
@@ -362,8 +360,10 @@ def vault_profile_id(user_id):
 
 
 def build_payload(profile_id, cookies, user_agent, platform="pinterest"):
-    """The exact body the Go server receives — byte-identical to the
-    extension's (see background.js). Pure, so it is testable without a socket.
+    """The canonical identity shape this project writes — byte-identical to
+    what the Chrome extension produces (see its background.js). Pure, so it is
+    testable without a socket, and `write_cookies` builds on it so these tests
+    cover the path that actually runs.
 
     `cookie_json` is keyed by NAME, so a cookie present on several domains
     (csrftoken, _ir, g_state all are) collapses to one entry, last wins. The
@@ -403,13 +403,14 @@ def write_cookies(profile_id, cookies, user_agent, redis_url, dry_run=False,
 
         r = redis.Redis.from_url(redis_url, decode_responses=True,
                                  socket_connect_timeout=3)
-        # `cookie_json` is keyed by NAME, collapsing a cookie that exists on
-        # several domains to one entry — byte-identical to what the extension
-        # and the Go server produce, so all three writers agree.
-        jar = {c["name"]: c["value"] for c in cookies}
+        # One source of truth for the shape. `cookie_json` is keyed by NAME,
+        # collapsing a cookie that exists on several domains to one entry --
+        # byte-identical to what the extension produces, so both writers agree.
+        payload = build_payload(profile_id, cookies, user_agent, platform)
+        jar = payload["cookie_json"]
         fields = {
             "cookies_json": json.dumps(jar),
-            "cookie": "; ".join(f"{n}={v}" for n, v in jar.items()),
+            "cookie": payload["cookie"],
             "last_updated": str(time.time()),
             "is_valid": "1",
         }
@@ -430,25 +431,6 @@ def write_cookies(profile_id, cookies, user_agent, redis_url, dry_run=False,
         return f"{len(jar)} cookies -> redis"
     except Exception as exc:
         return f"COOKIE WRITE FAILED ({type(exc).__name__})"
-
-
-def post_to_vault(profile_id, cookies, user_agent, dry_run=False,
-                  platform="pinterest"):
-    """The original path, through the Etsy project's Go cookie server.
-
-    Kept because the Chrome extension still uses that server and this is the
-    only code that proves the payload shape stays compatible with it. Not used
-    by the sync any more — see write_cookies().
-    """
-    body = build_payload(profile_id, cookies, user_agent, platform)
-    if dry_run:
-        return f"DRY-RUN would POST {len(body['cookie_json'])} cookies"
-    req = urllib.request.Request(
-        GO_SERVER, data=json.dumps(body).encode(),
-        headers={"Content-Type": "application/json",
-                 "Authorization": f"Bearer {GO_TOKEN}"})
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return json.loads(r.read().decode()).get("message", "ok")
 
 
 def sync_one(row, key, dry_run=False, ua_mode="auto",
@@ -583,14 +565,20 @@ def main():
     # (`pinterest-redis`) on 2026-08-25; 6379 is the Etsy project's, and
     # writing there now fills a vault nothing reads.
     #
-    # ⚠️ THIS FALLBACK IS LOAD-BEARING. The systemd unit sets no REDIS_URL, so
-    # the WSL sync runs on whatever is hardcoded here. When the vault moved and
-    # only .env was updated, this kept feeding the OLD container: the new vault
-    # went 85 minutes without a write and every profile aged past
-    # PROFILE_MAX_AGE. `src.status` showed 0/8 usable while the old vault sat
-    # there perfectly fresh — the pool was dead and the writer looked healthy.
+    # ⚠️ 127.0.0.1, NOT the WSL gateway IP. Measured 2026-08-26: from inside
+    # WSL, `172.31.144.1:6380` and `127.0.0.1:6380` reach DIFFERENT Redis
+    # instances (dbsize 8 vs 23) — a marker key written through the gateway was
+    # invisible to the container. Docker Desktop forwards published ports to
+    # 127.0.0.1 inside the distro, and that is the path that lands. It is also
+    # correct from Windows, so one value works for both.
+    #
+    # In production this fallback loses anyway: the unit's EnvironmentFile
+    # (/etc/adspower/api.env) sets REDIS_URL and beats it. That file is exactly
+    # what kept feeding the OLD container after the vault moved — the new vault
+    # went 85 minutes without a write, `src.status` read 0/8 usable, and the
+    # writer reported 6/6 synced the whole time. Grep all four places.
     redis_url = (args.redis_url or os.environ.get("REDIS_URL")
-                 or "redis://172.31.144.1:6380/0")
+                 or "redis://127.0.0.1:6380/0")
     synced = sum(sync_one(r, key, args.dry_run, args.ua_mode, redis_url)
                  for r in rows)
 
