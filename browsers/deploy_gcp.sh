@@ -80,21 +80,48 @@ echo "==> windows fonts"
 # is byte-identical to what a real Windows host produced. Installing the real
 # fonts is strictly better than spoofing the measurement: nothing is being
 # lied about, so there is nothing to catch.
-if sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq \
-     ttf-mscorefonts-installer fontconfig 2>/dev/null; then
-  fc-cache -f >/dev/null 2>&1 || true
-  echo "    installed"
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq \
+  ttf-mscorefonts-installer fontconfig 2>/dev/null || true
+fc-cache -f >/dev/null 2>&1 || true
+
+# COUNT THE FAMILIES; DO NOT TRUST apt's EXIT CODE.
+#
+# The package installs in two parts: dpkg registers it, then its postinst
+# DOWNLOADS the actual .ttf files from SourceForge. That download can fail
+# while dpkg still reports `ii`, leaving
+# /usr/share/fonts/truetype/msttcorefonts/ holding nothing but a README.
+#
+# Measured 2026-08-27 on a fresh Ubuntu 24.04 VM: apt exited 0, this script
+# printed "installed", and fc-list matched ZERO of the families. Reporting
+# success there is the same class of error the fonts themselves guard against
+# — a plausible-looking result that is wrong — so the check is a count, not an
+# exit code.
+FAMILIES='^(Arial|Times New Roman|Verdana|Georgia|Tahoma|Courier New|Comic Sans MS|Impact|Trebuchet MS)$'
+have=$(fc-list : family 2>/dev/null | tr ',' '\n' | sort -u | grep -icE "$FAMILIES" || true)
+
+if [ "${have:-0}" -ge 5 ]; then
+  echo "    $have/9 Windows families present"
 else
-  cat <<'FONTS'
-    ⚠️  ttf-mscorefonts-installer unavailable (it needs the contrib repo and
-        an interactive EULA accept). Fall back to copying the real files:
+  cat <<FONTS
+    ⚠️  ONLY ${have:-0}/9 Windows families are installed. apt may well have
+        exited 0 — the package registers before its postinst downloads the
+        fonts, and that download is what fails.
 
-          scp /c/Windows/Fonts/{arial,georgia,tahoma,verdana,times,comic,impact,cour}.ttf \
-              <vm>:~/.local/share/fonts/
-          ssh <vm> fc-cache -f
+        Every font-metric probe will now return the SAME fallback width for
+        every family, which is a Linux tell underneath this profile's Windows
+        user agent. Copy the real files instead (nothing is spoofed, so there
+        is nothing to catch):
 
-        Verify with:  python -m browsers.fingerprint --driver drission
-        Fewer than ~5 distinct font widths means they are still missing.
+          gcloud compute scp /c/Windows/Fonts/{arial,arialbd,georgia,tahoma,verdana,times,comic,impact,cour,trebuc}.ttf \\
+              <vm>:$HOME/.local/share/fonts/ --tunnel-through-iap
+          gcloud compute ssh <vm> --tunnel-through-iap --command 'fc-cache -f'
+
+        Then re-run this script, or just re-run the count:
+          fc-list : family | tr ',' '\\n' | sort -u | grep -icE '$FAMILIES'
+
+        NOTE: \`python -m browsers.fingerprint\` cannot verify this here — it
+        loads browsers/identities.json, which is never copied to this host by
+        design. Measure in-browser, or use the count above.
 FONTS
 fi
 
