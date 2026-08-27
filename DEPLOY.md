@@ -71,9 +71,26 @@ anything at any Redis.
 
 ---
 
+## The four scripts, and when each runs
+
+They look redundant and are not — they answer different questions, at different
+points, about different things:
+
+| | Asks | When |
+|---|---|---|
+| `./preflight.sh` | is this project ready to deploy at all? | before anything |
+| `./ship.sh check` | does the code pass the gate? | before a push |
+| `./ship.sh apify` · `gcp` | push it | the deploy itself |
+| `./smoke.sh` | does the **deployed** thing work? | after a push |
+| `./run_local.sh` | rehearse the actor locally on Linux | any time |
+
+`preflight.sh` and `smoke.sh` are the two that check reality rather than code.
+Only `smoke.sh` exercises the deployed actor — nothing local can.
+
 ## Before you start
 
 ```bash
+./preflight.sh           # is the vault reachable, is REDIS_URL remote, etc.
 ./ship.sh check          # runs the full gate, deploys nothing
 ```
 
@@ -300,6 +317,22 @@ from `~/pinterest-apify/`, a SEPARATE copy of this repo. It had drifted far
 enough to be missing `write_cookies` entirely. `deploy_gcp.sh` avoids this by
 using `git pull`, so the VM always reports a commit hash you can check against
 this repo — do the same anywhere else that runs this code.
+
+**Never `scp` a shell script from the Windows checkout — clone on the VM.**
+Measured 2026-08-27: `deploy_gcp.sh` copied from the laptop died at line 21 with
+`set: pipefail: invalid option name`, because bash read `pipefail`. The
+committed blob is clean LF (`.gitattributes` says `*.sh text eol=lf`); it was
+the *working-tree* copy that was CRLF, checked out before that rule existed —
+git does not re-check-out files when attributes change. It was the only such
+file in the repo, and it is the one that got copied. `git clone` on the VM
+hands you LF, which is why the runbook clones rather than copies.
+
+**A `.dockerignore` that lists filenames protects only those filenames.**
+It named `run_local.sh` and `ship.sh`; `preflight.sh` and `smoke.sh` were added
+later and silently began shipping inside the production image. Nothing
+referenced them, nothing failed — they were just there. Now `*.sh`. Identical
+in shape to the `.gitignore` rule below, and found the same way: by listing what
+the artefact actually contains instead of trusting the rule.
 
 **`.gitignore` is `.env*`, not `.env`.** A backup copy called
 `.env.backup-premigration` was committed once because the rule matched one exact

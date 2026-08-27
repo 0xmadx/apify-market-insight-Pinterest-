@@ -53,6 +53,20 @@ Two scripts answer "is it safe to ship" before and after a push:
 the vault has a live writer) and `./smoke.sh` (calls the deployed actor and
 fails a zero-record success).
 
+**What actually ships is 26 files** — `src/` (20), `.actor/` (2),
+`requirements.txt`, `Dockerfile`, `.dockerignore`, `.env.example`. About 9% of
+the repo's ~60,000 lines. `docs/`, `probes/`, `tests/`, `adspower/` and
+`browsers/` are all excluded, and `src/` imports none of them, so the exclusion
+cannot break the actor. Two reasons, not one: an image should hold what it
+runs, and `docs/wire/` plus `probes/results/` **are the product** — the measured
+map of an API with no contract does not belong inside the artefact shipped to
+run it.
+
+⚠️ Verify that list rather than trusting the rule. `.dockerignore` excluded
+shell scripts by exact name until 2026-08-27, so `preflight.sh` and `smoke.sh`
+shipped inside the image from the day they were added — silently, because
+nothing references them and nothing fails.
+
 ---
 
 ## Self-contained, on purpose

@@ -230,8 +230,10 @@ a network-reachable Redis (Upstash). **`DEPLOY.md` at the repo root is the
 ordered runbook** — read it before deploying anything; `docs/DEPLOY.md` holds
 the reasoning behind it.
 
-Three tools do the deploying, none of which existed before 2026-08-25:
-`ship.sh` (gated push to Apify or GCP), `browsers/deploy_gcp.sh` (provisions a
+Five tools do the deploying, none of which existed before 2026-08-25:
+`preflight.sh` (is the project deployable at all), `ship.sh` (the gate, then a
+gated push to Apify or GCP), `smoke.sh` (proves the DEPLOYED actor works — the
+only check that touches the real thing), `browsers/deploy_gcp.sh` (provisions a
 VM), `browsers/migrate_vault.py` (moves the vault between Redises).
 
 ## ⚠️ Config precedence, learned the expensive way
