@@ -567,8 +567,18 @@ def main():
     print(f"{len(rows)} profile(s)"
           + (f" in group {args.group!r}" if args.group else "")
           + (" — DRY RUN, nothing will be written" if args.dry_run else ""))
+    # 6380, NOT 6379. This project got its own Redis container
+    # (`pinterest-redis`) on 2026-08-25; 6379 is the Etsy project's, and
+    # writing there now fills a vault nothing reads.
+    #
+    # ⚠️ THIS FALLBACK IS LOAD-BEARING. The systemd unit sets no REDIS_URL, so
+    # the WSL sync runs on whatever is hardcoded here. When the vault moved and
+    # only .env was updated, this kept feeding the OLD container: the new vault
+    # went 85 minutes without a write and every profile aged past
+    # PROFILE_MAX_AGE. `src.status` showed 0/8 usable while the old vault sat
+    # there perfectly fresh — the pool was dead and the writer looked healthy.
     redis_url = (args.redis_url or os.environ.get("REDIS_URL")
-                 or "redis://172.31.144.1:6379/0")
+                 or "redis://172.31.144.1:6380/0")
     synced = sum(sync_one(r, key, args.dry_run, args.ua_mode, redis_url)
                  for r in rows)
 

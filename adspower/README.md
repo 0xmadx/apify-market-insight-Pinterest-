@@ -43,6 +43,21 @@ https://version.adspower.net/software/linux-x64-global/8.7.23/AdsPower-Global-8.
 311 MB · ~700 MB installed · needs libgtk-3-0, libxss1, libatspi2.0-0, libsecret-1-0
 ```
 
+## ⚠️ Where REDIS_URL really comes from
+
+The systemd unit reads `/etc/adspower/api.env`, which is **root-owned, chmod
+600, and overrides everything else** — `.env`, the process environment, and the
+hardcoded fallback in `sync_cookies.py`.
+
+That file holds the AdsPower key, so it is not readable without sudo, which
+means a wrong `REDIS_URL` in it is invisible to every check that does not run
+as root. When the vault moved to port 6380 it kept the sync pointed at 6379 for
+90 minutes, and the sync logged `6/6 synced to the vault` throughout.
+
+```bash
+sudo grep REDIS /etc/adspower/api.env        # what the timer ACTUALLY uses
+```
+
 ## Install
 
 ```bash

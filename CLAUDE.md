@@ -192,6 +192,19 @@ VAULT, not a file, so adding an account copies nothing anywhere.
 6380, migrated out of the Etsy project's shared container with
 `browsers/migrate_vault.py`. `cookie:etsy*` was left untouched.
 
+⚠️ **The migration is NOT finished.** As of 2026-08-26 the AdsPower sync still
+writes to the OLD container (6379) because `/etc/adspower/api.env` pins it
+there — see the config-precedence section below. Until one root command fixes
+that, 6380 holds a stale copy and `src.status` reads 0/8:
+
+```bash
+sudo sed -i 's|6379|6380|' /etc/adspower/api.env
+sudo systemctl start adspower-sync.service
+```
+
+Only once 6380 is green should the pinterest keys be stripped from 6379 — they
+are currently the ONLY fresh copy, so deleting them now would lose the pool.
+
 **Remaining:** the Apify cloud and the GCP VM, both of which need the vault on
 a network-reachable Redis (Upstash). **`DEPLOY.md` at the repo root is the
 ordered runbook** — read it before deploying anything; `docs/DEPLOY.md` holds
@@ -200,6 +213,32 @@ the reasoning behind it.
 Three tools do the deploying, none of which existed before 2026-08-25:
 `ship.sh` (gated push to Apify or GCP), `browsers/deploy_gcp.sh` (provisions a
 VM), `browsers/migrate_vault.py` (moves the vault between Redises).
+
+## ⚠️ Config precedence, learned the expensive way
+
+`REDIS_URL` lives in **four** places and they do not agree by default:
+
+```
+1. systemd EnvironmentFile   (/etc/adspower/api.env)   <- WINS, root-only
+2. the process environment
+3. .env
+4. the hardcoded fallback in sync_cookies.py
+```
+
+On 2026-08-26 the vault moved to `pinterest-redis` (6380). (3) and (4) were
+updated; (1) still said 6379 and beat them both. The pool was dead for 90
+minutes while **both halves reported success**:
+
+    sync_cookies   6/6 synced to the vault     (into the OLD container)
+    src.status     0/8 usable right now        (reading the NEW one)
+
+Neither side can see the other, so nothing surfaced it. Moving the vault means
+grepping for the URL in all four, not just the one you remember.
+
+Related, same root: **the code a timer runs may not be the code you edited.**
+The WSL sync runs from `~/pinterest-apify/`, a separate copy, and it had drifted
+far enough to be missing `write_cookies` entirely. `deploy_gcp.sh` uses
+`git pull` for exactly this reason — the VM reports a commit hash you can check.
 
 ## Working style that has paid off
 

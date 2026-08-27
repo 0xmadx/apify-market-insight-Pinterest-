@@ -182,6 +182,27 @@ codebase is most careful about.
 **Run the release gate in order.** `probe_endpoints` rewrites the fixtures the
 suites read, so the tests must run *after* it. `ship.sh` already does this.
 
+**A service's `EnvironmentFile` silently beats `.env` and every code default.**
+This cost 90 minutes of a dead pool on 2026-08-26. The vault moved to
+`pinterest-redis` (6380); `.env` was updated, the hardcoded fallback in
+`sync_cookies.py` was updated — and `/etc/adspower/api.env`, root-owned and
+unreadable without sudo, still said 6379. It won.
+
+Both halves reported success the whole time:
+
+    sync_cookies   6/6 synced to the vault      (into the OLD container)
+    src.status     0/8 usable right now         (reading the NEW one)
+
+Nothing surfaced the mismatch, because neither side can see the other. When
+you change where the vault lives, grep for the URL in **all four** places:
+`.env`, the code default, any `EnvironmentFile`, and the systemd unit itself.
+
+**The code the timer runs may not be the code you edited.** The WSL sync runs
+from `~/pinterest-apify/`, a SEPARATE copy of this repo. It had drifted far
+enough to be missing `write_cookies` entirely. `deploy_gcp.sh` avoids this by
+using `git pull`, so the VM always reports a commit hash you can check against
+this repo — do the same anywhere else that runs this code.
+
 **`.gitignore` is `.env*`, not `.env`.** A backup copy called
 `.env.backup-premigration` was committed once because the rule matched one exact
 name. See `SECURITY_AUDIT.md`.
