@@ -38,4 +38,8 @@ browsers/
 # Never, under any circumstance.
 .env
 .env.*
-!.env.example
+# Root-anchored, and that leading slash is the whole point. Written as
+# `!.env.example` it un-ignores that FILENAME ANYWHERE, which re-included
+# .claude/worktrees/<branch>/.env.example and defeated the `.claude/` rule
+# three lines up. Caught by pulling the deployed source back down and counting.
+!/.env.example
