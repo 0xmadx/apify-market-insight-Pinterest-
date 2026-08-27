@@ -1,11 +1,20 @@
 # DEPLOY — getting this onto Apify
 
-Everything here is ready to run; one decision is yours (§1). Nothing below has
-been executed yet — this is the runbook, not a record.
+Everything here is ready to run; one decision is yours (§1). §1 has been
+executed — see the note inline. Everything else below is still runbook, not
+record.
 
 ---
 
-## 1. The one blocker: a reachable Redis
+## 1. The one blocker: a reachable Redis — ✅ resolved 2026-08-26
+
+Upstash was chosen. Database `pinterest-apify-vault` (global, `us-east-1`
+primary) exists, the vault was migrated with `browsers/migrate_vault.py`
+(copy, not move — the local Docker vault is still a working fallback), and
+`python -m src.status` confirms 6/8 profiles usable through it. The `rediss://`
+URL lives in the local `.env` (gitignored) and still needs to be set as the
+Apify Actor secret `REDIS_URL` in Step 3 below — provisioning it here does not
+by itself configure the actor.
 
 The actor runs in Apify's cloud. Your vault is a Docker container on your desk.
 `localhost` inside an Apify container means **that container**, so the actor

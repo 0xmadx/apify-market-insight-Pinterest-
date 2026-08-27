@@ -42,8 +42,10 @@ AdsPower is still the live writer; the switch is deliberate and observable, not
 a flag. See [docs/OPERATING_MODEL.md](docs/OPERATING_MODEL.md).
 
 **Not deployed yet.** The actor runs locally and in its real container against
-a non-localhost Redis. What remains is Upstash, Apify and a GCP VM, in that
-order — [DEPLOY.md](DEPLOY.md).
+a non-localhost Redis. **Upstash is done** (2026-08-26): the vault has its own
+`pinterest-apify-vault` database, migrated with `browsers/migrate_vault.py`,
+verified 6/8 usable via `python -m src.status`. What remains is GitHub, Apify
+and a GCP VM, in that order — [DEPLOY.md](DEPLOY.md).
 
 ---
 

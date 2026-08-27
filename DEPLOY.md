@@ -75,9 +75,11 @@ gh auth login
 gh repo create pinterest-apify --private --source=. --remote=origin --push
 ```
 
-## Step 2 — Upstash (the only real blocker)
+## Step 2 — Upstash (the only real blocker) — ✅ done 2026-08-26
 
-Create a database, take the `rediss://` URL, then move the vault:
+Database `pinterest-apify-vault` (global, `us-east-1` primary) created via the
+Upstash API. `.env` points at it; the local vault was migrated, not moved, so
+`redis://localhost:6380/0` still works as a fallback:
 
 ```bash
 python -m browsers.migrate_vault --to 'rediss://...' --dry-run   # look first
@@ -88,10 +90,10 @@ It copies only this project's keys, leaves `cookie:etsy*` alone, and **copies
 rather than moves** — the local vault keeps working as a fallback until the new
 one is proven.
 
-Then point `.env` at it and verify **before** trusting it:
+Verified:
 
 ```bash
-python -m src.status        # expect 6/8 usable, TLS resolved per profile
+python -m src.status        # 6/8 usable, TLS resolved per profile — confirmed
 ```
 
 ⚠️ **Check the command budget.** Keepalive alone is roughly **7,000
