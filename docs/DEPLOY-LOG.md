@@ -100,9 +100,11 @@ Courier New=562  Comic Sans MS=619  Impact=614  Trebuchet MS=661
 `deploy_gcp.sh` now **counts resolvable families** rather than trusting an exit
 code, and warns below 5.
 
-**2. `browsers.fingerprint` cannot run on the VM.** It loads
-`browsers/identities.json`, the one file this design never copies there. The
-verification the runbook recommended was unrunnable on the host it verified.
+**2. `browsers.fingerprint` could not run on the VM** — ✅ since fixed in
+`814c420`. It loaded `browsers/identities.json`, the one file this design never
+copies there, so the verification the runbook recommended was unrunnable on the
+host it was meant to verify. It now defaults to reading identities from the
+**vault**, with `--file` as the opt-in for a laptop run.
 
 **3. The Upstash migration moved data, not the writer.** Measured minutes
 apart: Upstash 0/8 usable at ~13,400 s while the lab sat at 6/6 and ~280 s. The
