@@ -213,6 +213,17 @@ and the two `profile_*` entries are stale by hours and already refused. It is a
 project's Redis. The durable fix is to drop Pinterest from that extension's
 manifest and `background.js`, which is a change to the ETSY repo, not this one.
 
+**Our vault holds `ads_*` profiles only.** Two extension-origin profiles rode
+along in the migration and sat there stale and proxy-less — already refused by
+the lease path, but they made `src.status` read 6/8 and made the vault look
+mixed when it was not. Removed 2026-08-26; it now reads 6/6. If a `profile_*`
+id ever reappears in 6380, a writer other than AdsPower found its way in.
+
+One orphan is deliberate, not an oversight: `ads_k1fymck0` has a cookie key but
+is absent from `valid_profiles`, ~7 days stale and proxy-less — an AdsPower
+profile that was never validated. It belongs to an account, so it is the
+operator's call to log in and assign a proxy, or delete it.
+
 **Remaining:** the Apify cloud and the GCP VM, both of which need the vault on
 a network-reachable Redis (Upstash). **`DEPLOY.md` at the repo root is the
 ordered runbook** — read it before deploying anything; `docs/DEPLOY.md` holds
