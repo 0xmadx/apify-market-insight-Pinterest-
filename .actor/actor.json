@@ -2,7 +2,7 @@
   "actorSpecification": 1,
   "name": "pinterest-vault-scraper",
   "title": "Pinterest Trends \u2014 keywords, shopping, seasonal moments",
-  "description": "Pinterest Trends data as structured records: trending search keywords with growth and 91-day forecasts, trending product categories with real prices and outbound merchant links, seasonal moments with takeoff and peak dates, and audience age/gender for all of them. Five operations, one endpoint, no input required to start.",
+  "description": "Pinterest Trends as structured records: trending keywords with growth and 91-day forecasts, trending product categories with real prices and outbound merchant links, seasonal moments with takeoff and peak dates, and audience age/gender for all of them. Five operations, no input required to start.",
   "version": "1.0",
   "buildTag": "latest",
   "meta": {

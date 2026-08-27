@@ -1,6 +1,6 @@
 {
   "_client_context": "<stripped: account PII, see strip_pii()>",
-  "request_identifier": "1415784108528445",
+  "request_identifier": "1728109319427275",
   "resource": {
     "name": "ApiResource",
     "options": {
@@ -22,16 +22,2833 @@
     }
   },
   "resource_response": {
-    "data": null,
-    "error": {
-      "api_error_code": 3,
-      "code": 3,
-      "extra_data": {
-        "message": "None"
-      },
-      "http_status": 401,
-      "message": "Authorization failed.",
-      "status": "failure"
-    }
+    "code": 0,
+    "data": {
+      "moments": [
+        {
+          "moment": {
+            "daily_values": [
+              {
+                "normal_counts": 2,
+                "predicted_normalized_lower_bound_count": 2,
+                "predicted_normalized_upper_bound_count": 2,
+                "timestamp": 1795305600000
+              },
+              {
+                "normal_counts": 4,
+                "predicted_normalized_lower_bound_count": 3,
+                "predicted_normalized_upper_bound_count": 5,
+                "timestamp": 1794700800000
+              },
+              {
+                "normal_counts": 13,
+                "predicted_normalized_lower_bound_count": 10,
+                "predicted_normalized_upper_bound_count": 16,
+                "timestamp": 1794096000000
+              },
+              {
+                "normal_counts": 55,
+                "predicted_normalized_lower_bound_count": 44,
+                "predicted_normalized_upper_bound_count": 68,
+                "timestamp": 1793491200000
+              },
+              {
+                "normal_counts": 73,
+                "predicted_normalized_lower_bound_count": 58,
+                "predicted_normalized_upper_bound_count": 90,
+                "timestamp": 1792886400000
+              },
+              {
+                "normal_counts": 80,
+                "predicted_normalized_lower_bound_count": 64,
+                "predicted_normalized_upper_bound_count": 100,
+                "timestamp": 1792281600000
+              },
+              {
+                "normal_counts": 65,
+                "predicted_normalized_lower_bound_count": 52,
+                "predicted_normalized_upper_bound_count": 81,
+                "timestamp": 1791676800000
+              },
+              {
+                "normal_counts": 55,
+                "predicted_normalized_lower_bound_count": 44,
+                "predicted_normalized_upper_bound_count": 68,
+                "timestamp": 1791072000000
+              },
+              {
+                "normal_counts": 52,
+                "predicted_normalized_lower_bound_count": 42,
+                "predicted_normalized_upper_bound_count": 66,
+                "timestamp": 1790467200000
+              },
+              {
+                "normal_counts": 48,
+                "predicted_normalized_lower_bound_count": 39,
+                "predicted_normalized_upper_bound_count": 60,
+                "timestamp": 1789862400000
+              },
+              {
+                "normal_counts": 45,
+                "predicted_normalized_lower_bound_count": 36,
+                "predicted_normalized_upper_bound_count": 56,
+                "timestamp": 1789257600000
+              },
+              {
+                "normal_counts": 37,
+                "predicted_normalized_lower_bound_count": 29,
+                "predicted_normalized_upper_bound_count": 46,
+                "timestamp": 1788652800000
+              },
+              {
+                "normal_counts": 29,
+                "predicted_normalized_lower_bound_count": 24,
+                "predicted_normalized_upper_bound_count": 35,
+                "timestamp": 1788048000000
+              },
+              {
+                "normal_counts": 25,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1787443200000
+              },
+              {
+                "normal_counts": 20,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1786838400000
+              },
+              {
+                "normal_counts": 18,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1786233600000
+              },
+              {
+                "normal_counts": 15,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1785628800000
+              },
+              {
+                "normal_counts": 13,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1785024000000
+              },
+              {
+                "normal_counts": 11,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1784419200000
+              },
+              {
+                "normal_counts": 10,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1783814400000
+              },
+              {
+                "normal_counts": 5,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1783209600000
+              },
+              {
+                "normal_counts": 6,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1782604800000
+              },
+              {
+                "normal_counts": 4,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1782000000000
+              },
+              {
+                "normal_counts": 5,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1781395200000
+              },
+              {
+                "normal_counts": 4,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1780790400000
+              },
+              {
+                "normal_counts": 4,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1780185600000
+              },
+              {
+                "normal_counts": 4,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1779580800000
+              },
+              {
+                "normal_counts": 4,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1778976000000
+              },
+              {
+                "normal_counts": 3,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1778371200000
+              },
+              {
+                "normal_counts": 4,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1777766400000
+              },
+              {
+                "normal_counts": 4,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1777161600000
+              },
+              {
+                "normal_counts": 4,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1776556800000
+              },
+              {
+                "normal_counts": 4,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1775952000000
+              },
+              {
+                "normal_counts": 2,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1775347200000
+              },
+              {
+                "normal_counts": 3,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1774742400000
+              },
+              {
+                "normal_counts": 3,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1774137600000
+              },
+              {
+                "normal_counts": 3,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1773532800000
+              },
+              {
+                "normal_counts": 3,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1772928000000
+              },
+              {
+                "normal_counts": 4,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1772323200000
+              },
+              {
+                "normal_counts": 4,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1771718400000
+              },
+              {
+                "normal_counts": 2,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1771113600000
+              },
+              {
+                "normal_counts": 2,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1770508800000
+              },
+              {
+                "normal_counts": 3,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1769904000000
+              },
+              {
+                "normal_counts": 3,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1769299200000
+              },
+              {
+                "normal_counts": 3,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1768694400000
+              },
+              {
+                "normal_counts": 3,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1768089600000
+              },
+              {
+                "normal_counts": 2,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1767484800000
+              },
+              {
+                "normal_counts": 1,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1766880000000
+              },
+              {
+                "normal_counts": 1,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1766275200000
+              },
+              {
+                "normal_counts": 1,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1765670400000
+              },
+              {
+                "normal_counts": 1,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1765065600000
+              },
+              {
+                "normal_counts": 1,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1764460800000
+              },
+              {
+                "normal_counts": 2,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1763856000000
+              },
+              {
+                "normal_counts": 3,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1763251200000
+              },
+              {
+                "normal_counts": 5,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1762646400000
+              },
+              {
+                "normal_counts": 60,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1762041600000
+              },
+              {
+                "normal_counts": 62,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1761436800000
+              },
+              {
+                "normal_counts": 59,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1760832000000
+              },
+              {
+                "normal_counts": 60,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1760227200000
+              },
+              {
+                "normal_counts": 58,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1759622400000
+              },
+              {
+                "normal_counts": 49,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1759017600000
+              },
+              {
+                "normal_counts": 43,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1758412800000
+              },
+              {
+                "normal_counts": 40,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1757808000000
+              },
+              {
+                "normal_counts": 36,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1757203200000
+              },
+              {
+                "normal_counts": 28,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1756598400000
+              },
+              {
+                "normal_counts": 4,
+                "predicted_normalized_lower_bound_count": null,
+                "predicted_normalized_upper_bound_count": null,
+                "timestamp": 1755993600000
+              }
+            ],
+            "peaks": [
+              {
+                "peak_length_in_days": 84,
+                "peak_timestamp_millis": "1792281600000",
+                "takeoff_timestamp_millis": "1785628800000"
+              }
+            ]
+          },
+          "moment_interests": {
+            "925056443165": {
+              "daily_values": [
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": 2,
+                  "predicted_normalized_upper_bound_count": 3,
+                  "timestamp": 1795305600000
+                },
+                {
+                  "normal_counts": 5,
+                  "predicted_normalized_lower_bound_count": 4,
+                  "predicted_normalized_upper_bound_count": 6,
+                  "timestamp": 1794700800000
+                },
+                {
+                  "normal_counts": 14,
+                  "predicted_normalized_lower_bound_count": 11,
+                  "predicted_normalized_upper_bound_count": 18,
+                  "timestamp": 1794096000000
+                },
+                {
+                  "normal_counts": 59,
+                  "predicted_normalized_lower_bound_count": 47,
+                  "predicted_normalized_upper_bound_count": 76,
+                  "timestamp": 1793491200000
+                },
+                {
+                  "normal_counts": 73,
+                  "predicted_normalized_lower_bound_count": 58,
+                  "predicted_normalized_upper_bound_count": 93,
+                  "timestamp": 1792886400000
+                },
+                {
+                  "normal_counts": 78,
+                  "predicted_normalized_lower_bound_count": 61,
+                  "predicted_normalized_upper_bound_count": 100,
+                  "timestamp": 1792281600000
+                },
+                {
+                  "normal_counts": 62,
+                  "predicted_normalized_lower_bound_count": 48,
+                  "predicted_normalized_upper_bound_count": 79,
+                  "timestamp": 1791676800000
+                },
+                {
+                  "normal_counts": 50,
+                  "predicted_normalized_lower_bound_count": 39,
+                  "predicted_normalized_upper_bound_count": 64,
+                  "timestamp": 1791072000000
+                },
+                {
+                  "normal_counts": 47,
+                  "predicted_normalized_lower_bound_count": 37,
+                  "predicted_normalized_upper_bound_count": 60,
+                  "timestamp": 1790467200000
+                },
+                {
+                  "normal_counts": 45,
+                  "predicted_normalized_lower_bound_count": 36,
+                  "predicted_normalized_upper_bound_count": 58,
+                  "timestamp": 1789862400000
+                },
+                {
+                  "normal_counts": 41,
+                  "predicted_normalized_lower_bound_count": 32,
+                  "predicted_normalized_upper_bound_count": 52,
+                  "timestamp": 1789257600000
+                },
+                {
+                  "normal_counts": 33,
+                  "predicted_normalized_lower_bound_count": 26,
+                  "predicted_normalized_upper_bound_count": 42,
+                  "timestamp": 1788652800000
+                },
+                {
+                  "normal_counts": 27,
+                  "predicted_normalized_lower_bound_count": 22,
+                  "predicted_normalized_upper_bound_count": 33,
+                  "timestamp": 1788048000000
+                },
+                {
+                  "normal_counts": 22,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1787443200000
+                },
+                {
+                  "normal_counts": 18,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1786838400000
+                },
+                {
+                  "normal_counts": 16,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1786233600000
+                },
+                {
+                  "normal_counts": 14,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1785628800000
+                },
+                {
+                  "normal_counts": 12,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1785024000000
+                },
+                {
+                  "normal_counts": 13,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1784419200000
+                },
+                {
+                  "normal_counts": 10,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1783814400000
+                },
+                {
+                  "normal_counts": 5,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1783209600000
+                },
+                {
+                  "normal_counts": 6,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1782604800000
+                },
+                {
+                  "normal_counts": 5,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1782000000000
+                },
+                {
+                  "normal_counts": 5,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1781395200000
+                },
+                {
+                  "normal_counts": 5,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1780790400000
+                },
+                {
+                  "normal_counts": 5,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1780185600000
+                },
+                {
+                  "normal_counts": 5,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1779580800000
+                },
+                {
+                  "normal_counts": 5,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1778976000000
+                },
+                {
+                  "normal_counts": 4,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1778371200000
+                },
+                {
+                  "normal_counts": 5,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1777766400000
+                },
+                {
+                  "normal_counts": 6,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1777161600000
+                },
+                {
+                  "normal_counts": 6,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1776556800000
+                },
+                {
+                  "normal_counts": 5,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1775952000000
+                },
+                {
+                  "normal_counts": 3,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1775347200000
+                },
+                {
+                  "normal_counts": 4,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1774742400000
+                },
+                {
+                  "normal_counts": 4,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1774137600000
+                },
+                {
+                  "normal_counts": 4,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1773532800000
+                },
+                {
+                  "normal_counts": 5,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1772928000000
+                },
+                {
+                  "normal_counts": 5,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1772323200000
+                },
+                {
+                  "normal_counts": 5,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1771718400000
+                },
+                {
+                  "normal_counts": 3,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1771113600000
+                },
+                {
+                  "normal_counts": 3,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1770508800000
+                },
+                {
+                  "normal_counts": 4,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1769904000000
+                },
+                {
+                  "normal_counts": 5,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1769299200000
+                },
+                {
+                  "normal_counts": 5,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1768694400000
+                },
+                {
+                  "normal_counts": 4,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1768089600000
+                },
+                {
+                  "normal_counts": 3,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1767484800000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1766880000000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1766275200000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1765670400000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1765065600000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1764460800000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1763856000000
+                },
+                {
+                  "normal_counts": 3,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1763251200000
+                },
+                {
+                  "normal_counts": 6,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1762646400000
+                },
+                {
+                  "normal_counts": 63,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1762041600000
+                },
+                {
+                  "normal_counts": 61,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1761436800000
+                },
+                {
+                  "normal_counts": 54,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1760832000000
+                },
+                {
+                  "normal_counts": 51,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1760227200000
+                },
+                {
+                  "normal_counts": 47,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1759622400000
+                },
+                {
+                  "normal_counts": 40,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1759017600000
+                },
+                {
+                  "normal_counts": 36,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1758412800000
+                },
+                {
+                  "normal_counts": 33,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1757808000000
+                },
+                {
+                  "normal_counts": 29,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1757203200000
+                },
+                {
+                  "normal_counts": 23,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1756598400000
+                },
+                {
+                  "normal_counts": 3,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1755993600000
+                }
+              ],
+              "peaks": []
+            },
+            "934876475639": {
+              "daily_values": [
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": 1,
+                  "predicted_normalized_upper_bound_count": 2,
+                  "timestamp": 1795305600000
+                },
+                {
+                  "normal_counts": 3,
+                  "predicted_normalized_lower_bound_count": 2,
+                  "predicted_normalized_upper_bound_count": 4,
+                  "timestamp": 1794700800000
+                },
+                {
+                  "normal_counts": 10,
+                  "predicted_normalized_lower_bound_count": 8,
+                  "predicted_normalized_upper_bound_count": 13,
+                  "timestamp": 1794096000000
+                },
+                {
+                  "normal_counts": 42,
+                  "predicted_normalized_lower_bound_count": 32,
+                  "predicted_normalized_upper_bound_count": 53,
+                  "timestamp": 1793491200000
+                },
+                {
+                  "normal_counts": 68,
+                  "predicted_normalized_lower_bound_count": 53,
+                  "predicted_normalized_upper_bound_count": 86,
+                  "timestamp": 1792886400000
+                },
+                {
+                  "normal_counts": 79,
+                  "predicted_normalized_lower_bound_count": 63,
+                  "predicted_normalized_upper_bound_count": 100,
+                  "timestamp": 1792281600000
+                },
+                {
+                  "normal_counts": 66,
+                  "predicted_normalized_lower_bound_count": 52,
+                  "predicted_normalized_upper_bound_count": 85,
+                  "timestamp": 1791676800000
+                },
+                {
+                  "normal_counts": 55,
+                  "predicted_normalized_lower_bound_count": 43,
+                  "predicted_normalized_upper_bound_count": 70,
+                  "timestamp": 1791072000000
+                },
+                {
+                  "normal_counts": 52,
+                  "predicted_normalized_lower_bound_count": 41,
+                  "predicted_normalized_upper_bound_count": 65,
+                  "timestamp": 1790467200000
+                },
+                {
+                  "normal_counts": 51,
+                  "predicted_normalized_lower_bound_count": 40,
+                  "predicted_normalized_upper_bound_count": 64,
+                  "timestamp": 1789862400000
+                },
+                {
+                  "normal_counts": 45,
+                  "predicted_normalized_lower_bound_count": 36,
+                  "predicted_normalized_upper_bound_count": 58,
+                  "timestamp": 1789257600000
+                },
+                {
+                  "normal_counts": 37,
+                  "predicted_normalized_lower_bound_count": 30,
+                  "predicted_normalized_upper_bound_count": 47,
+                  "timestamp": 1788652800000
+                },
+                {
+                  "normal_counts": 32,
+                  "predicted_normalized_lower_bound_count": 26,
+                  "predicted_normalized_upper_bound_count": 39,
+                  "timestamp": 1788048000000
+                },
+                {
+                  "normal_counts": 29,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1787443200000
+                },
+                {
+                  "normal_counts": 19,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1786838400000
+                },
+                {
+                  "normal_counts": 16,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1786233600000
+                },
+                {
+                  "normal_counts": 13,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1785628800000
+                },
+                {
+                  "normal_counts": 11,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1785024000000
+                },
+                {
+                  "normal_counts": 9,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1784419200000
+                },
+                {
+                  "normal_counts": 8,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1783814400000
+                },
+                {
+                  "normal_counts": 4,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1783209600000
+                },
+                {
+                  "normal_counts": 4,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1782604800000
+                },
+                {
+                  "normal_counts": 3,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1782000000000
+                },
+                {
+                  "normal_counts": 3,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1781395200000
+                },
+                {
+                  "normal_counts": 3,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1780790400000
+                },
+                {
+                  "normal_counts": 3,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1780185600000
+                },
+                {
+                  "normal_counts": 3,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1779580800000
+                },
+                {
+                  "normal_counts": 3,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1778976000000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1778371200000
+                },
+                {
+                  "normal_counts": 3,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1777766400000
+                },
+                {
+                  "normal_counts": 3,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1777161600000
+                },
+                {
+                  "normal_counts": 3,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1776556800000
+                },
+                {
+                  "normal_counts": 3,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1775952000000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1775347200000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1774742400000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1774137600000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1773532800000
+                },
+                {
+                  "normal_counts": 3,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1772928000000
+                },
+                {
+                  "normal_counts": 3,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1772323200000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1771718400000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1771113600000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1770508800000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1769904000000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1769299200000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1768694400000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1768089600000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1767484800000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1766880000000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1766275200000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1765670400000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1765065600000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1764460800000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1763856000000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1763251200000
+                },
+                {
+                  "normal_counts": 4,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1762646400000
+                },
+                {
+                  "normal_counts": 48,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1762041600000
+                },
+                {
+                  "normal_counts": 60,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1761436800000
+                },
+                {
+                  "normal_counts": 59,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1760832000000
+                },
+                {
+                  "normal_counts": 59,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1760227200000
+                },
+                {
+                  "normal_counts": 58,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1759622400000
+                },
+                {
+                  "normal_counts": 51,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1759017600000
+                },
+                {
+                  "normal_counts": 46,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1758412800000
+                },
+                {
+                  "normal_counts": 43,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1757808000000
+                },
+                {
+                  "normal_counts": 38,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1757203200000
+                },
+                {
+                  "normal_counts": 30,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1756598400000
+                },
+                {
+                  "normal_counts": 5,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1755993600000
+                }
+              ],
+              "peaks": []
+            },
+            "935541271955": {
+              "daily_values": [
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": 1,
+                  "predicted_normalized_upper_bound_count": 3,
+                  "timestamp": 1795305600000
+                },
+                {
+                  "normal_counts": 4,
+                  "predicted_normalized_lower_bound_count": 3,
+                  "predicted_normalized_upper_bound_count": 6,
+                  "timestamp": 1794700800000
+                },
+                {
+                  "normal_counts": 14,
+                  "predicted_normalized_lower_bound_count": 10,
+                  "predicted_normalized_upper_bound_count": 21,
+                  "timestamp": 1794096000000
+                },
+                {
+                  "normal_counts": 41,
+                  "predicted_normalized_lower_bound_count": 28,
+                  "predicted_normalized_upper_bound_count": 59,
+                  "timestamp": 1793491200000
+                },
+                {
+                  "normal_counts": 69,
+                  "predicted_normalized_lower_bound_count": 48,
+                  "predicted_normalized_upper_bound_count": 99,
+                  "timestamp": 1792886400000
+                },
+                {
+                  "normal_counts": 69,
+                  "predicted_normalized_lower_bound_count": 48,
+                  "predicted_normalized_upper_bound_count": 100,
+                  "timestamp": 1792281600000
+                },
+                {
+                  "normal_counts": 50,
+                  "predicted_normalized_lower_bound_count": 35,
+                  "predicted_normalized_upper_bound_count": 72,
+                  "timestamp": 1791676800000
+                },
+                {
+                  "normal_counts": 37,
+                  "predicted_normalized_lower_bound_count": 25,
+                  "predicted_normalized_upper_bound_count": 53,
+                  "timestamp": 1791072000000
+                },
+                {
+                  "normal_counts": 30,
+                  "predicted_normalized_lower_bound_count": 21,
+                  "predicted_normalized_upper_bound_count": 44,
+                  "timestamp": 1790467200000
+                },
+                {
+                  "normal_counts": 25,
+                  "predicted_normalized_lower_bound_count": 17,
+                  "predicted_normalized_upper_bound_count": 36,
+                  "timestamp": 1789862400000
+                },
+                {
+                  "normal_counts": 20,
+                  "predicted_normalized_lower_bound_count": 14,
+                  "predicted_normalized_upper_bound_count": 29,
+                  "timestamp": 1789257600000
+                },
+                {
+                  "normal_counts": 16,
+                  "predicted_normalized_lower_bound_count": 11,
+                  "predicted_normalized_upper_bound_count": 23,
+                  "timestamp": 1788652800000
+                },
+                {
+                  "normal_counts": 15,
+                  "predicted_normalized_lower_bound_count": 12,
+                  "predicted_normalized_upper_bound_count": 19,
+                  "timestamp": 1788048000000
+                },
+                {
+                  "normal_counts": 26,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1787443200000
+                },
+                {
+                  "normal_counts": 6,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1786838400000
+                },
+                {
+                  "normal_counts": 5,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1786233600000
+                },
+                {
+                  "normal_counts": 5,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1785628800000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1785024000000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1784419200000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1783814400000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1783209600000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1782604800000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1782000000000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1781395200000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1780790400000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1780185600000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1779580800000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1778976000000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1778371200000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1777766400000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1777161600000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1776556800000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1775952000000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1775347200000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1774742400000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1774137600000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1773532800000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1772928000000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1772323200000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1771718400000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1771113600000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1770508800000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1769904000000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1769299200000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1768694400000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1768089600000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1767484800000
+                },
+                {
+                  "normal_counts": 0,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1766880000000
+                },
+                {
+                  "normal_counts": 0,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1766275200000
+                },
+                {
+                  "normal_counts": 0,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1765670400000
+                },
+                {
+                  "normal_counts": 0,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1765065600000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1764460800000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1763856000000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1763251200000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1762646400000
+                },
+                {
+                  "normal_counts": 25,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1762041600000
+                },
+                {
+                  "normal_counts": 16,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1761436800000
+                },
+                {
+                  "normal_counts": 14,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1760832000000
+                },
+                {
+                  "normal_counts": 14,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1760227200000
+                },
+                {
+                  "normal_counts": 12,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1759622400000
+                },
+                {
+                  "normal_counts": 10,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1759017600000
+                },
+                {
+                  "normal_counts": 8,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1758412800000
+                },
+                {
+                  "normal_counts": 7,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1757808000000
+                },
+                {
+                  "normal_counts": 6,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1757203200000
+                },
+                {
+                  "normal_counts": 4,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1756598400000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1755993600000
+                }
+              ],
+              "peaks": []
+            },
+            "941870572865": {
+              "daily_values": [
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": 1,
+                  "predicted_normalized_upper_bound_count": 1,
+                  "timestamp": 1795305600000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": 2,
+                  "predicted_normalized_upper_bound_count": 3,
+                  "timestamp": 1794700800000
+                },
+                {
+                  "normal_counts": 8,
+                  "predicted_normalized_lower_bound_count": 6,
+                  "predicted_normalized_upper_bound_count": 11,
+                  "timestamp": 1794096000000
+                },
+                {
+                  "normal_counts": 36,
+                  "predicted_normalized_lower_bound_count": 27,
+                  "predicted_normalized_upper_bound_count": 48,
+                  "timestamp": 1793491200000
+                },
+                {
+                  "normal_counts": 62,
+                  "predicted_normalized_lower_bound_count": 47,
+                  "predicted_normalized_upper_bound_count": 83,
+                  "timestamp": 1792886400000
+                },
+                {
+                  "normal_counts": 76,
+                  "predicted_normalized_lower_bound_count": 57,
+                  "predicted_normalized_upper_bound_count": 100,
+                  "timestamp": 1792281600000
+                },
+                {
+                  "normal_counts": 65,
+                  "predicted_normalized_lower_bound_count": 49,
+                  "predicted_normalized_upper_bound_count": 86,
+                  "timestamp": 1791676800000
+                },
+                {
+                  "normal_counts": 56,
+                  "predicted_normalized_lower_bound_count": 43,
+                  "predicted_normalized_upper_bound_count": 74,
+                  "timestamp": 1791072000000
+                },
+                {
+                  "normal_counts": 55,
+                  "predicted_normalized_lower_bound_count": 42,
+                  "predicted_normalized_upper_bound_count": 73,
+                  "timestamp": 1790467200000
+                },
+                {
+                  "normal_counts": 58,
+                  "predicted_normalized_lower_bound_count": 44,
+                  "predicted_normalized_upper_bound_count": 76,
+                  "timestamp": 1789862400000
+                },
+                {
+                  "normal_counts": 54,
+                  "predicted_normalized_lower_bound_count": 41,
+                  "predicted_normalized_upper_bound_count": 71,
+                  "timestamp": 1789257600000
+                },
+                {
+                  "normal_counts": 46,
+                  "predicted_normalized_lower_bound_count": 35,
+                  "predicted_normalized_upper_bound_count": 60,
+                  "timestamp": 1788652800000
+                },
+                {
+                  "normal_counts": 43,
+                  "predicted_normalized_lower_bound_count": 35,
+                  "predicted_normalized_upper_bound_count": 55,
+                  "timestamp": 1788048000000
+                },
+                {
+                  "normal_counts": 49,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1787443200000
+                },
+                {
+                  "normal_counts": 40,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1786838400000
+                },
+                {
+                  "normal_counts": 35,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1786233600000
+                },
+                {
+                  "normal_counts": 30,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1785628800000
+                },
+                {
+                  "normal_counts": 18,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1785024000000
+                },
+                {
+                  "normal_counts": 15,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1784419200000
+                },
+                {
+                  "normal_counts": 13,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1783814400000
+                },
+                {
+                  "normal_counts": 6,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1783209600000
+                },
+                {
+                  "normal_counts": 7,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1782604800000
+                },
+                {
+                  "normal_counts": 5,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1782000000000
+                },
+                {
+                  "normal_counts": 6,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1781395200000
+                },
+                {
+                  "normal_counts": 5,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1780790400000
+                },
+                {
+                  "normal_counts": 5,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1780185600000
+                },
+                {
+                  "normal_counts": 5,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1779580800000
+                },
+                {
+                  "normal_counts": 5,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1778976000000
+                },
+                {
+                  "normal_counts": 4,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1778371200000
+                },
+                {
+                  "normal_counts": 5,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1777766400000
+                },
+                {
+                  "normal_counts": 5,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1777161600000
+                },
+                {
+                  "normal_counts": 5,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1776556800000
+                },
+                {
+                  "normal_counts": 4,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1775952000000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1775347200000
+                },
+                {
+                  "normal_counts": 3,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1774742400000
+                },
+                {
+                  "normal_counts": 3,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1774137600000
+                },
+                {
+                  "normal_counts": 3,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1773532800000
+                },
+                {
+                  "normal_counts": 4,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1772928000000
+                },
+                {
+                  "normal_counts": 4,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1772323200000
+                },
+                {
+                  "normal_counts": 4,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1771718400000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1771113600000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1770508800000
+                },
+                {
+                  "normal_counts": 3,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1769904000000
+                },
+                {
+                  "normal_counts": 4,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1769299200000
+                },
+                {
+                  "normal_counts": 4,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1768694400000
+                },
+                {
+                  "normal_counts": 4,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1768089600000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1767484800000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1766880000000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1766275200000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1765670400000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1765065600000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1764460800000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1763856000000
+                },
+                {
+                  "normal_counts": 3,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1763251200000
+                },
+                {
+                  "normal_counts": 6,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1762646400000
+                },
+                {
+                  "normal_counts": 78,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1762041600000
+                },
+                {
+                  "normal_counts": 84,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1761436800000
+                },
+                {
+                  "normal_counts": 80,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1760832000000
+                },
+                {
+                  "normal_counts": 81,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1760227200000
+                },
+                {
+                  "normal_counts": 78,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1759622400000
+                },
+                {
+                  "normal_counts": 69,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1759017600000
+                },
+                {
+                  "normal_counts": 62,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1758412800000
+                },
+                {
+                  "normal_counts": 60,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1757808000000
+                },
+                {
+                  "normal_counts": 53,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1757203200000
+                },
+                {
+                  "normal_counts": 41,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1756598400000
+                },
+                {
+                  "normal_counts": 6,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1755993600000
+                }
+              ],
+              "peaks": []
+            },
+            "953061268473": {
+              "daily_values": [
+                {
+                  "normal_counts": 6,
+                  "predicted_normalized_lower_bound_count": 5,
+                  "predicted_normalized_upper_bound_count": 9,
+                  "timestamp": 1795305600000
+                },
+                {
+                  "normal_counts": 10,
+                  "predicted_normalized_lower_bound_count": 7,
+                  "predicted_normalized_upper_bound_count": 13,
+                  "timestamp": 1794700800000
+                },
+                {
+                  "normal_counts": 22,
+                  "predicted_normalized_lower_bound_count": 16,
+                  "predicted_normalized_upper_bound_count": 29,
+                  "timestamp": 1794096000000
+                },
+                {
+                  "normal_counts": 61,
+                  "predicted_normalized_lower_bound_count": 45,
+                  "predicted_normalized_upper_bound_count": 83,
+                  "timestamp": 1793491200000
+                },
+                {
+                  "normal_counts": 73,
+                  "predicted_normalized_lower_bound_count": 54,
+                  "predicted_normalized_upper_bound_count": 100,
+                  "timestamp": 1792886400000
+                },
+                {
+                  "normal_counts": 74,
+                  "predicted_normalized_lower_bound_count": 55,
+                  "predicted_normalized_upper_bound_count": 100,
+                  "timestamp": 1792281600000
+                },
+                {
+                  "normal_counts": 58,
+                  "predicted_normalized_lower_bound_count": 43,
+                  "predicted_normalized_upper_bound_count": 78,
+                  "timestamp": 1791676800000
+                },
+                {
+                  "normal_counts": 46,
+                  "predicted_normalized_lower_bound_count": 34,
+                  "predicted_normalized_upper_bound_count": 63,
+                  "timestamp": 1791072000000
+                },
+                {
+                  "normal_counts": 41,
+                  "predicted_normalized_lower_bound_count": 31,
+                  "predicted_normalized_upper_bound_count": 56,
+                  "timestamp": 1790467200000
+                },
+                {
+                  "normal_counts": 35,
+                  "predicted_normalized_lower_bound_count": 26,
+                  "predicted_normalized_upper_bound_count": 48,
+                  "timestamp": 1789862400000
+                },
+                {
+                  "normal_counts": 29,
+                  "predicted_normalized_lower_bound_count": 22,
+                  "predicted_normalized_upper_bound_count": 39,
+                  "timestamp": 1789257600000
+                },
+                {
+                  "normal_counts": 22,
+                  "predicted_normalized_lower_bound_count": 17,
+                  "predicted_normalized_upper_bound_count": 30,
+                  "timestamp": 1788652800000
+                },
+                {
+                  "normal_counts": 17,
+                  "predicted_normalized_lower_bound_count": 13,
+                  "predicted_normalized_upper_bound_count": 21,
+                  "timestamp": 1788048000000
+                },
+                {
+                  "normal_counts": 16,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1787443200000
+                },
+                {
+                  "normal_counts": 14,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1786838400000
+                },
+                {
+                  "normal_counts": 13,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1786233600000
+                },
+                {
+                  "normal_counts": 12,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1785628800000
+                },
+                {
+                  "normal_counts": 4,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1785024000000
+                },
+                {
+                  "normal_counts": 3,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1784419200000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1783814400000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1783209600000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1782604800000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1782000000000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1781395200000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1780790400000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1780185600000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1779580800000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1778976000000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1778371200000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1777766400000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1777161600000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1776556800000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1775952000000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1775347200000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1774742400000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1774137600000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1773532800000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1772928000000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1772323200000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1771718400000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1771113600000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1770508800000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1769904000000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1769299200000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1768694400000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1768089600000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1767484800000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1766880000000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1766275200000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1765670400000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1765065600000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1764460800000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1763856000000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1763251200000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1762646400000
+                },
+                {
+                  "normal_counts": 8,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1762041600000
+                },
+                {
+                  "normal_counts": 9,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1761436800000
+                },
+                {
+                  "normal_counts": 9,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1760832000000
+                },
+                {
+                  "normal_counts": 10,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1760227200000
+                },
+                {
+                  "normal_counts": 9,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1759622400000
+                },
+                {
+                  "normal_counts": 8,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1759017600000
+                },
+                {
+                  "normal_counts": 7,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1758412800000
+                },
+                {
+                  "normal_counts": 7,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1757808000000
+                },
+                {
+                  "normal_counts": 6,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1757203200000
+                },
+                {
+                  "normal_counts": 5,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1756598400000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1755993600000
+                }
+              ],
+              "peaks": []
+            },
+            "961238559656": {
+              "daily_values": [
+                {
+                  "normal_counts": 7,
+                  "predicted_normalized_lower_bound_count": 5,
+                  "predicted_normalized_upper_bound_count": 9,
+                  "timestamp": 1795305600000
+                },
+                {
+                  "normal_counts": 11,
+                  "predicted_normalized_lower_bound_count": 8,
+                  "predicted_normalized_upper_bound_count": 15,
+                  "timestamp": 1794700800000
+                },
+                {
+                  "normal_counts": 22,
+                  "predicted_normalized_lower_bound_count": 16,
+                  "predicted_normalized_upper_bound_count": 29,
+                  "timestamp": 1794096000000
+                },
+                {
+                  "normal_counts": 54,
+                  "predicted_normalized_lower_bound_count": 41,
+                  "predicted_normalized_upper_bound_count": 72,
+                  "timestamp": 1793491200000
+                },
+                {
+                  "normal_counts": 68,
+                  "predicted_normalized_lower_bound_count": 51,
+                  "predicted_normalized_upper_bound_count": 91,
+                  "timestamp": 1792886400000
+                },
+                {
+                  "normal_counts": 76,
+                  "predicted_normalized_lower_bound_count": 57,
+                  "predicted_normalized_upper_bound_count": 100,
+                  "timestamp": 1792281600000
+                },
+                {
+                  "normal_counts": 67,
+                  "predicted_normalized_lower_bound_count": 50,
+                  "predicted_normalized_upper_bound_count": 88,
+                  "timestamp": 1791676800000
+                },
+                {
+                  "normal_counts": 56,
+                  "predicted_normalized_lower_bound_count": 42,
+                  "predicted_normalized_upper_bound_count": 74,
+                  "timestamp": 1791072000000
+                },
+                {
+                  "normal_counts": 48,
+                  "predicted_normalized_lower_bound_count": 37,
+                  "predicted_normalized_upper_bound_count": 64,
+                  "timestamp": 1790467200000
+                },
+                {
+                  "normal_counts": 40,
+                  "predicted_normalized_lower_bound_count": 31,
+                  "predicted_normalized_upper_bound_count": 53,
+                  "timestamp": 1789862400000
+                },
+                {
+                  "normal_counts": 33,
+                  "predicted_normalized_lower_bound_count": 25,
+                  "predicted_normalized_upper_bound_count": 44,
+                  "timestamp": 1789257600000
+                },
+                {
+                  "normal_counts": 25,
+                  "predicted_normalized_lower_bound_count": 19,
+                  "predicted_normalized_upper_bound_count": 33,
+                  "timestamp": 1788652800000
+                },
+                {
+                  "normal_counts": 18,
+                  "predicted_normalized_lower_bound_count": 14,
+                  "predicted_normalized_upper_bound_count": 23,
+                  "timestamp": 1788048000000
+                },
+                {
+                  "normal_counts": 14,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1787443200000
+                },
+                {
+                  "normal_counts": 10,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1786838400000
+                },
+                {
+                  "normal_counts": 9,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1786233600000
+                },
+                {
+                  "normal_counts": 8,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1785628800000
+                },
+                {
+                  "normal_counts": 3,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1785024000000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1784419200000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1783814400000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1783209600000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1782604800000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1782000000000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1781395200000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1780790400000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1780185600000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1779580800000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1778976000000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1778371200000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1777766400000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1777161600000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1776556800000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1775952000000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1775347200000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1774742400000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1774137600000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1773532800000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1772928000000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1772323200000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1771718400000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1771113600000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1770508800000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1769904000000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1769299200000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1768694400000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1768089600000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1767484800000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1766880000000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1766275200000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1765670400000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1765065600000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1764460800000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1763856000000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1763251200000
+                },
+                {
+                  "normal_counts": 2,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1762646400000
+                },
+                {
+                  "normal_counts": 8,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1762041600000
+                },
+                {
+                  "normal_counts": 9,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1761436800000
+                },
+                {
+                  "normal_counts": 11,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1760832000000
+                },
+                {
+                  "normal_counts": 13,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1760227200000
+                },
+                {
+                  "normal_counts": 14,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1759622400000
+                },
+                {
+                  "normal_counts": 11,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1759017600000
+                },
+                {
+                  "normal_counts": 10,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1758412800000
+                },
+                {
+                  "normal_counts": 9,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1757808000000
+                },
+                {
+                  "normal_counts": 9,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1757203200000
+                },
+                {
+                  "normal_counts": 7,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1756598400000
+                },
+                {
+                  "normal_counts": 1,
+                  "predicted_normalized_lower_bound_count": null,
+                  "predicted_normalized_upper_bound_count": null,
+                  "timestamp": 1755993600000
+                }
+              ],
+              "peaks": []
+            }
+          },
+          "name": "halloween"
+        }
+      ]
+    },
+    "endpoint_name": "get_moment_metrics_handler",
+    "http_status": 200,
+    "message": "ok",
+    "status": "success",
+    "x_pinterest_sli_endpoint_name": "get_moment_metrics_handler"
   }
 }
