@@ -76,12 +76,22 @@ operation emits a field its output table does not document.
 ### Where the raw research drops went
 
 `docs/_captures/` held the operator's dated doc drops, kept unedited beside the
-consolidated `wire/` set. It was removed on 2026-08-27: of its 9 files, 4 were
-byte-identical to their `wire/` counterpart and the other 5 were older versions
-of the same documents — 4,220 lines total, roughly a fifth of all documentation,
-duplicating a job git already does. Its own README said as much: *"the other 8
-files in this drop were byte-identical or near-identical to what was already
-canonical — nothing else to merge."*
+consolidated `wire/` set. Removed 2026-08-27 — 11 files, 6,607 lines, about a
+fifth of the repo:
+
+- **9 markdown files.** 4 byte-identical to their `wire/` counterpart, 5 older
+  versions of the same documents. Its own README said so: *"the other 8 files in
+  this drop were byte-identical or near-identical to what was already canonical
+  — nothing else to merge."*
+- **1 taxonomy JSON** (2,387 lines). All 383 categories in it are present in
+  `probes/results/3.6-shopping_product_categories.json`, checked id by id with
+  zero missing — and that fixture is rewritten by every `probe_endpoints` run,
+  so it is the fresher copy.
+- its README.
+
+The folder existed so a claim could be traced back to what arrived, which is the
+job git history already does — and its own README pointed at `git log` for the
+actual diff.
 
 Nothing was lost. Recover any of it from the last commit that carried it:
 
