@@ -10,6 +10,7 @@ inherited from this project's parent: **a plausible wrong number, not a crash**.
 | Question | Read |
 |---|---|
 | **I need to deploy this** | `DEPLOY.md` at the repo root — the ordered runbook, credentials, and the traps |
+| **Anything touching Redis, containers, or the Etsy project** | `docs/VAULT_SEPARATION.md` — **read before pointing this project at any Redis or calling any service.** The standing rule is that we never reach into the Etsy lab; three dormant couplings had to be cut to make that true |
 | **Which browser tool are we using, and for what** | `docs/OPERATING_MODEL.md` — **read this before answering anything about AdsPower vs stealth-browsers**; there are four jobs, not one, and the answer differs per job |
 | What do I build first, and in what order | `docs/BUILD-PLAN.md` — **Phase 0 (run + mine all endpoints) precedes any code** |
 | How do the 20 endpoints link, what is the product | `docs/ARCHITECTURE.md` |
