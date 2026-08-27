@@ -99,8 +99,13 @@ keepalive reads the vault directly.
 ## Step 1 — GitHub — ✅ DONE 2026-08-26
 
 Pushed to **`git@github.com:0xmadx/pinterest-apify.git`**, private, full
-history on `main`. Clone that; do not work from a copy of the operator's
-laptop, and do not clone any other repo of this project — see below.
+history on `main`. **Clone that one.** Do not work from a copy of the
+operator's laptop.
+
+A second private repo, `0xmadx/apify-market-insight-Pinterest-`, is kept as a
+**mirror of the same history** — same commits, pushed from the same working
+copy. It is a copy, not a fork: never push to it directly and never treat it as
+a second source of truth. If the two ever disagree, `pinterest-apify` wins.
 
 Verified at push time: `.env`, `browsers/identities.json` and
 `.env.backup-premigration` are all untracked.
