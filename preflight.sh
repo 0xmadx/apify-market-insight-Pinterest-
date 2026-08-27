@@ -45,8 +45,15 @@ if command -v apify >/dev/null; then ok "apify-cli  $(apify --version 2>&1 | hea
 else bad "apify-cli not installed"; fix "npm i -g apify-cli"; fi
 if command -v gh >/dev/null; then ok "gh"
 else warn "gh not installed (only needed to flip repo visibility)"; fi
+# `command -v` alone reported "not installed" for a gcloud that WAS installed:
+# the SDK adds itself to the user PATH, and a shell started before that never
+# sees it. Check the default install location too, or this reports a missing
+# tool when the real answer is "reopen your terminal".
+GCLOUD_HOME="${LOCALAPPDATA:-$HOME/AppData/Local}/Google/Cloud SDK/google-cloud-sdk/bin"
 if command -v gcloud >/dev/null; then ok "gcloud"
-else warn "gcloud not installed — Step 4 (GCP) only, not needed to go live"; fi
+elif [ -x "$GCLOUD_HOME/gcloud.cmd" ] || [ -x "$GCLOUD_HOME/gcloud" ]; then
+  ok "gcloud (installed, not on this shell's PATH — reopen the terminal)"
+else warn "gcloud not installed — needed only to redeploy the GCP session farm"; fi
 
 echo
 echo "── 2. accounts ─────────────────────────────────────────────"
