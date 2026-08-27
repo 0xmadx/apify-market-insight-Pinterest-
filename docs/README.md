@@ -50,7 +50,6 @@ not product docs. Start at [wire/07-API-REFERENCE.md](wire/07-API-REFERENCE.md)
 
 | Folder | What |
 |---|---|
-| [`_captures/`](_captures/) | The operator's **raw research drops**, dated. Source material for `wire/`, kept unedited so a claim can be traced back to what arrived. |
 | `../probes/captures/` | **Browser-interception evidence** — the two things no API probe could reach: the persisted GraphQL query behind moment demographics, and the pin-page call carrying price and the outbound merchant URL. Both are implemented and verified; this folder holds the tooling and the re-capture procedure for when Pinterest rotates the query hash. |
 
 ---
@@ -73,3 +72,20 @@ that has drifted too permissive returns a confident "nothing was trending".
 The docs are checked too. `tests/test_dispatch.py` fails the build if
 [API.md](API.md) and the schema disagree in either direction, or if any
 operation emits a field its output table does not document.
+
+### Where the raw research drops went
+
+`docs/_captures/` held the operator's dated doc drops, kept unedited beside the
+consolidated `wire/` set. It was removed on 2026-08-27: of its 9 files, 4 were
+byte-identical to their `wire/` counterpart and the other 5 were older versions
+of the same documents — 4,220 lines total, roughly a fifth of all documentation,
+duplicating a job git already does. Its own README said as much: *"the other 8
+files in this drop were byte-identical or near-identical to what was already
+canonical — nothing else to merge."*
+
+Nothing was lost. Recover any of it from the last commit that carried it:
+
+```bash
+git show aca8e97:docs/_captures/2026-08-19-07APIREFERENCE.md
+git checkout aca8e97 -- docs/_captures/          # or restore the lot
+```
