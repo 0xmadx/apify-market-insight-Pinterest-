@@ -7,6 +7,24 @@
     "data": {
       "product_category_distributions": {
         "1408": {
+          "demographics": [
+            {
+              "gender_distribution": {
+                "male": 0.07,
+                "female": 0.82,
+                "unspecified": 0.11
+              },
+              "age_distribution": {
+                "18-24": 0.08,
+                "25-34": 0.13,
+                "35-44": 0.14,
+                "45-49": 0.07,
+                "50-54": 0.08,
+                "55-64": 0.22,
+                "65+": 0.31
+              }
+            }
+          ],
           "related_search_trends": [
             "fall halloween decor",
             "halloween decor",
@@ -28,41 +46,23 @@
           ],
           "summaries": [
             {
-              "outbound_clicks": {
+              "saves": {
+                "percent_growth": 0.53,
                 "lookback": 2,
-                "percent_growth": 0.72,
-                "percent_relative_volume": null,
-                "total": 0
+                "total": 0,
+                "percent_relative_volume": null
               },
               "engagement": {
-                "lookback": 2,
                 "percent_growth": 0.64,
-                "percent_relative_volume": null,
-                "total": 0
-              },
-              "saves": {
                 "lookback": 2,
-                "percent_growth": 0.53,
-                "percent_relative_volume": null,
-                "total": 0
-              }
-            }
-          ],
-          "demographics": [
-            {
-              "gender_distribution": {
-                "male": 0.07,
-                "female": 0.82,
-                "unspecified": 0.11
+                "total": 0,
+                "percent_relative_volume": null
               },
-              "age_distribution": {
-                "18-24": 0.08,
-                "25-34": 0.13,
-                "35-44": 0.14,
-                "45-49": 0.07,
-                "50-54": 0.08,
-                "55-64": 0.22,
-                "65+": 0.31
+              "outbound_clicks": {
+                "percent_growth": 0.72,
+                "lookback": 2,
+                "total": 0,
+                "percent_relative_volume": null
               }
             }
           ]
@@ -88,6 +88,6 @@
       }
     }
   },
-  "request_identifier": "8306052350777277",
+  "request_identifier": "1257665409526876",
   "_client_context": "<stripped: account PII, see strip_pii()>"
 }

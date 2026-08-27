@@ -192,18 +192,26 @@ VAULT, not a file, so adding an account copies nothing anywhere.
 6380, migrated out of the Etsy project's shared container with
 `browsers/migrate_vault.py`. `cookie:etsy*` was left untouched.
 
-⚠️ **The migration is NOT finished.** As of 2026-08-26 the AdsPower sync still
-writes to the OLD container (6379) because `/etc/adspower/api.env` pins it
-there — see the config-precedence section below. Until one root command fixes
-that, 6380 holds a stale copy and `src.status` reads 0/8:
+**The migration is finished** as of 2026-08-26. `/etc/adspower/api.env` now
+says 6380, the sync writes there, and the 22 `*pinterest*` keys were deleted
+from `scraper-redis` (6379), leaving its 8 `etsy`/`etsy_private` keys alone.
+Every config that names the vault — `.env`, the EnvironmentFile, the code
+default — agrees on 6380.
 
-```bash
-sudo sed -i 's|6379|6380|' /etc/adspower/api.env
-sudo systemctl start adspower-sync.service
-```
+⚠️ **One writer still leaks Pinterest into the Etsy container, and deleting
+does not stop it.** The Etsy project's Chrome extension
+(`etsy scrapper/chrome_extension/`) is built for BOTH platforms — its own
+description says so, and its `host_permissions` include
+`*://*.pinterest.com/*`. It beacons to the Etsy Go server, which writes
+`cookie:pinterest:*` straight into 6379. Measured: the keys were gone, and
+`cookie:pinterest:profile_p5ewxsodn` + `valid_profiles:pinterest` were back
+within minutes.
 
-Only once 6380 is green should the pinterest keys be stripped from 6379 — they
-are currently the ONLY fresh copy, so deleting them now would lose the pool.
+This costs us nothing operationally — we read 6380, those keys are orphaned,
+and the two `profile_*` entries are stale by hours and already refused. It is a
+*separation* defect, not an outage: a live Pinterest session sitting in another
+project's Redis. The durable fix is to drop Pinterest from that extension's
+manifest and `background.js`, which is a change to the ETSY repo, not this one.
 
 **Remaining:** the Apify cloud and the GCP VM, both of which need the vault on
 a network-reachable Redis (Upstash). **`DEPLOY.md` at the repo root is the
