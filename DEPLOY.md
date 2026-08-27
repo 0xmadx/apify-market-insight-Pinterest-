@@ -6,15 +6,21 @@ is the order of operations.
 
 Branch: **`main`**. It is the only branch. Both deploy targets come from it.
 
-## State as of 2026-08-26 — read this before the runbook
+## State as of 2026-08-27 — read this before the runbook
 
 | | |
 |---|---|
 | Step 1 GitHub | ✅ **done** — clone **`git@github.com:0xmadx/pinterest-apify.git`** (private). That name is canonical |
-| Step 2 Upstash | ⚠️ database exists, **copy is stale**, writer still points at the lab. This is the blocker |
-| Steps 3–6 | not started |
-| The gate | **544 checks** across seven suites (not 529 — older docs and the architecture artifact still say 529) |
-| The lab vault | 21 keys, 7 profiles, **6/6 usable**, all `ads_*` |
+| Step 2 Upstash | ✅ **done** — re-migrated (21 keys, 6 profiles, all `ads_*`), writer repointed and verified |
+| Step 3 Apify | ⬅ **the remaining blocker.** Needs `apify login`, then `./ship.sh apify` |
+| Step 4 GCP | ✅ **done** — `keepalive.timer` live on `pinterest-keepalive`, confirmed writing to Upstash |
+| Step 5 retire AdsPower writer | not yet — let GCP hold the pool for a day first |
+| The gate | **544 checks** across seven suites, 16/16 endpoints — last green 2026-08-27 |
+| The vault | Upstash, **6/6 usable**, written by BOTH AdsPower and GCP on 5-minute timers |
+
+**Both writers are live at once, and that is deliberate.** They carry the same
+stored identity forward and both verify before stamping `last_updated`, so the
+overlap is safe — it is the rollback window for Step 5.
 
 Three things changed on 2026-08-26 that older notes do not reflect:
 
@@ -218,26 +224,104 @@ apify call --input '{"operation":"radar","region":"US"}'    # 2 requests, 11 rec
 **You are live after this step.** Everything below saves money; nothing below
 earns it.
 
-## Step 4 — GCP (the laptop leaves the critical path)
+## Step 4 — GCP (the laptop leaves the critical path) — ✅ DONE 2026-08-27
+
+Live: project `pinterest-keepalive`, VM `pinterest-keepalive` (e2-medium,
+Ubuntu 24.04, `us-central1-a`), `keepalive.timer` active and enabled.
+
+**Clone first; do not scp `deploy_gcp.sh` from the Windows checkout** — see the
+CRLF trap below. The repo is private, so the VM needs its own credential:
 
 ```bash
-gcloud compute scp browsers/deploy_gcp.sh <vm>:~/
-gcloud compute ssh <vm>
-git clone <your-repo> ~/pinterest-apify
-REDIS_URL='rediss://...' bash deploy_gcp.sh
+# on the VM — the private half never leaves it
+ssh-keygen -t ed25519 -N '' -f ~/.ssh/id_ed25519
+# add the .pub under repo Settings → Deploy keys, READ-ONLY
+git clone git@github.com:0xmadx/pinterest-apify.git ~/pinterest-apify
+cd ~/pinterest-apify && REDIS_URL='rediss://...' bash browsers/deploy_gcp.sh
 ```
 
-It provisions Python, Chromium (no root — `patchright install chromium`),
-Windows fonts, and the systemd timer. It refuses to run without `REDIS_URL` and
-explains why localhost is wrong there.
+A deploy key is scoped to one repo; a personal access token would hand the VM
+the whole account.
 
-Verify:
+### No public IP, SSH through IAP
+
+The VM needs outbound (apt, PyPI, the Chromium download, Upstash) and **no**
+inbound. GCP's `default-allow-ssh` ships open to `0.0.0.0/0`, and this host
+holds the Upstash password and every live Pinterest session:
+
+```bash
+gcloud compute routers create keepalive-router --region=<r> --network=default
+gcloud compute routers nats create keepalive-nat --router=keepalive-router \
+  --region=<r> --auto-allocate-nat-external-ips --nat-all-subnet-ip-ranges
+gcloud compute instances delete-access-config <vm> --access-config-name="external-nat"
+gcloud compute firewall-rules update default-allow-ssh --source-ranges=35.235.240.0/20
+gcloud compute firewall-rules delete default-allow-rdp        # Linux VM
+```
+
+Then reach it with `gcloud compute ssh <vm> --tunnel-through-iap`. Note
+`gcloud compute scp` on Windows uses PuTTY's `pscp`, which does **not** expand
+`~` — destinations must be absolute (`vm:/home/<user>/`).
+
+### ⚠️ The fonts silently do not install, and the script says they did
+
+`deploy_gcp.sh` prints `installed` when apt exits 0. But
+`ttf-mscorefonts-installer` only *downloads* the fonts in its postinst, from
+SourceForge, and that download failed on this VM while the package still
+registered as `ii`. Measured 2026-08-27:
+
+```
+dpkg -l ttf-mscorefonts-installer     ii  (installed)
+/usr/share/fonts/truetype/msttcorefonts/   README only — zero .ttf
+fc-list | grep -c Arial|Verdana|...        0
+```
+
+This is the failure the fonts exist to prevent, wearing the shape of success:
+profiles carry Windows user agents and Windows-only WebGL strings, and a host
+without the real fonts answers every font-metric probe with the *same* fallback
+width — a Linux tell underneath a Windows claim.
+
+Fix by copying the real files (strictly better than any spoof: nothing is being
+lied about, so there is nothing to catch):
+
+```bash
+gcloud compute scp /c/Windows/Fonts/{arial,arialbd,georgia,tahoma,verdana,times,comic,impact,cour,trebuc}.ttf \
+  <vm>:/home/<user>/.local/share/fonts/ --tunnel-through-iap
+gcloud compute ssh <vm> --tunnel-through-iap --command 'fc-cache -f'
+```
+
+### Verify — and `browsers.fingerprint` cannot do it here
 
 ```bash
 systemctl list-timers keepalive.timer
 sudo journalctl -u keepalive.service -n 30 --no-pager
-python -m src.status
 ```
+
+⚠️ `python -m browsers.fingerprint` **fails on the VM**: it loads
+`browsers/identities.json`, the one file this design deliberately never copies
+there (`keepalive` reads the vault instead). It is a laptop tool. Measure fonts
+in-browser instead — render one string per family and compare widths. Anything
+under ~5 distinct values means they are collapsing to a fallback. Measured
+after the fix, 9 distinct of 9:
+
+```
+Arial=648  Times New Roman=620  Verdana=760  Georgia=697  Tahoma=654
+Courier New=562  Comic Sans MS=619  Impact=614  Trebuchet MS=661
+```
+
+### Proving GCP is the writer, not just that the vault is fresh
+
+With both writers running, a fresh heartbeat says nothing about *which* wrote.
+Attribute by content: the two leave different cookie counts for the same
+profile. Measured 2026-08-27 —
+
+| profile | AdsPower | GCP keepalive |
+|---|---|---|
+| `ads_k1fx40wf` | 11 | **9** |
+| `ads_k1fy6dnh` | 8 | **7** |
+| `ads_k1fyn0gc` | 11 | **13** |
+
+Upstash showed 9 / 7 / 13, so GCP wrote last. The keepalive log also names each
+profile's exit IP, and none of them is the VM's NAT address — rule 4 holding.
 
 ## Step 5 — stop AdsPower being the writer (only after step 4 proves itself)
 
