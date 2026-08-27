@@ -10,21 +10,21 @@
           "summaries": [
             {
               "outbound_clicks": {
-                "percent_growth": 0.72,
                 "lookback": 2,
                 "percent_relative_volume": null,
-                "total": 0
-              },
-              "engagement": {
-                "percent_growth": 0.64,
-                "lookback": 2,
-                "percent_relative_volume": null,
+                "percent_growth": 0.7,
                 "total": 0
               },
               "saves": {
-                "percent_growth": 0.53,
                 "lookback": 2,
                 "percent_relative_volume": null,
+                "percent_growth": 0.51,
+                "total": 0
+              },
+              "engagement": {
+                "lookback": 2,
+                "percent_relative_volume": null,
+                "percent_growth": 0.63,
                 "total": 0
               }
             }
@@ -48,7 +48,6 @@
             }
           ],
           "related_search_trends": [
-            "fall halloween decor",
             "halloween decor",
             "vintage halloween",
             "halloween stuff",
@@ -58,6 +57,7 @@
             "halloween crafts",
             "haunted",
             "halloween ideas",
+            "halloween outdoor decorations",
             "ornament ideas",
             "fall decor",
             "ornament crafts",
@@ -84,10 +84,10 @@
           "1408"
         ],
         "event": "OUTBOUND_CLICK",
-        "end_date": "2026-08-21"
+        "end_date": "2026-08-23"
       }
     }
   },
-  "request_identifier": "5197752560256581",
+  "request_identifier": "3448111403111757",
   "_client_context": "<stripped: account PII, see strip_pii()>"
 }

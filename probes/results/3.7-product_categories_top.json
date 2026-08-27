@@ -5,9 +5,85 @@
     "message": "ok",
     "endpoint_name": "get_filtered_product_categories",
     "data": {
+      "total_num_product_categories": 18,
       "ordered_values": [
         {
-          "product_category": "1239",
+          "parent_product_categories": [
+            "1104"
+          ],
+          "summary": {
+            "saves": {
+              "percent_relative_volume": 1,
+              "lookback": 2,
+              "percent_growth": 0.04,
+              "total": 0
+            },
+            "engagement": {
+              "percent_relative_volume": 1,
+              "lookback": 2,
+              "percent_growth": 0.1,
+              "total": 0
+            },
+            "outbound_clicks": {
+              "percent_relative_volume": 1,
+              "lookback": 2,
+              "percent_growth": 0.13,
+              "total": 0
+            }
+          },
+          "related_search_trends": [
+            "wide leg jeans",
+            "linen pants",
+            "lounge pants",
+            "sweatpants",
+            "barrel jeans",
+            "work pants",
+            "casual pants",
+            "casual outfits",
+            "casual",
+            "joggers",
+            "senior painted jeans",
+            "denim pants",
+            "leggings",
+            "painted jeans",
+            "jeans for women",
+            "jeans women",
+            "flare jeans",
+            "capri pants",
+            "pants for women",
+            "palazzo pants",
+            "cute jeans",
+            "denim",
+            "bootcut jeans",
+            "cargo",
+            "baggy jeans"
+          ],
+          "product_category": "1356"
+        },
+        {
+          "parent_product_categories": [
+            "1024"
+          ],
+          "summary": {
+            "saves": {
+              "percent_relative_volume": 0.64,
+              "lookback": 2,
+              "percent_growth": -0.04,
+              "total": 0
+            },
+            "engagement": {
+              "percent_relative_volume": 0.57,
+              "lookback": 2,
+              "percent_growth": 0.02,
+              "total": 0
+            },
+            "outbound_clicks": {
+              "percent_relative_volume": 0.48,
+              "lookback": 2,
+              "percent_growth": 0.11,
+              "total": 0
+            }
+          },
           "related_search_trends": [
             "bag inspo",
             "pretty bags",
@@ -35,90 +111,36 @@
             "crossbody bag",
             "cute bags"
           ],
-          "summary": {
-            "saves": {
-              "total": 0,
-              "percent_growth": -0.04,
-              "lookback": 2,
-              "percent_relative_volume": 0.96
-            },
-            "outbound_clicks": {
-              "total": 0,
-              "percent_growth": 0.12,
-              "lookback": 2,
-              "percent_relative_volume": 1
-            },
-            "engagement": {
-              "total": 0,
-              "percent_growth": 0.02,
-              "lookback": 2,
-              "percent_relative_volume": 1
-            }
-          },
-          "parent_product_categories": [
-            "1024"
-          ]
+          "product_category": "1239"
         },
         {
-          "product_category": "1350",
-          "related_search_trends": [
-            "winter fashion",
-            "leather jacket",
-            "jackets for women",
-            "fall outfits",
-            "trench coat",
-            "coat",
-            "abrigos",
-            "puffer jacket",
-            "carhartt",
-            "chaquetas",
-            "winter coats",
-            "puffer",
-            "bomber jacket",
-            "jacket men",
-            "suit",
-            "mens jackets",
-            "jacket",
-            "long coat",
-            "biker jacket",
-            "coats for women",
-            "timothee chalamet",
-            "winter outfits",
-            "quilted jacket",
-            "jean jacket",
-            "fleece jacket"
-          ],
-          "summary": {
-            "saves": {
-              "total": 0,
-              "percent_growth": 0.13,
-              "lookback": 2,
-              "percent_relative_volume": 1
-            },
-            "outbound_clicks": {
-              "total": 0,
-              "percent_growth": 0.45,
-              "lookback": 2,
-              "percent_relative_volume": 0.98
-            },
-            "engagement": {
-              "total": 0,
-              "percent_growth": 0.3,
-              "lookback": 2,
-              "percent_relative_volume": 0.93
-            }
-          },
           "parent_product_categories": [
             "1104"
-          ]
-        },
-        {
-          "product_category": "1108",
+          ],
+          "summary": {
+            "saves": {
+              "percent_relative_volume": 0.68,
+              "lookback": 2,
+              "percent_growth": 0.13,
+              "total": 0
+            },
+            "engagement": {
+              "percent_relative_volume": 0.54,
+              "lookback": 2,
+              "percent_growth": 0.3,
+              "total": 0
+            },
+            "outbound_clicks": {
+              "percent_relative_volume": 0.48,
+              "lookback": 2,
+              "percent_growth": 0.44,
+              "total": 0
+            }
+          },
           "related_search_trends": [
             "winter fashion",
             "leather jacket",
             "jackets for women",
-            "fall outfits",
             "trench coat",
             "coat",
             "abrigos",
@@ -126,7 +148,7 @@
             "carhartt",
             "chaquetas",
             "winter coats",
-            "puffer",
+            "fall fashion",
             "bomber jacket",
             "jacket men",
             "suit",
@@ -137,37 +159,92 @@
             "coats for women",
             "timothee chalamet",
             "winter outfits",
+            "puffer",
             "quilted jacket",
             "jean jacket",
             "fleece jacket"
           ],
-          "summary": {
-            "saves": {
-              "total": 0,
-              "percent_growth": 0.12,
-              "lookback": 2,
-              "percent_relative_volume": 0.99
-            },
-            "outbound_clicks": {
-              "total": 0,
-              "percent_growth": 0.44,
-              "lookback": 2,
-              "percent_relative_volume": 0.97
-            },
-            "engagement": {
-              "total": 0,
-              "percent_growth": 0.3,
-              "lookback": 2,
-              "percent_relative_volume": 0.92
-            }
-          },
+          "product_category": "1350"
+        },
+        {
           "parent_product_categories": [
             "1104",
             "1350"
-          ]
+          ],
+          "summary": {
+            "saves": {
+              "percent_relative_volume": 0.67,
+              "lookback": 2,
+              "percent_growth": 0.12,
+              "total": 0
+            },
+            "engagement": {
+              "percent_relative_volume": 0.53,
+              "lookback": 2,
+              "percent_growth": 0.29,
+              "total": 0
+            },
+            "outbound_clicks": {
+              "percent_relative_volume": 0.47,
+              "lookback": 2,
+              "percent_growth": 0.43,
+              "total": 0
+            }
+          },
+          "related_search_trends": [
+            "winter fashion",
+            "leather jacket",
+            "jackets for women",
+            "fall outfits",
+            "trench coat",
+            "coat",
+            "abrigos",
+            "puffer jacket",
+            "carhartt",
+            "chaquetas",
+            "winter coats",
+            "fall fashion",
+            "bomber jacket",
+            "jacket men",
+            "mens jackets",
+            "jacket",
+            "long coat",
+            "biker jacket",
+            "coats for women",
+            "timothee chalamet",
+            "winter outfits",
+            "puffer",
+            "quilted jacket",
+            "jean jacket",
+            "fleece jacket"
+          ],
+          "product_category": "1108"
         },
         {
-          "product_category": "1452",
+          "parent_product_categories": [
+            "1478",
+            "1104"
+          ],
+          "summary": {
+            "saves": {
+              "percent_relative_volume": 0.47,
+              "lookback": 2,
+              "percent_growth": 0.08,
+              "total": 0
+            },
+            "engagement": {
+              "percent_relative_volume": 0.35,
+              "lookback": 2,
+              "percent_growth": 0.25,
+              "total": 0
+            },
+            "outbound_clicks": {
+              "percent_relative_volume": 0.35,
+              "lookback": 2,
+              "percent_growth": 0.43,
+              "total": 0
+            }
+          },
           "related_search_trends": [
             "crochet clothes",
             "tricot",
@@ -187,94 +264,38 @@
             "cable knit sweater",
             "oversized sweater",
             "knitted",
+            "turtleneck",
             "knit top",
             "sweaters for women",
             "women's sweaters",
             "striped sweater",
             "fall outfits",
-            "winter fashion",
-            "cardigan sweater"
+            "winter fashion"
           ],
-          "summary": {
-            "saves": {
-              "total": 0,
-              "percent_growth": 0.07,
-              "lookback": 2,
-              "percent_relative_volume": 0.7
-            },
-            "outbound_clicks": {
-              "total": 0,
-              "percent_growth": 0.43,
-              "lookback": 2,
-              "percent_relative_volume": 0.73
-            },
-            "engagement": {
-              "total": 0,
-              "percent_growth": 0.24,
-              "lookback": 2,
-              "percent_relative_volume": 0.6
-            }
-          },
-          "parent_product_categories": [
-            "1478",
-            "1104"
-          ]
+          "product_category": "1452"
         },
         {
-          "product_category": "1069",
-          "related_search_trends": [
-            "shoes boots",
-            "cute cowgirl boots",
-            "heel",
-            "combat boots",
-            "rain boots",
-            "knee high boots",
-            "cowgirl boots",
-            "ankle boots",
-            "brown boots",
-            "knee boots",
-            "shoes",
-            "botines",
-            "western boots",
-            "boots women",
-            "high boots",
-            "boots men",
-            "riding boots",
-            "calf boots",
-            "heel boots",
-            "high heel boots",
-            "leather boots",
-            "platform boots",
-            "ugg",
-            "fashion boots",
-            "suede boots"
-          ],
+          "parent_product_categories": [],
           "summary": {
             "saves": {
-              "total": 0,
-              "percent_growth": 0.09,
+              "percent_relative_volume": 0.25,
               "lookback": 2,
-              "percent_relative_volume": 0.46
-            },
-            "outbound_clicks": {
-              "total": 0,
-              "percent_growth": 0.34,
-              "lookback": 2,
-              "percent_relative_volume": 0.44
+              "percent_growth": 0.08,
+              "total": 0
             },
             "engagement": {
-              "total": 0,
-              "percent_growth": 0.22,
+              "percent_relative_volume": 0.24,
               "lookback": 2,
-              "percent_relative_volume": 0.41
+              "percent_growth": 0.29,
+              "total": 0
+            },
+            "outbound_clicks": {
+              "percent_relative_volume": 0.22,
+              "lookback": 2,
+              "percent_growth": 0.54,
+              "total": 0
             }
           },
-          "parent_product_categories": [
-            "1416"
-          ]
-        },
-        {
-          "product_category": "1123",
           "related_search_trends": [
             "costume inspo",
             "fun halloween outfits",
@@ -302,30 +323,85 @@
             "disney costumes",
             "halloween costume inspo"
           ],
-          "summary": {
-            "saves": {
-              "total": 0,
-              "percent_growth": 0.07,
-              "lookback": 2,
-              "percent_relative_volume": 0.37
-            },
-            "outbound_clicks": {
-              "total": 0,
-              "percent_growth": 0.51,
-              "lookback": 2,
-              "percent_relative_volume": 0.43
-            },
-            "engagement": {
-              "total": 0,
-              "percent_growth": 0.27,
-              "lookback": 2,
-              "percent_relative_volume": 0.4
-            }
-          },
-          "parent_product_categories": []
+          "product_category": "1123"
         },
         {
-          "product_category": "1424",
+          "parent_product_categories": [
+            "1416"
+          ],
+          "summary": {
+            "saves": {
+              "percent_relative_volume": 0.31,
+              "lookback": 2,
+              "percent_growth": 0.09,
+              "total": 0
+            },
+            "engagement": {
+              "percent_relative_volume": 0.24,
+              "lookback": 2,
+              "percent_growth": 0.23,
+              "total": 0
+            },
+            "outbound_clicks": {
+              "percent_relative_volume": 0.21,
+              "lookback": 2,
+              "percent_growth": 0.35,
+              "total": 0
+            }
+          },
+          "related_search_trends": [
+            "shoes boots",
+            "cute cowgirl boots",
+            "heel",
+            "rain boots",
+            "knee high boots",
+            "cowgirl boots",
+            "ankle boots",
+            "brown boots",
+            "knee boots",
+            "shoes",
+            "botines",
+            "western boots",
+            "boots women",
+            "high boots",
+            "boots men",
+            "riding boots",
+            "calf boots",
+            "heel boots",
+            "high heel boots",
+            "leather boots",
+            "platform boots",
+            "ugg",
+            "fashion boots",
+            "suede boots",
+            "combat boots"
+          ],
+          "product_category": "1069"
+        },
+        {
+          "parent_product_categories": [
+            "1104"
+          ],
+          "summary": {
+            "saves": {
+              "percent_relative_volume": 0.17,
+              "lookback": 2,
+              "percent_growth": -0.05,
+              "total": 0
+            },
+            "engagement": {
+              "percent_relative_volume": 0.15,
+              "lookback": 2,
+              "percent_growth": 0.04,
+              "total": 0
+            },
+            "outbound_clicks": {
+              "percent_relative_volume": 0.15,
+              "lookback": 2,
+              "percent_growth": 0.12,
+              "total": 0
+            }
+          },
           "related_search_trends": [
             "pajama set",
             "silk pajamas",
@@ -334,7 +410,6 @@
             "nightdress",
             "sleep dress",
             "cute pajama",
-            "loungewear",
             "pajama pants",
             "kimono",
             "pajama",
@@ -351,32 +426,32 @@
             "bathrobe",
             "satin pajamas"
           ],
-          "summary": {
-            "saves": {
-              "total": 0,
-              "percent_growth": -0.05,
-              "lookback": 2,
-              "percent_relative_volume": 0.25
-            },
-            "outbound_clicks": {
-              "total": 0,
-              "percent_growth": 0.12,
-              "lookback": 2,
-              "percent_relative_volume": 0.32
-            },
-            "engagement": {
-              "total": 0,
-              "percent_growth": 0.04,
-              "lookback": 2,
-              "percent_relative_volume": 0.26
-            }
-          },
-          "parent_product_categories": [
-            "1104"
-          ]
+          "product_category": "1424"
         },
         {
-          "product_category": "1102",
+          "parent_product_categories": [
+            "1416"
+          ],
+          "summary": {
+            "saves": {
+              "percent_relative_volume": 0.08,
+              "lookback": 2,
+              "percent_growth": 0.03,
+              "total": 0
+            },
+            "engagement": {
+              "percent_relative_volume": 0.08,
+              "lookback": 2,
+              "percent_growth": 0.2,
+              "total": 0
+            },
+            "outbound_clicks": {
+              "percent_relative_volume": 0.08,
+              "lookback": 2,
+              "percent_growth": 0.31,
+              "total": 0
+            }
+          },
           "related_search_trends": [
             "crocs",
             "birks",
@@ -401,35 +476,35 @@
             "women shoes",
             "birkenstock shoes",
             "low heels",
-            "ugg",
-            "shoes"
+            "clogs shoes",
+            "ugg"
+          ],
+          "product_category": "1102"
+        },
+        {
+          "parent_product_categories": [
+            "1416"
           ],
           "summary": {
             "saves": {
-              "total": 0,
-              "percent_growth": 0.03,
+              "percent_relative_volume": 0.04,
               "lookback": 2,
-              "percent_relative_volume": 0.12
-            },
-            "outbound_clicks": {
-              "total": 0,
-              "percent_growth": 0.32,
-              "lookback": 2,
-              "percent_relative_volume": 0.16
+              "percent_growth": 0.2,
+              "total": 0
             },
             "engagement": {
-              "total": 0,
-              "percent_growth": 0.19,
+              "percent_relative_volume": 0.06,
               "lookback": 2,
-              "percent_relative_volume": 0.14
+              "percent_growth": 0.18,
+              "total": 0
+            },
+            "outbound_clicks": {
+              "percent_relative_volume": 0.06,
+              "lookback": 2,
+              "percent_growth": 0.21,
+              "total": 0
             }
           },
-          "parent_product_categories": [
-            "1416"
-          ]
-        },
-        {
-          "product_category": "1354",
           "related_search_trends": [
             "shoes boots",
             "formal shoes",
@@ -457,32 +532,32 @@
             "dr martens",
             "women shoes"
           ],
-          "summary": {
-            "saves": {
-              "total": 0,
-              "percent_growth": 0.17,
-              "lookback": 2,
-              "percent_relative_volume": 0.06
-            },
-            "outbound_clicks": {
-              "total": 0,
-              "percent_growth": 0.21,
-              "lookback": 2,
-              "percent_relative_volume": 0.12
-            },
-            "engagement": {
-              "total": 0,
-              "percent_growth": 0.16,
-              "lookback": 2,
-              "percent_relative_volume": 0.09
-            }
-          },
-          "parent_product_categories": [
-            "1416"
-          ]
+          "product_category": "1354"
         },
         {
-          "product_category": "1404",
+          "parent_product_categories": [
+            "1003"
+          ],
+          "summary": {
+            "saves": {
+              "percent_relative_volume": 0.09,
+              "lookback": 2,
+              "percent_growth": 0.16,
+              "total": 0
+            },
+            "engagement": {
+              "percent_relative_volume": 0.06,
+              "lookback": 2,
+              "percent_growth": 0.18,
+              "total": 0
+            },
+            "outbound_clicks": {
+              "percent_relative_volume": 0.05,
+              "lookback": 2,
+              "percent_growth": 0.31,
+              "total": 0
+            }
+          },
           "related_search_trends": [
             "tricot",
             "knitting ideas",
@@ -510,34 +585,35 @@
             "shawl knitting patterns",
             "shawls and wraps"
           ],
-          "summary": {
-            "saves": {
-              "total": 0,
-              "percent_growth": 0.17,
-              "lookback": 2,
-              "percent_relative_volume": 0.13
-            },
-            "outbound_clicks": {
-              "total": 0,
-              "percent_growth": 0.32,
-              "lookback": 2,
-              "percent_relative_volume": 0.11
-            },
-            "engagement": {
-              "total": 0,
-              "percent_growth": 0.19,
-              "lookback": 2,
-              "percent_relative_volume": 0.11
-            }
-          },
-          "parent_product_categories": [
-            "1003"
-          ]
+          "product_category": "1404"
         },
         {
-          "product_category": "1432",
+          "parent_product_categories": [
+            "1255"
+          ],
+          "summary": {
+            "saves": {
+              "percent_relative_volume": 0.11,
+              "lookback": 2,
+              "percent_growth": -0.02,
+              "total": 0
+            },
+            "engagement": {
+              "percent_relative_volume": 0.06,
+              "lookback": 2,
+              "percent_growth": 0.08,
+              "total": 0
+            },
+            "outbound_clicks": {
+              "percent_relative_volume": 0.05,
+              "lookback": 2,
+              "percent_growth": 0.22,
+              "total": 0
+            }
+          },
           "related_search_trends": [
             "leg warmers",
+            "boot socks",
             "ankle socks",
             "sheer tights",
             "socks women",
@@ -545,209 +621,156 @@
             "thigh high socks",
             "sock knitting patterns",
             "knitting socks",
+            "wool socks",
             "embroidered socks",
             "funky socks",
-            "wool socks",
+            "tights",
             "fun socks",
             "compression socks",
             "scrunch socks",
             "knitted socks",
-            "slouch socks",
             "knee high socks",
             "grip socks",
             "cute socks",
             "pilates socks",
-            "boot socks",
+            "sheer socks",
+            "slouch socks",
             "long socks",
-            "ruffle socks",
-            "lace socks",
-            "tights"
+            "ruffle socks"
           ],
-          "summary": {
-            "saves": {
-              "total": 0,
-              "percent_growth": -0.02,
-              "lookback": 2,
-              "percent_relative_volume": 0.17
-            },
-            "outbound_clicks": {
-              "total": 0,
-              "percent_growth": 0.22,
-              "lookback": 2,
-              "percent_relative_volume": 0.1
-            },
-            "engagement": {
-              "total": 0,
-              "percent_growth": 0.08,
-              "lookback": 2,
-              "percent_relative_volume": 0.1
-            }
-          },
-          "parent_product_categories": [
-            "1255"
-          ]
+          "product_category": "1432"
         },
         {
-          "product_category": "1099",
-          "related_search_trends": [
-            "jewlery",
-            "pandora charms",
-            "jewelry inspiration",
-            "jewelry design",
-            "jewelry accessories",
-            "charms",
-            "bijoux",
-            "bag charms",
-            "joyas",
-            "handmade jewelry",
-            "gold jewelry",
-            "necklace pendant",
-            "charm necklace",
-            "beads",
-            "bracelets",
-            "jewels",
-            "dream jewelry",
-            "cute jewelry",
-            "clay charms",
-            "diy jewelry",
-            "jewellery",
-            "key necklace",
-            "pandora",
-            "charm bracelet",
-            "diamond"
-          ],
-          "summary": {
-            "saves": {
-              "total": 0,
-              "percent_growth": 0.01,
-              "lookback": 2,
-              "percent_relative_volume": 0.1
-            },
-            "outbound_clicks": {
-              "total": 0,
-              "percent_growth": 0.16,
-              "lookback": 2,
-              "percent_relative_volume": 0.07
-            },
-            "engagement": {
-              "total": 0,
-              "percent_growth": 0.03,
-              "lookback": 2,
-              "percent_relative_volume": 0.08
-            }
-          },
           "parent_product_categories": [
             "1263"
-          ]
-        },
-        {
-          "product_category": "1052",
-          "related_search_trends": [
-            "muscle",
-            "stud belt",
-            "gold chain belt",
-            "beaded belt",
-            "concho belt",
-            "belt inspo",
-            "cute belts",
-            "waist belt",
-            "chain belt",
-            "vintage belt",
-            "bb belt",
-            "gold belt",
-            "western belt",
-            "belt design",
-            "belt buckle",
-            "belts for women",
-            "brown belt",
-            "boho belt",
-            "cowgirl belt",
-            "rhinestone belt",
-            "buckle",
-            "statement belt",
-            "tooled leather",
-            "black belt",
-            "leather belt"
           ],
           "summary": {
             "saves": {
-              "total": 0,
-              "percent_growth": 0.05,
+              "percent_relative_volume": 0.07,
               "lookback": 2,
-              "percent_relative_volume": 0.1
-            },
-            "outbound_clicks": {
-              "total": 0,
-              "percent_growth": 0.13,
-              "lookback": 2,
-              "percent_relative_volume": 0.05
+              "percent_growth": -0.01,
+              "total": 0
             },
             "engagement": {
-              "total": 0,
-              "percent_growth": 0.05,
+              "percent_relative_volume": 0.05,
               "lookback": 2,
-              "percent_relative_volume": 0.06
+              "percent_growth": 0.02,
+              "total": 0
+            },
+            "outbound_clicks": {
+              "percent_relative_volume": 0.04,
+              "lookback": 2,
+              "percent_growth": 0.15,
+              "total": 0
             }
           },
-          "parent_product_categories": [
-            "1003"
-          ]
+          "related_search_trends": [
+            "a necklace",
+            "diamond",
+            "diy jewelry",
+            "charm necklace",
+            "jewels",
+            "gold jewelry",
+            "pandora charms",
+            "pendants",
+            "necklace",
+            "jewellery",
+            "charm",
+            "bracelets",
+            "jewelry inspo",
+            "joyas",
+            "necklace pendant",
+            "jewelry design",
+            "dream jewelry",
+            "charm bracelet",
+            "bag charms",
+            "bijoux",
+            "jewelry inspiration",
+            "clay charms",
+            "jewelry ideas",
+            "key necklace",
+            "cute jewelry"
+          ],
+          "product_category": "1099"
         },
         {
-          "product_category": "1482",
-          "related_search_trends": [
-            "indian clothing",
-            "traditional indian outfits",
-            "desi outfits",
-            "desi",
-            "fancy sarees",
-            "saree",
-            "bridal lehenga",
-            "saree look",
-            "chaniya choli",
-            "dress designs",
-            "silk saree",
-            "indian wedding",
-            "indian saree",
-            "indian bridal outfits",
-            "lehenga choli",
-            "wedding lehenga",
-            "sharara set",
-            "kurta",
-            "indian wedding outfits",
-            "salwar kameez",
-            "wedding saree",
-            "indian dresses",
-            "lehenga designs",
-            "sharara",
-            "sari"
-          ],
-          "summary": {
-            "saves": {
-              "total": 0,
-              "percent_growth": -0.04,
-              "lookback": 2,
-              "percent_relative_volume": 0.05
-            },
-            "outbound_clicks": {
-              "total": 0,
-              "percent_growth": 0.11,
-              "lookback": 2,
-              "percent_relative_volume": 0.05
-            },
-            "engagement": {
-              "total": 0,
-              "percent_growth": -0.03,
-              "lookback": 2,
-              "percent_relative_volume": 0.08
-            }
-          },
           "parent_product_categories": [
+            "1356",
             "1104"
-          ]
+          ],
+          "summary": {
+            "saves": {
+              "percent_relative_volume": 0,
+              "lookback": 2,
+              "percent_growth": 0.09,
+              "total": 0
+            },
+            "engagement": {
+              "percent_relative_volume": 0.01,
+              "lookback": 2,
+              "percent_growth": 0.18,
+              "total": 0
+            },
+            "outbound_clicks": {
+              "percent_relative_volume": 0.02,
+              "lookback": 2,
+              "percent_growth": 0.23,
+              "total": 0
+            }
+          },
+          "related_search_trends": [
+            "pantalon",
+            "linen pants",
+            "mens pants",
+            "women business casual",
+            "pinstripe pants",
+            "office outfits",
+            "work pants",
+            "men's style",
+            "casual pants",
+            "men fashion casual outfits",
+            "hombre",
+            "suit pants",
+            "outfits for work",
+            "mens clothing",
+            "work clothes",
+            "linen pants women",
+            "pants for women",
+            "high waisted pants",
+            "business casual pants",
+            "casual work outfits",
+            "palazzo pants",
+            "formal pants",
+            "wide leg pants",
+            "pleated trousers",
+            "satin pants"
+          ],
+          "product_category": "1152"
         },
         {
-          "product_category": "1417",
+          "parent_product_categories": [
+            "1024"
+          ],
+          "summary": {
+            "saves": {
+              "percent_relative_volume": 0.04,
+              "lookback": 2,
+              "percent_growth": -0.12,
+              "total": 0
+            },
+            "engagement": {
+              "percent_relative_volume": 0.03,
+              "lookback": 2,
+              "percent_growth": -0.03,
+              "total": 0
+            },
+            "outbound_clicks": {
+              "percent_relative_volume": 0.02,
+              "lookback": 2,
+              "percent_growth": 0.11,
+              "total": 0
+            }
+          },
           "related_search_trends": [
             "handbags",
             "bag inspo",
@@ -775,86 +798,170 @@
             "everyday bag",
             "bag ideas"
           ],
-          "summary": {
-            "saves": {
-              "total": 0,
-              "percent_growth": -0.1,
-              "lookback": 2,
-              "percent_relative_volume": 0.06
-            },
-            "outbound_clicks": {
-              "total": 0,
-              "percent_growth": 0.12,
-              "lookback": 2,
-              "percent_relative_volume": 0.04
-            },
-            "engagement": {
-              "total": 0,
-              "percent_growth": -0.02,
-              "lookback": 2,
-              "percent_relative_volume": 0.05
-            }
-          },
-          "parent_product_categories": [
-            "1024"
-          ]
+          "product_category": "1417"
         },
         {
-          "product_category": "1152",
-          "related_search_trends": [
-            "pantalon",
-            "linen pants",
-            "mens pants",
-            "women business casual",
-            "pinstripe pants",
-            "office outfits",
-            "work pants",
-            "men's style",
-            "casual pants",
-            "men fashion casual outfits",
-            "hombre",
-            "outfits men",
-            "suit pants",
-            "outfits for work",
-            "work clothes",
-            "linen pants women",
-            "pants for women",
-            "high waisted pants",
-            "business casual pants",
-            "casual work outfits",
-            "palazzo pants",
-            "formal pants",
-            "wide leg pants",
-            "pleated trousers",
-            "satin pants"
+          "parent_product_categories": [
+            "1416"
           ],
           "summary": {
             "saves": {
-              "total": 0,
-              "percent_growth": 0.12,
+              "percent_relative_volume": 0.04,
               "lookback": 2,
-              "percent_relative_volume": 0.01
-            },
-            "outbound_clicks": {
-              "total": 0,
-              "percent_growth": 0.17,
-              "lookback": 2,
-              "percent_relative_volume": 0.03
+              "percent_growth": 0.06,
+              "total": 0
             },
             "engagement": {
-              "total": 0,
-              "percent_growth": 0.14,
+              "percent_relative_volume": 0.02,
               "lookback": 2,
-              "percent_relative_volume": 0.02
+              "percent_growth": 0.18,
+              "total": 0
+            },
+            "outbound_clicks": {
+              "percent_relative_volume": 0.02,
+              "lookback": 2,
+              "percent_growth": 0.29,
+              "total": 0
             }
           },
+          "related_search_trends": [
+            "\u043e\u0431\u0443\u0432\u044c",
+            "cute slippers",
+            "funny cute",
+            "really funny",
+            "insole",
+            "ugg tazz",
+            "ugg tasman",
+            "sandals",
+            "pigs",
+            "crochet slippers",
+            "pantuflas",
+            "ugg shoes",
+            "animal slippers",
+            "house slippers",
+            "fuzzy slippers",
+            "shoes",
+            "fashion shoes",
+            "hilarious",
+            "cute animals",
+            "women's shoes",
+            "cute uggs",
+            "cute shoes",
+            "fluffy slippers",
+            "flats",
+            "ugg slippers"
+          ],
+          "product_category": "1426"
+        },
+        {
           "parent_product_categories": [
-            "1356",
             "1104"
-          ]
+          ],
+          "summary": {
+            "saves": {
+              "percent_relative_volume": 0.03,
+              "lookback": 2,
+              "percent_growth": -0.03,
+              "total": 0
+            },
+            "engagement": {
+              "percent_relative_volume": 0.05,
+              "lookback": 2,
+              "percent_growth": -0.03,
+              "total": 0
+            },
+            "outbound_clicks": {
+              "percent_relative_volume": 0.02,
+              "lookback": 2,
+              "percent_growth": 0.11,
+              "total": 0
+            }
+          },
+          "related_search_trends": [
+            "indian clothing",
+            "traditional indian outfits",
+            "desi outfits",
+            "desi",
+            "fancy sarees",
+            "saree",
+            "bridal lehenga",
+            "saree look",
+            "chaniya choli",
+            "dress designs",
+            "silk saree",
+            "indian wedding",
+            "indian saree",
+            "indian bridal outfits",
+            "lehenga choli",
+            "wedding lehenga",
+            "sharara set",
+            "kurta",
+            "indian wedding outfits",
+            "salwar kameez",
+            "wedding saree",
+            "indian dresses",
+            "lehenga designs",
+            "sharara",
+            "sari"
+          ],
+          "product_category": "1482"
+        },
+        {
+          "parent_product_categories": [
+            "1221",
+            "1003",
+            "1220"
+          ],
+          "summary": {
+            "saves": {
+              "percent_relative_volume": 0.01,
+              "lookback": 2,
+              "percent_growth": -0.05,
+              "total": 0
+            },
+            "engagement": {
+              "percent_relative_volume": 0,
+              "lookback": 2,
+              "percent_growth": 0,
+              "total": 0
+            },
+            "outbound_clicks": {
+              "percent_relative_volume": 0,
+              "lookback": 2,
+              "percent_growth": 0.11,
+              "total": 0
+            }
+          },
+          "related_search_trends": [
+            "comb",
+            "bridal hair accessories",
+            "hairdo",
+            "updo",
+            "hair piece",
+            "bridal hair and makeup",
+            "bridal accessories",
+            "peinado boda",
+            "hair jewelry",
+            "hair accessory",
+            "wedding headpiece",
+            "wedding hair",
+            "hairstyles",
+            "headpiece",
+            "wedding hair up",
+            "prom hairstyles",
+            "hair clips",
+            "prom hair",
+            "hair pins",
+            "flower hair",
+            "wedding hair accessories",
+            "bridal headpieces",
+            "wedding hair inspiration",
+            "wedding hair and makeup",
+            "wedding hairstyles"
+          ],
+          "product_category": "1224"
         }
-      ],
-      "total_num_product_categories": 16
+      ]
     },
     "x_pinterest_sli_endpoint_name": "get_filtered_product_categories",
     "http_status": 200
@@ -869,7 +976,7 @@
       "data": {
         "event": "OUTBOUND_CLICK",
         "ranking_method": "GROWTH",
-        "end_date": "2026-08-21",
+        "end_date": "2026-08-23",
         "parent_product_categories": [
           "1181"
         ],
@@ -879,6 +986,6 @@
       }
     }
   },
-  "request_identifier": "4455745754731083",
+  "request_identifier": "5201320395036680",
   "_client_context": "<stripped: account PII, see strip_pii()>"
 }

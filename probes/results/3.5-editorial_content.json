@@ -6,9 +6,68 @@
     "endpoint_name": "get_trends_editorial_content_handler",
     "data": [
       {
+        "title": "Can't Stop Cross-Stitching",
+        "end_date": "",
+        "start_date": "2026-08-01",
+        "is_ready_for_translation": true,
+        "pins": [
+          {
+            "width": 474,
+            "vertical_offset": 30,
+            "src": "https://i.pinimg.com/474x/41/ae/66/41ae66cf51cfc28c61261dccdfb3a5eb.jpg",
+            "height": 632,
+            "id": "1096978421763117039",
+            "color": "#ad6759"
+          },
+          {
+            "width": null,
+            "vertical_offset": 55,
+            "src": "",
+            "height": null,
+            "id": "1096978421763142235",
+            "color": "#e9e9e9"
+          },
+          {
+            "width": 474,
+            "vertical_offset": 70,
+            "src": "https://i.pinimg.com/474x/87/67/ea/8767ea44dc954a6d93657e8eb474c5fa.jpg",
+            "height": 632,
+            "id": "1096978421763117060",
+            "color": "#b0a79a"
+          },
+          {
+            "width": 474,
+            "vertical_offset": 62,
+            "src": "https://i.pinimg.com/474x/4d/fa/2d/4dfa2d54a4d8fc31feb93e81e20713c8.jpg",
+            "height": 587,
+            "id": "1096978421763140344",
+            "color": "#997b64"
+          },
+          {
+            "width": 474,
+            "vertical_offset": 58,
+            "src": "https://i.pinimg.com/474x/11/b2/e3/11b2e36afb1d3b9066923fbafc6597d7.jpg",
+            "height": 632,
+            "id": "1096978421763140293",
+            "color": "#665c55"
+          },
+          {
+            "width": 474,
+            "vertical_offset": 34,
+            "src": "https://i.pinimg.com/474x/19/ae/99/19ae99328817163f5c4ef88ef0253570.jpg",
+            "height": 474,
+            "id": "1096978421763117096",
+            "color": "#b7b4b5"
+          }
+        ],
         "interests": [
           "934876475639"
         ],
+        "hide_keyword_percentages": false,
+        "is_published": true,
+        "trend_type": "search",
+        "body": "Could cross stitch be your new favorite hobby? This charming craft is making everyday items feel extra special, from handmade bookmarks to stitched notebooks and photo details that turn memories into keepsakes. Playful, calming, and a little nostalgic, it is the sweetest way to make back to school supplies feel more personal, expressive, and entirely your own.",
+        "id": "eaa3b7c5-6930-4c66-aa59-8b81b8ec5b9c",
         "keywords": {
           "US": [
             "embroidery ideas",
@@ -32,76 +91,76 @@
             "cross stitch"
           ]
         },
-        "body": "Could cross stitch be your new favorite hobby? This charming craft is making everyday items feel extra special, from handmade bookmarks to stitched notebooks and photo details that turn memories into keepsakes. Playful, calming, and a little nostalgic, it is the sweetest way to make back to school supplies feel more personal, expressive, and entirely your own.",
-        "pins": [
-          {
-            "src": "https://i.pinimg.com/474x/41/ae/66/41ae66cf51cfc28c61261dccdfb3a5eb.jpg",
-            "vertical_offset": 30,
-            "color": "#ad6759",
-            "height": 632,
-            "id": "1096978421763117039",
-            "width": 474
-          },
-          {
-            "src": "",
-            "vertical_offset": 55,
-            "color": "#e9e9e9",
-            "height": null,
-            "id": "1096978421763142235",
-            "width": null
-          },
-          {
-            "src": "https://i.pinimg.com/474x/87/67/ea/8767ea44dc954a6d93657e8eb474c5fa.jpg",
-            "vertical_offset": 70,
-            "color": "#b0a79a",
-            "height": 632,
-            "id": "1096978421763117060",
-            "width": 474
-          },
-          {
-            "src": "https://i.pinimg.com/474x/4d/fa/2d/4dfa2d54a4d8fc31feb93e81e20713c8.jpg",
-            "vertical_offset": 62,
-            "color": "#997b64",
-            "height": 587,
-            "id": "1096978421763140344",
-            "width": 474
-          },
-          {
-            "src": "https://i.pinimg.com/474x/11/b2/e3/11b2e36afb1d3b9066923fbafc6597d7.jpg",
-            "vertical_offset": 58,
-            "color": "#665c55",
-            "height": 632,
-            "id": "1096978421763140293",
-            "width": 474
-          },
-          {
-            "src": "https://i.pinimg.com/474x/19/ae/99/19ae99328817163f5c4ef88ef0253570.jpg",
-            "vertical_offset": 34,
-            "color": "#b7b4b5",
-            "height": 474,
-            "id": "1096978421763117096",
-            "width": 474
-          }
-        ],
-        "title": "Can't Stop Cross-Stitching",
-        "end_date": "",
-        "is_published": true,
-        "trend_type": "search",
-        "id": "eaa3b7c5-6930-4c66-aa59-8b81b8ec5b9c",
-        "hide_keyword_percentages": false,
         "regions": [
           "US",
           "GB+IE",
           "CA"
-        ],
-        "start_date": "2026-08-01",
-        "is_ready_for_translation": true
+        ]
       },
       {
+        "title": "The Summer of Jorts",
+        "end_date": "",
+        "start_date": "2026-08-01",
+        "is_ready_for_translation": true,
+        "pins": [
+          {
+            "width": 474,
+            "vertical_offset": 89,
+            "src": "https://i.pinimg.com/474x/0b/7c/2a/0b7c2a5ef63f1f93de7b9613e51a43d0.jpg",
+            "height": 711,
+            "id": "1096978421765119876",
+            "color": "#7b736c"
+          },
+          {
+            "width": 474,
+            "vertical_offset": 87,
+            "src": "https://i.pinimg.com/474x/be/43/31/be4331c1529d6a0a1dd0b98de335596a.jpg",
+            "height": 694,
+            "id": "1096978421765120047",
+            "color": "#959998"
+          },
+          {
+            "width": 474,
+            "vertical_offset": 93,
+            "src": "https://i.pinimg.com/474x/59/ad/20/59ad20eef966ec5cc2334bcced748f6b.jpg",
+            "height": 585,
+            "id": "1096978421765119639",
+            "color": "#908c83"
+          },
+          {
+            "width": 474,
+            "vertical_offset": 84,
+            "src": "https://i.pinimg.com/474x/a1/9c/b6/a19cb668eee5d48b01dd4d539de72bb6.jpg",
+            "height": 842,
+            "id": "1096978421765120192",
+            "color": "#7b7c84"
+          },
+          {
+            "width": 474,
+            "vertical_offset": 100,
+            "src": "https://i.pinimg.com/474x/c3/4c/e3/c34ce3844f7f5824830f3f7711958765.jpg",
+            "height": 842,
+            "id": "1096978421765119854",
+            "color": "#57595a"
+          },
+          {
+            "width": 474,
+            "vertical_offset": 100,
+            "src": "https://i.pinimg.com/474x/2e/30/f1/2e30f10826382ff1dc79ed6e818860e7.jpg",
+            "height": 663,
+            "id": "785385622562533226",
+            "color": "#7f7a71"
+          }
+        ],
         "interests": [
           "948967005229",
           "924581335376"
         ],
+        "hide_keyword_percentages": false,
+        "is_published": true,
+        "trend_type": "search",
+        "body": "Longer, looser, and way more versatile than they get credit for, jorts are showing up in denim, checked, and camo prints that feel easy, cool, and a little unexpected. They bring shape to the simplest outfits and give more styled ones a little edge. With tanks and flip-flops they feel effortless; with crisp shirting, belts, loafers, or even heels, a little more dressed up. Good on everyone, they\u2019re easy to wear and even easier to style your own way.",
+        "id": "76ab633e-eee2-4c7e-bd06-e476d22d2644",
         "keywords": {
           "US": [
             "jorts outfit",
@@ -125,75 +184,75 @@
             "culottes outfit"
           ]
         },
-        "body": "Longer, looser, and way more versatile than they get credit for, jorts are showing up in denim, checked, and camo prints that feel easy, cool, and a little unexpected. They bring shape to the simplest outfits and give more styled ones a little edge. With tanks and flip-flops they feel effortless; with crisp shirting, belts, loafers, or even heels, a little more dressed up. Good on everyone, they\u2019re easy to wear and even easier to style your own way.",
-        "pins": [
-          {
-            "src": "https://i.pinimg.com/474x/0b/7c/2a/0b7c2a5ef63f1f93de7b9613e51a43d0.jpg",
-            "vertical_offset": 89,
-            "color": "#7b736c",
-            "height": 711,
-            "id": "1096978421765119876",
-            "width": 474
-          },
-          {
-            "src": "https://i.pinimg.com/474x/be/43/31/be4331c1529d6a0a1dd0b98de335596a.jpg",
-            "vertical_offset": 87,
-            "color": "#959998",
-            "height": 694,
-            "id": "1096978421765120047",
-            "width": 474
-          },
-          {
-            "src": "https://i.pinimg.com/474x/59/ad/20/59ad20eef966ec5cc2334bcced748f6b.jpg",
-            "vertical_offset": 93,
-            "color": "#908c83",
-            "height": 585,
-            "id": "1096978421765119639",
-            "width": 474
-          },
-          {
-            "src": "https://i.pinimg.com/474x/a1/9c/b6/a19cb668eee5d48b01dd4d539de72bb6.jpg",
-            "vertical_offset": 84,
-            "color": "#7b7c84",
-            "height": 842,
-            "id": "1096978421765120192",
-            "width": 474
-          },
-          {
-            "src": "https://i.pinimg.com/474x/c3/4c/e3/c34ce3844f7f5824830f3f7711958765.jpg",
-            "vertical_offset": 100,
-            "color": "#57595a",
-            "height": 842,
-            "id": "1096978421765119854",
-            "width": 474
-          },
-          {
-            "src": "https://i.pinimg.com/474x/2e/30/f1/2e30f10826382ff1dc79ed6e818860e7.jpg",
-            "vertical_offset": 100,
-            "color": "#7f7a71",
-            "height": 663,
-            "id": "785385622562533226",
-            "width": 474
-          }
-        ],
-        "title": "The Summer of Jorts",
-        "end_date": "",
-        "is_published": true,
-        "trend_type": "search",
-        "id": "76ab633e-eee2-4c7e-bd06-e476d22d2644",
-        "hide_keyword_percentages": false,
         "regions": [
           "US",
           "GB+IE",
           "CA"
-        ],
-        "start_date": "2026-08-01",
-        "is_ready_for_translation": true
+        ]
       },
       {
+        "title": "Throw an Ikebana Party",
+        "end_date": "",
+        "start_date": "2026-08-01",
+        "is_ready_for_translation": true,
+        "pins": [
+          {
+            "width": 474,
+            "vertical_offset": 65,
+            "src": "https://i.pinimg.com/474x/ff/43/0f/ff430f9b1ec9cbb42397ae3462df41f0.jpg",
+            "height": 577,
+            "id": "1096978421763018975",
+            "color": "#adaba3"
+          },
+          {
+            "width": null,
+            "vertical_offset": 61,
+            "src": "",
+            "height": null,
+            "id": "1096978421765029479",
+            "color": "#e9e9e9"
+          },
+          {
+            "width": 474,
+            "vertical_offset": 69,
+            "src": "https://i.pinimg.com/474x/71/b7/f3/71b7f3e688f9e6616193becce6c4d27f.jpg",
+            "height": 631,
+            "id": "1096978421763024554",
+            "color": "#989792"
+          },
+          {
+            "width": 474,
+            "vertical_offset": 77,
+            "src": "https://i.pinimg.com/474x/af/af/e4/afafe4fe29b7f7e7d4f378dff9772a5e.jpg",
+            "height": 631,
+            "id": "1096978421763020234",
+            "color": "#79736b"
+          },
+          {
+            "width": 474,
+            "vertical_offset": 3,
+            "src": "https://i.pinimg.com/474x/28/b2/98/28b2988b1a8a2bca87beadcfebd3eb9f.jpg",
+            "height": 592,
+            "id": "1096978421763018170",
+            "color": "#847e6d"
+          },
+          {
+            "width": null,
+            "vertical_offset": 54,
+            "src": "",
+            "height": null,
+            "id": "1096978421765029477",
+            "color": "#e9e9e9"
+          }
+        ],
         "interests": [
           "934876475639"
         ],
+        "hide_keyword_percentages": false,
+        "is_published": true,
+        "trend_type": "search",
+        "body": "What if your next party was equal parts activity and atmosphere? Throw an ikebana party and make your next gathering feel a little more special. All it takes is a few stems, some close friends, and a slow afternoon to create simple arrangements that feel like tiny works of art. Inspired by the Japanese art of ikebana, this hosting trend brings together quiet beauty, creativity, and intentional time with the people you love.",
+        "id": "492f3f1c-e6f3-4c19-abf8-85957593cbe8",
         "keywords": {
           "US": [
             "fall flowers",
@@ -217,75 +276,75 @@
             "wild flowers"
           ]
         },
-        "body": "What if your next party was equal parts activity and atmosphere? Throw an ikebana party and make your next gathering feel a little more special. All it takes is a few stems, some close friends, and a slow afternoon to create simple arrangements that feel like tiny works of art. Inspired by the Japanese art of ikebana, this hosting trend brings together quiet beauty, creativity, and intentional time with the people you love.",
-        "pins": [
-          {
-            "src": "https://i.pinimg.com/474x/ff/43/0f/ff430f9b1ec9cbb42397ae3462df41f0.jpg",
-            "vertical_offset": 65,
-            "color": "#adaba3",
-            "height": 577,
-            "id": "1096978421763018975",
-            "width": 474
-          },
-          {
-            "src": "",
-            "vertical_offset": 61,
-            "color": "#e9e9e9",
-            "height": null,
-            "id": "1096978421765029479",
-            "width": null
-          },
-          {
-            "src": "https://i.pinimg.com/474x/71/b7/f3/71b7f3e688f9e6616193becce6c4d27f.jpg",
-            "vertical_offset": 69,
-            "color": "#989792",
-            "height": 631,
-            "id": "1096978421763024554",
-            "width": 474
-          },
-          {
-            "src": "https://i.pinimg.com/474x/af/af/e4/afafe4fe29b7f7e7d4f378dff9772a5e.jpg",
-            "vertical_offset": 77,
-            "color": "#79736b",
-            "height": 631,
-            "id": "1096978421763020234",
-            "width": 474
-          },
-          {
-            "src": "https://i.pinimg.com/474x/28/b2/98/28b2988b1a8a2bca87beadcfebd3eb9f.jpg",
-            "vertical_offset": 3,
-            "color": "#847e6d",
-            "height": 592,
-            "id": "1096978421763018170",
-            "width": 474
-          },
-          {
-            "src": "",
-            "vertical_offset": 54,
-            "color": "#e9e9e9",
-            "height": null,
-            "id": "1096978421765029477",
-            "width": null
-          }
-        ],
-        "title": "Throw an Ikebana Party",
-        "end_date": "",
-        "is_published": true,
-        "trend_type": "search",
-        "id": "492f3f1c-e6f3-4c19-abf8-85957593cbe8",
-        "hide_keyword_percentages": false,
         "regions": [
           "US",
           "GB+IE",
           "CA"
-        ],
-        "start_date": "2026-08-01",
-        "is_ready_for_translation": true
+        ]
       },
       {
+        "title": "Savory Yogurt Bowls",
+        "end_date": "",
+        "start_date": "2026-08-01",
+        "is_ready_for_translation": true,
+        "pins": [
+          {
+            "width": 474,
+            "vertical_offset": 47,
+            "src": "https://i.pinimg.com/474x/a3/a0/80/a3a080693e5e2fc15488ea9f22eead68.jpg",
+            "height": 592,
+            "id": "1096978421765097137",
+            "color": "#927764"
+          },
+          {
+            "width": 474,
+            "vertical_offset": 44,
+            "src": "https://i.pinimg.com/474x/b2/30/75/b23075da1e8493ace15cf3cedbe63216.jpg",
+            "height": 841,
+            "id": "1096978421765097845",
+            "color": "#c6b8a5"
+          },
+          {
+            "width": 474,
+            "vertical_offset": 41,
+            "src": "https://i.pinimg.com/474x/83/5f/d0/835fd079ac45b00b756cba7163012985.jpg",
+            "height": 584,
+            "id": "1096978421765096187",
+            "color": "#a69867"
+          },
+          {
+            "width": 474,
+            "vertical_offset": 48,
+            "src": "https://i.pinimg.com/474x/ad/78/ce/ad78cecafd7dec7b70ff1c43dab09b0b.jpg",
+            "height": 842,
+            "id": "1096978421765097943",
+            "color": "#b0aa96"
+          },
+          {
+            "width": 474,
+            "vertical_offset": 5,
+            "src": "https://i.pinimg.com/474x/e2/6f/41/e26f41587720b0c666162e40be15d28a.jpg",
+            "height": 632,
+            "id": "1096978421765096207",
+            "color": "#a17d52"
+          },
+          {
+            "width": 474,
+            "vertical_offset": 40,
+            "src": "https://i.pinimg.com/474x/e7/39/99/e7399978ea8e84188e880cb7a53c93cb.jpg",
+            "height": 555,
+            "id": "1096978421765096159",
+            "color": "#a98b6c"
+          }
+        ],
         "interests": [
           "918530398158"
         ],
+        "hide_keyword_percentages": false,
+        "is_published": true,
+        "trend_type": "search",
+        "body": "If sweet yogurt bowls were your first love, consider this your next fixation. Thick, tangy yogurt slips into its savory era with tzatziki energy, piled with crisp cucumbers, fresh herbs, lemon, and garlicky Mediterranean flair. Add silky salmon, jammy eggs, chickpeas, or seeded crackers, and suddenly every bite is cool, crunchy, protein-packed, and deeply craveable\u2014the kind of light, lovely lunch that somehow keeps you full and dreaming about the next bowl. Fresh, chic, and built to crave again.",
+        "id": "9bc4cff2-6a2b-4e6b-acc0-9690a1a88dff",
         "keywords": {
           "US": [
             "savory yogurt bowl",
@@ -309,76 +368,76 @@
             "yogurt bowls"
           ]
         },
-        "body": "If sweet yogurt bowls were your first love, consider this your next fixation. Thick, tangy yogurt slips into its savory era with tzatziki energy, piled with crisp cucumbers, fresh herbs, lemon, and garlicky Mediterranean flair. Add silky salmon, jammy eggs, chickpeas, or seeded crackers, and suddenly every bite is cool, crunchy, protein-packed, and deeply craveable\u2014the kind of light, lovely lunch that somehow keeps you full and dreaming about the next bowl. Fresh, chic, and built to crave again.",
-        "pins": [
-          {
-            "src": "https://i.pinimg.com/474x/a3/a0/80/a3a080693e5e2fc15488ea9f22eead68.jpg",
-            "vertical_offset": 47,
-            "color": "#927764",
-            "height": 592,
-            "id": "1096978421765097137",
-            "width": 474
-          },
-          {
-            "src": "https://i.pinimg.com/474x/b2/30/75/b23075da1e8493ace15cf3cedbe63216.jpg",
-            "vertical_offset": 44,
-            "color": "#c6b8a5",
-            "height": 841,
-            "id": "1096978421765097845",
-            "width": 474
-          },
-          {
-            "src": "https://i.pinimg.com/474x/83/5f/d0/835fd079ac45b00b756cba7163012985.jpg",
-            "vertical_offset": 41,
-            "color": "#a69867",
-            "height": 584,
-            "id": "1096978421765096187",
-            "width": 474
-          },
-          {
-            "src": "https://i.pinimg.com/474x/ad/78/ce/ad78cecafd7dec7b70ff1c43dab09b0b.jpg",
-            "vertical_offset": 48,
-            "color": "#b0aa96",
-            "height": 842,
-            "id": "1096978421765097943",
-            "width": 474
-          },
-          {
-            "src": "https://i.pinimg.com/474x/e2/6f/41/e26f41587720b0c666162e40be15d28a.jpg",
-            "vertical_offset": 5,
-            "color": "#a17d52",
-            "height": 632,
-            "id": "1096978421765096207",
-            "width": 474
-          },
-          {
-            "src": "https://i.pinimg.com/474x/e7/39/99/e7399978ea8e84188e880cb7a53c93cb.jpg",
-            "vertical_offset": 40,
-            "color": "#a98b6c",
-            "height": 555,
-            "id": "1096978421765096159",
-            "width": 474
-          }
-        ],
-        "title": "Savory Yogurt Bowls",
-        "end_date": "",
-        "is_published": true,
-        "trend_type": "search",
-        "id": "9bc4cff2-6a2b-4e6b-acc0-9690a1a88dff",
-        "hide_keyword_percentages": false,
         "regions": [
           "US",
           "GB+IE",
           "CA"
-        ],
-        "start_date": "2026-08-01",
-        "is_ready_for_translation": true
+        ]
       },
       {
+        "title": "Fawn Season Aesthetic",
+        "end_date": "",
+        "start_date": "2026-08-01",
+        "is_ready_for_translation": true,
+        "pins": [
+          {
+            "width": 474,
+            "vertical_offset": 74,
+            "src": "https://i.pinimg.com/474x/ce/1e/9a/ce1e9a58e5058b4d0fe753e4c9c5dab4.jpg",
+            "height": 606,
+            "id": "871516965410857850",
+            "color": "#3d3816"
+          },
+          {
+            "width": 474,
+            "vertical_offset": 49,
+            "src": "https://i.pinimg.com/474x/7c/40/8b/7c408b382301816f9fa53b36aced3b98.jpg",
+            "height": 355,
+            "id": "871516965409982060",
+            "color": "#c79c81"
+          },
+          {
+            "width": 474,
+            "vertical_offset": 54,
+            "src": "https://i.pinimg.com/474x/af/fa/17/affa17f6d463befa502f64352dac516e.jpg",
+            "height": 590,
+            "id": "871516965419348618",
+            "color": "#463831"
+          },
+          {
+            "width": 474,
+            "vertical_offset": 65,
+            "src": "https://i.pinimg.com/474x/16/ba/55/16ba5528982ca8a2b91333a947c35b35.jpg",
+            "height": 948,
+            "id": "871516965419348525",
+            "color": "#826c56"
+          },
+          {
+            "width": 474,
+            "vertical_offset": null,
+            "src": "https://i.pinimg.com/474x/f6/65/c7/f665c7bf59547ab6c14ab40b5e05f1dd.jpg",
+            "height": 592,
+            "id": "871516965410857672",
+            "color": "#665240"
+          },
+          {
+            "width": 474,
+            "vertical_offset": 2,
+            "src": "https://i.pinimg.com/474x/1a/da/59/1ada5977cf2e3f40e619ac34813d4bc6.jpg",
+            "height": 606,
+            "id": "871516965410235502",
+            "color": "#765641"
+          }
+        ],
         "interests": [
           "948967005229",
           "935541271955"
         ],
+        "hide_keyword_percentages": false,
+        "is_published": true,
+        "trend_type": "search",
+        "body": "Whimsy meets woodland in a mix of doe-eyed beauty, delicate spot prints, and fawn-inspired details that are both dreamy and cute. Fall for soft fawn freckles and channel the aesthetic through faux fur jackets, tabi flats, and spotted deer print, which stands out as a sweet and unexpected answer to animal print for fall. Spanning home decor, beauty, and fashion, this aesthetic captures a playful, storybook mood made for frolicking into fall.",
+        "id": "f98433f3-679a-45b0-b621-fd1f255bf6dc",
         "keywords": {
           "US": [
             "doe eyes",
@@ -402,76 +461,76 @@
             "deer wallpaper"
           ]
         },
-        "body": "Whimsy meets woodland in a mix of doe-eyed beauty, delicate spot prints, and fawn-inspired details that are both dreamy and cute. Fall for soft fawn freckles and channel the aesthetic through faux fur jackets, tabi flats, and spotted deer print, which stands out as a sweet and unexpected answer to animal print for fall. Spanning home decor, beauty, and fashion, this aesthetic captures a playful, storybook mood made for frolicking into fall.",
-        "pins": [
-          {
-            "src": "https://i.pinimg.com/474x/ce/1e/9a/ce1e9a58e5058b4d0fe753e4c9c5dab4.jpg",
-            "vertical_offset": 74,
-            "color": "#3d3816",
-            "height": 606,
-            "id": "871516965410857850",
-            "width": 474
-          },
-          {
-            "src": "https://i.pinimg.com/474x/7c/40/8b/7c408b382301816f9fa53b36aced3b98.jpg",
-            "vertical_offset": 49,
-            "color": "#c79c81",
-            "height": 355,
-            "id": "871516965409982060",
-            "width": 474
-          },
-          {
-            "src": "https://i.pinimg.com/474x/af/fa/17/affa17f6d463befa502f64352dac516e.jpg",
-            "vertical_offset": 54,
-            "color": "#463831",
-            "height": 590,
-            "id": "871516965419348618",
-            "width": 474
-          },
-          {
-            "src": "https://i.pinimg.com/474x/16/ba/55/16ba5528982ca8a2b91333a947c35b35.jpg",
-            "vertical_offset": 65,
-            "color": "#826c56",
-            "height": 948,
-            "id": "871516965419348525",
-            "width": 474
-          },
-          {
-            "src": "https://i.pinimg.com/474x/f6/65/c7/f665c7bf59547ab6c14ab40b5e05f1dd.jpg",
-            "vertical_offset": null,
-            "color": "#665240",
-            "height": 592,
-            "id": "871516965410857672",
-            "width": 474
-          },
-          {
-            "src": "https://i.pinimg.com/474x/1a/da/59/1ada5977cf2e3f40e619ac34813d4bc6.jpg",
-            "vertical_offset": 2,
-            "color": "#765641",
-            "height": 606,
-            "id": "871516965410235502",
-            "width": 474
-          }
-        ],
-        "title": "Fawn Season Aesthetic",
-        "end_date": "",
-        "is_published": true,
-        "trend_type": "search",
-        "id": "f98433f3-679a-45b0-b621-fd1f255bf6dc",
-        "hide_keyword_percentages": false,
         "regions": [
           "US",
           "GB+IE",
           "CA"
-        ],
-        "start_date": "2026-08-01",
-        "is_ready_for_translation": true
+        ]
       },
       {
+        "title": "That Tuscan Feeling",
+        "end_date": "",
+        "start_date": "2026-08-01",
+        "is_ready_for_translation": true,
+        "pins": [
+          {
+            "width": 474,
+            "vertical_offset": 63,
+            "src": "https://i.pinimg.com/474x/a2/23/4a/a2234aa1f74e8b584d0469337139ddbc.jpg",
+            "height": 474,
+            "id": "1090082284841147824",
+            "color": "#5c492c"
+          },
+          {
+            "width": 474,
+            "vertical_offset": 6,
+            "src": "https://i.pinimg.com/474x/7f/62/b7/7f62b7cddfe1b0b7c9e818ec92f26505.jpg",
+            "height": 842,
+            "id": "1090082284841122907",
+            "color": "#ca7849"
+          },
+          {
+            "width": 474,
+            "vertical_offset": null,
+            "src": "https://i.pinimg.com/474x/dc/02/77/dc0277383f429b5d72f5faefc8a601e4.jpg",
+            "height": 592,
+            "id": "687221224434755095",
+            "color": "#4a3f32"
+          },
+          {
+            "width": 474,
+            "vertical_offset": 8,
+            "src": "https://i.pinimg.com/474x/9f/f8/39/9ff839e2b18b5405f7ecb404939fb4c6.jpg",
+            "height": 355,
+            "id": "1090082284841122914",
+            "color": "#cb9147"
+          },
+          {
+            "width": 474,
+            "vertical_offset": 20,
+            "src": "https://i.pinimg.com/474x/20/41/b9/2041b9894bf9d636b5903be2f06bda41.jpg",
+            "height": 842,
+            "id": "1090082284836565202",
+            "color": "#9b714f"
+          },
+          {
+            "width": 474,
+            "vertical_offset": 18,
+            "src": "https://i.pinimg.com/474x/7e/f8/57/7ef857fee799337736713948aeaedcf6.jpg",
+            "height": 711,
+            "id": "1090082284836143084",
+            "color": "#6a4323"
+          }
+        ],
         "interests": [
           "935249274030",
           "935541271955"
         ],
+        "hide_keyword_percentages": false,
+        "is_published": true,
+        "trend_type": "search",
+        "body": "Terracotta and golden-hour light meet peak Y2K glamour in a look that feels warm and bronzed, and a little over-the-top in the best way. Think oversized sunnies, blown-out hair, glossy lips, fresh nails, and outfits that feel equal parts casual and done up. It\u2019s slow lunches and rustic kitchens, but through an early-2000s lens \u2014 rich earthy tones and that effortless-but-not-really energy. Nostalgic, sun-soaked, and unapologetically glamorous, it captures the lived-in luxury that defined the era.",
+        "id": "67216182-a276-4448-b646-3a16bd214f9d",
         "keywords": {
           "US": [
             "tuscan house",
@@ -497,70 +556,11 @@
             "tuscan mom aesthetic"
           ]
         },
-        "body": "Terracotta and golden-hour light meet peak Y2K glamour in a look that feels warm and bronzed, and a little over-the-top in the best way. Think oversized sunnies, blown-out hair, glossy lips, fresh nails, and outfits that feel equal parts casual and done up. It\u2019s slow lunches and rustic kitchens, but through an early-2000s lens \u2014 rich earthy tones and that effortless-but-not-really energy. Nostalgic, sun-soaked, and unapologetically glamorous, it captures the lived-in luxury that defined the era.",
-        "pins": [
-          {
-            "src": "https://i.pinimg.com/474x/a2/23/4a/a2234aa1f74e8b584d0469337139ddbc.jpg",
-            "vertical_offset": 63,
-            "color": "#5c492c",
-            "height": 474,
-            "id": "1090082284841147824",
-            "width": 474
-          },
-          {
-            "src": "https://i.pinimg.com/474x/7f/62/b7/7f62b7cddfe1b0b7c9e818ec92f26505.jpg",
-            "vertical_offset": 6,
-            "color": "#ca7849",
-            "height": 842,
-            "id": "1090082284841122907",
-            "width": 474
-          },
-          {
-            "src": "https://i.pinimg.com/474x/dc/02/77/dc0277383f429b5d72f5faefc8a601e4.jpg",
-            "vertical_offset": null,
-            "color": "#4a3f32",
-            "height": 592,
-            "id": "687221224434755095",
-            "width": 474
-          },
-          {
-            "src": "https://i.pinimg.com/474x/9f/f8/39/9ff839e2b18b5405f7ecb404939fb4c6.jpg",
-            "vertical_offset": 8,
-            "color": "#cb9147",
-            "height": 355,
-            "id": "1090082284841122914",
-            "width": 474
-          },
-          {
-            "src": "https://i.pinimg.com/474x/20/41/b9/2041b9894bf9d636b5903be2f06bda41.jpg",
-            "vertical_offset": 20,
-            "color": "#9b714f",
-            "height": 842,
-            "id": "1090082284836565202",
-            "width": 474
-          },
-          {
-            "src": "https://i.pinimg.com/474x/7e/f8/57/7ef857fee799337736713948aeaedcf6.jpg",
-            "vertical_offset": 18,
-            "color": "#6a4323",
-            "height": 711,
-            "id": "1090082284836143084",
-            "width": 474
-          }
-        ],
-        "title": "That Tuscan Feeling",
-        "end_date": "",
-        "is_published": true,
-        "trend_type": "search",
-        "id": "67216182-a276-4448-b646-3a16bd214f9d",
-        "hide_keyword_percentages": false,
         "regions": [
           "US",
           "GB+IE",
           "CA"
-        ],
-        "start_date": "2026-08-01",
-        "is_ready_for_translation": true
+        ]
       }
     ],
     "x_pinterest_sli_endpoint_name": "get_trends_editorial_content_handler",
@@ -576,6 +576,6 @@
       "data": {}
     }
   },
-  "request_identifier": "9712033277818634",
+  "request_identifier": "1143279389049200",
   "_client_context": "<stripped: account PII, see strip_pii()>"
 }

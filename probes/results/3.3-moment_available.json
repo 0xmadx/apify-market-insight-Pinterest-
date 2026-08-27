@@ -10,20 +10,20 @@
         "valentines day",
         "independence day",
         "memorial day",
-        "new years eve",
         "easter",
         "st patricks day",
         "summer",
+        "fathers day",
+        "hanukkah",
+        "new years eve",
         "christmas",
         "mothers day",
-        "halloween",
-        "fathers day",
-        "hanukkah"
+        "halloween"
       ],
       "peaks": [
         {
-          "peak_timestamp_millis": "1795824000000",
-          "takeoff_timestamp_millis": "1793404800000",
+          "peak_timestamp_millis": "1795996800000",
+          "takeoff_timestamp_millis": "1792972800000",
           "peak_length_in_days": 35
         },
         {
@@ -32,125 +32,125 @@
           "peak_length_in_days": null
         },
         {
-          "peak_timestamp_millis": "1783036800000",
-          "takeoff_timestamp_millis": "1781222400000",
-          "peak_length_in_days": 42
-        },
-        {
-          "peak_timestamp_millis": "1783036800000",
-          "takeoff_timestamp_millis": "1782432000000",
-          "peak_length_in_days": 21
-        },
-        {
-          "peak_timestamp_millis": "1798848000000",
-          "takeoff_timestamp_millis": "1797638400000",
-          "peak_length_in_days": 42
-        },
-        {
-          "peak_timestamp_millis": "1775174400000",
-          "takeoff_timestamp_millis": "1771545600000",
-          "peak_length_in_days": 70
-        },
-        {
-          "peak_timestamp_millis": "1773964800000",
-          "takeoff_timestamp_millis": "1770940800000",
-          "peak_length_in_days": 56
-        },
-        {
-          "peak_timestamp_millis": "1780617600000",
-          "takeoff_timestamp_millis": "1770940800000",
-          "peak_length_in_days": 217
-        },
-        {
-          "peak_timestamp_millis": "1796428800000",
-          "takeoff_timestamp_millis": "1793404800000",
+          "peak_timestamp_millis": "1783209600000",
+          "takeoff_timestamp_millis": "1781395200000",
           "peak_length_in_days": 35
         },
         {
-          "peak_timestamp_millis": "1778803200000",
-          "takeoff_timestamp_millis": "1775779200000",
-          "peak_length_in_days": 49
+          "peak_timestamp_millis": "1783209600000",
+          "takeoff_timestamp_millis": "1782000000000",
+          "peak_length_in_days": 28
         },
         {
-          "peak_timestamp_millis": "1792713600000",
-          "takeoff_timestamp_millis": "1785456000000",
-          "peak_length_in_days": 91
+          "peak_timestamp_millis": "1775347200000",
+          "takeoff_timestamp_millis": "1771113600000",
+          "peak_length_in_days": 70
         },
         {
-          "peak_timestamp_millis": "1782432000000",
-          "takeoff_timestamp_millis": "1780012800000",
+          "peak_timestamp_millis": "1772928000000",
+          "takeoff_timestamp_millis": "1771113600000",
+          "peak_length_in_days": 56
+        },
+        {
+          "peak_timestamp_millis": "1780185600000",
+          "takeoff_timestamp_millis": "1771113600000",
+          "peak_length_in_days": 217
+        },
+        {
+          "peak_timestamp_millis": "1782000000000",
+          "takeoff_timestamp_millis": "1780790400000",
+          "peak_length_in_days": 28
+        },
+        {
+          "peak_timestamp_millis": "1796601600000",
+          "takeoff_timestamp_millis": "1793577600000",
+          "peak_length_in_days": 105
+        },
+        {
+          "peak_timestamp_millis": "1799020800000",
+          "takeoff_timestamp_millis": "1797206400000",
           "peak_length_in_days": 42
         },
         {
-          "peak_timestamp_millis": "1796428800000",
-          "takeoff_timestamp_millis": "1793404800000",
-          "peak_length_in_days": 105
+          "peak_timestamp_millis": "1796601600000",
+          "takeoff_timestamp_millis": "1792972800000",
+          "peak_length_in_days": 42
+        },
+        {
+          "peak_timestamp_millis": "1778371200000",
+          "takeoff_timestamp_millis": "1776556800000",
+          "peak_length_in_days": 35
+        },
+        {
+          "peak_timestamp_millis": "1792281600000",
+          "takeoff_timestamp_millis": "1785628800000",
+          "peak_length_in_days": 84
         }
       ],
       "historical_peaks": [
         {
-          "peak_timestamp_millis": "1764288000000",
-          "takeoff_timestamp_millis": "1761868800000",
+          "peak_timestamp_millis": "1764460800000",
+          "takeoff_timestamp_millis": "1761436800000",
           "peak_length_in_days": 35
         },
         {
-          "peak_timestamp_millis": "1770940800000",
-          "takeoff_timestamp_millis": "1767312000000",
-          "peak_length_in_days": 63
-        },
-        {
-          "peak_timestamp_millis": "1783036800000",
-          "takeoff_timestamp_millis": "1781222400000",
-          "peak_length_in_days": 42
-        },
-        {
-          "peak_timestamp_millis": "1783036800000",
-          "takeoff_timestamp_millis": "1782432000000",
-          "peak_length_in_days": 21
-        },
-        {
-          "peak_timestamp_millis": "1767312000000",
-          "takeoff_timestamp_millis": "1766102400000",
-          "peak_length_in_days": 42
-        },
-        {
-          "peak_timestamp_millis": "1775174400000",
-          "takeoff_timestamp_millis": "1771545600000",
-          "peak_length_in_days": 70
-        },
-        {
-          "peak_timestamp_millis": "1773964800000",
-          "takeoff_timestamp_millis": "1770940800000",
+          "peak_timestamp_millis": "1771113600000",
+          "takeoff_timestamp_millis": "1767484800000",
           "peak_length_in_days": 56
         },
         {
-          "peak_timestamp_millis": "1780617600000",
-          "takeoff_timestamp_millis": "1770940800000",
-          "peak_length_in_days": 217
-        },
-        {
-          "peak_timestamp_millis": "1764892800000",
-          "takeoff_timestamp_millis": "1761868800000",
+          "peak_timestamp_millis": "1783209600000",
+          "takeoff_timestamp_millis": "1781395200000",
           "peak_length_in_days": 35
         },
         {
-          "peak_timestamp_millis": "1778803200000",
-          "takeoff_timestamp_millis": "1775779200000",
-          "peak_length_in_days": 49
+          "peak_timestamp_millis": "1783209600000",
+          "takeoff_timestamp_millis": "1782000000000",
+          "peak_length_in_days": 28
         },
         {
-          "peak_timestamp_millis": "1761868800000",
-          "takeoff_timestamp_millis": "1755820800000",
-          "peak_length_in_days": 112
+          "peak_timestamp_millis": "1775347200000",
+          "takeoff_timestamp_millis": "1771113600000",
+          "peak_length_in_days": 70
         },
         {
-          "peak_timestamp_millis": "1782432000000",
-          "takeoff_timestamp_millis": "1780012800000",
+          "peak_timestamp_millis": "1772928000000",
+          "takeoff_timestamp_millis": "1771113600000",
+          "peak_length_in_days": 56
+        },
+        {
+          "peak_timestamp_millis": "1780185600000",
+          "takeoff_timestamp_millis": "1771113600000",
+          "peak_length_in_days": 217
+        },
+        {
+          "peak_timestamp_millis": "1782000000000",
+          "takeoff_timestamp_millis": "1780790400000",
+          "peak_length_in_days": 28
+        },
+        {
+          "peak_timestamp_millis": "1765065600000",
+          "takeoff_timestamp_millis": "1762041600000",
+          "peak_length_in_days": 105
+        },
+        {
+          "peak_timestamp_millis": "1767484800000",
+          "takeoff_timestamp_millis": "1765670400000",
           "peak_length_in_days": 42
         },
         {
-          "peak_timestamp_millis": "1764892800000",
-          "takeoff_timestamp_millis": "1761868800000",
+          "peak_timestamp_millis": "1765065600000",
+          "takeoff_timestamp_millis": "1761436800000",
+          "peak_length_in_days": 42
+        },
+        {
+          "peak_timestamp_millis": "1778371200000",
+          "takeoff_timestamp_millis": "1776556800000",
+          "peak_length_in_days": 35
+        },
+        {
+          "peak_timestamp_millis": "1761436800000",
+          "takeoff_timestamp_millis": "1755993600000",
           "peak_length_in_days": 105
         }
       ],
@@ -159,30 +159,30 @@
         "1802563200000",
         "1814659200000",
         "1811721600000",
-        "1798675200000",
         "1806192000000",
         "1805241600000",
         "1781913600000",
+        "1813449600000",
+        "1796342400000",
+        "1798675200000",
         "1798156800000",
         "1809820800000",
-        "1793404800000",
-        "1813449600000",
-        "1796342400000"
+        "1793404800000"
       ],
       "phase_labels": [
         "approaching",
         "approaching",
         "ended",
         "ended",
-        "approaching",
         "ended",
         "ended",
         "cooldown",
+        "ended",
+        "approaching",
+        "approaching",
         "approaching",
         "ended",
-        "rising",
-        "ended",
-        "approaching"
+        "rising"
       ]
     },
     "x_pinterest_sli_endpoint_name": "get_available_moments_handler",
@@ -198,6 +198,6 @@
       "data": {}
     }
   },
-  "request_identifier": "3399654639966183",
+  "request_identifier": "4270258335625295",
   "_client_context": "<stripped: account PII, see strip_pii()>"
 }
