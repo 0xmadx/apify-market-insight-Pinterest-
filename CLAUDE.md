@@ -29,11 +29,19 @@ one-vertical-per-call, the double-spelled `has_prediction`). It is not advisory.
 .venv/Scripts/python.exe -m src.status              # vault health — ALWAYS first
 .venv/Scripts/python.exe -m probes.probe_endpoints  # 16 live endpoint probes (needs vault)
 .venv/Scripts/python.exe -m probes.coverage         # fields the parsers DON'T surface
-.venv/Scripts/python.exe -m tests.test_incremental        # 20
+.venv/Scripts/python.exe -m tests.test_incremental        # 55
 .venv/Scripts/python.exe -m tests.test_shopping_api       # 54
-.venv/Scripts/python.exe -m tests.test_shopping_traversal # 33
+.venv/Scripts/python.exe -m tests.test_shopping_traversal # 34
 .venv/Scripts/python.exe -m tests.test_full_project       # 95
-.venv/Scripts/python.exe -m tests.test_dispatch           # 44 — zero-input + input plumbing
+.venv/Scripts/python.exe -m tests.test_dispatch           # 149 — zero-input + input plumbing
+.venv/Scripts/python.exe -m tests.test_adspower           # 90 — the cookie syncer
+.venv/Scripts/python.exe -m tests.test_vault              # 52 — the lease path (needs Redis)
+```
+
+Or all of it, in the order the release gate requires:
+
+```bash
+./ship.sh check      # probes the live wire FIRST, then the 529 checks
 ```
 
 Everything is a module run from the repo root. The venv is local to this repo.
@@ -51,7 +59,7 @@ Everything is a module run from the repo root. The venv is local to this repo.
 
   ⚠️ This used to read "no Playwright, no headless browsers, **ever**", and
   that is now false for half the system. The *vault writer* on GCP is a
-  headless Chromium (`browsers/`, branch `stealth-browsers`) — deliberately, to
+  headless Chromium (`browsers/`, merged to `main`) — deliberately, to
   stop paying AdsPower. The rule was always about the actor's cost and attack
   surface, not a ban on browsers anywhere in the project.
 - Freshness depends on the writer. The extension beacons only **while a
@@ -159,7 +167,7 @@ reasoning in `docs/DEPLOY.md` §5.
 `shopping`, `keywords`, `moments`, `radar`, and `crawl`, which follows the
 links between them instead of stopping at one page. Both of Pinterest's time
 controls are wired: `endDate` (which date) and `dateRange` (how much history).
-509 checks, 0 unread response fields (`probes/coverage.py`).
+529 checks, 0 unread response fields (`probes/coverage.py`).
 
 **Both browser captures landed 2026-08-19:**
 - §3.18 moment Age/Gender via the persisted GraphQL query — audience is now

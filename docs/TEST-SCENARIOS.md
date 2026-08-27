@@ -285,7 +285,7 @@ shipped:
 
 ## COVERAGE LEDGER (updated 2026-08-19 — the build is done)
 
-339 checks across five suites, every one tagged with its scenario id:
+529 checks across five suites, every one tagged with its scenario id:
 
 | Suite | Checks | Covers |
 |---|---|---|

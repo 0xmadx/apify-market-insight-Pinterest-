@@ -36,7 +36,7 @@ separate namespace, the same shape as an Apify container reaching Upstash.
 **Proven this way on 2026-08-19** (Ubuntu WSL, `REDIS_URL` pointed at
 `172.31.144.1:6380`, never localhost):
 
-- all 509 offline checks pass on Linux — the code had only ever run on Windows
+- all 529 offline checks pass on Linux — the code had only ever run on Windows
 - the actor boots the real Apify SDK, reads `INPUT.json`, and reaches a
   networked Redis
 - with an empty vault it fails **exactly as designed**: `ERROR No leasable
@@ -285,7 +285,7 @@ wrong thing, with `task={}` as the only clue. Check that line in the log.
 .venv/Scripts/python.exe -m tests.test_vault        # the lease path — needs Redis
 ```
 
-509 checks total. All but `test_vault` are pure offline; that one runs against
+529 checks total. All but `test_vault` are pure offline; that one runs against
 the real Redis under a throwaway `__test_vault` namespace, because a fake would
 not exercise the `SET NX` that is the whole of the lease. `test_dispatch` also guards the docs: it fails if
 `.actor/input_schema.json` and `docs/API.md` disagree in either direction, or

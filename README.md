@@ -29,23 +29,32 @@ honestly ·
 
 ---
 
-## Phase 1 — where we are
+## Where we are
 
-One local Chrome, one Pinterest profile, the extension beaming, home IP, no
-proxy. Everything in here is built for exactly that and nothing more.
+**Phase 2 landed.** Eight AdsPower profiles, each on its own Webshare exit IP,
+chained per profile through the vault — the seam described at the bottom of this
+file is no longer `None`. The vault refuses to lease a profile that has no proxy.
 
-**Phase 2**, when it comes: AdsPower profiles and Webshare proxies, chained per
-profile and per account through the vault. The seam for it is described at the
-bottom — one field, already read, currently always `None`.
+**Phase 3 is built and measured but not cut over.** `browsers/` is a free
+replacement for AdsPower's session-keeping: per-profile fingerprints (3/3
+distinct and stable), headless Linux with no root, 7 profiles refreshed in 53s.
+AdsPower is still the live writer; the switch is deliberate and observable, not
+a flag. See [docs/OPERATING_MODEL.md](docs/OPERATING_MODEL.md).
+
+**Not deployed yet.** The actor runs locally and in its real container against
+a non-localhost Redis. What remains is Upstash, Apify and a GCP VM, in that
+order — [DEPLOY.md](DEPLOY.md).
 
 ---
 
 ## Self-contained, on purpose
 
-This is its own repository, on the Desktop, outside the Etsy project. It shares
-exactly **one** thing with the Etsy repo it was lifted out of: the Redis vault,
-because the Chrome extension writes the sessions there. It shares no code, no
-imports, and no configuration.
+This is its own repository, outside the Etsy project, and since 2026-08-25 it
+shares **nothing** with it. The vault used to live in the Etsy project's Redis
+container; it now has its own — `pinterest-redis` on 6380, migrated with
+`browsers/migrate_vault.py`, which copies only this platform's keys and leaves
+`cookie:etsy*` untouched. No shared code, no shared imports, no shared config,
+and now no shared process.
 
 - [`.env`](.env) is loaded from **this directory by explicit path**, never by
   upward search. A `find_dotenv()` walking up would have silently inherited the
@@ -70,7 +79,7 @@ imports, and no configuration.
 |---|---|
 | `scrapling` | `pinterest/core/client.py` in the parent repo imports `StealthyFetcher` and **nothing calls it** — every working Pinterest call goes through a plain HTTP client. Scrapling's value is auto-healing HTML selectors and a Camoufox stealth browser. These endpoints return JSON, so there are no selectors to heal, and the stealth fetcher would drag a headless browser into an actor that needs none — several times the Apify compute cost, for nothing gained |
 | `httpx` | Swapped out for `curl_cffi`. Same synchronous shape, plus the fingerprint |
-| Proxy rotation, AdsPower | Not phase 1 |
+| Proxy rotation, AdsPower | Not phase 1 — both landed later, see below |
 
 ## What was added
 
@@ -114,7 +123,7 @@ src/parsers.py             one named parser per endpoint
 src/shopping.py  keywords.py  moments.py  radar.py   the four traversals
 src/crawl.py               the fifth: follows the links between them
 src/status.py              vault health check
-tests/                     7 suites, 509 checks — see below
+tests/                     7 suites, 529 checks — see below
 probes/                    live wire probes; probe_endpoints is the release gate
 docs/                      product docs + the reverse-engineering corpus
 ```
@@ -147,7 +156,7 @@ Both of Pinterest's time controls are wired: `endDate` (which date am I looking
 at) and `dateRange` (how much history the chart shows). They are different
 questions and compose.
 
-Run everything offline — **339 checks, no network**:
+Run everything offline — **529 checks, no network**:
 
 ```bash
 .venv/Scripts/python.exe -m tests.test_incremental          #  20 — freshness layer
@@ -249,25 +258,29 @@ default.
 
 ---
 
-## The phase-2 seam
+## The phase-2 seam — closed
 
-Nothing proxy-related is implemented. Where it goes when it is:
+This section used to describe where proxies *would* go. They went there.
 
-- `Identity.proxy` is already read **from the profile hash**, not from a global,
-  and is `None` today. A cookie and the IP it was born on are one identity;
-  recombining them across runs is itself a fingerprint. Phase 2 writes `proxy`
-  next to `cookies_json` for each profile and this code changes not at all.
-- AdsPower is desktop software with a *local* API (`127.0.0.1:50325`). It cannot
-  run in an Apify container. The shape has to be: AdsPower on a machine you
-  control → a sync agent reads each profile's cookies and proxy → writes them to
-  the vault → the actor reads the vault. The same picture as today with the
-  extension swapped out.
-- Reading cookies out of an AdsPower profile is **not** a plain REST call — the
-  local API starts the browser and hands back a CDP websocket, and the cookies
-  come from `Network.getAllCookies` over it. That needs verifying against a
-  running instance. AdsPower was not installed here (port 50325 dead), so nothing
-  about it has been probed and nothing should be built on assumption.
-- Webshare (`GET /api/v2/proxy/list/`, `Authorization: Token …`) is the natural
-  source, with each proxy health-checked against a Pinterest canary before it
-  enters the pool — a proxy that resolves but draws a 403 from the target is
-  worse than no proxy, because it burns the session attached to it.
+- `Identity.proxy` is read from the profile hash, not a global, and is now
+  populated for every profile in the pool. A cookie and the IP it was born on
+  are one identity; the vault refuses to lease a profile with no proxy
+  (`REQUIRE_PROXY`), because an unproxied one exits from whatever host the run
+  is on and mixes a residential identity into a proxied pool.
+- AdsPower runs headless in WSL with a local API (`127.0.0.1:50325`), and
+  `adspower/sync_cookies.py` reads each profile's cookies, user agent and proxy
+  and writes all three to the vault together.
+- ⚠️ **Reading those cookies is `Storage.getCookies`, NOT
+  `Network.getAllCookies`.** This file said the latter, and it was wrong: that
+  method does not exist on a browser-level CDP target. The first implementation
+  swallowed the resulting error and reported "never signed in" for a profile
+  holding a live session — a plausible wrong answer produced by ignoring an
+  error that said exactly what was wrong. `tests/test_adspower.py` GROUP R is
+  that bug's regression test.
+- Webshare proxies are assigned one per profile by
+  `adspower/assign_proxies.py`, country-matched to the account, and the pairing
+  is **sticky** — a profile that has an exit IP is never given a different one.
+
+The seam that is still open is the one after it: `browsers/` replaces
+AdsPower's session-keeping entirely and is proven but not cut over. See
+[docs/OPERATING_MODEL.md](docs/OPERATING_MODEL.md).
