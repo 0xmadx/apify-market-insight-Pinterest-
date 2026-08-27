@@ -384,14 +384,18 @@ def write_cookies(profile_id, cookies, user_agent, redis_url, dry_run=False,
                   platform="pinterest"):
     """Write the identity straight to Redis, no Go server in the middle.
 
-    WHY THIS EXISTS. `post_to_vault` posts to the Go cookie server, which lives
-    in the *Etsy* project and writes to whichever Redis IT was configured for.
-    That was fine while both projects shared one Redis. The moment this project
-    got its own (`pinterest-redis`, port 6380), it stopped being fine in the
-    worst way: `write_proxy` writes DIRECTLY and would land in the new vault,
-    while cookies went through the Go server into the OLD one. Half an identity
-    in each — and `src.status` would show a profile with a proxy and no
+    WHY THIS EXISTS. Cookies used to go through the Go cookie server, which
+    lives in the *Etsy* project and writes to whichever Redis IT was configured
+    for. That was fine while both projects shared one Redis. The moment this
+    project got its own (`pinterest-redis`, port 6380) it stopped being fine in
+    the worst way: `write_proxy` writes DIRECTLY and would land in the new
+    vault, while cookies went through the Go server into the OLD one. Half an
+    identity in each — and `src.status` would show a profile with a proxy and no
     cookies, which reads as "never signed in" rather than "split brain".
+
+    That path (`post_to_vault`) was deleted once this became the only writer;
+    keeping a dead function pointed at another project's server was a footgun,
+    not a fallback.
 
     Same fields, same key schema, same shape `browsers/identities.py:restore()`
     already writes. Nothing new is invented here; the hop is simply removed.
