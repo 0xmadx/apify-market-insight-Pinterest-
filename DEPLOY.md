@@ -2,7 +2,9 @@
 
 **For whoever deploys this — human or agent, in a fresh session.** Read this
 top to bottom before running anything. `docs/DEPLOY.md` has the reasoning; this
-is the order of operations.
+is the order of operations; [`docs/DEPLOY-LOG.md`](docs/DEPLOY-LOG.md) is the
+record — what was actually provisioned, its resource names, and the evidence
+behind each "done".
 
 Branch: **`main`**. It is the only branch. Both deploy targets come from it.
 
