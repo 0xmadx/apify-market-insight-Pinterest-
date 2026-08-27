@@ -126,15 +126,29 @@ else
     if [ "$N" -gt 0 ]; then ok "vault: $USABLE"
     else bad "vault: $USABLE — a deploy now serves NOTHING"; fi
 
+    # ONE SAMPLE CANNOT PROVE A LIVE WRITER, only a stale one.
+    #
+    # A fresh heartbeat has two possible causes and they are indistinguishable
+    # from a single read: a writer is refreshing this Redis every 5 minutes, or
+    # somebody copied fresh data in a moment ago. `migrate_vault` produces the
+    # second, and it decays into an empty pool 15 minutes later.
+    #
+    # Claiming "writer is ALIVE" off one sample is exactly the plausible wrong
+    # answer this codebase refuses everywhere else, so this reports what it
+    # actually measured — freshness — and names the check that settles it.
     MAXAGE=$(echo "$STATUS" | grep -oE 'age=[0-9]+' | cut -d= -f2 | sort -rn | head -1)
     if [ -n "$MAXAGE" ]; then
       if [ "$MAXAGE" -lt 600 ]; then
-        ok "writer is ALIVE on this Redis (oldest heartbeat ${MAXAGE}s)"
+        ok "vault is FRESH (oldest heartbeat ${MAXAGE}s)"
+        if [ "$MAXAGE" -lt 120 ]; then
+          warn "…but that is recent enough to be a MIGRATION, not a writer"
+          fix "re-run this in ~6 min: if the age has not reset, nothing is writing here"
+        fi
       else
         bad "NO WRITER on this Redis (oldest heartbeat ${MAXAGE}s > 600s)"
         fix "the syncer is writing somewhere else — set REDIS_URL in"
-        fix "/etc/adspower/api.env (WSL) to the SAME rediss:// URL, then"
-        fix "sudo systemctl restart adspower-sync.timer"
+        fix "/etc/adspower/api.env (WSL), which BEATS .env and the code default,"
+        fix "then: sudo systemctl restart adspower-sync.timer"
       fi
     fi
   fi
