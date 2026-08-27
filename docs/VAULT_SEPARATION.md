@@ -98,7 +98,13 @@ keeping Etsy profiles out of our pool, `migrate_vault` refusing to touch
 4. the code fallback in sync_cookies.py
 ```
 
-Grep all four. On 2026-08-26 (3) and (4) were updated, (1) was not, and the
+On the **GCP VM** it is a different file with the same power:
+
+```
+/etc/pinterest-keepalive/env    <- WINS there, written by browsers/deploy_gcp.sh
+```
+
+Grep all of them. On 2026-08-26 (3) and (4) were updated, (1) was not, and the
 pool was dead for 90 minutes while `sync_cookies` reported `6/6 synced` and
 `src.status` reported `0/8 usable`. Neither half can see the other.
 

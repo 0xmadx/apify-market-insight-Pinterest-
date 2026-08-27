@@ -308,17 +308,31 @@ Two decisions worth knowing:
   profile whose heartbeat is older than `PROFILE_MAX_AGE` (900s), so the gap
   must stay well under it. 5 minutes is a 3x margin.
 
-Install:
+Install — **use the script, do not `cp` the unit**:
 
 ```bash
-sudo mkdir -p /etc/pinterest-keepalive
-sudo tee /etc/pinterest-keepalive/env >/dev/null <<'EOF'
-REDIS_URL=rediss://...
-VAULT_PLATFORM=pinterest
-EOF
-sudo cp browsers/keepalive.{service,timer} /etc/systemd/system/
-sudo systemctl daemon-reload && sudo systemctl enable --now keepalive.timer
+REDIS_URL='rediss://...' bash browsers/deploy_gcp.sh
 ```
+
+⚠️ `browsers/keepalive.service` is a **reference copy written for WSL**. It
+hardcodes `/home/devy` and a venv at `~/pinterest-actor` — which is not even
+where this repo lives (`~/pinterest-apify`). Copying it to a VM with a
+different username, or to any host that follows the documented layout,
+produces a unit that dies at `ExecStart` with a bare `status=203/EXEC` and no
+indication of why. `deploy_gcp.sh` generates the unit from the paths that
+actually exist on the host instead, which is the whole reason it is a script
+and not two `cp` commands.
+
+It writes the environment file itself:
+
+```
+/etc/pinterest-keepalive/env      REDIS_URL, VAULT_PLATFORM
+```
+
+⚠️ That file is a systemd `EnvironmentFile`, so on the VM it **beats `.env`
+and the code default** the same way `/etc/adspower/api.env` does on the WSL
+box. It is a fifth home for `REDIS_URL`; see
+[`../docs/VAULT_SEPARATION.md`](../docs/VAULT_SEPARATION.md).
 
 ## Stage 6 — the cutover, when you are ready
 

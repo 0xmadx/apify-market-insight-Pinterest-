@@ -1,5 +1,11 @@
 # Keep Pinterest sessions fresh in the vault, without AdsPower.
 #
+# ⚠️ REFERENCE COPY — DO NOT INSTALL THIS FILE. The paths below are a WSL
+# box's (/home/devy, a venv at ~/pinterest-actor, which is not even where
+# this repo lives). On any other host it dies at ExecStart with a bare
+# status=203/EXEC that says nothing about why. Use `browsers/deploy_gcp.sh`,
+# which generates the unit from paths that exist on the host it runs on.
+#
 # WHY THIS EXISTS — the failure it prevents is silent and total:
 #
 # The vault evicts any profile whose `last_updated` is older than
