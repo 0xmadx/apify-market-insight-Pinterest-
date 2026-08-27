@@ -181,7 +181,18 @@ their next run**, minutes later, with no notice. Additive changes are safe; a
 renamed field, changed default or removed operation needs a `version` bump
 first.
 
-Set `REDIS_URL` as an Actor **secret**, never in `actor.json`. Then smoke it:
+Set `REDIS_URL` as an Actor **secret**, never in `actor.json` — it carries the
+vault password.
+
+**Everything else has a working default**, and on Apify two of them resolve
+correctly on their own: `DEDUP_SCOPE` falls back to `APIFY_USER_ID`, which the
+platform sets, so the seen-set is per customer without being configured; and
+`IMPERSONATE` is derived per identity from that profile's own user agent rather
+than pinned. Set an env var only when overriding a default on purpose — and if
+you do, **write down which and why**, because a deployment nobody can reproduce
+from this file is the next outage.
+
+Then smoke it:
 
 ```bash
 apify call --input '{"operation":"radar","region":"US"}'    # 2 requests, 11 records

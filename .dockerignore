@@ -21,9 +21,18 @@ probes/
 tests/
 .claude/
 api_sim.py
-run_local.sh
-ship.sh
 *.md
+
+# A PATTERN, not a list of names. This read `run_local.sh` and `ship.sh` until
+# 2026-08-27, when preflight.sh and smoke.sh were added and silently started
+# shipping in the image — nothing referenced them, nothing failed, they were
+# just there. Same shape as the .gitignore rule that said `.env` and let
+# `.env.backup-premigration` through (SECURITY_AUDIT.md).
+#
+# The actor's CMD is `python -m src.main`; no shell script is reachable at
+# runtime, so the safe default is none of them rather than the ones we
+# remembered to name.
+*.sh
 
 # Operator tooling for the machine that FILLS the vault — the AdsPower Local
 # API client, the Webshare proxy assigner, the systemd units. `src/` imports
