@@ -76,7 +76,16 @@ def quiet_acquire(config):
 
 
 def main():
-    base = Config()
+    # NEVER the production vault. Config() reads REDIS_URL, which points at
+    # Upstash once the vault has moved there -- and this suite writes, deletes
+    # and SCANs a whole keyspace. Running the gate would then bill the
+    # production database to test code, on a plan metered per command, and put
+    # a scan across the live pool for no reason.
+    #
+    # Defaults to the local lab Redis, which is exactly what it is for. Set
+    # TEST_REDIS_URL to point somewhere else deliberately.
+    test_url = os.environ.get("TEST_REDIS_URL", "redis://localhost:6380/0")
+    base = replace(Config(), REDIS_URL=test_url)
     strict = replace(base, PLATFORM=TEST_PLATFORM, WAIT_TIMEOUT=1,
                      REQUIRE_PROXY=True)
     lenient = replace(strict, REQUIRE_PROXY=False)
@@ -85,9 +94,11 @@ def main():
     try:
         vault.r.ping()
     except Exception as exc:
-        print(f"cannot reach Redis — {exc}")
-        print("This suite needs the vault Redis running. It uses a throwaway "
-              "namespace and never touches the live pinterest keys.")
+        print(f"cannot reach Redis at {test_url} — {exc}")
+        print("This suite needs a LOCAL Redis (the lab container). It uses a "
+              "throwaway namespace, never touches the live pinterest keys, and "
+              "deliberately does NOT use REDIS_URL so it cannot bill the "
+              "production vault. Override with TEST_REDIS_URL if you mean to.")
         return 2
     wipe(vault)
 

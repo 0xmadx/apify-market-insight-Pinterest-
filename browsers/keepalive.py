@@ -222,6 +222,12 @@ def load_from_vault(vault, platform):
                         "cookies": cookies,
                         "user_agent": data.get("user_agent"),
                         "proxy": data.get("proxy"),
+                        # This id CAME FROM valid_profiles, so re-adding it after
+                        # every pass buys nothing and costs one command per
+                        # profile per pass -- 1,728/day at 6 profiles on a
+                        # 5-minute timer, against a 10,000/day free tier.
+                        # `--file` records carry no such guarantee and still SADD.
+                        "in_set": True,
                         "fingerprint": measured if isinstance(measured, dict)
                                        else None})
     return records
@@ -240,7 +246,11 @@ def write(vault, platform, record, cookies):
     if record.get("proxy"):
         fields["proxy"] = record["proxy"]
     vault.r.hset(f"cookie:{platform}:{profile_id}", mapping=fields)
-    vault.r.sadd(f"valid_profiles:{platform}", profile_id)
+    # Only when membership is not already established -- see `in_set` above.
+    # The heartbeat is the HSET; the SADD only ever mattered for a profile the
+    # set did not already contain.
+    if not record.get("in_set"):
+        vault.r.sadd(f"valid_profiles:{platform}", profile_id)
 
 
 def one_pass(records, vault, platform, headless=True, log=print):

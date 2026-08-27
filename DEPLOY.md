@@ -433,6 +433,36 @@ and re-enabling that one timer is the entire rollback.
 
 ---
 
+## Upstash costs money per command — where it actually goes
+
+Metered per command, free tier near 10,000/day. Counted from the code, not
+estimated, at 6 profiles on 5-minute timers:
+
+| | Commands per pass | Per day |
+|---|---|---|
+| AdsPower sync (`adspower-sync.timer`) | 4 x 6 = 24 | ~6,900 |
+| GCP keepalive (`keepalive.timer`) | 1 + (3 x 6) = 19 | ~5,500 |
+| **Both running** | | **~12,400 — over the free tier** |
+| One actor run | ~5 to lease, plus cache/seen-set | tens |
+
+**The writers are the whole bill; the readers are noise.** Optimising the actor's
+read path saves nothing worth having, and the obvious idea — caching an identity
+on Apify and only calling Upstash when it fails — is actively unsafe: the lease
+(`SET NX`) is what stops two runs driving one Pinterest session from two IPs,
+and a cached jar defeats both that and the 900s freshness rule. Do not.
+
+Two safe levers, in order of size:
+
+1. **Retire the AdsPower writer** (Step 5). Halves it, to ~5,500/day. The
+   overlap was always a rollback window, not a steady state.
+2. **Do not run the test suite against production.** `tests/test_vault.py` is
+   pinned to a LOCAL Redis and ignores `REDIS_URL` deliberately — it writes,
+   deletes and SCANs a keyspace, and billing production to test code is the
+   kind of cost that never shows up in a review.
+
+Raising the keepalive interval is NOT a third lever: `PROFILE_MAX_AGE` is 900s,
+and `keepalive.py` already refuses anything that would let profiles age out.
+
 ## Traps that will bite
 
 **Capacity is your profile count.** Six profiles means six concurrent runs. The
