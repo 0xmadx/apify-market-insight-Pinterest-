@@ -10,7 +10,7 @@ Branch: **`main`**. It is the only branch. Both deploy targets come from it.
 
 | | |
 |---|---|
-| Step 1 GitHub | ✅ **done** — `git@github.com:0xmadx/pinterest-apify.git`, private, 113 commits |
+| Step 1 GitHub | ✅ **done** — clone **`git@github.com:0xmadx/pinterest-apify.git`** (private). That name is canonical |
 | Step 2 Upstash | ⚠️ database exists, **copy is stale**, writer still points at the lab. This is the blocker |
 | Steps 3–6 | not started |
 | The gate | **544 checks** across seven suites (not 529 — older docs and the architecture artifact still say 529) |
@@ -98,8 +98,9 @@ keepalive reads the vault directly.
 
 ## Step 1 — GitHub — ✅ DONE 2026-08-26
 
-Pushed to **`git@github.com:0xmadx/pinterest-apify.git`**, private, 113 commits
-on `main`. Clone that; do not work from a copy of the operator's laptop.
+Pushed to **`git@github.com:0xmadx/pinterest-apify.git`**, private, full
+history on `main`. Clone that; do not work from a copy of the operator's
+laptop, and do not clone any other repo of this project — see below.
 
 Verified at push time: `.env`, `browsers/identities.json` and
 `.env.backup-premigration` are all untracked.
