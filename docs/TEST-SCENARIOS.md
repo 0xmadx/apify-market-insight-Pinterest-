@@ -242,10 +242,17 @@
   hit counters). A 403/empty response is never served from cache (already
   proven in `test_incremental.py` — keep it green).
 
-**F4. Budget cap [offline]**
-- `maxRecords`/`drill_top_n` caps the *planned request list* before execution;
-  a plan exceeding the per-run budget is trimmed with a note in `_meta`, not
-  executed and rate-limited.
+**F4. Budget cap says whether it cut anything [offline]**
+- `maxRecords`/`drill_top_n` cap the work; a capped run must be
+  **distinguishable from a complete one**. `scraper.run()` peeks one record past
+  the cap: another record exists -> `ctx.truncated` and a run-log warning; the
+  stream was already exhausted -> the answer is COMPLETE and is not flagged.
+- Why the peek rather than a count: stopping at exactly `maxRecords` cannot tell
+  the customer which case they are in, and a short dataset reads as "Pinterest
+  has nothing" — the failure mode this repo exists to prevent. Flagging every
+  capped run instead would cry wolf on the fully-served ones.
+- Covered in `tests/test_dispatch.py` for all five operations, both directions
+  (cut -> flagged, `maxRecords == total` -> not flagged).
 
 ---
 
@@ -285,7 +292,7 @@ shipped:
 
 ## COVERAGE LEDGER (updated 2026-08-19 — the build is done)
 
-529 checks across five suites, every one tagged with its scenario id:
+544 checks across five suites, every one tagged with its scenario id:
 
 | Suite | Checks | Covers |
 |---|---|---|

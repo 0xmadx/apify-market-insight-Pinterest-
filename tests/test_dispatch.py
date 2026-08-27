@@ -78,15 +78,23 @@ class Ctx:
         self.task = task
         self.cache = None
         self.force_refresh = False
+        self.truncated = False
 
 
 def drive(task):
     """Run the dispatcher against fixtures, returning (records, client)."""
+    records, client, _ = drive_ctx(task)
+    return records, client
+
+
+def drive_ctx(task):
+    """As drive(), but hands back the Context so run-level flags are visible."""
     client = EveryFixture()
+    ctx = Ctx(task)
     original = sc.TrendsClient
     sc.TrendsClient = lambda *a, **k: client
     try:
-        return list(run(Ctx(task), task)), client
+        return list(run(ctx, task)), client, ctx
     finally:
         sc.TrendsClient = original
 
@@ -642,6 +650,27 @@ def main():
         n = len(c.all_calls)
         print(f"       {op:<10} {len(recs):>4} records / ~{n:>2} requests")
         check(f"{op}: default run stays under 100 requests", n < 100, n)
+
+    print("\nF4 — a capped run says whether it is a slice or the whole answer")
+    for op in OPERATIONS:
+        full, _ = drive({"operation": op})
+        if len(full) < 2:
+            continue                      # nothing to cut; F4 says nothing here
+
+        cut, _, ctx = drive_ctx({"operation": op, "maxRecords": 1})
+        check(f"{op}: maxRecords=1 yields exactly 1 record", len(cut) == 1, len(cut))
+        # The point of F4. Without this the customer cannot tell a cut answer
+        # from "Pinterest has nothing" — the failure mode this repo is built
+        # against. A count alone never carries that; a flag does.
+        check(f"{op}: a cut run is FLAGGED as truncated", ctx.truncated is True)
+
+        exact, _, ctx_exact = drive_ctx({"operation": op, "maxRecords": len(full)})
+        # The other half, and the reason for peeking rather than counting:
+        # a cap that happens to equal the total is a COMPLETE answer. Flagging
+        # it would cry wolf on every fully-served capped run.
+        check(f"{op}: maxRecords == total is NOT called truncated",
+              len(exact) == len(full) and ctx_exact.truncated is False,
+              f"{len(exact)}/{len(full)} truncated={ctx_exact.truncated}")
 
     failed = [n for n, ok in checks if not ok]
     print(f"\n{len(checks) - len(failed)}/{len(checks)} checks passed")

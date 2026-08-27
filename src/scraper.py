@@ -63,10 +63,19 @@ def run(ctx, task):
 
     max_records = int(task.get("maxRecords", 0) or 0)
     emitted = 0
-    for record in handler(client, task):
+    stream = handler(client, task)
+    for record in stream:
         yield record
         emitted += 1
         if max_records and emitted >= max_records:
+            # Peek one past the cap before stopping. Returning at exactly
+            # maxRecords cannot tell the customer whether they received
+            # everything or a slice, and a short list reads as "Pinterest has
+            # nothing" — this project's defining failure mode. Only claim
+            # truncation when another record actually exists; a cap that
+            # happens to equal the total is a COMPLETE answer, not a cut one.
+            if next(stream, None) is not None:
+                ctx.truncated = True
             return
 
 

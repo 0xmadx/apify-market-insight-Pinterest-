@@ -37,6 +37,11 @@ class Context:
         self.force_refresh = bool(self.task.get("forceRefresh", False))
         self.full_rescan = bool(self.task.get("fullRescan", False))
 
+        # Set by scraper.run() when `maxRecords` cut the stream short AND more
+        # was available. A capped run that happens to be complete leaves this
+        # False — the flag means "there is more", never merely "a cap was set".
+        self.truncated = False
+
     # ------------------------------------------------------------- fetching
 
     def get(self, kind: str, url: str, params=None, headers=None):

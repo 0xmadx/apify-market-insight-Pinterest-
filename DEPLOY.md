@@ -42,7 +42,7 @@ has been re-litigated more than once.
 ./ship.sh check          # runs the full gate, deploys nothing
 ```
 
-Expect **16/16 endpoints OK** and **529 checks passing**. If the gate fails,
+Expect **16/16 endpoints OK** and **544 checks passing**. If the gate fails,
 stop — do not deploy around it. A failing probe usually means Pinterest changed
 something, and the fix is to reconcile the code with today's wire, not to skip
 the check.
