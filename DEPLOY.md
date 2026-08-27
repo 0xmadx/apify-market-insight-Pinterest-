@@ -353,6 +353,42 @@ the two leave different cookie counts for the same profile, so compare the
 per-profile counts against each writer's known signature. Measured 2026-08-27:
 Upstash showed GCP's 9/7/13, not AdsPower's 11/8/11.
 
+⚠️ **On the VM, hand `browsers.fingerprint` the environment first.** There is
+no `.env` there: the vault URL lives in `/etc/pinterest-keepalive/env`, and
+systemd supplies it to `keepalive.service` through `EnvironmentFile`. An
+interactive shell inherits none of that, so `Config` falls back to its localhost
+default and the tool reports a Redis nobody asked for:
+
+```
+cannot reach Redis — Error 111 connecting to localhost:6380. Connection refused.
+```
+
+That message is about the *default*, not the vault, on a host whose service is
+refreshing profiles correctly every five minutes. Source the env file and it
+works:
+
+```bash
+cd ~/pinterest-apify
+set -a; . <(sudo cat /etc/pinterest-keepalive/env); set +a
+./.venv/bin/python -m browsers.fingerprint --driver drission --profiles 3
+```
+
+Measured on the VM 2026-08-27 — three profiles, three machines:
+
+```
+ads_k1fx40wf  1280x720  cores=4   ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Direct3D11
+ads_k1fy47um  1440x900  cores=6   ANGLE (AMD, AMD Radeon(TM) Graphics Direct3D11
+ads_k1fy6dnh  1280x720  cores=12  ANGLE (AMD, AMD Radeon(TM) Graphics Direct3D11
+
+DISTINCT 3/3 on the strong signals · STABLE 3/3 across launches · PASS
+```
+
+`Direct3D11` on a Linux VM is the Windows claim holding up, and the fonts are
+what keep it holding. Note these are still the **synthetic** shapes: no profile
+carries `fingerprint_json` yet, so `fp_basis` reads `synthetic` until each is
+re-synced once with `--ua-mode always` (see Step 5).
+
+
 **Prove the exit IP is the proxy, not the VM.** Every profile must exit through
 its own proxy; none may show the VM's NAT address. `keepalive` checks this
 before it writes, because Chromium falls back to a direct connection when a

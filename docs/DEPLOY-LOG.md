@@ -100,11 +100,42 @@ Courier New=562  Comic Sans MS=619  Impact=614  Trebuchet MS=661
 `deploy_gcp.sh` now **counts resolvable families** rather than trusting an exit
 code, and warns below 5.
 
-**2. `browsers.fingerprint` could not run on the VM** — ✅ since fixed in
-`814c420`. It loaded `browsers/identities.json`, the one file this design never
-copies there, so the verification the runbook recommended was unrunnable on the
-host it was meant to verify. It now defaults to reading identities from the
-**vault**, with `--file` as the opt-in for a laptop run.
+**2. `browsers.fingerprint` could not run on the VM** — fixed in `814c420`,
+which made it read the **vault** by default (`--file` is now the opt-in).
+
+That fix was necessary and not sufficient. Run by hand on the VM it still
+failed, one layer down:
+
+```
+cannot reach Redis — Error 111 connecting to localhost:6380. Connection refused.
+```
+
+There is no `.env` on the VM. The vault URL is in
+`/etc/pinterest-keepalive/env`, which systemd supplies to the service through
+`EnvironmentFile` — an interactive shell inherits none of it, so `Config` falls
+back to its localhost default and the error names a Redis nobody asked for, on
+a host whose service is working perfectly. Source the env file first:
+
+```bash
+set -a; . <(sudo cat /etc/pinterest-keepalive/env); set +a
+```
+
+Same shape of bug both times: **a verification tool that cannot run in the
+place it verifies.** Worth watching for in anything else added VM-side.
+
+With the environment supplied it passes on the real VM:
+
+```
+ads_k1fx40wf  1280x720  cores=4   ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Direct3D11
+ads_k1fy47um  1440x900  cores=6   ANGLE (AMD, AMD Radeon(TM) Graphics Direct3D11
+ads_k1fy6dnh  1280x720  cores=12  ANGLE (AMD, AMD Radeon(TM) Graphics Direct3D11
+
+DISTINCT 3/3 on the strong signals · STABLE 3/3 across launches · PASS
+```
+
+Three GPUs, three core counts, three resolutions — and `Direct3D11` WebGL
+strings on a Linux host, which is the Windows claim these profiles make holding
+up under measurement.
 
 **3. The Upstash migration moved data, not the writer.** Measured minutes
 apart: Upstash 0/8 usable at ~13,400 s while the lab sat at 6/6 and ~280 s. The
