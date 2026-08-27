@@ -8,7 +8,64 @@ behind each "done".
 
 Branch: **`main`**. It is the only branch. Both deploy targets come from it.
 
-## State as of 2026-08-27 — read this before the runbook
+## The deployment model — what, why, and when
+
+Everything below only makes sense on top of these five facts. They are the
+model; the steps are just consequences of it.
+
+**1. There are two environments, and no staging.** The operator's laptop is the
+*lab*; Apify + Upstash + the GCP VM are *production*. Nothing sits between them.
+The closest thing to a staging run is `./run_local.sh`, which executes the real
+actor on Linux against the real vault — a rehearsal, not an environment.
+
+**2. Deployment flows one way, always.** The repo is the source of truth, the
+deployed actor is a snapshot of it, and **nothing is ever edited on Apify.**
+
+```
+edit locally  ->  ./preflight.sh  ->  ./ship.sh check  ->  ./ship.sh apify  ->  ./smoke.sh
+```
+
+**3. Every push IS a release.** `.actor/actor.json` carries `buildTag: latest`,
+so a push reaches existing customers on their next run, minutes later, with no
+announcement and no opt-in. There is no "deploy to prod later" step to forget —
+pushing *is* that step.
+
+**4. That makes one question the whole of release management.** Before any
+push, answer it in writing:
+
+> *Could a customer's existing code break if this landed silently tonight?*
+
+| Answer | What to do |
+|---|---|
+| No — new field, new optional input, bug fix, better error | ship on `latest` |
+| Yes — renamed field, changed default, removed operation, changed meaning | bump `version` in `.actor/actor.json` FIRST, leave the old version running |
+
+The compatibility contract customers are held to is in
+[`docs/API.md`](docs/API.md) § Compatibility. Read it before deciding, because
+what you are allowed to change is defined there, not here.
+
+**5. There is no undo on Apify. Rollback is a forward push.**
+
+```bash
+git checkout <last-good-sha> && ./ship.sh apify
+```
+
+So **know the good SHA before you push, not after.** `git log --oneline -1`
+takes two seconds and is the entire discipline.
+
+### When to deploy
+
+| Trigger | Then |
+|---|---|
+| A bug fix or additive change, gate green | ship it — no ceremony, that is what `latest` is for |
+| A breaking change | `version` bump first, then ship |
+| A red gate, or a probe at FAIL | **stop.** A failing probe means Pinterest moved; reconcile code with today's wire, never deploy around it |
+| An empty or stale vault | stop. The actor will fail loudly with `VaultEmpty`, which is correct, but you will have spent a deploy to learn it |
+| Friday afternoon, no one watching | it is a session-backed scraper on someone else's API. Ship when you can watch the smoke test |
+
+---
+
+## Where things stand
 
 | | |
 |---|---|
@@ -79,35 +136,7 @@ anything at any Redis.
 
 ---
 
-## The four scripts, and when each runs
-
-They look redundant and are not — they answer different questions, at different
-points, about different things:
-
-| | Asks | When |
-|---|---|---|
-| `./preflight.sh` | is this project ready to deploy at all? | before anything |
-| `./ship.sh check` | does the code pass the gate? | before a push |
-| `./ship.sh apify` · `gcp` | push it | the deploy itself |
-| `./smoke.sh` | does the **deployed** thing work? | after a push |
-| `./run_local.sh` | rehearse the actor locally on Linux | any time |
-
-`preflight.sh` and `smoke.sh` are the two that check reality rather than code.
-Only `smoke.sh` exercises the deployed actor — nothing local can.
-
-## Before you start
-
-```bash
-./preflight.sh           # is the vault reachable, is REDIS_URL remote, etc.
-./ship.sh check          # runs the full gate, deploys nothing
-```
-
-Expect **16/16 endpoints OK** and **551 checks passing**. If the gate fails,
-stop — do not deploy around it. A failing probe usually means Pinterest changed
-something, and the fix is to reconcile the code with today's wire, not to skip
-the check.
-
-### Credentials needed
+## Credentials needed
 
 | | What | Notes |
 |---|---|---|
@@ -120,6 +149,49 @@ Nothing else. `browsers/identities.json` does **not** need copying anywhere —
 keepalive reads the vault directly.
 
 ---
+
+# Part A — the release loop
+
+**This is the part you do forever.** Once the infrastructure in Part B exists,
+shipping a change is these four commands and nothing else. Read this section
+even if the project is already live; Part B is mostly history.
+
+```bash
+./preflight.sh                      # 1. is the environment sane?
+./ship.sh check                     # 2. is the code sane?
+./ship.sh apify                     # 3. gate again, then push
+./smoke.sh                          # 4. does the DEPLOYED thing work?
+```
+
+Each answers a different question, and none substitutes for another:
+
+| | Proves | Fails when |
+|---|---|---|
+| `preflight.sh` | tooling, auth, `.env` hygiene, and that a **live writer** is filling the vault | credentials missing, `REDIS_URL` local, pool stale |
+| `ship.sh check` | 16/16 live endpoints, then 551 offline checks | Pinterest moved, or you broke something |
+| `ship.sh apify` | the push itself — asks the `buildTag` question first | dirty tree, red gate |
+| `smoke.sh` | the **deployed** actor returns real records; a zero-record success is a FAILURE | vault unreachable from Apify, secret unset |
+
+Only `smoke.sh` touches the deployed thing. Nothing local can tell you the
+cloud actor works, and the most common cause of "passed everything, still
+broke" is `REDIS_URL` not set as an Actor secret.
+
+**Order is load-bearing.** `ship.sh check` runs `probe_endpoints` *before* the
+suites, because probing rewrites the fixtures the suites then read. Run the
+tests first and you test today's code against yesterday's wire. `ship.sh`
+already sequences this; do not hand-run the pieces out of order.
+
+**Rollback:** `git checkout <last-good-sha> && ./ship.sh apify`. There is no
+undo — see the model above.
+
+---
+
+# Part B — first-time provisioning
+
+**Mostly done.** Steps 1, 2 and 4 are complete; only Step 3 remains. Full
+evidence for each in [`docs/DEPLOY-LOG.md`](docs/DEPLOY-LOG.md) — what was
+built, its resource names, and what each check actually proved. Re-read these
+steps only when rebuilding a piece from scratch.
 
 ## Step 1 — GitHub — ✅ DONE 2026-08-26
 
@@ -144,7 +216,7 @@ project** rather than rewriting history — rotating makes the published value
 worthless, which beats hiding it. Everything else in history came back clean:
 the `ADS_API_KEY` / `WEBSHARE` hits are all `...` placeholders in docs.
 
-## Step 2 — Upstash (the only real blocker)
+## Step 2 — Upstash — ✅ DONE 2026-08-27
 
 ⚠️ **A database already exists and its copy is STALE.** It was migrated before
 2026-08-26 and holds 23 keys / 8 profiles, including two extension-origin
@@ -194,7 +266,7 @@ commands/day** (288 passes × 8 profiles × ~3 writes). Free tiers commonly cap
 near 10k. Either pay — it is cents at this volume — or widen `--interval`, but
 never past `PROFILE_MAX_AGE` (900s), which `keepalive.py` already refuses.
 
-## Step 3 — Apify
+## Step 3 — Apify — ⬅ THE REMAINING BLOCKER
 
 ```bash
 ./ship.sh apify
@@ -264,70 +336,38 @@ Then reach it with `gcloud compute ssh <vm> --tunnel-through-iap`. Note
 `gcloud compute scp` on Windows uses PuTTY's `pscp`, which does **not** expand
 `~` — destinations must be absolute (`vm:/home/<user>/`).
 
-### ⚠️ The fonts silently do not install, and the script says they did
-
-`deploy_gcp.sh` prints `installed` when apt exits 0. But
-`ttf-mscorefonts-installer` only *downloads* the fonts in its postinst, from
-SourceForge, and that download failed on this VM while the package still
-registered as `ii`. Measured 2026-08-27:
-
-```
-dpkg -l ttf-mscorefonts-installer     ii  (installed)
-/usr/share/fonts/truetype/msttcorefonts/   README only — zero .ttf
-fc-list | grep -c Arial|Verdana|...        0
-```
-
-This is the failure the fonts exist to prevent, wearing the shape of success:
-profiles carry Windows user agents and Windows-only WebGL strings, and a host
-without the real fonts answers every font-metric probe with the *same* fallback
-width — a Linux tell underneath a Windows claim.
-
-Fix by copying the real files (strictly better than any spoof: nothing is being
-lied about, so there is nothing to catch):
-
-```bash
-gcloud compute scp /c/Windows/Fonts/{arial,arialbd,georgia,tahoma,verdana,times,comic,impact,cour,trebuc}.ttf \
-  <vm>:/home/<user>/.local/share/fonts/ --tunnel-through-iap
-gcloud compute ssh <vm> --tunnel-through-iap --command 'fc-cache -f'
-```
-
-### Verify
+### Verifying a GCP rebuild
 
 ```bash
 systemctl list-timers keepalive.timer
 sudo journalctl -u keepalive.service -n 30 --no-pager
+python -m src.status                       # expect 6/6, ads_* only
+python -m browsers.fingerprint             # reads the VAULT, runs on the VM
 ```
 
-`python -m browsers.fingerprint` **used to fail here** and no longer does. It
-defaulted to `browsers/identities.json` — the one file this design deliberately
-never copies to a server — so the runbook was recommending a check that could
-not run on the host it was meant to check. Fixed 2026-08-27: it now reads the
-vault by default, exactly as `keepalive` does, and `--file` is opt-in.
+Two checks that look redundant and are not:
 
-Measure fonts directly too, because that is the failure that hides best —
-render one string per family and compare widths. Anything under ~5 distinct
-values means they are collapsing to a fallback. Measured after the fix, 9
-distinct of 9:
+**Prove GCP is the WRITER, not just that the vault looks fresh.** With both
+writers live, a low heartbeat only proves *someone* wrote. Attribute by content:
+the two leave different cookie counts for the same profile, so compare the
+per-profile counts against each writer's known signature. Measured 2026-08-27:
+Upstash showed GCP's 9/7/13, not AdsPower's 11/8/11.
 
+**Prove the exit IP is the proxy, not the VM.** Every profile must exit through
+its own proxy; none may show the VM's NAT address. `keepalive` checks this
+before it writes, because Chromium falls back to a direct connection when a
+proxy fails and every other signal still reports success.
+
+⚠️ **If fonts are missing, install them by copying — do not trust apt.**
+`ttf-mscorefonts-installer` downloads separately in its postinst and can leave
+you with `ii` and an empty directory. `deploy_gcp.sh` now counts resolvable
+families and warns below 5; the full incident is in
+[`docs/DEPLOY-LOG.md`](docs/DEPLOY-LOG.md).
+
+```bash
+gcloud compute scp /c/Windows/Fonts/{arial,arialbd,georgia,tahoma,verdana,times,comic,impact,cour,trebuc}.ttf   <vm>:/home/<user>/.local/share/fonts/ --tunnel-through-iap
+gcloud compute ssh <vm> --tunnel-through-iap --command 'fc-cache -f'
 ```
-Arial=648  Times New Roman=620  Verdana=760  Georgia=697  Tahoma=654
-Courier New=562  Comic Sans MS=619  Impact=614  Trebuchet MS=661
-```
-
-### Proving GCP is the writer, not just that the vault is fresh
-
-With both writers running, a fresh heartbeat says nothing about *which* wrote.
-Attribute by content: the two leave different cookie counts for the same
-profile. Measured 2026-08-27 —
-
-| profile | AdsPower | GCP keepalive |
-|---|---|---|
-| `ads_k1fx40wf` | 11 | **9** |
-| `ads_k1fy6dnh` | 8 | **7** |
-| `ads_k1fyn0gc` | 11 | **13** |
-
-Upstash showed 9 / 7 / 13, so GCP wrote last. The keepalive log also names each
-profile's exit IP, and none of them is the VM's NAT address — rule 4 holding.
 
 ## Step 5 — stop AdsPower being the writer (only after step 4 proves itself)
 
