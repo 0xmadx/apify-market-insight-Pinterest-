@@ -49,8 +49,6 @@ import urllib.parse
 import urllib.request
 
 ADS = "http://127.0.0.1:50325"
-GO_SERVER = "http://172.31.144.1:8000/update-cookie"
-GO_TOKEN = "super_secret_key_123"
 
 # MEASURED 2026-08-19, because guessing this wrong costs whole profiles.
 #
@@ -362,8 +360,10 @@ def vault_profile_id(user_id):
 
 
 def build_payload(profile_id, cookies, user_agent, platform="pinterest"):
-    """The exact body the Go server receives — byte-identical to the
-    extension's (see background.js). Pure, so it is testable without a socket.
+    """The canonical identity shape this project writes — byte-identical to
+    what the Chrome extension produces (see its background.js). Pure, so it is
+    testable without a socket, and `write_cookies` builds on it so these tests
+    cover the path that actually runs.
 
     `cookie_json` is keyed by NAME, so a cookie present on several domains
     (csrftoken, _ir, g_state all are) collapses to one entry, last wins. The
@@ -384,14 +384,18 @@ def write_cookies(profile_id, cookies, user_agent, redis_url, dry_run=False,
                   platform="pinterest"):
     """Write the identity straight to Redis, no Go server in the middle.
 
-    WHY THIS EXISTS. `post_to_vault` posts to the Go cookie server, which lives
-    in the *Etsy* project and writes to whichever Redis IT was configured for.
-    That was fine while both projects shared one Redis. The moment this project
-    got its own (`pinterest-redis`, port 6380), it stopped being fine in the
-    worst way: `write_proxy` writes DIRECTLY and would land in the new vault,
-    while cookies went through the Go server into the OLD one. Half an identity
-    in each — and `src.status` would show a profile with a proxy and no
+    WHY THIS EXISTS. Cookies used to go through the Go cookie server, which
+    lives in the *Etsy* project and writes to whichever Redis IT was configured
+    for. That was fine while both projects shared one Redis. The moment this
+    project got its own (`pinterest-redis`, port 6380) it stopped being fine in
+    the worst way: `write_proxy` writes DIRECTLY and would land in the new
+    vault, while cookies went through the Go server into the OLD one. Half an
+    identity in each — and `src.status` would show a profile with a proxy and no
     cookies, which reads as "never signed in" rather than "split brain".
+
+    That path (`post_to_vault`) was deleted once this became the only writer;
+    keeping a dead function pointed at another project's server was a footgun,
+    not a fallback.
 
     Same fields, same key schema, same shape `browsers/identities.py:restore()`
     already writes. Nothing new is invented here; the hop is simply removed.
@@ -403,40 +407,34 @@ def write_cookies(profile_id, cookies, user_agent, redis_url, dry_run=False,
 
         r = redis.Redis.from_url(redis_url, decode_responses=True,
                                  socket_connect_timeout=3)
-        # `cookie_json` is keyed by NAME, collapsing a cookie that exists on
-        # several domains to one entry — byte-identical to what the extension
-        # and the Go server produce, so all three writers agree.
-        jar = {c["name"]: c["value"] for c in cookies}
-        r.hset(f"cookie:{platform}:{profile_id}", mapping={
+        # One source of truth for the shape. `cookie_json` is keyed by NAME,
+        # collapsing a cookie that exists on several domains to one entry --
+        # byte-identical to what the extension produces, so both writers agree.
+        payload = build_payload(profile_id, cookies, user_agent, platform)
+        jar = payload["cookie_json"]
+        fields = {
             "cookies_json": json.dumps(jar),
-            "cookie": "; ".join(f"{n}={v}" for n, v in jar.items()),
-            "user_agent": user_agent or "",
+            "cookie": payload["cookie"],
             "last_updated": str(time.time()),
             "is_valid": "1",
-        })
+        }
+        # ⚠️ ONLY when non-empty. The Go server this replaced HSET user_agent
+        # only if it had one, so a UA captured by an earlier --ua-mode run
+        # SURVIVED a later run that did not start a browser. sync_one() relies
+        # on that and says so; the first version of this function wrote
+        # `user_agent or ""` unconditionally and wiped every UA in the pool.
+        #
+        # The vault then refuses the profile ("no user_agent") — correctly,
+        # because replaying a jar under an unknown browser is the mismatch the
+        # whole session layer exists to avoid. Measured: 6 fresh profiles,
+        # 0 usable.
+        if user_agent:
+            fields["user_agent"] = user_agent
+        r.hset(f"cookie:{platform}:{profile_id}", mapping=fields)
         r.sadd(f"valid_profiles:{platform}", profile_id)
         return f"{len(jar)} cookies -> redis"
     except Exception as exc:
         return f"COOKIE WRITE FAILED ({type(exc).__name__})"
-
-
-def post_to_vault(profile_id, cookies, user_agent, dry_run=False,
-                  platform="pinterest"):
-    """The original path, through the Etsy project's Go cookie server.
-
-    Kept because the Chrome extension still uses that server and this is the
-    only code that proves the payload shape stays compatible with it. Not used
-    by the sync any more — see write_cookies().
-    """
-    body = build_payload(profile_id, cookies, user_agent, platform)
-    if dry_run:
-        return f"DRY-RUN would POST {len(body['cookie_json'])} cookies"
-    req = urllib.request.Request(
-        GO_SERVER, data=json.dumps(body).encode(),
-        headers={"Content-Type": "application/json",
-                 "Authorization": f"Bearer {GO_TOKEN}"})
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return json.loads(r.read().decode()).get("message", "ok")
 
 
 def sync_one(row, key, dry_run=False, ua_mode="auto",
@@ -567,8 +565,24 @@ def main():
     print(f"{len(rows)} profile(s)"
           + (f" in group {args.group!r}" if args.group else "")
           + (" — DRY RUN, nothing will be written" if args.dry_run else ""))
+    # 6380, NOT 6379. This project got its own Redis container
+    # (`pinterest-redis`) on 2026-08-25; 6379 is the Etsy project's, and
+    # writing there now fills a vault nothing reads.
+    #
+    # ⚠️ 127.0.0.1, NOT the WSL gateway IP. Measured 2026-08-26: from inside
+    # WSL, `172.31.144.1:6380` and `127.0.0.1:6380` reach DIFFERENT Redis
+    # instances (dbsize 8 vs 23) — a marker key written through the gateway was
+    # invisible to the container. Docker Desktop forwards published ports to
+    # 127.0.0.1 inside the distro, and that is the path that lands. It is also
+    # correct from Windows, so one value works for both.
+    #
+    # In production this fallback loses anyway: the unit's EnvironmentFile
+    # (/etc/adspower/api.env) sets REDIS_URL and beats it. That file is exactly
+    # what kept feeding the OLD container after the vault moved — the new vault
+    # went 85 minutes without a write, `src.status` read 0/8 usable, and the
+    # writer reported 6/6 synced the whole time. Grep all four places.
     redis_url = (args.redis_url or os.environ.get("REDIS_URL")
-                 or "redis://172.31.144.1:6379/0")
+                 or "redis://127.0.0.1:6380/0")
     synced = sum(sync_one(r, key, args.dry_run, args.ua_mode, redis_url)
                  for r in rows)
 

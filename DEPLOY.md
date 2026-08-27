@@ -6,6 +6,27 @@ is the order of operations.
 
 Branch: **`main`**. It is the only branch. Both deploy targets come from it.
 
+## State as of 2026-08-26 — read this before the runbook
+
+| | |
+|---|---|
+| Step 1 GitHub | ✅ **done** — clone **`git@github.com:0xmadx/pinterest-apify.git`** (private). That name is canonical |
+| Step 2 Upstash | ⚠️ database exists, **copy is stale**, writer still points at the lab. This is the blocker |
+| Steps 3–6 | not started |
+| The gate | **544 checks** across seven suites (not 529 — older docs and the architecture artifact still say 529) |
+| The lab vault | 21 keys, 7 profiles, **6/6 usable**, all `ads_*` |
+
+Three things changed on 2026-08-26 that older notes do not reflect:
+
+1. **The Chrome extension is no longer one of our writers.** It belongs to the
+   Etsy project and writes into their Redis. Anything describing three writers
+   — extension, AdsPower, keepalive — is out of date; we have two.
+   [`docs/VAULT_SEPARATION.md`](docs/VAULT_SEPARATION.md).
+2. **Two extension-origin profiles were removed from the vault**, so it is
+   `6/6` now, not `6/8`. Upstash's copy predates that.
+3. **`maxRecords` now reports whether it cut the answer short.** Additive, so
+   safe on `buildTag: latest` — no version bump needed.
+
 ---
 
 ## What this is, in one paragraph
@@ -26,50 +47,27 @@ wrong figures. Most of the guards exist for that.
 | Job | Where | What runs | How often |
 |---|---|---|---|
 | Log an account in | operator's laptop | AdsPower, **by hand** | once per account, ever |
-| Keep sessions alive | **GCP VM** | `browsers/keepalive.py` | every 5 min, forever |
+| Keep sessions alive | GCP VM | `browsers/keepalive.py` | every 5 min |
 | Serve customers | Apify | `src/` | per run |
 | The vault | Upstash | Redis | always |
-
-**AdsPower is a login station and a spare tyre, not the session keeper.**
-Signing in is the one thing that cannot be automated safely — Pinterest's login
-is its most defended surface and a flagged login burns the account — so a human
-does it by hand, behind that account's proxy, once per account. GCP does
-everything after that.
-
-⚠️ The GCP farm runs **DrissionPage**, not Playwright. `patchright` is in
-`browsers/requirements.txt` only to supply the Chromium binary.
-`browsers/keepalive.py:12` records why: patchright silently ignores init
-scripts, so every profile reported the host's real hardware — measured **1/3
-distinct**. DrissionPage honours `Page.addScriptToEvaluateOnNewDocument` and
-gets **3/3 distinct and stable**. Fingerprint diversity is what AdsPower is
-actually paid for, so it decides the driver.
-
-### Where the writer runs is irrelevant to the reader
-
-The vault is a network Redis, so a writer anywhere works: it writes to Upstash
-over TLS, Apify reads the same table, neither knows about the other, nothing is
-tunnelled, and no port on the writer's box is ever exposed. That is the "one
-shared table, independent writers and readers" model in
-[`docs/OPERATING_MODEL.md`](docs/OPERATING_MODEL.md), and it is what makes
-Step 2b's temporary bridge and Step 4's GCP cutover interchangeable.
-
-What it requires is the part that is easy to miss: **migrating the vault copies
-the data, it does not move the writer.** Both must point at the same Redis, or
-the actor reads a table nobody is refreshing — a frozen snapshot that goes
-stale in 15 minutes and then serves nothing.
-
-Measured on 2026-08-26, immediately after the Upstash migration:
-
-```
-Upstash          0/8 usable   ages ~13,400s   ← what Apify would have read
-local 6380       6/6 usable   ages ~280s      ← where the writer still pointed
-```
-
-Both are "the vault". Only one was alive. See § Step 2b.
 
 Read [`docs/OPERATING_MODEL.md`](docs/OPERATING_MODEL.md) before answering any
 question about AdsPower vs the free stack. The answer differs per job, and it
 has been re-litigated more than once.
+
+### The operator's machine is the LAB, not a deploy target
+
+Nothing is deployed *from* the laptop and nothing production runs *on* it. It
+holds AdsPower (manual login only), a local `pinterest-redis` on 6380, and the
+working copy. Deployment happens from a clone of the GitHub repo, against
+Upstash and Apify. When this runbook says "the vault", it means **Upstash** —
+the local 6380 is the lab's own copy and is not what customers read.
+
+Corollary: **the Chrome extension is not one of our writers.** It belongs to the
+Etsy project and writes into *their* Redis. Our writers are AdsPower today and
+`keepalive.py` on GCP after step 5. See
+[`docs/VAULT_SEPARATION.md`](docs/VAULT_SEPARATION.md) — read it before pointing
+anything at any Redis.
 
 ---
 
@@ -79,7 +77,7 @@ has been re-litigated more than once.
 ./ship.sh check          # runs the full gate, deploys nothing
 ```
 
-Expect **16/16 endpoints OK** and **529 checks passing**. If the gate fails,
+Expect **16/16 endpoints OK** and **544 checks passing**. If the gate fails,
 stop — do not deploy around it. A failing probe usually means Pinterest changed
 something, and the fix is to reconcile the code with today's wire, not to skip
 the check.
@@ -98,25 +96,43 @@ keepalive reads the vault directly.
 
 ---
 
-## Step 1 — GitHub
+## Step 1 — GitHub — ✅ DONE 2026-08-26
 
-History has been scanned (see [`SECURITY_AUDIT.md`](SECURITY_AUDIT.md)): no
-secret was ever committed. Re-run the scan if in doubt; do not skip it, because
-a push publishes every commit ever made.
+Pushed to **`git@github.com:0xmadx/pinterest-apify.git`**, private, full
+history on `main`. **Clone that one.** Do not work from a copy of the
+operator's laptop.
 
-**Make the repo private.** `docs/wire/` is the reverse-engineered endpoint
-corpus. That research is the actual product.
+A second private repo, `0xmadx/apify-market-insight-Pinterest-`, is kept as a
+**mirror of the same history** — same commits, pushed from the same working
+copy. It is a copy, not a fork: never push to it directly and never treat it as
+a second source of truth. If the two ever disagree, `pinterest-apify` wins.
 
-```bash
-gh auth login
-gh repo create pinterest-apify --private --source=. --remote=origin --push
-```
+Verified at push time: `.env`, `browsers/identities.json` and
+`.env.backup-premigration` are all untracked.
 
-## Step 2 — Upstash (the only real blocker) — ✅ done 2026-08-26
+⚠️ **One credential IS in history and should be rotated.**
+`GO_TOKEN = "super_secret_key_123"` — the *Etsy* project's Go cookie server
+bearer token — was committed in `fe4a60c` and removed in `3ad4a80`. Scope is
+small: private repo, and the service it opens is bound to `172.31.144.1:8000`
+on the operator's own WSL box, not the internet. **Rotate it in the Etsy
+project** rather than rewriting history — rotating makes the published value
+worthless, which beats hiding it. Everything else in history came back clean:
+the `ADS_API_KEY` / `WEBSHARE` hits are all `...` placeholders in docs.
 
-Database `pinterest-apify-vault` (global, `us-east-1` primary) created via the
-Upstash API. `.env` points at it; the local vault was migrated, not moved, so
-`redis://localhost:6380/0` still works as a fallback:
+## Step 2 — Upstash (the only real blocker)
+
+⚠️ **A database already exists and its copy is STALE.** It was migrated before
+2026-08-26 and holds 23 keys / 8 profiles, including two extension-origin
+profiles (`profile_ldu6ypke8`, `profile_p5ewxsodn`) that have since been removed
+from the lab vault. The lab is now **21 keys / 7 profiles / 6 usable, all
+`ads_*`**. Re-migrate before trusting it; do not deploy against the old copy.
+
+Re-migrating is safe and self-correcting: `copy_key` replaces
+`valid_profiles:pinterest` wholesale and the lease path reads that set, so the
+two extension profiles drop out of the pool on their own. Their hash keys linger
+at the destination as dead weight — invisible and harmless.
+
+Take the `rediss://` URL, then move the vault:
 
 ```bash
 python -m browsers.migrate_vault --to 'rediss://...' --dry-run   # look first
@@ -127,64 +143,31 @@ It copies only this project's keys, leaves `cookie:etsy*` alone, and **copies
 rather than moves** — the local vault keeps working as a fallback until the new
 one is proven.
 
-Verified:
+Then point the **writer** at it, not just `.env`. This is the step that has
+failed twice, both times with both halves reporting success:
 
 ```bash
-python -m src.status        # 6/8 usable, TLS resolved per profile — confirmed
+# 1. the reader
+sed -i "s|^REDIS_URL=.*|REDIS_URL=rediss://...|" .env
+
+# 2. the WRITER — root-owned, and it BEATS .env and the code default
+sudo sed -i "s|^REDIS_URL=.*|REDIS_URL=rediss://...|" /etc/adspower/api.env
+sudo systemctl start adspower-sync.service
 ```
+
+Verify **before** trusting it — and the number to expect is `6/6`, not `6/8`:
+
+```bash
+python -m src.status        # expect 6/6 usable, TLS resolved per profile
+```
+
+If it reads `0/6` while the sync says `6/6 synced`, the writer and the reader
+are pointed at different Redises. That is the failure, every time.
 
 ⚠️ **Check the command budget.** Keepalive alone is roughly **7,000
 commands/day** (288 passes × 8 profiles × ~3 writes). Free tiers commonly cap
 near 10k. Either pay — it is cents at this volume — or widen `--interval`, but
 never past `PROFILE_MAX_AGE` (900s), which `keepalive.py` already refuses.
-
-## Step 2b — Bridge: point the WSL writer at Upstash
-
-**Do this before Step 3.** Until it is done the Upstash vault is a frozen
-snapshot, and a deployed actor reading it will fail with `VaultEmpty` — or
-worse, lease a stale profile.
-
-This is a **temporary bridge, not the target state.** GCP (Step 4) is the
-session keeper; this exists so Apify can be deployed and proven today, before a
-VM is provisioned. It is not throwaway work either — `docs/OPERATING_MODEL.md`
-keeps the AdsPower syncer as the documented failover writer, so this path has to
-work regardless.
-
-The syncer resolves its target as `--redis-url` → `$REDIS_URL` → a
-WSL-to-Windows-host fallback (`sync_cookies.py`). systemd supplies it from
-`/etc/adspower/api.env`, so that one line is the switch:
-
-```bash
-wsl -d Ubuntu
-sudo nano /etc/adspower/api.env        # REDIS_URL=rediss://default:...@...upstash.io:6379
-sudo systemctl restart adspower-sync.timer
-sudo systemctl start adspower-sync.service   # run one pass now, don't wait 5 min
-journalctl -u adspower-sync.service -n 20 --no-pager
-```
-
-Verify from Windows — this is the check that matters, and the ages are the
-answer:
-
-```bash
-.venv/Scripts/python.exe -m src.status     # expect ages < 300s, N/N usable
-```
-
-If ages keep climbing, the writer is still pointed somewhere else. Note the
-fallback in `sync_cookies.py` is port **6379**, while this project's local
-container is **6380** — a missing `REDIS_URL` does not error, it quietly writes
-to the wrong place.
-
-**Latency is not a concern, but the timeout was worth checking.** The syncer
-opens Redis with `socket_connect_timeout=3`. Measured WSL → Upstash over TLS:
-**min 446ms / median 483ms / max 517ms** — about 6× headroom. No change needed;
-recorded so a future timeout failure is recognised as drift rather than
-debugged from scratch.
-
-⚠️ **Command budget.** Six profiles every 5 min at ~3 writes each is roughly
-**5,200 commands/day**, against a 10k/day free tier. That leaves ~4,800/day for
-actual customer runs, which is fine for testing and thin for launch. Widen the
-timer interval or pay before it matters — but never past `PROFILE_MAX_AGE`
-(900s).
 
 ## Step 3 — Apify
 
@@ -198,44 +181,16 @@ their next run**, minutes later, with no notice. Additive changes are safe; a
 renamed field, changed default or removed operation needs a `version` bump
 first.
 
-Set `REDIS_URL` as an Actor **secret**, never in `actor.json` — it carries the
-vault password. This is the step nothing local can verify, and the most common
-reason a deploy that passed every check still fails in the cloud.
-
-`ship.sh apify` now **runs the smoke itself** rather than printing it, because
-a printed command is the one that gets skipped:
+Set `REDIS_URL` as an Actor **secret**, never in `actor.json`. Then smoke it:
 
 ```bash
-./smoke.sh              # radar — 2 requests, the cheapest possible proof
-./smoke.sh shopping     # heavier, once radar passes
+apify call --input '{"operation":"radar","region":"US"}'    # 2 requests, 11 records
 ```
 
-It calls `run-sync-get-dataset-items` — the same endpoint an integrator writes
-— and **treats a zero-record success as a failure**. A run that returns 200
-with an empty dataset reads as "Pinterest has nothing trending" when it really
-means the vault was empty or the session was signed out. That is this project's
-defining failure mode, so the smoke refuses to pass it. It also fails if the
-records are `_demo` fixtures rather than live data.
+**You are live after this step.** Everything below saves money; nothing below
+earns it.
 
-`SKIP_SMOKE=1` bypasses it and says so loudly. There is no good reason to use it.
-
-**Rollback**, since the push is live the moment it lands:
-
-```bash
-git checkout <last-good-sha> && ./ship.sh apify
-```
-
-There is no "undo" on Apify — rolling back is pushing the previous commit
-forward. Know the SHA before you push, not after.
-
-**You are live after this step.** Everything below stops the laptop being
-load-bearing; nothing below earns more.
-
-## Step 4 — GCP: the session keeper the model actually calls for
-
-This retires the Step 2b bridge and puts the farm where it belongs. It also
-ends the AdsPower subscription for session-keeping — AdsPower stays installed
-for job 1 (logging accounts in) and as failover.
+## Step 4 — GCP (the laptop leaves the critical path)
 
 ```bash
 gcloud compute scp browsers/deploy_gcp.sh <vm>:~/
@@ -243,16 +198,6 @@ gcloud compute ssh <vm>
 git clone <your-repo> ~/pinterest-apify
 REDIS_URL='rediss://...' bash deploy_gcp.sh
 ```
-
-⚠️ **The repo is private, so the VM cannot clone it anonymously.** Generate an
-SSH key on the VM and add it under repo Settings → Deploy keys, read-only — not
-a personal access token, which would grant the VM far more than it needs.
-
-**Running both writers at once is safe.** `keepalive.py` reads its profile list
-from `valid_profiles:{platform}` in the vault and carries the stored
-`cookies_json`, `user_agent` and `proxy` forward rather than inventing new ones,
-so it refreshes AdsPower-created `ads_*` profiles wearing the same identity.
-Both writers verify before stamping `last_updated`.
 
 It provisions Python, Chromium (no root — `patchright install chromium`),
 Windows fonts, and the systemd timer. It refuses to run without `REDIS_URL` and
@@ -306,6 +251,44 @@ codebase is most careful about.
 
 **Run the release gate in order.** `probe_endpoints` rewrites the fixtures the
 suites read, so the tests must run *after* it. `ship.sh` already does this.
+
+**A service's `EnvironmentFile` silently beats `.env` and every code default.**
+This cost 90 minutes of a dead pool on 2026-08-26. The vault moved to
+`pinterest-redis` (6380); `.env` was updated, the hardcoded fallback in
+`sync_cookies.py` was updated — and `/etc/adspower/api.env`, root-owned and
+unreadable without sudo, still said 6379. It won.
+
+Both halves reported success the whole time:
+
+    sync_cookies   6/6 synced to the vault      (into the OLD container)
+    src.status     0/8 usable right now         (reading the NEW one)
+
+Nothing surfaced the mismatch, because neither side can see the other. When
+you change where the vault lives, grep for the URL in **all four** places:
+`.env`, the code default, any `EnvironmentFile`, and the systemd unit itself.
+
+**From WSL, use `127.0.0.1`, not the gateway IP, to reach a Docker port.**
+Measured 2026-08-26: `172.31.144.1:6380` and `127.0.0.1:6380` reached
+DIFFERENT Redis instances from inside WSL — dbsize 8 versus 23. A marker key
+written through the gateway was invisible to the container. Docker Desktop's
+WSL integration forwards published ports to `127.0.0.1` inside the distro, and
+that is the path that actually lands. The gateway happened to work for 6379,
+which is exactly why it was trusted for 6380.
+
+**A writer that replaces another must not drop fields the old one preserved.**
+`write_cookies` replaced a POST to the Go cookie server. The Go server HSET
+`user_agent` only when it had one, so a UA captured by an earlier run SURVIVED
+a later run that started no browser — and `sync_one` says so in a comment. The
+replacement wrote `user_agent or ""` unconditionally and wiped every UA in the
+pool. The vault then refused all six profiles ("no user_agent"), correctly:
+replaying a cookie jar under an unknown browser is the mismatch the session
+layer exists to prevent. Fresh cookies, zero usable.
+
+**The code the timer runs may not be the code you edited.** The WSL sync runs
+from `~/pinterest-apify/`, a SEPARATE copy of this repo. It had drifted far
+enough to be missing `write_cookies` entirely. `deploy_gcp.sh` avoids this by
+using `git pull`, so the VM always reports a commit hash you can check against
+this repo — do the same anywhere else that runs this code.
 
 **`.gitignore` is `.env*`, not `.env`.** A backup copy called
 `.env.backup-premigration` was committed once because the rule matched one exact

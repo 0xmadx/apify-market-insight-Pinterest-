@@ -226,6 +226,8 @@ Two caveats worth knowing:
 
 ## Output
 
+**Field naming differs by direction, deliberately.** Input is `camelCase` (Apify's convention for actor input schemas); output is `snake_case` (Pinterest's own wire naming, kept so a field you see in a record is greppable against `docs/wire/`). It is consistent within each direction — 45 inputs, zero snake_case; every output key, zero camelCase — so `endDate` goes in and `end_date` comes back.
+
 One record per row. Every record carries `_meta`.
 
 ### `shopping` — one trending product category
@@ -367,6 +369,7 @@ keywords, and a keyword must not collide with a category of the same name.
 | `InvalidParam: …` | refused before the wire, with the measured reason | fix the input; the message names the valid values |
 | Fewer records than requested | Pinterest silently dropped terms it has no data for | absence is not a verdict — measured: 10 keywords requested, 4 returned |
 | Empty result for a region | that feature is narrower than the rest | see the region rules above |
+| Exactly `maxRecords` records | the cap cut the answer **and more was available** — the run log says so explicitly. A capped run that happens to be complete is NOT flagged, so the warning always means "there is more" | raise or remove `maxRecords` |
 | Identical output to last run | the seen-set is working | set `fullRescan: true` to re-emit everything |
 
 ---
@@ -402,3 +405,24 @@ This sits on a reverse-engineered wire with no contract. Two moving parts:
   you got.
 - **Endpoint drift** is checked by `probes/probe_endpoints.py` before each
   release; 16/16 must answer or the release stops.
+
+### Compatibility — what you can build on
+
+The actor is published on build tag `latest`, so a release reaches your **next
+run**, minutes later, with no notice. That makes the split below the actual
+contract, not a nicety:
+
+| | Promise | Examples |
+|---|---|---|
+| **Safe to depend on** | changes only with a `version` bump | operation names, existing input names and their defaults, existing output field names, the meaning of a field |
+| **Additive at any time** | your code must tolerate these | new output fields, new optional inputs, new `_meta` keys, more records |
+| **Never promised** | Pinterest owns these, not us | row counts, ordering, which terms have data, the absolute value of any count |
+
+Write clients that **read fields by name and ignore unknown ones**. Do not
+assert a record count, an array length, or a position in a list — those move
+when Pinterest moves, on days nothing here changed. This project's own tests
+learned that the hard way: three asserted a vertical returns 19 categories and
+failed the day it returned 16.
+
+Breaking changes ship as a new `version` with the old one left running; you
+move when you choose to.

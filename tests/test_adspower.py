@@ -343,15 +343,19 @@ def main():
           'p.get("valid")' in asrc)
 
     print("\nGROUP P — provenance: what reaches the vault")
-    body = sc.post_to_vault("ads_test", SIGNED_IN, "UA/1.0", dry_run=True)
+    # Against the LIVE writer. This used to call post_to_vault, which posted to
+    # the Etsy project's Go server; that path is gone, and testing it was
+    # testing a hop this project no longer takes.
+    body = sc.write_cookies("ads_test", SIGNED_IN, "UA/1.0",
+                            "redis://localhost:6380/0", dry_run=True)
     check("P1 dry-run writes nothing and says so", "DRY-RUN" in body, body)
 
     # Call the REAL builder. An earlier version of this test rebuilt the dict
     # itself and therefore asserted nothing about the code.
     payload = sc.build_payload("ads_test", SIGNED_IN, "UA/1.0")
-    # The Go server rejects anything but these platforms, and SessionManager
-    # reads cookies_json — so the contract is exact, not approximate.
-    check("P2 platform is 'pinterest' (the Go server 400s on anything else)",
+    # SessionManager reads cookies_json, so the contract is exact rather than
+    # approximate — and write_cookies now builds on this same function.
+    check("P2 platform is 'pinterest', which is the pool the vault reads",
           payload["platform"] == "pinterest")
     check("P3 cookie_json is keyed by NAME, collapsing per-domain duplicates",
           len(payload["cookie_json"]) == 5 and len(SIGNED_IN) == 6,
@@ -557,7 +561,8 @@ def main():
                                                                 "domain": None}])]:
         pin = [c for c in jar if "pinterest.com" in (c.get("domain") or "")]
         check(f"D1 {label}: filters to empty without raising", pin == [])
-    empty = sc.post_to_vault("ads_x", [], "UA", dry_run=True)
+    empty = sc.write_cookies("ads_x", [], "UA", "redis://localhost:6380/0",
+                             dry_run=True)
     check("D2 an empty cookie list still returns a report, not a crash",
           "0 cookies" in empty, empty)
     check("D3 rate limiter is a real pause, not a no-op",

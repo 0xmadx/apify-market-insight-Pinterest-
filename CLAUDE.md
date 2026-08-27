@@ -10,6 +10,7 @@ inherited from this project's parent: **a plausible wrong number, not a crash**.
 | Question | Read |
 |---|---|
 | **I need to deploy this** | `DEPLOY.md` at the repo root — the ordered runbook, credentials, and the traps |
+| **Anything touching Redis, containers, or the Etsy project** | `docs/VAULT_SEPARATION.md` — **read before pointing this project at any Redis or calling any service.** The standing rule is that we never reach into the Etsy lab; three dormant couplings had to be cut to make that true |
 | **Which browser tool are we using, and for what** | `docs/OPERATING_MODEL.md` — **read this before answering anything about AdsPower vs stealth-browsers**; there are four jobs, not one, and the answer differs per job |
 | What do I build first, and in what order | `docs/BUILD-PLAN.md` — **Phase 0 (run + mine all endpoints) precedes any code** |
 | How do the 20 endpoints link, what is the product | `docs/ARCHITECTURE.md` |
@@ -41,7 +42,7 @@ one-vertical-per-call, the double-spelled `has_prediction`). It is not advisory.
 Or all of it, in the order the release gate requires:
 
 ```bash
-./ship.sh check      # probes the live wire FIRST, then the 529 checks
+./ship.sh check      # probes the live wire FIRST, then the 544 checks
 ```
 
 Everything is a module run from the repo root. The venv is local to this repo.
@@ -167,7 +168,7 @@ reasoning in `docs/DEPLOY.md` §5.
 `shopping`, `keywords`, `moments`, `radar`, and `crawl`, which follows the
 links between them instead of stopping at one page. Both of Pinterest's time
 controls are wired: `endDate` (which date) and `dateRange` (how much history).
-529 checks, 0 unread response fields (`probes/coverage.py`).
+544 checks, 0 unread response fields (`probes/coverage.py`).
 
 **Both browser captures landed 2026-08-19:**
 - §3.18 moment Age/Gender via the persisted GraphQL query — audience is now
@@ -192,6 +193,38 @@ VAULT, not a file, so adding an account copies nothing anywhere.
 6380, migrated out of the Etsy project's shared container with
 `browsers/migrate_vault.py`. `cookie:etsy*` was left untouched.
 
+**The migration is finished** as of 2026-08-26. `/etc/adspower/api.env` now
+says 6380, the sync writes there, and the 22 `*pinterest*` keys were deleted
+from `scraper-redis` (6379), leaving its 8 `etsy`/`etsy_private` keys alone.
+Every config that names the vault — `.env`, the EnvironmentFile, the code
+default — agrees on 6380.
+
+⚠️ **One writer still leaks Pinterest into the Etsy container, and deleting
+does not stop it.** The Etsy project's Chrome extension
+(`etsy scrapper/chrome_extension/`) is built for BOTH platforms — its own
+description says so, and its `host_permissions` include
+`*://*.pinterest.com/*`. It beacons to the Etsy Go server, which writes
+`cookie:pinterest:*` straight into 6379. Measured: the keys were gone, and
+`cookie:pinterest:profile_p5ewxsodn` + `valid_profiles:pinterest` were back
+within minutes.
+
+This costs us nothing operationally — we read 6380, those keys are orphaned,
+and the two `profile_*` entries are stale by hours and already refused. It is a
+*separation* defect, not an outage: a live Pinterest session sitting in another
+project's Redis. The durable fix is to drop Pinterest from that extension's
+manifest and `background.js`, which is a change to the ETSY repo, not this one.
+
+**Our vault holds `ads_*` profiles only.** Two extension-origin profiles rode
+along in the migration and sat there stale and proxy-less — already refused by
+the lease path, but they made `src.status` read 6/8 and made the vault look
+mixed when it was not. Removed 2026-08-26; it now reads 6/6. If a `profile_*`
+id ever reappears in 6380, a writer other than AdsPower found its way in.
+
+One orphan is deliberate, not an oversight: `ads_k1fymck0` has a cookie key but
+is absent from `valid_profiles`, ~7 days stale and proxy-less — an AdsPower
+profile that was never validated. It belongs to an account, so it is the
+operator's call to log in and assign a proxy, or delete it.
+
 **Remaining:** the Apify cloud and the GCP VM, both of which need the vault on
 a network-reachable Redis (Upstash). **`DEPLOY.md` at the repo root is the
 ordered runbook** — read it before deploying anything; `docs/DEPLOY.md` holds
@@ -200,6 +233,32 @@ the reasoning behind it.
 Three tools do the deploying, none of which existed before 2026-08-25:
 `ship.sh` (gated push to Apify or GCP), `browsers/deploy_gcp.sh` (provisions a
 VM), `browsers/migrate_vault.py` (moves the vault between Redises).
+
+## ⚠️ Config precedence, learned the expensive way
+
+`REDIS_URL` lives in **four** places and they do not agree by default:
+
+```
+1. systemd EnvironmentFile   (/etc/adspower/api.env)   <- WINS, root-only
+2. the process environment
+3. .env
+4. the hardcoded fallback in sync_cookies.py
+```
+
+On 2026-08-26 the vault moved to `pinterest-redis` (6380). (3) and (4) were
+updated; (1) still said 6379 and beat them both. The pool was dead for 90
+minutes while **both halves reported success**:
+
+    sync_cookies   6/6 synced to the vault     (into the OLD container)
+    src.status     0/8 usable right now        (reading the NEW one)
+
+Neither side can see the other, so nothing surfaced it. Moving the vault means
+grepping for the URL in all four, not just the one you remember.
+
+Related, same root: **the code a timer runs may not be the code you edited.**
+The WSL sync runs from `~/pinterest-apify/`, a separate copy, and it had drifted
+far enough to be missing `write_cookies` entirely. `deploy_gcp.sh` uses
+`git pull` for exactly this reason — the VM reports a commit hash you can check.
 
 ## Working style that has paid off
 

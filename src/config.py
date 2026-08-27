@@ -28,10 +28,13 @@ except ImportError:
 
 @dataclass(frozen=True)
 class Config:
-    # The vault. Local dev: the Docker Redis the Go cookie server writes to.
+    # The vault. Local dev: `pinterest-redis` on 6380, THIS project's own
+    # container. 6379 is the Etsy project's `scraper-redis` and must never be
+    # the fallback -- an unset REDIS_URL pointing there would read another
+    # project's pool and look like it worked.
     # Apify cloud: must be a NETWORK-REACHABLE Redis. A localhost URL there
     # resolves to the actor's own empty container and finds nothing.
-    REDIS_URL: str = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
+    REDIS_URL: str = os.environ.get("REDIS_URL", "redis://localhost:6380/0")
 
     # Which pool to draw identities from. The Chrome extension already posts
     # under this exact name, so nothing on the writing side needs to change.

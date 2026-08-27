@@ -43,6 +43,21 @@ https://version.adspower.net/software/linux-x64-global/8.7.23/AdsPower-Global-8.
 311 MB · ~700 MB installed · needs libgtk-3-0, libxss1, libatspi2.0-0, libsecret-1-0
 ```
 
+## ⚠️ Where REDIS_URL really comes from
+
+The systemd unit reads `/etc/adspower/api.env`, which is **root-owned, chmod
+600, and overrides everything else** — `.env`, the process environment, and the
+hardcoded fallback in `sync_cookies.py`.
+
+That file holds the AdsPower key, so it is not readable without sudo, which
+means a wrong `REDIS_URL` in it is invisible to every check that does not run
+as root. When the vault moved to port 6380 it kept the sync pointed at 6379 for
+90 minutes, and the sync logged `6/6 synced to the vault` throughout.
+
+```bash
+sudo grep REDIS /etc/adspower/api.env        # what the timer ACTUALLY uses
+```
+
 ## Install
 
 ```bash
@@ -102,12 +117,16 @@ So the shape that fits a VPS is a small syncer that:
 1. lists profiles — `GET /api/v1/user/list`
 2. starts each — `GET /api/v1/browser/start?user_id=…` → CDP port
 3. pulls cookies over CDP — `Network.getAllCookies`
-4. POSTs them to the Go cookie server exactly as the extension does
-   (`Authorization: Bearer …`, `platform: "pinterest"`, a stable `profile_id`)
+4. writes them **straight into our own Redis** (`write_cookies`), under the
+   same keys the extension used (`platform: "pinterest"`, a stable `profile_id`)
 
-Same destination, same Redis keys, same `SessionManager` on the other side —
-and no extension to load, no browser to keep in the foreground. The Go server
-and the vault do not change at all.
+Same Redis keys, same `SessionManager` on the other side — and no extension to
+load, no browser to keep in the foreground.
+
+> Until 2026-08-26 step 4 POSTed to the **Etsy project's** Go cookie server.
+> That hop is gone: it wrote to whichever Redis *it* was configured for, which
+> stopped being ours the day this project got its own container. See
+> [`../docs/VAULT_SEPARATION.md`](../docs/VAULT_SEPARATION.md).
 
 ### The fast path: `/api/v2/browser-profile/cookies`
 
@@ -136,9 +155,15 @@ the kind GROUP R covers. `fetch_cookies_v2()` decodes it; a test pins that.
 
 **The user agent is only obtainable from a running browser.** No v1 or v2
 endpoint exposes it (`user/list` has no UA field; `browser-profile/detail` is
-404). So `--with-ua` starts one. Run it **once per profile**: the Go server
+404). So `--with-ua` starts one. Run it **once per profile**: `write_cookies`
 only HSETs `user_agent` when non-empty, so later fast runs omit it and the
 stored value survives. The fast path sends nothing rather than a guess.
+
+> That conditional is load-bearing and was learned the hard way. The Go server
+> this replaced had the same rule; the first version of `write_cookies` wrote
+> `user_agent or ""` unconditionally and wiped every UA in the pool. The vault
+> then refused all six profiles — correctly — for having no UA. Fresh cookies,
+> zero usable.
 
 ### What the scraper needs — three things, and only three
 
@@ -148,7 +173,7 @@ stored value survives. The fast path sends nothing rather than a guess.
 | **csrftoken** | **inside the cookies** | Pinterest's CSRF is *cookie-echo*: `session.py` reads `cookies["csrftoken"]` and sends it back as `X-CSRFToken`. There is no token call to make. A jar without it still syncs — reads work — but the run warns, because POSTs will fail |
 | **user_agent** | a browser, **once** | AdsPower spoofs a different UA per profile. Replaying cookies under another profile's UA is exactly the mismatch a fingerprinter looks for, so it is stored beside them |
 
-| **proxy** | AdsPower's `user_proxy_config` | written straight to Redis by this script, because the Go server has no proxy field. The scraper then exits from the same IP the browser does |
+| **proxy** | AdsPower's `user_proxy_config` | written straight to Redis by this script, alongside the cookies. The scraper then exits from the same IP the browser does |
 
 Since 2026-08-20 the vault **refuses to lease a profile with no proxy**
 (`REQUIRE_PROXY`, default on). A profile without one exits from whatever host

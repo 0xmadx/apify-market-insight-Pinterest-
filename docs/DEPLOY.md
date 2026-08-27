@@ -6,15 +6,24 @@ record.
 
 ---
 
-## 1. The one blocker: a reachable Redis — ✅ resolved 2026-08-26
+## 1. The one blocker: a reachable Redis — ⚠️ half-done
 
-Upstash was chosen. Database `pinterest-apify-vault` (global, `us-east-1`
-primary) exists, the vault was migrated with `browsers/migrate_vault.py`
-(copy, not move — the local Docker vault is still a working fallback), and
-`python -m src.status` confirms 6/8 profiles usable through it. The `rediss://`
-URL lives in the local `.env` (gitignored) and still needs to be set as the
-Apify Actor secret `REDIS_URL` in Step 3 below — provisioning it here does not
-by itself configure the actor.
+Upstash was chosen and the database `pinterest-apify-vault` (global,
+`us-east-1` primary) exists. **It is not yet usable**, for two reasons that
+`DEPLOY.md`'s state table tracks:
+
+1. **The copy is stale.** It was migrated while the lab still held two
+   extension-origin profiles that have since been removed. Re-migrate; it is
+   self-correcting, because `copy_key` replaces `valid_profiles:pinterest`
+   wholesale and the lease path reads that set.
+2. **No writer points at it.** Migrating copies the data, not the writer —
+   see the `EnvironmentFile` trap in `DEPLOY.md`, which cost 90 minutes of a
+   dead pool because `/etc/adspower/api.env` silently beat both `.env` and the
+   code default.
+
+The `rediss://` URL lives in the local `.env` (gitignored) and separately needs
+to be set as the Apify Actor secret `REDIS_URL` in §3 — provisioning the
+database does not by itself configure the actor.
 
 The actor runs in Apify's cloud. Your vault is a Docker container on your desk.
 `localhost` inside an Apify container means **that container**, so the actor
@@ -45,7 +54,7 @@ separate namespace, the same shape as an Apify container reaching Upstash.
 **Proven this way on 2026-08-19** (Ubuntu WSL, `REDIS_URL` pointed at
 `172.31.144.1:6380`, never localhost):
 
-- all 529 offline checks pass on Linux — the code had only ever run on Windows
+- all 544 offline checks pass on Linux — the code had only ever run on Windows
 - the actor boots the real Apify SDK, reads `INPUT.json`, and reaches a
   networked Redis
 - with an empty vault it fails **exactly as designed**: `ERROR No leasable
@@ -294,7 +303,7 @@ wrong thing, with `task={}` as the only clue. Check that line in the log.
 .venv/Scripts/python.exe -m tests.test_vault        # the lease path — needs Redis
 ```
 
-529 checks total. All but `test_vault` are pure offline; that one runs against
+544 checks total. All but `test_vault` are pure offline; that one runs against
 the real Redis under a throwaway `__test_vault` namespace, because a fake would
 not exercise the `SET NX` that is the whole of the lease. `test_dispatch` also guards the docs: it fails if
 `.actor/input_schema.json` and `docs/API.md` disagree in either direction, or

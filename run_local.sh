@@ -44,7 +44,7 @@ find . -name __pycache__ -type d -exec rm -rf {} + 2>/dev/null || true
 
 # The Windows host, from inside WSL — a real network hop, not localhost.
 HOSTIP=\$(ip route show default | awk '{print \$3}')
-export REDIS_URL=\"redis://\$HOSTIP:6379/0\"
+export REDIS_URL=\"redis://\$HOSTIP:6380/0\"
 export VAULT_WAIT_TIMEOUT=\${VAULT_WAIT_TIMEOUT:-30}
 
 mkdir -p storage/key_value_stores/default
@@ -58,7 +58,7 @@ pathlib.Path('storage/key_value_stores/default/INPUT.json').write_text(
 print('INPUT:', json.dumps(task))
 PY
 
-echo \"REDIS_URL=redis://\$HOSTIP:6379/0  (non-localhost, on purpose)\"
+echo \"REDIS_URL=redis://\$HOSTIP:6380/0  (non-localhost, on purpose)\"
 echo '--- actor ---'
 ./.venv/bin/python -m src.main || true
 

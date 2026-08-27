@@ -144,6 +144,14 @@ async def _batches(task, config):
                     + (f" as {session.identity.profile_id}"
                        if session.acquired
                        else " · NO identity needed (fully cached)"))
+                # Say so when the cap cut the answer. A short dataset is
+                # indistinguishable from "Pinterest has nothing" unless the run
+                # states which one it was.
+                if ctx.truncated:
+                    Actor.log.warning(
+                        f"maxRecords={task.get('maxRecords')} cut this run short"
+                        " — MORE WAS AVAILABLE. This dataset is a slice, not the"
+                        " whole answer. Raise or remove maxRecords to get it all.")
             if batch:
                 put(batch)
         finally:

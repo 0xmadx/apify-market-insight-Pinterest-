@@ -242,10 +242,17 @@
   hit counters). A 403/empty response is never served from cache (already
   proven in `test_incremental.py` — keep it green).
 
-**F4. Budget cap [offline]**
-- `maxRecords`/`drill_top_n` caps the *planned request list* before execution;
-  a plan exceeding the per-run budget is trimmed with a note in `_meta`, not
-  executed and rate-limited.
+**F4. Budget cap says whether it cut anything [offline]**
+- `maxRecords`/`drill_top_n` cap the work; a capped run must be
+  **distinguishable from a complete one**. `scraper.run()` peeks one record past
+  the cap: another record exists -> `ctx.truncated` and a run-log warning; the
+  stream was already exhausted -> the answer is COMPLETE and is not flagged.
+- Why the peek rather than a count: stopping at exactly `maxRecords` cannot tell
+  the customer which case they are in, and a short dataset reads as "Pinterest
+  has nothing" — the failure mode this repo exists to prevent. Flagging every
+  capped run instead would cry wolf on the fully-served ones.
+- Covered in `tests/test_dispatch.py` for all five operations, both directions
+  (cut -> flagged, `maxRecords == total` -> not flagged).
 
 ---
 
@@ -285,15 +292,17 @@ shipped:
 
 ## COVERAGE LEDGER (updated 2026-08-19 — the build is done)
 
-529 checks across five suites, every one tagged with its scenario id:
+544 checks across five suites, every one tagged with its scenario id:
 
 | Suite | Checks | Covers |
 |---|---|---|
-| `tests/test_incremental.py` | 20 | freshness layer (cache/seen-set/watermark — F3's cache honesty) |
+| `tests/test_incremental.py` | 55 | freshness layer (cache/seen-set/watermark — F3's cache honesty) |
 | `tests/test_shopping_api.py` | 54 | B1–B5, C1–C5, C7, C2b (vertical-name guard), F (event/demographics) |
-| `tests/test_shopping_traversal.py` | 33 | E2 end-to-end incl. budget, A4, D3–D5 |
+| `tests/test_shopping_traversal.py` | 34 | E2 end-to-end incl. budget, A4, D3–D5 |
 | `tests/test_full_project.py` | 95 | B1–B6, C4, D1–D5, D4/D4b (§3.18 + interest matrix), E1–E4, E2b (§3.19 commerce), F1/F3/F6 (incl. cache wiring), H2/H3 |
-| `tests/test_dispatch.py` | 137 | the customer-facing path: schema↔code↔docs drift (all four directions), C6, H (history caps + date provenance), I (the Date-range control, moment regions, phase labels), J (the crawl) |
+| `tests/test_dispatch.py` | 164 | the customer-facing path: schema↔code↔docs drift (all four directions), C6, **F4 (a capped run says whether it is a slice)**, H (history caps + date provenance), I (the Date-range control, moment regions, phase labels), J (the crawl) |
+| `tests/test_adspower.py` | 90 | the cookie syncer: group routing, proxy sharing, UA preservation, provenance |
+| `tests/test_vault.py` | 52 | the lease path — exclusivity, refusals, `REQUIRE_PROXY` (needs Redis) |
 
 **Covered live instead of offline:** A3 (the PWS-handler 403 → `malformed`) and
 A5's no-rate-limit-headers fact are exercised by `probes/probe_endpoints.py` and
