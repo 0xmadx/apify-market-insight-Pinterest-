@@ -53,6 +53,10 @@ def run(ctx, task):
     # question inside a TTL should cost Pinterest one request, not two.
     client = TrendsClient(ctx.session, cache=ctx.cache,
                           force_refresh=ctx.force_refresh)
+    # Handed back on the context so the caller can read its counters after the
+    # run -- the 429 tally in particular, which is a claim ("never seen once")
+    # that nothing was measuring.
+    ctx.client = client
     handler = {
         "shopping": _shopping,
         "keywords": _keywords,

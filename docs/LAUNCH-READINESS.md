@@ -86,7 +86,7 @@ Singleflight holds.
 
 ## By discipline
 
-**Engineering.** 555 offline checks across seven suites; 16/16 endpoints
+**Engineering.** 561 offline checks across seven suites; 16/16 endpoints
 answered live today. The codebase's own habit — refuse rather than guess, absent
 is not zero, provenance on every number — is real and consistently applied. The
 weak spot found was that guards were not always *tested*: the vault lease path
@@ -131,9 +131,17 @@ for customers who want everything each time.
 
 ## First week after launch
 
-Instrument what every future decision depends on, none of which is measured in
-production today: **lease wait time · `VaultEmpty` count · cache hit rate ·
-429s from Pinterest** (never observed once in this project's life).
+✅ **Done 2026-08-27.** Every run now writes `RUN_METRICS` to its key-value
+store and logs one `metrics:` line: **lease wait time · `vault_empty` ·
+cache hit rate · `rate_limited_429s`**, plus the profile used, records pushed
+and skipped, and whether `maxRecords` truncated.
+
+Two deliberate `None`s, both the house rule applied to measurement: a fully
+cached run reports `lease_wait_seconds: null` rather than `0`, because leasing
+nothing is not the same as waiting no time; and a run that asked the cache
+nothing reports `cache_hit_rate: null` rather than `0`, which would read as a
+broken cache. "We have never seen a 429" was a belief with nothing counting it
+— now it is a number.
 
 Then, in order of what the numbers will justify: lease renewal → more accounts
 → the async queue.

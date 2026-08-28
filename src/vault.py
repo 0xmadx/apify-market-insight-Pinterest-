@@ -74,6 +74,9 @@ class SessionVault:
 
     # ---------------------------------------------------------------- reading
 
+    # Seconds the last acquire() spent waiting. None until one runs.
+    last_wait_seconds = None
+
     def acquire(self, platform: str = None) -> Identity:
         """Lease a usable identity, waiting a bounded time for one to appear.
 
@@ -81,15 +84,24 @@ class SessionVault:
         overnight and reports nothing is worse than one that fails loudly.
         """
         platform = platform or self.config.PLATFORM
-        deadline = time.time() + self.config.WAIT_TIMEOUT
+        started = time.time()
+        deadline = started + self.config.WAIT_TIMEOUT
 
         while True:
             for profile_id in self._candidates(platform):
                 identity = self._try_lease(platform, profile_id)
                 if identity is not None:
+                    # How long a run waited for a profile is THE number that
+                    # says whether the pool is big enough. Concurrent capacity
+                    # equals the profile count, so when this starts climbing the
+                    # answer is more accounts -- not more tuning. Recorded on
+                    # the vault rather than logged, so the caller decides what
+                    # to do with it.
+                    self.last_wait_seconds = round(time.time() - started, 3)
                     return identity
 
             if time.time() >= deadline:
+                self.last_wait_seconds = round(time.time() - started, 3)
                 raise VaultEmpty(
                     f"No leasable '{platform}' profile after "
                     f"{self.config.WAIT_TIMEOUT}s. Check that Chrome is open with the "

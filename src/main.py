@@ -46,8 +46,11 @@ async def main():
             Actor.log.warning("forceRefresh: ignoring cached responses for this run")
 
         pushed = skipped = 0
+        # Filled by the worker; `vault_empty` is set here because it is the one
+        # outcome the worker never reaches.
+        metrics = {"vault_empty": 0}
         try:
-            async for batch in _batches(task, config):
+            async for batch in _batches(task, config, metrics):
                 fresh, already_held = _split(batch, state, full_rescan)
                 skipped += already_held
 
@@ -62,10 +65,42 @@ async def main():
             # use. Failing loudly is the point — a silent empty dataset would
             # read as "Pinterest returned nothing".
             Actor.log.error(str(exc))
+            metrics["vault_empty"] = 1
+            await _record(metrics, pushed, skipped)
             await Actor.fail(status_message="No usable Pinterest session in the vault.")
             return
 
         Actor.log.info(f"done: {pushed} new, {skipped} skipped as unchanged")
+        await _record(metrics, pushed, skipped)
+
+
+async def _record(metrics, pushed, skipped):
+    """Persist one run's numbers, and say them out loud.
+
+    WHY THIS EXISTS. Four questions decide everything about scaling this actor,
+    and before 2026-08-27 not one of them was measured in production: how long a
+    run waits for a profile, how often the vault is empty, how much the cache
+    actually saves, and whether Pinterest ever rate-limits us. "We have never
+    seen a 429" was a belief with nothing counting.
+
+    Written to the run's key-value store under RUN_METRICS so it can be read
+    per run without scraping logs, AND logged as one line, because a number
+    nobody can see is not a measurement.
+    """
+    metrics = dict(metrics)
+    metrics["records_pushed"] = pushed
+    metrics["records_skipped"] = skipped
+    hits = metrics.get("cache_hits") or 0
+    total = hits + (metrics.get("cache_misses") or 0)
+    # None, not 0, when nothing was asked of the cache -- a run that made no
+    # requests has no hit rate, and 0% would read as a broken cache.
+    metrics["cache_hit_rate"] = round(hits / total, 3) if total else None
+    try:
+        await Actor.set_value("RUN_METRICS", metrics)
+    except Exception as exc:          # never let bookkeeping fail a good run
+        Actor.log.warning(f"could not store RUN_METRICS: {type(exc).__name__}")
+    Actor.log.info("metrics: " + " · ".join(
+        f"{k}={v}" for k, v in sorted(metrics.items()) if v is not None))
 
 
 def _split(batch, state: RunState, full_rescan: bool):
@@ -105,7 +140,7 @@ def _mark(records, state: RunState):
         )
 
 
-async def _batches(task, config):
+async def _batches(task, config, metrics=None):
     """Run the sync scraper in a worker thread, yielding batches to the loop.
 
     curl_cffi here is synchronous, so it must not run on the event loop; the
@@ -138,6 +173,22 @@ async def _batches(task, config):
                         put(batch)
                         batch = []
                 ctx.identity = session.identity      # known only now
+                # THE FOUR NUMBERS every scaling decision needs, none of which
+                # existed in production before 2026-08-27. Recorded here because
+                # this is the only place that can see all of them at once.
+                if metrics is not None:
+                    metrics.update({
+                        "cache_hits": ctx.cache.hits,
+                        "cache_misses": ctx.cache.misses,
+                        "wire_requests": session.fetches,
+                        # None, not 0: a fully cached run leased no profile at
+                        # all, which is a different fact from waiting no time.
+                        "lease_wait_seconds": session.lease_wait_seconds,
+                        "profile": (session.identity.profile_id
+                                    if session.acquired else None),
+                        "rate_limited_429s": getattr(ctx.client, "rate_limited", 0),
+                        "truncated": bool(ctx.truncated),
+                    })
                 Actor.log.info(
                     f"cache: {ctx.cache.hits} hits, {ctx.cache.misses} misses"
                     f" · wire: {session.fetches} request(s)"

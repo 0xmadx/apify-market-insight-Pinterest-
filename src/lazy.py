@@ -49,12 +49,17 @@ class LazySession:
         self._session = None
         self.identity = None
         self.fetches = 0
+        # None means no profile was ever leased -- a fully cached run. That is
+        # a different fact from "waited 0s", and conflating them would hide the
+        # cheapest runs the actor makes.
+        self.lease_wait_seconds = None
 
     # ---------------------------------------------------------- the seam
 
     def _ensure(self):
         if self._session is None:
             self.identity = self._vault.acquire(self._config.PLATFORM)
+            self.lease_wait_seconds = self._vault.last_wait_seconds
             if self._log:
                 self._log(f"leased {self.identity.profile_id} on first wire "
                           f"request (cache served everything before it)")

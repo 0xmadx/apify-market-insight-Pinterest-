@@ -61,6 +61,7 @@ class StaleQueryHash(TrendsAPIError):
 
 class TrendsClient:
     def __init__(self, session, cache=None, delay=0.4, force_refresh=False):
+        self.rate_limited = 0
         self.session = session
         # The response cache (src/cache.py). Optional so tests and probes can
         # run without Redis, but the actor ALWAYS passes one: without it the
@@ -408,6 +409,9 @@ class TrendsClient:
 
             verdict = classify(response)
             if verdict == "rate_limited":
+                # A 429 has never been seen in this project's life. That is a
+                # belief, not a measurement, until something counts them.
+                self.rate_limited += 1
                 if attempt == MAX_RETRIES - 1:
                     raise TrendsAPIError("429 after retries", status=429,
                                          kind="rate_limited", endpoint=endpoint)

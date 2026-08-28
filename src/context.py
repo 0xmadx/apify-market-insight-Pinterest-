@@ -42,6 +42,10 @@ class Context:
         # False — the flag means "there is more", never merely "a cap was set".
         self.truncated = False
 
+        # Set by scraper.run(). Carries the request counters, including how many
+        # 429s Pinterest sent.
+        self.client = None
+
     # ------------------------------------------------------------- fetching
 
     def get(self, kind: str, url: str, params=None, headers=None):

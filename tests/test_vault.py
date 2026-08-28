@@ -396,6 +396,62 @@ def main():
     check("E4 a failure to record the failure does not break the pass", survived)
     wipe(vault)
 
+    print("")
+    print("GROUP M — the numbers scaling decisions depend on")
+    wipe(vault)
+    seed(vault, "ads_m1", proxy="http://p:1@1.2.3.4:9", age=30)
+
+    v = SessionVault(strict)
+    check("M1 wait is unmeasured until an acquire happens",
+          v.last_wait_seconds is None, v.last_wait_seconds)
+    # Acquire on an instance we hold, so the recorded value can be read back.
+    # `quiet_acquire` builds its own vault internally and throws it away.
+    with redirect_stdout(io.StringIO()):
+        ident = v.acquire(TEST_PLATFORM)
+    check("M2 a successful lease records how long it waited",
+          ident is not None and isinstance(v.last_wait_seconds, float)
+          and v.last_wait_seconds >= 0,
+          f"identity={ident and ident.profile_id} wait={v.last_wait_seconds}")
+
+    v3 = SessionVault(strict)
+    got = None
+    with redirect_stdout(io.StringIO()):
+        try:
+            got = v3.acquire(TEST_PLATFORM)
+        except VaultEmpty:
+            pass
+    # It waited for a profile already leased by M2, so the number must be real
+    # and must be at least the poll interval -- a 0 here would mean the timer
+    # never ran.
+    check("M3 a wait that actually happened is measured, not zero",
+          v3.last_wait_seconds is not None and v3.last_wait_seconds > 0,
+          v3.last_wait_seconds)
+
+    # An empty vault still records the wait: how long a run burned before
+    # failing is exactly what you want when the pool runs dry.
+    wipe(vault)
+    v4 = SessionVault(strict)
+    with redirect_stdout(io.StringIO()):
+        try:
+            v4.acquire(TEST_PLATFORM)
+        except VaultEmpty:
+            pass
+    check("M4 VaultEmpty records the wait too, not just success",
+          v4.last_wait_seconds is not None, v4.last_wait_seconds)
+
+    # None is not zero, applied to instrumentation: a fully cached run leases
+    # nothing, and reporting 0s would make the cheapest runs look like the
+    # fastest leases instead of no lease at all.
+    from src.lazy import LazySession
+    lazy = LazySession(strict)
+    check("M5 a session that never leased reports None, not 0",
+          lazy.lease_wait_seconds is None, lazy.lease_wait_seconds)
+
+    from src.transport import TrendsClient
+    check("M6 the 429 counter starts at zero and exists to be counted",
+          TrendsClient(session=None, cache=None).rate_limited == 0)
+    wipe(vault)
+
     failed = [n for n, ok in checks if not ok]
     print(f"\n{len(checks) - len(failed)}/{len(checks)} checks passed")
     for name in failed:
