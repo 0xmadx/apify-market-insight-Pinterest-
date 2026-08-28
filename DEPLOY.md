@@ -71,15 +71,26 @@ takes two seconds and is the entire discipline.
 |---|---|
 | Step 1 GitHub | ✅ **done** — clone **`git@github.com:0xmadx/pinterest-apify.git`** (private). That name is canonical |
 | Step 2 Upstash | ✅ **done** — re-migrated (21 keys, 6 profiles, all `ads_*`), writer repointed and verified |
-| Step 3 Apify | ⬅ **the remaining blocker.** Needs `apify login`, then `./ship.sh apify` |
+| Step 3 Apify | ✅ **done 2026-08-27** — actor `yMtXPlrwLkTb9Zzpx`, build 1.0.4 on `latest`, `REDIS_URL` set as a secret. Smoke passed: 11 live records |
 | Step 4 GCP | ✅ **done** — `keepalive.timer` live on `pinterest-keepalive`, confirmed writing to Upstash |
-| Step 5 retire AdsPower writer | not yet — let GCP hold the pool for a day first |
+| Step 5 retire AdsPower writer | ✅ **done 2026-08-27** — `adspower-sync.timer` disabled; GCP verified as sole writer |
 | The gate | **555 checks** across seven suites, 16/16 endpoints — last green 2026-08-27 |
-| The vault | Upstash, **6/6 usable**, written by BOTH AdsPower and GCP on 5-minute timers |
+| The vault | Upstash, **6/6 usable**, written by GCP alone on a 5-minute timer |
 
-**Both writers are live at once, and that is deliberate.** They carry the same
-stored identity forward and both verify before stamping `last_updated`, so the
-overlap is safe — it is the rollback window for Step 5.
+**✅ THE DEPLOY IS COMPLETE.** All five steps are done. What follows is the
+release loop (Part A) and maintenance, not first-time setup.
+
+**GCP is now the only writer.** The overlap was the rollback window for Step 5
+and it is spent. Verified before switching AdsPower off, and again seven minutes
+after: all six in-pool profiles refreshed inside one cycle (211-225s). Rollback
+is `sudo systemctl enable --now adspower-sync.timer` on the WSL box.
+
+⚠️ **Count the POOL, not the keys.** The check that verified this cutover first
+reported "NOBODY IS WRITING" because it scanned every `cookie:pinterest:*` key
+and took the oldest — 653,746s. That was `ads_k1fymck0`, an orphan with a cookie
+key that is deliberately absent from `valid_profiles`, plus two extension-era
+leftovers. The actor only leases what is IN THE SET, so that is what freshness
+means. `src.status` was printing `6/6 usable` two lines above the false alarm.
 
 Three things changed on 2026-08-26 that older notes do not reflect:
 

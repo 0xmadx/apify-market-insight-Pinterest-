@@ -240,11 +240,19 @@ remote). The GCP VM runs `keepalive.timer` and is a proven writer — attributed
 by cookie-count signature, not by a fresh-looking heartbeat. AdsPower still
 writes too; the overlap is the rollback window for Step 5, not a steady state.
 
-**Remaining: one thing.** `apify login` + `REDIS_URL` as an Actor secret, then
-`./ship.sh apify`. Both are credentials, so both are the operator's. **`DEPLOY.md`
-at the repo root is the ordered runbook** — its first section is the deployment
-model, which is what makes the steps make sense; `docs/DEPLOY.md` holds the
-reasoning and `docs/DEPLOY-LOG.md` the evidence.
+**✅ SHIPPED 2026-08-27.** Actor `yMtXPlrwLkTb9Zzpx` on Apify, build 1.0.4 on
+`latest`, smoke passed with 11 live records. GCP is the sole vault writer;
+`adspower-sync.timer` is disabled and AdsPower is now login-station only.
+**`DEPLOY.md` at the repo root is the runbook** — Part A is the release loop you
+use forever, Part B is first-time setup and is history now. `docs/DEPLOY.md`
+holds the reasoning, `docs/DEPLOY-LOG.md` the evidence.
+
+⚠️ **`apify push` uploads more than the image contains.** `.dockerignore` governs
+the IMAGE; the CLI honours `.gitignore` and `.actorignore` for the UPLOAD. The
+first deploy put all 176 tracked files on Apify — `docs/wire/` and
+`probes/results/` included, i.e. the product — while the image correctly held 26.
+`.actorignore` now mirrors `.dockerignore` and cuts it to 29. Keep the two in
+step, and verify with `apify pull` rather than trusting either.
 
 **Running the pool is now three commands, not an SSH session.** `src.status`
 shows *why* a profile died (`keepalive` writes the reason into the vault — one
