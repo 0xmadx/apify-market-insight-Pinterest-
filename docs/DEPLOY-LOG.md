@@ -77,7 +77,7 @@ same profile, so attribution is by content, not timing:
 | `ads_k1fyn0gc` | 11 | 13 | **13** |
 
 **The gate**, run against the lab vault so a staleness clock could not fail it
-for the wrong reason: 16/16 endpoints, 569 checks
+for the wrong reason: 16/16 endpoints, 583 checks
 (95+54+34+164+55+90+52), `latest_available_date` → 2026-08-21.
 
 ### Three silent failures found

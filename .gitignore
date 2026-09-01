@@ -24,3 +24,8 @@ browsers/profiles/
 # was a verbatim copy of .env, API keys included.
 .env*
 !.env.example
+
+# The DeepSeek cost/usage log (tools/deepseek.py). Local operational history,
+# not code — and its "prompt_preview" field is a 60-char snippet of whatever
+# was drafted, which does not belong in a shared repo even in preview form.
+tools/.deepseek_usage.jsonl

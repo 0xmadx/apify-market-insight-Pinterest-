@@ -73,7 +73,7 @@ Everything except the sessions is reproducible from this repo alone:
 
 ```bash
 ./preflight.sh        # what is missing on this machine
-./ship.sh check       # 16/16 live endpoints, then 569 offline checks
+./ship.sh check       # 16/16 live endpoints, then 583 offline checks
 ./run_local.sh        # the real actor, locally, against a real vault
 ```
 
@@ -200,7 +200,7 @@ src/parsers.py             one named parser per endpoint
 src/shopping.py  keywords.py  moments.py  radar.py   the four traversals
 src/crawl.py               the fifth: follows the links between them
 src/status.py              vault health check
-tests/                     7 suites, 569 checks — see below
+tests/                     7 suites, 583 checks — see below
 probes/                    live wire probes; probe_endpoints is the release gate
 docs/                      product docs + the reverse-engineering corpus
 ```
@@ -234,7 +234,7 @@ Both of Pinterest's time controls are wired: `endDate` (which date am I looking
 at) and `dateRange` (how much history the chart shows). They are different
 questions and compose.
 
-Run everything offline — **569 checks, no network**:
+Run everything offline — **583 checks, no network**:
 
 ```bash
 .venv/Scripts/python.exe -m tests.test_incremental          #  55 — freshness layer

@@ -686,6 +686,96 @@ def main():
             os.environ["DEEPSEEK_API_KEY"] = _saved
         ds._loaded = False
 
+    print("")
+    print("GROUP DC — DeepSeek cost tracking cannot repeat the Upstash surprise")
+
+    # The peak/off-peak boundary IS the pricing model — DeepSeek charges 2x
+    # during it, so an off-by-one here silently doubles or halves every
+    # estimate. Checked at both edges of both windows.
+    import datetime as _dt
+    utc = _dt.timezone.utc
+    check("DC1 01:00 UTC weekday is peak (window opens)",
+          ds.is_peak(_dt.datetime(2026, 9, 1, 1, 0, tzinfo=utc)))
+    check("DC2 03:59 UTC weekday is still peak",
+          ds.is_peak(_dt.datetime(2026, 9, 1, 3, 59, tzinfo=utc)))
+    check("DC3 04:00 UTC weekday is off-peak (window closes)",
+          not ds.is_peak(_dt.datetime(2026, 9, 1, 4, 0, tzinfo=utc)))
+    check("DC4 06:00 UTC weekday is peak (second window opens)",
+          ds.is_peak(_dt.datetime(2026, 9, 1, 6, 0, tzinfo=utc)))
+    check("DC5 10:00 UTC weekday is off-peak (second window closes)",
+          not ds.is_peak(_dt.datetime(2026, 9, 1, 10, 0, tzinfo=utc)))
+    # A Saturday at 02:00 UTC sits inside the weekday peak HOUR range —
+    # the day-of-week check is what makes this off-peak, and it is the one
+    # most likely to be missed by a naive "just check the hour" version.
+    check("DC6 weekend at a peak HOUR is still off-peak",
+          not ds.is_peak(_dt.datetime(2026, 9, 5, 2, 0, tzinfo=utc)))
+
+    # The conservative default: when the API does not say how many prompt
+    # tokens hit cache, EVERY prompt token must be billed at the expensive
+    # cache-miss rate. Assuming the cheap case on missing data is the same
+    # mistake that made the Upstash bill a surprise instead of a forecast.
+    off_peak = _dt.datetime(2026, 9, 1, 12, 0, tzinfo=utc)  # noon Tue = off-peak
+    no_split = {"prompt_tokens": 1000, "completion_tokens": 500}
+    cost_no_split, band = ds.estimate_cost(no_split, "deepseek-v4-flash", off_peak)
+    expect = round(1000 / 1e6 * 0.22 + 500 / 1e6 * 0.66, 6)
+    check("DC7 no cache breakdown -> ALL prompt tokens at the cache-MISS rate",
+          cost_no_split == expect, (cost_no_split, expect))
+    check("DC8 the off-peak window is correctly identified for the estimate",
+          band == "off_peak", band)
+
+    with_split = {"prompt_tokens": 1000, "prompt_cache_hit_tokens": 800,
+                  "completion_tokens": 500}
+    cost_with_split, _ = ds.estimate_cost(with_split, "deepseek-v4-flash", off_peak)
+    check("DC9 a reported cache hit must be CHEAPER than assuming all-miss",
+          cost_with_split < cost_no_split, (cost_with_split, cost_no_split))
+
+    # An unknown model must not crash the estimate — it falls back to the
+    # default model's rates rather than raising, because a pricing lookup
+    # failing must never be the reason a draft that already succeeded loses
+    # its cost record.
+    fallback_cost, _ = ds.estimate_cost(no_split, "some-future-model-name", off_peak)
+    check("DC10 an unknown model name falls back rather than raising",
+          fallback_cost == cost_no_split, fallback_cost)
+
+    # The log/summary round trip, entirely on a throwaway file — never the
+    # real .deepseek_usage.jsonl, so running the test suite cannot corrupt or
+    # inflate the operator's actual cost history.
+    tmp_log = pathlib.Path("tests") / "_deepseek_usage_test.jsonl"
+    if tmp_log.exists():
+        tmp_log.unlink()
+    try:
+        empty = ds.usage_summary(tmp_log)
+        check("DC11 a summary with nothing logged yet reports zeros, not an error",
+              empty == {"calls": 0, "prompt_tokens": 0, "completion_tokens": 0,
+                        "estimated_cost_usd": 0.0}, empty)
+
+        ds._log("deepseek-v4-flash", no_split, cost_no_split, "off_peak",
+                "draft the marketers README intro")
+        # _log always writes to the REAL path -- move what it just wrote into
+        # the throwaway file, then remove the real one, so this check cannot
+        # leave a fabricated entry in the operator's actual audit trail.
+        real_line = ds.USAGE_LOG.read_text(encoding="utf-8")
+        ds.USAGE_LOG.unlink()
+        tmp_log.write_text(real_line, encoding="utf-8")
+
+        one = ds.usage_summary(tmp_log)
+        check("DC12 one logged call is counted correctly",
+              one["calls"] == 1 and one["prompt_tokens"] == 1000
+              and one["completion_tokens"] == 500, one)
+        check("DC13 the logged cost matches what was estimated",
+              one["estimated_cost_usd"] == round(cost_no_split, 4), one)
+
+        # A corrupt line (a half-written entry from a crash mid-write) must
+        # not sink the whole total -- the other lines are still real spend.
+        with open(tmp_log, "a", encoding="utf-8") as f:
+            f.write("{not valid json\n")
+        after_corruption = ds.usage_summary(tmp_log)
+        check("DC14 a corrupt log line is skipped, not fatal to the total",
+              after_corruption["calls"] == 1, after_corruption)
+    finally:
+        if tmp_log.exists():
+            tmp_log.unlink()
+
     failed = [n for n, ok in checks if not ok]
     print(f"\n{len(checks) - len(failed)}/{len(checks)} checks passed")
     for name in failed:
