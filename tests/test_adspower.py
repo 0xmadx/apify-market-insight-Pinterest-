@@ -776,6 +776,47 @@ def main():
         if tmp_log.exists():
             tmp_log.unlink()
 
+    print("")
+    print("GROUP PR — the pricing calculator refuses to guess a fixed cost")
+    import tools.pricing as pr
+
+    check("PR1 break-even is fixed cost divided by volume, nothing hidden",
+          pr.break_even(40.0, 500) == 0.08)
+
+    try:
+        pr.break_even(40.0, 0)
+        zero_raised = False
+    except ValueError:
+        zero_raised = True
+    check("PR2 zero runs/month raises rather than dividing by zero silently",
+          zero_raised)
+
+    try:
+        pr.break_even(40.0, -5)
+        neg_raised = False
+    except ValueError:
+        neg_raised = True
+    check("PR3 negative runs/month is refused the same way",
+          neg_raised)
+
+    # The worked example from the docstring's own claim: compute cost is
+    # negligible next to a real fixed cost, at any plausible CU rate.
+    r = pr.suggested_price(40.0, 500, margin_pct=50, cu_price_usd=0.25)
+    check("PR4 break-even matches the fixed-cost math",
+          r["break_even_per_run"] == 0.08, r)
+    check("PR5 a 50% margin on $0.08 lands at $0.12 (plus a near-zero compute add)",
+          0.12 <= r["suggested_price_per_run"] < 0.13, r)
+    check("PR6 compute cost per run is a small fraction of a cent, not dollars",
+          r["compute_cost_per_run"] < 0.001, r["compute_cost_per_run"])
+
+    # Omitting --cu-price must leave compute cost at exactly zero, not a
+    # guessed default -- the CLI already refuses missing --gcp/--proxies/
+    # --runs-per-month the same way; this is the same rule applied to the one
+    # optional input.
+    r_no_cu = pr.suggested_price(40.0, 500, margin_pct=50, cu_price_usd=None)
+    check("PR7 omitting the CU rate means compute cost is 0, not guessed",
+          r_no_cu["compute_cost_per_run"] == 0.0, r_no_cu)
+
     failed = [n for n, ok in checks if not ok]
     print(f"\n{len(checks) - len(failed)}/{len(checks)} checks passed")
     for name in failed:
