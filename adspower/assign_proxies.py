@@ -46,7 +46,15 @@ import sys
 import time
 import urllib.request
 
-import keys
+# Both invocation styles have to work: this file is RUN as
+# `python adspower/assign_proxies.py` (which puts adspower/ on the path,
+# so the bare import resolves) and IMPORTED as `adspower.assign_proxies`
+# by tools/adspower_profile.py, which reuses its proxy rules rather than
+# keeping a second copy of the two-per-proxy cap.
+try:
+    from . import keys
+except ImportError:      # run as a script, not imported as a package
+    import keys
 
 ADS = "http://127.0.0.1:50325"
 WEBSHARE = "https://proxy.webshare.io"

@@ -614,6 +614,42 @@ def main():
     check("FP7 write_cookies accepts an absent fingerprint without crashing",
           "DRY-RUN" in body, body)
 
+    print("")
+    print("GROUP NP — creating a blank profile cannot break the proxy cap")
+    from tools.adspower_profile import pick, usage
+    from adspower.assign_proxies import MAX_PROFILES_PER_PROXY as CAP
+
+    P = [{"proxy_address": "1.1.1.1", "port": 1},
+         {"proxy_address": "2.2.2.2", "port": 2}]
+
+    # The counts must be keyed the way assign_proxies keys them -- a (host,
+    # str(port)) TUPLE. Building "host:port" strings here instead makes every
+    # lookup miss, so every proxy reads as unused. The first version of
+    # tools/adspower_profile.py did exactly that and would have stacked account
+    # after account on one IP while printing success.
+    counted = usage([{"user_proxy_config": {"proxy_host": "1.1.1.1",
+                                            "proxy_port": "1"}}])
+    check("NP1 usage() keys match assign_proxies' proxy_key tuples",
+          counted == {("1.1.1.1", "1"): 1}, counted)
+
+    check("NP2 the least-used proxy wins, so the pool fills evenly",
+          pick(P, counted)["proxy_address"] == "2.2.2.2")
+
+    # The one that protects the accounts. Two profiles per proxy is the
+    # operator's rule; a third means three accounts sharing one exit IP.
+    full = {("1.1.1.1", "1"): CAP, ("2.2.2.2", "2"): CAP}
+    check("NP3 REFUSES when every proxy is at the cap — never a third profile",
+          pick(P, full) is None, pick(P, full))
+
+    check("NP4 one free seat is still usable",
+          pick(P, {("1.1.1.1", "1"): CAP,
+                   ("2.2.2.2", "2"): CAP - 1})["proxy_address"] == "2.2.2.2")
+
+    # The cap must be the SAME constant, not an equal number that can drift.
+    import tools.adspower_profile as npmod
+    check("NP5 the cap is imported from assign_proxies, not redefined",
+          npmod.MAX_PROFILES_PER_PROXY is CAP)
+
     failed = [n for n, ok in checks if not ok]
     print(f"\n{len(checks) - len(failed)}/{len(checks)} checks passed")
     for name in failed:

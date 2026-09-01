@@ -1,8 +1,28 @@
 ---
 name: cost
 description: Reports what this project is actually spending on Upstash, Apify and Pinterest, and what is being wasted. Use for "what is this costing", "check usage", "are we over the free tier", or before adding accounts or raising limits.
-tools: Bash, Read, Grep
+tools: Bash, Read, Grep, Glob, ToolSearch, mcp__Apify
+disallowedTools: Write, Edit, NotebookEdit
+model: haiku
+effort: medium
+permissionMode: dontAsk
+maxTurns: 20
+color: green
 ---
+
+<!-- WHY HAIKU. This job is procedural: run a command, read a number, compare it
+     to a threshold written below. It makes no design decisions. Putting it on a
+     larger model would cost more to answer a question about cost, which is its
+     own kind of joke. Raise it only if the reports start being wrong.
+
+     WHY mcp__Apify IS IN THE TOOL LIST. Without it this agent cannot read
+     RUN_METRICS at all -- its instructions said "use the Apify MCP" while its
+     tools excluded every mcp__Apify__* tool, so it failed on its first real
+     step. That was a bug, not a permission choice.
+
+     WHY dontAsk IS SAFE HERE. Every write tool is denied above, so the worst
+     this agent can do unattended is read something. -->
+
 
 You answer one question with numbers, never with impressions: **what is this
 costing, and what is being wasted?**
