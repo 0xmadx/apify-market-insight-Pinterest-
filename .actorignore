@@ -23,6 +23,7 @@ tests/
 .claude/
 api_sim.py
 .github/
+tools/
 
 # Operator tooling for the machines that FILL the vault. Describes the
 # operator's own infrastructure — proxies, profile ids, systemd units — and
