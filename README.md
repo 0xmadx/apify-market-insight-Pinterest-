@@ -98,7 +98,7 @@ a flag. See [docs/OPERATING_MODEL.md](docs/OPERATING_MODEL.md).
 
 **Not deployed yet.** The actor runs locally and in its real container against
 a non-localhost Redis. GitHub is done — the canonical repo is
-`git@github.com:0xmadx/pinterest-apify.git` (private). The Upstash database
+`git@github.com:0xmadx/apify-market-insight-Pinterest-.git` (private). The Upstash database
 exists but **its copy is stale and no writer points at it**, which is the
 current blocker. Apify and the GCP VM follow, in that order —
 [DEPLOY.md](DEPLOY.md) carries the state table and the runbook.

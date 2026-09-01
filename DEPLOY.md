@@ -69,7 +69,7 @@ takes two seconds and is the entire discipline.
 
 | | |
 |---|---|
-| Step 1 GitHub | ✅ **done** — clone **`git@github.com:0xmadx/pinterest-apify.git`** (private). That name is canonical |
+| Step 1 GitHub | ✅ **done** — clone **`git@github.com:0xmadx/apify-market-insight-Pinterest-.git`** (private). That name is canonical |
 | Step 2 Upstash | ✅ **done** — re-migrated (21 keys, 6 profiles, all `ads_*`), writer repointed and verified |
 | Step 3 Apify | ✅ **done 2026-08-27** — actor `yMtXPlrwLkTb9Zzpx`, build 1.0.4 on `latest`, `REDIS_URL` set as a secret. Smoke passed: 11 live records |
 | Step 4 GCP | ✅ **done** — `keepalive.timer` live on `pinterest-keepalive`, confirmed writing to Upstash |
@@ -206,20 +206,24 @@ steps only when rebuilding a piece from scratch.
 
 ## Step 1 — GitHub — ✅ DONE 2026-08-26
 
-Pushed to **`git@github.com:0xmadx/pinterest-apify.git`**, private, full
+Pushed to **`git@github.com:0xmadx/apify-market-insight-Pinterest-.git`**, private, full
 history on `main`. **Clone that one.** Do not work from a copy of the
 operator's laptop.
 
-**One repo, one remote, one branch.** There was briefly a second private repo,
-`0xmadx/apify-market-insight-Pinterest-`, kept as a mirror. It is no longer a
-push target: two remotes with nothing enforcing sync is a drift waiting to
-happen, and a stale duplicate of a private commercial scraper is how a future
-session clones the wrong thing. Both were identical at `74d7fba` when the mirror
-was dropped, so nothing was lost — that repo is frozen at that commit and should
-be deleted on GitHub.
+**One repo, one remote, one branch — and the name is not the one you would
+guess.** This project went through THREE repo states before landing here, each
+turn because a delete removed the wrong one:
 
-If you see any remote here other than `origin -> pinterest-apify`, that is the
-defect, not a feature.
+1. `pinterest-apify` was the original canonical name.
+2. `apify-market-insight-Pinterest-` was created as a mirror. Both repos then
+   got deleted at different points, twice landing on the WRONG one — leaving
+   `pinterest-apify` gone and this repo as the only survivor.
+3. Rather than fight a third deletion, the operator adopted the survivor.
+   **`apify-market-insight-Pinterest-` is now canonical, permanently.** Do not
+   recreate `pinterest-apify` and do not treat this name as temporary.
+
+If you see any remote here other than
+`origin -> apify-market-insight-Pinterest-`, that is the defect, not a feature.
 
 Verified at push time: `.env`, `browsers/identities.json` and
 `.env.backup-premigration` are all untracked.
@@ -327,7 +331,7 @@ CRLF trap below. The repo is private, so the VM needs its own credential:
 # on the VM — the private half never leaves it
 ssh-keygen -t ed25519 -N '' -f ~/.ssh/id_ed25519
 # add the .pub under repo Settings → Deploy keys, READ-ONLY
-git clone git@github.com:0xmadx/pinterest-apify.git ~/pinterest-apify
+git clone git@github.com:0xmadx/apify-market-insight-Pinterest-.git ~/pinterest-apify
 cd ~/pinterest-apify && REDIS_URL='rediss://...' bash browsers/deploy_gcp.sh
 ```
 
@@ -420,6 +424,23 @@ families and warns below 5; the full incident is in
 ```bash
 gcloud compute scp /c/Windows/Fonts/{arial,arialbd,georgia,tahoma,verdana,times,comic,impact,cour,trebuc}.ttf   <vm>:/home/<user>/.local/share/fonts/ --tunnel-through-iap
 gcloud compute ssh <vm> --tunnel-through-iap --command 'fc-cache -f'
+```
+
+⚠️ **The GCP VM still has a deploy key for the OLD, now-deleted repo name.**
+The VM was set up before the repo rename above, and its SSH deploy key is
+registered under GitHub Settings → Deploy keys on the repo that no longer
+exists. Its next `git pull` will fail with something like "Repository not
+found" or "Permission denied (publickey)". This does not stop
+`keepalive.timer` from running RIGHT NOW — it only breaks the NEXT code update
+pulled onto the VM. Fix (needs `gcloud`, not available on this laptop):
+
+```bash
+gcloud compute ssh <vm> --tunnel-through-iap
+cd ~/pinterest-apify
+git remote set-url origin git@github.com:0xmadx/apify-market-insight-Pinterest-.git
+git pull   # fails until the VM's deploy key is re-added under Settings ->
+           # Deploy keys on apify-market-insight-Pinterest-, or a fresh key is
+           # generated per the Step 4 instructions above and added there
 ```
 
 ## Step 5 — stop AdsPower being the writer (only after step 4 proves itself)
