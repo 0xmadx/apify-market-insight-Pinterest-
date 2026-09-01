@@ -74,7 +74,7 @@ takes two seconds and is the entire discipline.
 | Step 3 Apify | ✅ **done 2026-08-27** — actor `yMtXPlrwLkTb9Zzpx`, build 1.0.4 on `latest`, `REDIS_URL` set as a secret. Smoke passed: 11 live records |
 | Step 4 GCP | ✅ **done** — `keepalive.timer` live on `pinterest-keepalive`, confirmed writing to Upstash |
 | Step 5 retire AdsPower writer | ✅ **done 2026-08-27** — `adspower-sync.timer` disabled; GCP verified as sole writer |
-| The gate | **590 checks** across seven suites, 16/16 endpoints — last green 2026-08-27 |
+| The gate | **593 checks** across seven suites, 16/16 endpoints — last green 2026-08-27 |
 | The vault | Upstash, **6/6 usable**, written by GCP alone on a 5-minute timer |
 
 **✅ THE DEPLOY IS COMPLETE.** All five steps are done. What follows is the
@@ -179,7 +179,7 @@ Each answers a different question, and none substitutes for another:
 | | Proves | Fails when |
 |---|---|---|
 | `preflight.sh` | tooling, auth, `.env` hygiene, and that a **live writer** is filling the vault | credentials missing, `REDIS_URL` local, pool stale |
-| `ship.sh check` | 16/16 live endpoints, then 590 offline checks | Pinterest moved, or you broke something |
+| `ship.sh check` | 16/16 live endpoints, then 593 offline checks | Pinterest moved, or you broke something |
 | `ship.sh apify` | the push itself — asks the `buildTag` question first | dirty tree, red gate |
 | `smoke.sh` | the **deployed** actor returns real records; a zero-record success is a FAILURE | vault unreachable from Apify, secret unset |
 

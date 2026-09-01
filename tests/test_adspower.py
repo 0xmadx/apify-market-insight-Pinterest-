@@ -817,6 +817,16 @@ def main():
     check("PR7 omitting the CU rate means compute cost is 0, not guessed",
           r_no_cu["compute_cost_per_run"] == 0.0, r_no_cu)
 
+    # A ONE-TIME account cost must be spread over how often it is actually
+    # paid, not dropped straight into the monthly total -- that would charge
+    # it every month forever regardless of real replacement frequency.
+    check("PR8 amortizing multiplies one-time cost by replacement frequency",
+          pr.amortized_account_cost(0.03, 1) == 0.03)
+    check("PR9 a fractional replacement rate is honoured, not rounded away",
+          abs(pr.amortized_account_cost(3.00, 0.5) - 1.50) < 1e-9)
+    check("PR10 zero expected replacements amortizes to exactly zero",
+          pr.amortized_account_cost(5.00, 0) == 0.0)
+
     failed = [n for n, ok in checks if not ok]
     print(f"\n{len(checks) - len(failed)}/{len(checks)} checks passed")
     for name in failed:

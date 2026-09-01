@@ -40,6 +40,20 @@ def compute_cost_per_run(cu_price_usd):
     return MEASURED_CU_PER_RUN * cu_price_usd
 
 
+def amortized_account_cost(cost_per_account_usd, accounts_per_month):
+    """Turn a ONE-TIME cost (buying/replacing a Pinterest account) into a fair
+    monthly figure, by spreading it over how often you expect to pay it.
+
+    Why this cannot just be added to the monthly total as-is: a one-time cost
+    dropped straight into --other would be charged EVERY month forever, which
+    overcounts it by however many months you are not actually replacing an
+    account. And silently treating it as zero when it is real is the opposite
+    mistake -- the one this whole file exists to refuse. Amortizing is the
+    only honest way to fold a one-time cost into a recurring total.
+    """
+    return cost_per_account_usd * accounts_per_month
+
+
 def break_even(fixed_costs_usd, runs_per_month):
     """The price per run that exactly covers fixed monthly costs. Below this,
     every run is a loss regardless of how the platform bills compute.
@@ -86,7 +100,27 @@ def main():
                     help="your Apify $/compute-unit rate, from "
                          "console.apify.com/billing — omit to leave compute "
                          "cost out of the estimate rather than guess it")
+    ap.add_argument("--account-cost", type=float, default=None,
+                    help="ONE-TIME cost in USD to acquire/replace one "
+                         "Pinterest account. Requires --accounts-per-month "
+                         "too, so it can be amortized rather than either "
+                         "over- or under-counted")
+    ap.add_argument("--accounts-per-month", type=float, default=None,
+                    help="how many accounts you expect to create or replace "
+                         "per month, on average — fractions are fine (0.5 = "
+                         "one every two months)")
     args = ap.parse_args()
+
+    # Both or neither. One without the other is not a smaller mistake, it is
+    # a different mistake in each direction: --account-cost alone with no
+    # rate would either be dropped (undercounting a real cost) or charged
+    # every month forever (overcounting it); --accounts-per-month alone has
+    # nothing to multiply.
+    if (args.account_cost is None) != (args.accounts_per_month is None):
+        print("--account-cost and --accounts-per-month must be given "
+              "together, or not at all — one without the other cannot be "
+              "amortized correctly.", file=sys.stderr)
+        return 2
 
     # Refuse rather than guess. A missing cost silently treated as $0 would
     # produce a price that looks calculated but is actually wrong — the exact
@@ -107,13 +141,23 @@ def main():
               file=sys.stderr)
         return 2
 
-    fixed = args.gcp + args.proxies + args.other
+    account_amortized = 0.0
+    if args.account_cost is not None:
+        account_amortized = amortized_account_cost(args.account_cost,
+                                                    args.accounts_per_month)
+
+    fixed = args.gcp + args.proxies + args.other + account_amortized
     result = suggested_price(fixed, args.runs_per_month, args.margin,
                              args.cu_price)
 
-    print(f"  fixed monthly costs   ${fixed:.2f}  "
-          f"(GCP ${args.gcp:.2f} + proxies ${args.proxies:.2f}"
-          + (f" + other ${args.other:.2f}" if args.other else "") + ")")
+    breakdown = f"GCP ${args.gcp:.2f} + proxies ${args.proxies:.2f}"
+    if args.other:
+        breakdown += f" + other ${args.other:.2f}"
+    if args.account_cost is not None:
+        breakdown += (f" + accounts ${account_amortized:.4f} "
+                      f"(${args.account_cost:.2f} x "
+                      f"{args.accounts_per_month:g}/mo)")
+    print(f"  fixed monthly costs   ${fixed:.2f}  ({breakdown})")
     print(f"  expected runs/month   {args.runs_per_month}")
     print(f"  break-even per run    ${result['break_even_per_run']:.4f}")
     if args.cu_price:
