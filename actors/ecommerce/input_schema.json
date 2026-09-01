@@ -1,0 +1,359 @@
+{
+  "title": "Pinterest Trends for E-commerce input",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "operation": {
+      "title": "Operation",
+      "type": "string",
+      "description": "Which traversal to run. shopping: trending product categories, joined and drilled. keywords: discover/seed/exact keyword research through the full pipeline. moments: seasonal moments with the API's only daily-resolution curves. radar: Pinterest's curated spotlight + Editors' Picks (2 requests, schedule-friendly). crawl: follow Pinterest's own navigation recursively — an entry page, then the links off it (moment/trend/category -> its keywords -> their related keywords), breadth-first and batched so cost scales with depth, not with how many nodes it finds.",
+      "enum": [
+        "shopping",
+        "keywords",
+        "moments",
+        "radar",
+        "crawl"
+      ],
+      "default": "shopping"
+    },
+    "crawlFrom": {
+      "title": "[crawl] Entry page",
+      "type": "string",
+      "editor": "select",
+      "enum": [
+        "overview",
+        "shopping",
+        "search",
+        "moments"
+      ],
+      "enumTitles": [
+        "Trends overview (spotlight + editorial + moments)",
+        "Discover trending product categories (first page)",
+        "Discover trending search keywords (first page)",
+        "Moments only"
+      ],
+      "default": "overview",
+      "description": "Which Pinterest page the crawl starts from, loaded the way the UI loads it by default. Everything else follows from the links on it."
+    },
+    "crawlDepth": {
+      "title": "[crawl] Depth (hops to follow)",
+      "type": "integer",
+      "default": 1,
+      "minimum": 0,
+      "maximum": 3,
+      "description": "0 = the entry page only. 1 = also follow its keyword links (a moment's keywords, a category's search-query chips). 2 = also follow those keywords' related terms. Each level is ONE batch of ~3 requests regardless of how many nodes it holds, so depth is cheap and width is free."
+    },
+    "maxRequests": {
+      "title": "[crawl] Request budget (hard stop)",
+      "type": "integer",
+      "default": 60,
+      "minimum": 1,
+      "description": "The crawl stops when it has spent this many requests, and says so in _meta.crawl_truncated. Hard-capped at 400: at ~1s per request a longer run could outlive its 900s session lease, and the vault would then hand the same Pinterest account to another run while this one was still using it — two runs on one session from two IPs, which is how accounts get flagged. Split bigger jobs across several runs; the cache makes the second one cheap.",
+      "maximum": 400
+    },
+    "maxNodesPerLevel": {
+      "title": "[crawl] Max nodes per level",
+      "type": "integer",
+      "default": 50,
+      "minimum": 1,
+      "description": "Cap on how many keywords one level follows. Keeps a wide entry page (13 moments x 25 keywords) from turning into a level of 325."
+    },
+    "region": {
+      "title": "Region",
+      "type": "string",
+      "description": "Pinterest region code — 32 accepted (US, CA, GB+IE, DE, FR, BR, MX, AU+NZ, JP, KR, SE+DK+FI+NO, …). '+' is literal. Narrower per feature: top_products and editorial serve US/CA/GB+IE only; JP and IN have no seasonal moments at all.",
+      "default": "US",
+      "editor": "textfield"
+    },
+    "maxRecords": {
+      "title": "Max records",
+      "type": "integer",
+      "description": "Hard stop on records pushed. 0 = no limit.",
+      "default": 0,
+      "minimum": 0
+    },
+    "endDate": {
+      "title": "Point in time",
+      "type": "string",
+      "editor": "textfield",
+      "description": "YYYY-MM-DD. Ask what things looked like on a PAST date instead of now — 'what was trending last October'. Empty = Pinterest's newest settled data (which already lags ~4 days). How far back you can go differs by operation: keyword DISCOVERY reaches years back, but keyword enrichment, shopping and moments reject roughly a year or more and return that rejection with an empty body, so it is refused here with the reason instead."
+    },
+    "dateRange": {
+      "title": "Date range (history window)",
+      "type": "string",
+      "editor": "select",
+      "enum": [
+        "",
+        "past_3_months",
+        "past_6_months",
+        "past_1_year",
+        "past_2_years"
+      ],
+      "enumTitles": [
+        "(operation default)",
+        "Past 3 months",
+        "Past 6 months",
+        "Past 1 year",
+        "Past 2 years"
+      ],
+      "default": "",
+      "description": "Pinterest's own 'Date range' dropdown — how much HISTORY each chart covers. Distinct from endDate, which picks WHICH DATE you are looking at. Applies to whichever operation you run: it sets the keyword chart, the product-category performance chart and the moment curve alike. The per-operation inputs (days / chartDays / lookbackDays) still work and override this when both are given."
+    },
+    "verticals": {
+      "title": "[shopping] Verticals",
+      "type": "array",
+      "editor": "stringList",
+      "description": "L1 vertical ids (1181 Fashion, 1250 Home decor, 1042 Beauty, 1148 DIY, 1016 Arts & entertainment, 1500 Wedding, 1315 Media). Leave empty for the three Pinterest's own UI shows (Fashion, Home decor, Beauty) — the cheap default. Pass all seven explicitly to include the four hidden ones, which Pinterest serves but never displays."
+    },
+    "drillTopN": {
+      "title": "[shopping] Drill top N",
+      "type": "integer",
+      "description": "How many categories per vertical get the full drill-down (audience, search queries, products). Each drilled category costs ~2 extra requests.",
+      "default": 3,
+      "minimum": 0
+    },
+    "event": {
+      "title": "[shopping] Ranking event",
+      "type": "string",
+      "description": "OUTBOUND_CLICK (purchase intent), ENGAGEMENT (broad attention), SAVE (planning). The audience differs materially per event.",
+      "enum": [
+        "OUTBOUND_CLICK",
+        "ENGAGEMENT",
+        "SAVE"
+      ],
+      "default": "OUTBOUND_CLICK"
+    },
+    "includeProducts": {
+      "title": "[shopping] Include top products",
+      "type": "boolean",
+      "default": true,
+      "description": "Attach the shoppable product list to drilled categories. US, CA and GB+IE only."
+    },
+    "enrichTopN": {
+      "title": "[shopping] Fetch price + merchant link",
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "description": "Per drilled category, fetch real price, stock, free-shipping threshold and the OUTBOUND MERCHANT URL for this many top products. Costs 1 extra request PER PRODUCT (no batch form exists), so start small. 0 = off."
+    },
+    "chartDays": {
+      "title": "[shopping] Chart window (days)",
+      "type": "integer",
+      "default": 730,
+      "description": "Days of history in each category's Performance chart. 90 / 180 / 365 / 730. Defaults to 2 years so a full seasonal cycle is visible twice — one year shows each season once, which cannot tell a trend from a one-off. Same single request either way. 180 matches Pinterest's own detail page if you prefer their view."
+    },
+    "shoppingAges": {
+      "title": "[shopping] Age filter",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Restrict trending categories to these age bands: 18-24, 25-34, 35-44, 45-49, 50-54, 55-64, 65+, all. Empty = everyone. (Sent as the shopping enum form; the keyword operation uses a different scheme — handled for you.)"
+    },
+    "shoppingGenders": {
+      "title": "[shopping] Gender filter",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Restrict trending categories: male, female, unspecified. Empty = everyone."
+    },
+    "rankingMethod": {
+      "title": "[shopping] Ranking method",
+      "type": "string",
+      "default": "GROWTH",
+      "enum": [
+        "GROWTH",
+        "HIGH_VOLUME",
+        "VIRAL"
+      ],
+      "description": "How Pinterest ranks the categories. Their own UI only ever sends GROWTH — HIGH_VOLUME and VIRAL are real and unexposed, so this reaches rankings their interface cannot show."
+    },
+    "orderBy": {
+      "title": "[shopping] Sort by",
+      "type": "string",
+      "default": "RELATIVE_VOLUME",
+      "enum": [
+        "RELATIVE_VOLUME",
+        "TREND_RANK",
+        "PCT_CHANGE_MOM"
+      ],
+      "description": "Which column sorts the table. RELATIVE_VOLUME is the UI default; PCT_CHANGE_MOM surfaces fastest-moving instead of biggest."
+    },
+    "mode": {
+      "title": "[keywords] Mode",
+      "type": "string",
+      "description": "discover: Pinterest's trending set with filters. seed: typeahead expansion of a stem (whole keyword space). exact: enrich your own term list.",
+      "enum": [
+        "discover",
+        "seed",
+        "exact"
+      ],
+      "default": "discover"
+    },
+    "queries": {
+      "title": "[keywords] Terms / seed stem",
+      "type": "array",
+      "editor": "stringList",
+      "description": "exact mode: the terms to enrich. seed mode: the first entry is the stem. Lowercase (enforced - uppercase silently returns nothing)."
+    },
+    "preset": {
+      "title": "[keywords] Discover preset",
+      "type": "integer",
+      "description": "1 top monthly, 2 top yearly, 3 growing, 4 seasonal.",
+      "default": 3,
+      "minimum": 1,
+      "maximum": 4
+    },
+    "numTerms": {
+      "title": "[keywords] Discover how many",
+      "type": "integer",
+      "default": 100,
+      "minimum": 1,
+      "maximum": 100,
+      "description": "Keywords to pull from discovery before enrichment. Max 100 (Pinterest's ceiling)."
+    },
+    "maxTerms": {
+      "title": "[keywords] Max terms to enrich",
+      "type": "integer",
+      "description": "Cap on terms sent through the pipeline. 0 = all discovered (up to 100).",
+      "default": 0,
+      "minimum": 0
+    },
+    "keywordsToInclude": {
+      "title": "[keywords] Must contain",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Only keep discovered keywords containing one of these. OR logic, substring match, lowercase enforced (uppercase silently returns nothing). This is how you scope discovery to YOUR niche."
+    },
+    "interests": {
+      "title": "[keywords] Interest filter",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Interest ids to scope discovery to (24 exist; see docs 07 4.2). Empty = all interests."
+    },
+    "moments": {
+      "title": "[keywords] Moment filter",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Only keywords tied to these seasonal moments. Type them however Pinterest displays them — \"Father's Day\" is normalised to the wire form (lowercase, spaces kept, apostrophes stripped) automatically; the raw form is a 400. Slugs are REGION-SPECIFIC: 25 exist globally, 13 in the US."
+    },
+    "ageBuckets": {
+      "title": "[keywords] Age filter",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Restrict discovery to age bands: 18-24, 25-34, 35-44, 45-49, 50-54, 55-64, 65+. (18-24 maps to two internal codes; handled for you.)"
+    },
+    "genders": {
+      "title": "[keywords] Gender filter",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Restrict discovery: male, female, unspecified."
+    },
+    "days": {
+      "title": "[keywords] History window",
+      "type": "integer",
+      "default": 730,
+      "description": "Days of history per keyword chart. 90 / 180 / 365 / 730. Defaults to 730 (2 years) because YEAR-OVER-YEAR IS ONLY RETURNED AT 730 — measured, yoy_change is null at 180 and 365 and populated at 730. Two years costs the same ONE request and the same ~0.7s; only the payload grows. Lower it if you want smaller records and do not need yoy."
+    },
+    "predictedDays": {
+      "title": "Forecast horizon (days)",
+      "type": "integer",
+      "default": 91,
+      "minimum": 0,
+      "maximum": 91,
+      "description": "Days of forecast to request. Max 91 — Pinterest rejects more. Only fills for keywords that have a forecast."
+    },
+    "includeRelated": {
+      "title": "[keywords] Include related terms",
+      "type": "boolean",
+      "description": "5 siblings per term, each with its own forecast flag. Costs one request PER TERM (no batch form exists).",
+      "default": false
+    },
+    "includeImages": {
+      "title": "[keywords] Include pin images",
+      "type": "boolean",
+      "description": "9 popular-pin image urls per term. One batched POST for the whole run.",
+      "default": true
+    },
+    "aggregation": {
+      "title": "[moments] Granularity",
+      "type": "string",
+      "description": "daily is unique to moments - nothing else in the API resolves below weekly.",
+      "enum": [
+        "daily",
+        "weekly",
+        "monthly"
+      ],
+      "default": "daily"
+    },
+    "phases": {
+      "title": "[moments] Phases to drill",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Which phases get curves + keywords + audience. Default: rising, approaching. All moments are emitted either way; cooled ones cost no extra requests.",
+      "prefill": [
+        "rising",
+        "approaching"
+      ]
+    },
+    "drill": {
+      "title": "[moments] Drill at all",
+      "type": "boolean",
+      "default": true,
+      "description": "Off = list every moment with its phase and peak dates only, no per-moment calls. Cheapest possible run."
+    },
+    "includeAudience": {
+      "title": "[moments] Derived audience",
+      "type": "boolean",
+      "description": "Age + gender for each drilled moment — the same figures Pinterest's own \"Who's driving this moment\" chart draws (measured). If their persisted query rotates, this falls back to an aggregate of the moment's keyword audiences and the record says so in _meta.audience_basis.",
+      "default": true
+    },
+    "interestIds": {
+      "title": "[moments] Interest breakdown",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Interest ids to break each drilled moment's audience down by. Pinterest's own UI offers only ~7 per moment, but ANY moment x ANY interest works - these are audiences their interface cannot show. Costs one request PER CELL, so keep the list short. Empty = off."
+    },
+    "lookbackDays": {
+      "title": "[moments] History window",
+      "type": "integer",
+      "default": 730,
+      "description": "Days of moment history. Max 730, and 730 is the default: judging when a season starts means comparing it with the same season last year. Costs the same one request."
+    },
+    "interest": {
+      "title": "[radar] Interest filter",
+      "type": "string",
+      "editor": "textfield",
+      "description": "One interest id to scope the spotlight, or empty for all."
+    },
+    "includeSpotlight": {
+      "title": "[radar] Include spotlight",
+      "type": "boolean",
+      "default": true,
+      "description": "Pinterest's 5 curated homepage trends."
+    },
+    "includeEditorial": {
+      "title": "[radar] Include Editors' Picks",
+      "type": "boolean",
+      "default": true,
+      "description": "6 hand-written editorial trends with campaign windows. US, CA and GB+IE only."
+    },
+    "fullRescan": {
+      "title": "Full rescan",
+      "type": "boolean",
+      "description": "Ignore the seen-set: re-emit records already collected in previous runs.",
+      "default": false
+    },
+    "forceRefresh": {
+      "title": "Force refresh",
+      "type": "boolean",
+      "description": "Ignore cached responses: hit Pinterest for every request.",
+      "default": false
+    },
+    "relatedFanout": {
+      "title": "[crawl] Related lookups per level",
+      "type": "integer",
+      "default": 10,
+      "minimum": 0,
+      "description": "How many keywords per level also get their 5 related siblings — the edges the NEXT level walks. This is the crawl's only per-item cost (1 request each, no batch form exists), and it is only spent when crawlDepth is high enough to actually use the result. 0 means the crawl cannot go past its keyword level."
+    }
+  },
+  "required": []
+}

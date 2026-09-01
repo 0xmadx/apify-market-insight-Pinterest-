@@ -46,8 +46,23 @@ LAB = pathlib.Path(__file__).resolve().parent.parent
 ENGINE = ["src", "Dockerfile", "requirements.txt", ".env.example"]
 
 # Per-product: which files, and where they come from in the lab.
+#
+# Three variants added 2026-09-01, none of them a fork: each has its own
+# actor.json (name/title/description) and its own input_schema.json (copied
+# from .actor/'s, verified identical except title and operation.default), but
+# every one of them still builds from the ONE shared src/ in ENGINE above.
+# Same engine, three audiences -- marketers (campaign timing, search demand),
+# ecommerce (trending products, real prices, merchant links), creators (a
+# content calendar from moments + keywords). Not yet pushed anywhere or
+# created on Apify; that stays a separate, explicit, operator-only action.
 PRODUCTS = {
     "general": {"source": ".actor",
+                "files": ["actor.json", "input_schema.json", "README.md"]},
+    "marketers": {"source": "actors/marketers",
+                 "files": ["actor.json", "input_schema.json", "README.md"]},
+    "ecommerce": {"source": "actors/ecommerce",
+                 "files": ["actor.json", "input_schema.json", "README.md"]},
+    "creators": {"source": "actors/creators",
                 "files": ["actor.json", "input_schema.json", "README.md"]},
 }
 

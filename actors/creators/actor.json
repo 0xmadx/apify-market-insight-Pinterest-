@@ -1,0 +1,23 @@
+{
+  "actorSpecification": 1,
+  "name": "pinterest-trends-creators",
+  "title": "Pinterest Trends for Creators — a content calendar from real data",
+  "description": "Pinterest Trends for content creators: plan posts around seasonal moments before they peak, and see exactly which search terms are gaining right now. Growth curves, forecasts and moment timing turn into a content calendar. No input required to start.",
+  "version": "1.0",
+  "buildTag": "latest",
+  "meta": {
+    "templateId": "python-start"
+  },
+  "dockerfile": "../Dockerfile",
+  "input": "./input_schema.json",
+  "readme": "./README.md",
+  "defaultMemoryMbytes": 256,
+  "minMemoryMbytes": 128,
+  "maxMemoryMbytes": 2048,
+  "storages": {
+    "dataset": {
+      "actorSpecification": 1,
+      "views": {}
+    }
+  }
+}
