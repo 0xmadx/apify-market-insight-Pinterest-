@@ -1,0 +1,53 @@
+# The offline half of the release gate, on every push.
+#
+# WHAT IS DELIBERATELY NOT HERE: `probes/probe_endpoints.py`. It leases a real
+# profile from the vault and makes 16 live Pinterest calls, so running it per
+# commit would burn Upstash commands (metered, ~10k/day free) and hammer an API
+# we do not own, to re-learn something that changes on Pinterest's schedule and
+# not on ours. Live probes stay manual (`./ship.sh check`) and scheduled.
+#
+# So this job proves the CODE is right. It cannot prove today's wire still
+# matches, and it does not claim to.
+name: gate
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  offline-checks:
+    runs-on: ubuntu-latest
+
+    # test_vault is the only suite needing Redis, and it is pinned to a LOCAL
+    # one on purpose (see its header): it writes, deletes and SCANs a keyspace,
+    # so pointing it at production would bill the real vault to run tests.
+    services:
+      redis:
+        image: redis:alpine
+        ports: ["6380:6379"]
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s --health-timeout 3s --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"      # matches apify/actor-python:3.12
+          cache: pip
+
+      - name: Install
+        run: pip install -r requirements.txt
+
+      - name: Offline suites
+        env:
+          TEST_REDIS_URL: redis://localhost:6380/0
+        run: |
+          fail=0
+          for t in test_incremental test_shopping_api test_shopping_traversal \
+                   test_full_project test_dispatch test_adspower test_vault; do
+            echo "== $t"
+            python -m tests.$t || fail=1
+          done
+          exit $fail

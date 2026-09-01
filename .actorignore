@@ -22,6 +22,7 @@ probes/
 tests/
 .claude/
 api_sim.py
+.github/
 
 # Operator tooling for the machines that FILL the vault. Describes the
 # operator's own infrastructure — proxies, profile ids, systemd units — and
@@ -34,6 +35,13 @@ browsers/
 # smoke.sh the day they were added.
 *.sh
 *.md
+
+# ...except the one piece of prose that IS the product page. On the Apify Store
+# the README is what a customer reads before deciding to run anything, and
+# `*.md` above would have stripped it silently -- the actor would have shipped
+# with a blank listing and nothing would have failed. Root-anchored `!/` is not
+# enough here: this file lives in .actor/, so it needs its own path.
+!.actor/README.md
 
 # Never, under any circumstance.
 .env

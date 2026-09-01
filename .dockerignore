@@ -21,6 +21,7 @@ probes/
 tests/
 .claude/
 api_sim.py
+.github/
 *.md
 
 # A PATTERN, not a list of names. This read `run_local.sh` and `ship.sh` until
