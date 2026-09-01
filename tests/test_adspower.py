@@ -650,6 +650,42 @@ def main():
     check("NP5 the cap is imported from assign_proxies, not redefined",
           npmod.MAX_PROFILES_PER_PROXY is CAP)
 
+    print("")
+    print("GROUP DS — the DeepSeek client is offline-only, never on the data path")
+    import pathlib
+
+    import tools.deepseek as ds
+
+    # It must be imported by NOTHING under src/. Its whole point is staying out
+    # of what a customer receives; an accidental `from tools.deepseek import`
+    # inside the actor would be exactly the mistake the module's own docstring
+    # warns against.
+    leaked = [p for p in pathlib.Path("src").glob("*.py")
+             if "tools.deepseek" in p.read_text(encoding="utf-8")
+             or "tools import deepseek" in p.read_text(encoding="utf-8")]
+    check("DS1 nothing in src/ imports the DeepSeek client", not leaked, leaked)
+
+    _saved = os.environ.pop("DEEPSEEK_API_KEY", None)
+    ds._loaded = False   # force a fresh (non-)load for this check
+    try:
+        no_key_error = None
+        try:
+            ds.complete("anything")
+        except SystemExit as exc:
+            no_key_error = str(exc)
+        check("DS2 complete() refuses without a key, BEFORE any network call",
+              no_key_error is not None and "DEEPSEEK_API_KEY" in no_key_error,
+              no_key_error)
+
+        os.environ["DEEPSEEK_API_KEY"] = "test-value-not-a-real-key"
+        check("DS3 an exported key wins over anything in .env",
+              ds.api_key() == "test-value-not-a-real-key")
+    finally:
+        os.environ.pop("DEEPSEEK_API_KEY", None)
+        if _saved:
+            os.environ["DEEPSEEK_API_KEY"] = _saved
+        ds._loaded = False
+
     failed = [n for n, ok in checks if not ok]
     print(f"\n{len(checks) - len(failed)}/{len(checks)} checks passed")
     for name in failed:

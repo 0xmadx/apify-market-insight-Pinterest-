@@ -34,18 +34,24 @@ one-vertical-per-call, the double-spelled `has_prediction`). It is not advisory.
 .venv/Scripts/python.exe -m tests.test_shopping_api       # 54
 .venv/Scripts/python.exe -m tests.test_shopping_traversal # 34
 .venv/Scripts/python.exe -m tests.test_full_project       # 95
-.venv/Scripts/python.exe -m tests.test_dispatch           # 149 — zero-input + input plumbing
-.venv/Scripts/python.exe -m tests.test_adspower           # 90 — the cookie syncer
-.venv/Scripts/python.exe -m tests.test_vault              # 52 — the lease path (needs Redis)
+.venv/Scripts/python.exe -m tests.test_dispatch           # 164 — zero-input + input plumbing
+.venv/Scripts/python.exe -m tests.test_adspower           # 105 — the cookie syncer, proxy caps, DeepSeek client
+.venv/Scripts/python.exe -m tests.test_vault              # 62 — the lease path + metrics (needs Redis)
 ```
 
 Or all of it, in the order the release gate requires:
 
 ```bash
-./ship.sh check      # probes the live wire FIRST, then the 566 checks
+./ship.sh check      # probes the live wire FIRST, then the 569 checks
 ```
 
 Everything is a module run from the repo root. The venv is local to this repo.
+
+**`tools/deepseek.py`** drafts prose (README copy, marketing text) that a human
+reviews before publishing — never wired into `src/`, and `tests/test_adspower.py`
+(GROUP DS) fails the build if anything under `src/` ever imports it. Key goes in
+`.env` as `DEEPSEEK_API_KEY`, same as `ADS_API_KEY`. `python -m tools.deepseek
+"<prompt>"` prints a draft to stdout.
 
 ## Sessions — the part that must not be broken
 
@@ -178,7 +184,7 @@ reasoning in `docs/DEPLOY.md` §5.
 `shopping`, `keywords`, `moments`, `radar`, and `crawl`, which follows the
 links between them instead of stopping at one page. Both of Pinterest's time
 controls are wired: `endDate` (which date) and `dateRange` (how much history).
-566 checks, 0 unread response fields (`probes/coverage.py`).
+569 checks, 0 unread response fields (`probes/coverage.py`).
 
 **Both browser captures landed 2026-08-19:**
 - §3.18 moment Age/Gender via the persisted GraphQL query — audience is now
