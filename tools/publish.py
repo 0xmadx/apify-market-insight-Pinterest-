@@ -57,13 +57,17 @@ ENGINE = ["src", "Dockerfile", "requirements.txt", ".env.example"]
 # created on Apify; that stays a separate, explicit, operator-only action.
 PRODUCTS = {
     "general": {"source": ".actor",
-                "files": ["actor.json", "input_schema.json", "README.md"]},
+                "files": ["actor.json", "input_schema.json",
+                          "output_schema.json", "README.md"]},
     "marketers": {"source": "actors/marketers",
-                 "files": ["actor.json", "input_schema.json", "README.md"]},
+                 "files": ["actor.json", "input_schema.json",
+                           "output_schema.json", "README.md"]},
     "ecommerce": {"source": "actors/ecommerce",
-                 "files": ["actor.json", "input_schema.json", "README.md"]},
+                 "files": ["actor.json", "input_schema.json",
+                           "output_schema.json", "README.md"]},
     "creators": {"source": "actors/creators",
-                "files": ["actor.json", "input_schema.json", "README.md"]},
+                "files": ["actor.json", "input_schema.json",
+                          "output_schema.json", "README.md"]},
 }
 
 

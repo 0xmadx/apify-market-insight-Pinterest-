@@ -1,0 +1,12 @@
+{
+  "actorOutputSchemaVersion": 1,
+  "title": "Output schema of Pinterest Trends for Marketers",
+  "description": "Every operation (radar, keywords, moments) pushes its records to the same default dataset, one record per item.",
+  "properties": {
+    "records": {
+      "type": "string",
+      "title": "Records",
+      "template": "{{links.apiDefaultDatasetUrl}}/items"
+    }
+  }
+}
