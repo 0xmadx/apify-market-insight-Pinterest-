@@ -63,11 +63,18 @@ async def main():
         except VaultEmpty as exc:
             # Not a crash, and not a Pinterest problem: there is no session to
             # use. Failing loudly is the point — a silent empty dataset would
-            # read as "Pinterest returned nothing".
+            # read as "Pinterest returned nothing". The full technical reason
+            # (str(exc)) goes to the operator-visible log only; the customer
+            # sees a plain capacity message, not "vault"/"session" internals —
+            # this already waited up to WAIT_TIMEOUT for a slot to free up, so
+            # "try again shortly" is an honest instruction, not a brush-off.
             Actor.log.error(str(exc))
             metrics["vault_empty"] = 1
             await _record(metrics, pushed, skipped)
-            await Actor.fail(status_message="No usable Pinterest session in the vault.")
+            await Actor.fail(status_message=(
+                "We're at capacity right now — every data source is in use. "
+                "Please try again in a few minutes."
+            ))
             return
 
         Actor.log.info(f"done: {pushed} new, {skipped} skipped as unchanged")
