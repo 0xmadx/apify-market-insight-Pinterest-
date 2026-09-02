@@ -85,6 +85,25 @@ Then, once you have a season or an angle in mind:
 `includeRelated` returns 5 sibling terms per query — useful for widening a
 brief beyond the one phrase creative first suggested.
 
+## Using the API
+
+Press Run once in the Console and Apify generates ready-to-paste code for
+this exact call (Python, JS, curl) under the **API** tab — that's the
+fastest way to integrate. The shape of it:
+
+```bash
+curl "https://api.apify.com/v2/acts/0xdevers~pinterest-trends-marketers/run-sync-get-dataset-items?token=YOUR_API_TOKEN" \
+  -X POST -H "Content-Type: application/json" \
+  -d '{ "operation": "radar", "region": "US" }'
+```
+
+Get `YOUR_API_TOKEN` from Console → Settings → Integrations. This returns the
+finished dataset directly, so it's the right call for `radar` and most
+`keywords`/`moments` runs. A `keywords` run with `includeRelated: true` on a
+long query list can run past `run-sync`'s timeout — for those, POST to
+`/v2/acts/.../runs` instead and poll the run, or just set `maxRecords` to
+keep one call inside the sync window.
+
 ## Reading the numbers honestly
 
 This is where most Pinterest data goes wrong, so the actor is explicit about it:
