@@ -1,6 +1,6 @@
 {
   "_client_context": "<stripped: account PII, see strip_pii()>",
-  "request_identifier": "3617587895733340",
+  "request_identifier": "7525174439176991",
   "resource": {
     "name": "ApiResource",
     "options": {
@@ -10,7 +10,7 @@
       "data": {
         "age_bucket": [],
         "days": 60,
-        "end_date": "2026-08-23",
+        "end_date": "2026-08-29",
         "event": "ENGAGEMENT",
         "gender": [],
         "predicted_days": 0,
@@ -28,56 +28,56 @@
         {
           "daily_values": [
             {
-              "count": 84,
-              "date": "2026-06-28",
-              "normalized_predicted_lower_bound": null,
-              "normalized_predicted_upper_bound": null
-            },
-            {
               "count": 82,
-              "date": "2026-07-05",
+              "date": "2026-07-04",
               "normalized_predicted_lower_bound": null,
               "normalized_predicted_upper_bound": null
             },
             {
-              "count": 85,
-              "date": "2026-07-12",
-              "normalized_predicted_lower_bound": null,
-              "normalized_predicted_upper_bound": null
-            },
-            {
-              "count": 91,
-              "date": "2026-07-19",
+              "count": 84,
+              "date": "2026-07-11",
               "normalized_predicted_lower_bound": null,
               "normalized_predicted_upper_bound": null
             },
             {
               "count": 90,
-              "date": "2026-07-26",
+              "date": "2026-07-18",
               "normalized_predicted_lower_bound": null,
               "normalized_predicted_upper_bound": null
             },
             {
-              "count": 92,
-              "date": "2026-08-02",
+              "count": 90,
+              "date": "2026-07-25",
               "normalized_predicted_lower_bound": null,
               "normalized_predicted_upper_bound": null
             },
             {
-              "count": 96,
-              "date": "2026-08-09",
+              "count": 91,
+              "date": "2026-08-01",
+              "normalized_predicted_lower_bound": null,
+              "normalized_predicted_upper_bound": null
+            },
+            {
+              "count": 94,
+              "date": "2026-08-08",
               "normalized_predicted_lower_bound": null,
               "normalized_predicted_upper_bound": null
             },
             {
               "count": 100,
-              "date": "2026-08-16",
+              "date": "2026-08-15",
               "normalized_predicted_lower_bound": null,
               "normalized_predicted_upper_bound": null
             },
             {
               "count": 95,
-              "date": "2026-08-23",
+              "date": "2026-08-22",
+              "normalized_predicted_lower_bound": null,
+              "normalized_predicted_upper_bound": null
+            },
+            {
+              "count": 95,
+              "date": "2026-08-29",
               "normalized_predicted_lower_bound": null,
               "normalized_predicted_upper_bound": null
             }

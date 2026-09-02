@@ -1,6 +1,6 @@
 {
   "_client_context": "<stripped: account PII, see strip_pii()>",
-  "request_identifier": "4936676461931585",
+  "request_identifier": "1275439501156339",
   "resource": {
     "name": "ApiResource",
     "options": {
@@ -8,7 +8,7 @@
         "-end-"
       ],
       "data": {
-        "end_date": "2026-08-23",
+        "end_date": "2026-08-29",
         "event": "OUTBOUND_CLICK",
         "limit": 20,
         "order": "DESC",
@@ -36,7 +36,7 @@
             "lounge pants",
             "sweatpants",
             "barrel jeans",
-            "work pants",
+            "ripped jeans",
             "casual pants",
             "casual outfits",
             "casual",
@@ -60,20 +60,127 @@
           "summary": {
             "engagement": {
               "lookback": 2,
-              "percent_growth": 0.1,
+              "percent_growth": 0.09,
               "percent_relative_volume": 1,
               "total": 0
             },
             "outbound_clicks": {
               "lookback": 2,
-              "percent_growth": 0.13,
+              "percent_growth": 0.12,
               "percent_relative_volume": 1,
               "total": 0
             },
             "saves": {
               "lookback": 2,
-              "percent_growth": 0.04,
+              "percent_growth": 0.01,
               "percent_relative_volume": 1,
+              "total": 0
+            }
+          }
+        },
+        {
+          "parent_product_categories": [
+            "1104",
+            "1350"
+          ],
+          "product_category": "1108",
+          "related_search_trends": [
+            "winter fashion",
+            "leather jacket",
+            "jackets for women",
+            "trench coat",
+            "coat",
+            "fleece jacket",
+            "puffer jacket",
+            "carhartt",
+            "chaquetas",
+            "cardigan",
+            "fall fashion",
+            "bomber jacket",
+            "jacket men",
+            "mens jackets",
+            "jacket",
+            "long coat",
+            "winter coats",
+            "parka",
+            "abrigos",
+            "biker jacket",
+            "coats for women",
+            "winter outfits",
+            "puffer",
+            "quilted jacket",
+            "jean jacket"
+          ],
+          "summary": {
+            "engagement": {
+              "lookback": 2,
+              "percent_growth": 0.27,
+              "percent_relative_volume": 0.56,
+              "total": 0
+            },
+            "outbound_clicks": {
+              "lookback": 2,
+              "percent_growth": 0.41,
+              "percent_relative_volume": 0.5,
+              "total": 0
+            },
+            "saves": {
+              "lookback": 2,
+              "percent_growth": 0.11,
+              "percent_relative_volume": 0.69,
+              "total": 0
+            }
+          }
+        },
+        {
+          "parent_product_categories": [
+            "1104"
+          ],
+          "product_category": "1350",
+          "related_search_trends": [
+            "winter fashion",
+            "leather jacket",
+            "jackets for women",
+            "trench coat",
+            "coat",
+            "fleece jacket",
+            "puffer jacket",
+            "carhartt",
+            "chaquetas",
+            "cardigan",
+            "fall fashion",
+            "bomber jacket",
+            "jacket men",
+            "mens jackets",
+            "jacket",
+            "long coat",
+            "winter coats",
+            "parka",
+            "abrigos",
+            "biker jacket",
+            "coats for women",
+            "winter outfits",
+            "puffer",
+            "quilted jacket",
+            "jean jacket"
+          ],
+          "summary": {
+            "engagement": {
+              "lookback": 2,
+              "percent_growth": 0.27,
+              "percent_relative_volume": 0.56,
+              "total": 0
+            },
+            "outbound_clicks": {
+              "lookback": 2,
+              "percent_growth": 0.42,
+              "percent_relative_volume": 0.5,
+              "total": 0
+            },
+            "saves": {
+              "lookback": 2,
+              "percent_growth": 0.12,
+              "percent_relative_volume": 0.7,
               "total": 0
             }
           }
@@ -84,31 +191,31 @@
           ],
           "product_category": "1239",
           "related_search_trends": [
-            "bag inspo",
-            "pretty bags",
-            "bags for women",
-            "designer bags",
-            "carteras",
-            "coach bags",
-            "coach purse",
-            "fashion bags",
-            "louis vuitton",
-            "leather handbags",
-            "clutch",
-            "leather shoulder bag",
-            "luxury bags",
-            "pocket",
-            "tote bag",
-            "cute purses",
-            "tote",
-            "purses",
-            "\u0441\u0443\u043c\u043a\u0438",
-            "leather tote",
-            "my bag",
             "purses and bags",
+            "purses",
+            "leather shoulder bag",
+            "cute bags",
+            "tote",
+            "luxury bags",
+            "bags for women",
+            "cute purses",
+            "coach purse",
+            "women's bag",
+            "coach bags",
+            "tote bag",
+            "louis vuitton",
+            "bag inspo",
             "chanel",
             "crossbody bag",
-            "cute bags"
+            "leather handbags",
+            "women handbags",
+            "fashion bags",
+            "\u0441\u0443\u043c\u043a\u0438",
+            "clutch",
+            "designer bags",
+            "leather tote",
+            "pocket",
+            "pretty bags"
           ],
           "summary": {
             "engagement": {
@@ -125,115 +232,8 @@
             },
             "saves": {
               "lookback": 2,
-              "percent_growth": -0.04,
-              "percent_relative_volume": 0.64,
-              "total": 0
-            }
-          }
-        },
-        {
-          "parent_product_categories": [
-            "1104"
-          ],
-          "product_category": "1350",
-          "related_search_trends": [
-            "winter fashion",
-            "leather jacket",
-            "jackets for women",
-            "trench coat",
-            "coat",
-            "abrigos",
-            "puffer jacket",
-            "carhartt",
-            "chaquetas",
-            "winter coats",
-            "fall fashion",
-            "bomber jacket",
-            "jacket men",
-            "suit",
-            "mens jackets",
-            "jacket",
-            "long coat",
-            "biker jacket",
-            "coats for women",
-            "timothee chalamet",
-            "winter outfits",
-            "puffer",
-            "quilted jacket",
-            "jean jacket",
-            "fleece jacket"
-          ],
-          "summary": {
-            "engagement": {
-              "lookback": 2,
-              "percent_growth": 0.3,
-              "percent_relative_volume": 0.54,
-              "total": 0
-            },
-            "outbound_clicks": {
-              "lookback": 2,
-              "percent_growth": 0.44,
-              "percent_relative_volume": 0.48,
-              "total": 0
-            },
-            "saves": {
-              "lookback": 2,
-              "percent_growth": 0.13,
-              "percent_relative_volume": 0.68,
-              "total": 0
-            }
-          }
-        },
-        {
-          "parent_product_categories": [
-            "1104",
-            "1350"
-          ],
-          "product_category": "1108",
-          "related_search_trends": [
-            "winter fashion",
-            "leather jacket",
-            "jackets for women",
-            "fall outfits",
-            "trench coat",
-            "coat",
-            "abrigos",
-            "puffer jacket",
-            "carhartt",
-            "chaquetas",
-            "winter coats",
-            "fall fashion",
-            "bomber jacket",
-            "jacket men",
-            "mens jackets",
-            "jacket",
-            "long coat",
-            "biker jacket",
-            "coats for women",
-            "timothee chalamet",
-            "winter outfits",
-            "puffer",
-            "quilted jacket",
-            "jean jacket",
-            "fleece jacket"
-          ],
-          "summary": {
-            "engagement": {
-              "lookback": 2,
-              "percent_growth": 0.29,
-              "percent_relative_volume": 0.53,
-              "total": 0
-            },
-            "outbound_clicks": {
-              "lookback": 2,
-              "percent_growth": 0.43,
-              "percent_relative_volume": 0.47,
-              "total": 0
-            },
-            "saves": {
-              "lookback": 2,
-              "percent_growth": 0.12,
-              "percent_relative_volume": 0.67,
+              "percent_growth": -0.03,
+              "percent_relative_volume": 0.65,
               "total": 0
             }
           }
@@ -249,6 +249,7 @@
             "tricot",
             "fall fashion",
             "cropped cardigan",
+            "outfit",
             "knitted sweater",
             "knit",
             "casual outfits",
@@ -256,7 +257,6 @@
             "yarn",
             "knitting inspiration",
             "sweater pattern",
-            "cardigan pattern",
             "cardigans for women",
             "winter outfits",
             "crochet clothing",
@@ -275,19 +275,19 @@
             "engagement": {
               "lookback": 2,
               "percent_growth": 0.25,
-              "percent_relative_volume": 0.35,
+              "percent_relative_volume": 0.37,
               "total": 0
             },
             "outbound_clicks": {
               "lookback": 2,
-              "percent_growth": 0.43,
-              "percent_relative_volume": 0.35,
+              "percent_growth": 0.41,
+              "percent_relative_volume": 0.37,
               "total": 0
             },
             "saves": {
               "lookback": 2,
               "percent_growth": 0.08,
-              "percent_relative_volume": 0.47,
+              "percent_relative_volume": 0.49,
               "total": 0
             }
           }
@@ -296,21 +296,22 @@
           "parent_product_categories": [],
           "product_category": "1123",
           "related_search_trends": [
+            "bugs",
             "costume inspo",
-            "fun halloween outfits",
+            "cockroach",
             "halloween disfraces",
             "couple costumes",
             "costumes women",
             "trendy halloween costumes",
             "halloween outfits",
             "cosplay costumes",
+            "halloween cosplay",
             "halloween costume outfits",
             "dress up",
             "classy halloween costumes",
             "costume party",
             "halloween costume ideas",
             "costumes for women",
-            "cute costumes",
             "medieval",
             "adult costumes",
             "pretty halloween costumes",
@@ -318,27 +319,26 @@
             "mask",
             "couples halloween costumes",
             "funny costumes",
-            "fun costumes",
-            "disney costumes",
-            "halloween costume inspo"
+            "cockroach costume",
+            "fun costumes"
           ],
           "summary": {
             "engagement": {
               "lookback": 2,
-              "percent_growth": 0.29,
-              "percent_relative_volume": 0.24,
+              "percent_growth": 0.32,
+              "percent_relative_volume": 0.25,
               "total": 0
             },
             "outbound_clicks": {
               "lookback": 2,
-              "percent_growth": 0.54,
-              "percent_relative_volume": 0.22,
+              "percent_growth": 0.59,
+              "percent_relative_volume": 0.24,
               "total": 0
             },
             "saves": {
               "lookback": 2,
-              "percent_growth": 0.08,
-              "percent_relative_volume": 0.25,
+              "percent_growth": 0.07,
+              "percent_relative_volume": 0.26,
               "total": 0
             }
           }
@@ -349,99 +349,49 @@
           ],
           "product_category": "1069",
           "related_search_trends": [
-            "shoes boots",
-            "cute cowgirl boots",
-            "heel",
-            "rain boots",
-            "knee high boots",
-            "cowgirl boots",
-            "ankle boots",
-            "brown boots",
-            "knee boots",
+            "combat boots",
+            "ugg",
             "shoes",
-            "botines",
-            "western boots",
-            "boots women",
-            "high boots",
-            "boots men",
-            "riding boots",
-            "calf boots",
-            "heel boots",
-            "high heel boots",
             "leather boots",
             "platform boots",
-            "ugg",
-            "fashion boots",
+            "knee high boots",
+            "high heel boots",
+            "shoes boots",
+            "riding boots",
+            "dr martens",
+            "boots men",
+            "men's boots",
+            "black boots",
+            "womens boots",
             "suede boots",
-            "combat boots"
+            "rain boots",
+            "snow boots",
+            "ankle boots",
+            "brown boots",
+            "heel boots",
+            "boots women",
+            "fashion boots",
+            "knee boots",
+            "botas vaqueras",
+            "heeled boots"
           ],
           "summary": {
             "engagement": {
               "lookback": 2,
-              "percent_growth": 0.23,
-              "percent_relative_volume": 0.24,
+              "percent_growth": 0.25,
+              "percent_relative_volume": 0.25,
               "total": 0
             },
             "outbound_clicks": {
               "lookback": 2,
-              "percent_growth": 0.35,
-              "percent_relative_volume": 0.21,
+              "percent_growth": 0.39,
+              "percent_relative_volume": 0.23,
               "total": 0
             },
             "saves": {
               "lookback": 2,
               "percent_growth": 0.09,
-              "percent_relative_volume": 0.31,
-              "total": 0
-            }
-          }
-        },
-        {
-          "parent_product_categories": [
-            "1104"
-          ],
-          "product_category": "1424",
-          "related_search_trends": [
-            "pajama set",
-            "silk pajamas",
-            "onesie pajamas",
-            "sleep shorts",
-            "nightdress",
-            "sleep dress",
-            "cute pajama",
-            "pajama pants",
-            "kimono",
-            "pajama",
-            "pjs",
-            "cute pjs",
-            "cute sleepwear",
-            "pajama shorts",
-            "sets",
-            "pajamas women",
-            "nightgown",
-            "christmas pajamas",
-            "pj set",
-            "cute pajama sets",
-            "bathrobe",
-            "satin pajamas"
-          ],
-          "summary": {
-            "engagement": {
-              "lookback": 2,
-              "percent_growth": 0.04,
-              "percent_relative_volume": 0.15,
-              "total": 0
-            },
-            "outbound_clicks": {
-              "lookback": 2,
-              "percent_growth": 0.12,
-              "percent_relative_volume": 0.15,
-              "total": 0
-            },
-            "saves": {
-              "lookback": 2,
-              "percent_growth": -0.05,
-              "percent_relative_volume": 0.17,
+              "percent_relative_volume": 0.32,
               "total": 0
             }
           }
@@ -453,6 +403,7 @@
           "product_category": "1102",
           "related_search_trends": [
             "crocs",
+            "womens clogs",
             "birks",
             "heel",
             "birkenstock",
@@ -460,7 +411,7 @@
             "coach clogs",
             "girly shoes",
             "shoe inspo",
-            "dream shoes",
+            "shoes",
             "birkenstock naples",
             "fashion shoes",
             "ballet",
@@ -474,26 +425,25 @@
             "flats",
             "women shoes",
             "birkenstock shoes",
-            "low heels",
             "clogs shoes",
             "ugg"
           ],
           "summary": {
             "engagement": {
               "lookback": 2,
-              "percent_growth": 0.2,
-              "percent_relative_volume": 0.08,
+              "percent_growth": 0.24,
+              "percent_relative_volume": 0.09,
               "total": 0
             },
             "outbound_clicks": {
               "lookback": 2,
-              "percent_growth": 0.31,
-              "percent_relative_volume": 0.08,
+              "percent_growth": 0.37,
+              "percent_relative_volume": 0.09,
               "total": 0
             },
             "saves": {
               "lookback": 2,
-              "percent_growth": 0.03,
+              "percent_growth": 0.01,
               "percent_relative_volume": 0.08,
               "total": 0
             }
@@ -510,7 +460,7 @@
             "leather shoes",
             "flat shoes",
             "penny loafers",
-            "comfortable shoes",
+            "mocasines",
             "men's shoes",
             "loafers men",
             "shoes",
@@ -534,73 +484,20 @@
           "summary": {
             "engagement": {
               "lookback": 2,
-              "percent_growth": 0.18,
+              "percent_growth": 0.23,
               "percent_relative_volume": 0.06,
               "total": 0
             },
             "outbound_clicks": {
               "lookback": 2,
-              "percent_growth": 0.21,
+              "percent_growth": 0.28,
               "percent_relative_volume": 0.06,
               "total": 0
             },
             "saves": {
               "lookback": 2,
-              "percent_growth": 0.2,
+              "percent_growth": 0.19,
               "percent_relative_volume": 0.04,
-              "total": 0
-            }
-          }
-        },
-        {
-          "parent_product_categories": [
-            "1003"
-          ],
-          "product_category": "1404",
-          "related_search_trends": [
-            "tricot",
-            "knitting ideas",
-            "crochet shawl",
-            "crochet patterns",
-            "head scarf",
-            "knitting patterns",
-            "crocheted",
-            "knit scarf",
-            "yarn",
-            "neck scarf",
-            "scarf crochet pattern",
-            "shawl",
-            "knit patterns",
-            "scarf knitting patterns",
-            "crochet scarf",
-            "shawl patterns",
-            "shawl crochet pattern",
-            "hair scarf",
-            "triangle scarf",
-            "crochet scarves",
-            "scarf pattern",
-            "knitting projects",
-            "scarf",
-            "shawl knitting patterns",
-            "shawls and wraps"
-          ],
-          "summary": {
-            "engagement": {
-              "lookback": 2,
-              "percent_growth": 0.18,
-              "percent_relative_volume": 0.06,
-              "total": 0
-            },
-            "outbound_clicks": {
-              "lookback": 2,
-              "percent_growth": 0.31,
-              "percent_relative_volume": 0.05,
-              "total": 0
-            },
-            "saves": {
-              "lookback": 2,
-              "percent_growth": 0.16,
-              "percent_relative_volume": 0.09,
               "total": 0
             }
           }
@@ -616,8 +513,10 @@
             "ankle socks",
             "sheer tights",
             "socks women",
+            "baby socks",
             "high socks",
             "thigh high socks",
+            "ruffle socks",
             "sock knitting patterns",
             "knitting socks",
             "wool socks",
@@ -629,84 +528,29 @@
             "scrunch socks",
             "knitted socks",
             "knee high socks",
+            "toe socks",
             "grip socks",
             "cute socks",
             "pilates socks",
-            "sheer socks",
-            "slouch socks",
-            "long socks",
-            "ruffle socks"
+            "long legs"
           ],
           "summary": {
             "engagement": {
               "lookback": 2,
-              "percent_growth": 0.08,
+              "percent_growth": 0.07,
               "percent_relative_volume": 0.06,
               "total": 0
             },
             "outbound_clicks": {
               "lookback": 2,
-              "percent_growth": 0.22,
-              "percent_relative_volume": 0.05,
-              "total": 0
-            },
-            "saves": {
-              "lookback": 2,
-              "percent_growth": -0.02,
-              "percent_relative_volume": 0.11,
-              "total": 0
-            }
-          }
-        },
-        {
-          "parent_product_categories": [
-            "1263"
-          ],
-          "product_category": "1099",
-          "related_search_trends": [
-            "a necklace",
-            "diamond",
-            "diy jewelry",
-            "charm necklace",
-            "jewels",
-            "gold jewelry",
-            "pandora charms",
-            "pendants",
-            "necklace",
-            "jewellery",
-            "charm",
-            "bracelets",
-            "jewelry inspo",
-            "joyas",
-            "necklace pendant",
-            "jewelry design",
-            "dream jewelry",
-            "charm bracelet",
-            "bag charms",
-            "bijoux",
-            "jewelry inspiration",
-            "clay charms",
-            "jewelry ideas",
-            "key necklace",
-            "cute jewelry"
-          ],
-          "summary": {
-            "engagement": {
-              "lookback": 2,
-              "percent_growth": 0.02,
-              "percent_relative_volume": 0.05,
-              "total": 0
-            },
-            "outbound_clicks": {
-              "lookback": 2,
               "percent_growth": 0.15,
-              "percent_relative_volume": 0.04,
+              "percent_relative_volume": 0.05,
               "total": 0
             },
             "saves": {
               "lookback": 2,
-              "percent_growth": -0.01,
-              "percent_relative_volume": 0.07,
+              "percent_growth": 0,
+              "percent_relative_volume": 0.11,
               "total": 0
             }
           }
@@ -724,96 +568,43 @@
             "women business casual",
             "pinstripe pants",
             "office outfits",
-            "work pants",
+            "long pants",
             "men's style",
             "casual pants",
             "men fashion casual outfits",
             "hombre",
             "suit pants",
             "outfits for work",
-            "mens clothing",
             "work clothes",
             "linen pants women",
             "pants for women",
             "high waisted pants",
+            "business casual outfits",
             "business casual pants",
             "casual work outfits",
             "palazzo pants",
-            "formal pants",
             "wide leg pants",
             "pleated trousers",
+            "work pants",
             "satin pants"
           ],
           "summary": {
             "engagement": {
               "lookback": 2,
-              "percent_growth": 0.18,
+              "percent_growth": 0.29,
               "percent_relative_volume": 0.01,
               "total": 0
             },
             "outbound_clicks": {
               "lookback": 2,
-              "percent_growth": 0.23,
+              "percent_growth": 0.39,
               "percent_relative_volume": 0.02,
               "total": 0
             },
             "saves": {
-              "lookback": 2,
-              "percent_growth": 0.09,
-              "percent_relative_volume": 0,
-              "total": 0
-            }
-          }
-        },
-        {
-          "parent_product_categories": [
-            "1024"
-          ],
-          "product_category": "1417",
-          "related_search_trends": [
-            "handbags",
-            "bag inspo",
-            "canvas tote bag",
-            "crochet bags",
-            "tote",
-            "pouch",
-            "beach bag",
-            "bridesmaid gift",
-            "welcome bags",
-            "tote bag painting",
-            "shopping bag",
-            "sac",
-            "tote bag",
-            "tote bag ideas",
-            "baggu bags",
-            "leather tote bag",
-            "painted tote",
-            "quilted tote",
-            "wedding welcome bags",
-            "boat tote",
-            "carteras",
-            "leather tote",
-            "purses",
-            "everyday bag",
-            "bag ideas"
-          ],
-          "summary": {
-            "engagement": {
-              "lookback": 2,
-              "percent_growth": -0.03,
-              "percent_relative_volume": 0.03,
-              "total": 0
-            },
-            "outbound_clicks": {
               "lookback": 2,
               "percent_growth": 0.11,
-              "percent_relative_volume": 0.02,
-              "total": 0
-            },
-            "saves": {
-              "lookback": 2,
-              "percent_growth": -0.12,
-              "percent_relative_volume": 0.04,
+              "percent_relative_volume": 0,
               "total": 0
             }
           }
@@ -826,14 +617,14 @@
           "related_search_trends": [
             "\u043e\u0431\u0443\u0432\u044c",
             "cute slippers",
-            "funny cute",
             "really funny",
+            "comfortable shoes",
             "insole",
             "ugg tazz",
             "ugg tasman",
             "sandals",
             "pigs",
-            "crochet slippers",
+            "fluffy slippers",
             "pantuflas",
             "ugg shoes",
             "animal slippers",
@@ -846,26 +637,26 @@
             "women's shoes",
             "cute uggs",
             "cute shoes",
-            "fluffy slippers",
+            "funny cute",
             "flats",
             "ugg slippers"
           ],
           "summary": {
             "engagement": {
               "lookback": 2,
-              "percent_growth": 0.18,
+              "percent_growth": 0.17,
               "percent_relative_volume": 0.02,
               "total": 0
             },
             "outbound_clicks": {
               "lookback": 2,
-              "percent_growth": 0.29,
+              "percent_growth": 0.26,
               "percent_relative_volume": 0.02,
               "total": 0
             },
             "saves": {
               "lookback": 2,
-              "percent_growth": 0.06,
+              "percent_growth": 0.04,
               "percent_relative_volume": 0.04,
               "total": 0
             }
@@ -887,11 +678,11 @@
             "saree look",
             "chaniya choli",
             "dress designs",
-            "silk saree",
+            "kimono",
             "indian wedding",
             "indian saree",
-            "indian bridal outfits",
             "lehenga choli",
+            "silk saree",
             "wedding lehenga",
             "sharara set",
             "kurta",
@@ -906,20 +697,128 @@
           "summary": {
             "engagement": {
               "lookback": 2,
-              "percent_growth": -0.03,
+              "percent_growth": 0,
               "percent_relative_volume": 0.05,
               "total": 0
             },
             "outbound_clicks": {
               "lookback": 2,
-              "percent_growth": 0.11,
+              "percent_growth": 0.17,
               "percent_relative_volume": 0.02,
               "total": 0
             },
             "saves": {
               "lookback": 2,
-              "percent_growth": -0.03,
-              "percent_relative_volume": 0.03,
+              "percent_growth": 0,
+              "percent_relative_volume": 0.04,
+              "total": 0
+            }
+          }
+        },
+        {
+          "parent_product_categories": [
+            "1221",
+            "1003",
+            "1220"
+          ],
+          "product_category": "1376",
+          "related_search_trends": [
+            "beaded hair",
+            "kids hair",
+            "hair care",
+            "hair toppers",
+            "hairstyles for wet hair",
+            "bows",
+            "haircare aesthetic",
+            "toddler hairstyles",
+            "hairdos",
+            "hairstyles for wet hair quick",
+            "hair bands",
+            "scrunchies",
+            "hair accessory",
+            "accessories",
+            "wet hair",
+            "hair clips",
+            "diy hair accessories",
+            "hair hair",
+            "hairstyle",
+            "ponytail",
+            "accessory",
+            "baby hair",
+            "hair accessories for women",
+            "after shower hairstyles",
+            "hair ties"
+          ],
+          "summary": {
+            "engagement": {
+              "lookback": 2,
+              "percent_growth": 0.17,
+              "percent_relative_volume": 0.01,
+              "total": 0
+            },
+            "outbound_clicks": {
+              "lookback": 2,
+              "percent_growth": 0.15,
+              "percent_relative_volume": 0.01,
+              "total": 0
+            },
+            "saves": {
+              "lookback": 2,
+              "percent_growth": -0.1,
+              "percent_relative_volume": 0.01,
+              "total": 0
+            }
+          }
+        },
+        {
+          "parent_product_categories": [
+            "1024"
+          ],
+          "product_category": "1145",
+          "related_search_trends": [
+            "baby bag for hospital",
+            "handbags",
+            "bag inspo",
+            "canvas tote bag",
+            "leather backpack",
+            "stroller bag",
+            "vichy",
+            "tote",
+            "backpack",
+            "baby stuff",
+            "baby pacifier",
+            "baby things",
+            "sac",
+            "baby gear",
+            "tote bag",
+            "diaper",
+            "baby bag",
+            "red bag",
+            "travel bag",
+            "everyday purse",
+            "zipper pouch",
+            "backpack purse",
+            "purses",
+            "mini bag",
+            "everyday bag"
+          ],
+          "summary": {
+            "engagement": {
+              "lookback": 2,
+              "percent_growth": -0.01,
+              "percent_relative_volume": 0.01,
+              "total": 0
+            },
+            "outbound_clicks": {
+              "lookback": 2,
+              "percent_growth": 0.1,
+              "percent_relative_volume": 0,
+              "total": 0
+            },
+            "saves": {
+              "lookback": 2,
+              "percent_growth": -0.1,
+              "percent_relative_volume": 0,
               "total": 0
             }
           }
@@ -953,7 +852,7 @@
             "hair pins",
             "flower hair",
             "wedding hair accessories",
-            "bridal headpieces",
+            "wedding accessories",
             "wedding hair inspiration",
             "wedding hair and makeup",
             "wedding hairstyles"
@@ -961,13 +860,13 @@
           "summary": {
             "engagement": {
               "lookback": 2,
-              "percent_growth": 0,
+              "percent_growth": 0.01,
               "percent_relative_volume": 0,
               "total": 0
             },
             "outbound_clicks": {
               "lookback": 2,
-              "percent_growth": 0.11,
+              "percent_growth": 0.15,
               "percent_relative_volume": 0,
               "total": 0
             },
@@ -978,9 +877,64 @@
               "total": 0
             }
           }
+        },
+        {
+          "parent_product_categories": [
+            "1221",
+            "1003",
+            "1220"
+          ],
+          "product_category": "1470",
+          "related_search_trends": [
+            "princess crown",
+            "gold crown",
+            "birthday crown",
+            "diadem",
+            "crown",
+            "headpiece",
+            "royal crown",
+            "quinceanera crown",
+            "diamond tiara",
+            "bridal accessories",
+            "wedding tiara",
+            "handmade wire jewelry",
+            "royal jewelry",
+            "wedding headpiece",
+            "bridal jewelry",
+            "queen crown",
+            "wedding hair",
+            "bridal tiara",
+            "diy jewelry",
+            "bridal headband",
+            "wedding crown",
+            "wedding jewelry",
+            "crown aesthetic",
+            "bridal crown",
+            "pearls"
+          ],
+          "summary": {
+            "engagement": {
+              "lookback": 2,
+              "percent_growth": -0.14,
+              "percent_relative_volume": 0.01,
+              "total": 0
+            },
+            "outbound_clicks": {
+              "lookback": 2,
+              "percent_growth": 0.14,
+              "percent_relative_volume": 0,
+              "total": 0
+            },
+            "saves": {
+              "lookback": 2,
+              "percent_growth": -0.12,
+              "percent_relative_volume": 0.02,
+              "total": 0
+            }
+          }
         }
       ],
-      "total_num_product_categories": 18
+      "total_num_product_categories": 17
     },
     "endpoint_name": "get_filtered_product_categories",
     "http_status": 200,

@@ -1,6 +1,6 @@
 {
   "_client_context": "<stripped: account PII, see strip_pii()>",
-  "request_identifier": "9306027803512207",
+  "request_identifier": "1760171983370477",
   "resource": {
     "name": "ApiResource",
     "options": {
@@ -8,7 +8,7 @@
         "-end-"
       ],
       "data": {
-        "end_date": "2026-08-23",
+        "end_date": "2026-08-29",
         "event": "OUTBOUND_CLICK",
         "product_category_ids": [
           "1408"
@@ -30,13 +30,13 @@
                 "35-44": 0.14,
                 "45-49": 0.07,
                 "50-54": 0.08,
-                "55-64": 0.22,
+                "55-64": 0.23,
                 "65+": 0.31
               },
               "gender_distribution": {
                 "female": 0.82,
-                "male": 0.07,
-                "unspecified": 0.11
+                "male": 0.06,
+                "unspecified": 0.12
               }
             }
           ],
@@ -47,6 +47,7 @@
             "diy halloween",
             "diy halloween decorations",
             "fall halloween",
+            "outdoor halloween",
             "halloween crafts",
             "haunted",
             "halloween ideas",
@@ -54,7 +55,6 @@
             "ornament ideas",
             "fall decor",
             "ornament crafts",
-            "diy christmas ornaments",
             "pumpkin",
             "xmas decor",
             "halloween fun"
@@ -63,19 +63,19 @@
             {
               "engagement": {
                 "lookback": 2,
-                "percent_growth": 0.63,
+                "percent_growth": 0.61,
                 "percent_relative_volume": null,
                 "total": 0
               },
               "outbound_clicks": {
                 "lookback": 2,
-                "percent_growth": 0.7,
+                "percent_growth": 0.68,
                 "percent_relative_volume": null,
                 "total": 0
               },
               "saves": {
                 "lookback": 2,
-                "percent_growth": 0.51,
+                "percent_growth": 0.43,
                 "percent_relative_volume": null,
                 "total": 0
               }
