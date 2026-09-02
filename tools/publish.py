@@ -201,6 +201,22 @@ def stage_actor(product, dest):
         shutil.copy2(src, dest / ".actor" / fname)
         written.append(".actor/" + fname)
 
+    # `.actor/` in THIS tree is ONE level below its own root -- the same depth
+    # as the lab's own .actor/, but DIFFERENT from actors/<name>/'s two levels
+    # in build()'s product-repo tree. The source actor.json was just fixed to
+    # '../../Dockerfile' for THAT case; copied verbatim it would be wrong HERE.
+    # Same bug, mirrored: a relative path is only ever correct for one specific
+    # depth, so every place that copies actor.json must set it for where IT
+    # puts the file, never trust the value already in the source.
+    cfg_path = dest / ".actor" / "actor.json"
+    cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
+    cfg["dockerfile"] = "../Dockerfile"
+    cfg["input"] = "./input_schema.json"
+    cfg["readme"] = "./README.md"
+    cfg.pop("dockerContextDir", None)   # not needed outside the monorepo layout
+    cfg_path.write_text(json.dumps(cfg, indent=2, ensure_ascii=False) + "\n",
+                        encoding="utf-8", newline="\n")
+
     # Same reasoning as build()'s .dockerignore: this tree lives outside the
     # lab, so it needs its own, and without one `COPY . ./` would put every
     # OTHER product's leftover ENGINE copy (none here, but future-proof) or
