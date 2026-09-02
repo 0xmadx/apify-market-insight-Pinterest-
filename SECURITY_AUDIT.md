@@ -47,6 +47,30 @@ is not.
 | Proxy username / password in any commit | clean |
 | Long secret-like blobs in tracked source | none |
 
+## Result — 2026-09-02
+
+Re-run before making any of the four Apify actors public, after the persona
+actors (`actors/marketers`, `actors/ecommerce`, `actors/creators`) and
+`tools/publish.py` landed.
+
+| check | result |
+|---|---|
+| Sensitive filename ever committed, all branches | **none** |
+| Redis URL with embedded credentials, any tracked file | clean (one hit in `browsers/deploy_gcp.sh` is a doc placeholder — literal `...`, not a real value) |
+| Long base64/hex secret-like blobs in tracked source | none real — the only hits are Pinterest's public GraphQL `queryHash` (a non-secret query identifier, documented in `docs/wire/`) |
+| `eval`/`exec`/`os.system`/shell-injection patterns in `src/`, `tools/` | none (`publish.py`'s one `subprocess.run` uses list-form args) |
+| SSRF via customer input | not possible — target hosts (`trends.pinterest.com`, `www.pinterest.com`) are hardcoded constants; no URL/host/proxy/Redis override field exists in any actor's input schema |
+| Cookies/fingerprint/proxy in customer-facing dataset records | none — checked `records.py`, no session field ever reaches a pushed record |
+| Cookies/proxy credentials in operator-visible run logs | none — `Identity.__repr__` (`src/vault.py:63`) prints only `profile_id`, cookie count, and age |
+| `ADS_API_KEY` / `WEBSHARE_API` / `DEEPSEEK_API_KEY` hardcoded anywhere | none — environment-only, everywhere |
+
+**Verdict: safe to push, safe to make public.**
+
+Not a repo finding, but worth knowing: `browsers/profiles/` on the operator's
+local machine holds real cached AdsPower/keepalive session data. Confirmed
+`.gitignore`d (0 files tracked) — not a leak risk, just local-machine hygiene
+if that disk is ever imaged or handed off.
+
 **Verdict: safe to push.**
 
 ## The near-miss that changed the ignore rule — 2026-08-25
