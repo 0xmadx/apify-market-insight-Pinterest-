@@ -58,6 +58,14 @@ And a real keyword, for validating the angle behind the campaign:
 Where `has_forecast` is true, the tail runs **91 days into the future** —
 you can see whether an angle keeps climbing before you commit budget to it.
 
+## Output format
+
+Every record above is one item in the run's dataset — no parsing required.
+Apify converts that dataset for you on download, so pick whatever your tools
+already read: **JSON**, **CSV**, **Excel (XLSX)**, **XML**, or **RSS**, from
+the Console's Export button or the API (`?format=xml`, `?format=csv`, …). A
+media calendar or CRM that only takes CSV is not a reason to write a parser.
+
 ## Quick start
 
 ```json

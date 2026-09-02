@@ -47,6 +47,13 @@ Up to **50 products per category**, each with its pin, merchant and image. Set
 `enrichTopN` and the top N also carry **price, stock and the outbound merchant
 link** — the chain from category to pin to the merchant's own page.
 
+## Output format
+
+Every record above is one item in the run's dataset — no parsing required.
+Apify converts that dataset for you on download, so pick whatever your tools
+already read: **JSON**, **CSV**, **Excel (XLSX)**, **XML**, or **RSS**, from
+the Console's Export button or the API (`?format=xml`, `?format=csv`, …).
+
 ## Quick start
 
 ```json

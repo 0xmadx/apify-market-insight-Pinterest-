@@ -51,6 +51,15 @@ Up to **50 products per category**, each with its pin, merchant and image. Set
 link** — the chain from category to pin to the merchant's own page that
 Pinterest's own screen does not show at all.
 
+## Output format
+
+Every record above is one item in the run's dataset — no parsing required.
+Apify converts that dataset for you on download, so pick whatever your tools
+already read: **JSON**, **CSV**, **Excel (XLSX)**, **XML**, or **RSS**, from
+the Console's Export button or the API (`?format=xml`, `?format=csv`, …). Drop
+the CSV or Excel export straight into a sourcing sheet — no code needed to go
+from "trending category" to a row your buyer can act on.
+
 ## Quick start
 
 ```json

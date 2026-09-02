@@ -59,6 +59,15 @@ And a real keyword, for checking a caption idea before you commit to it:
 `has_forecast` is true the series runs **91 days into the future** — post
 early enough and you are riding the curve up, not catching the tail.
 
+## Output format
+
+Every record above is one item in the run's dataset — no parsing required.
+Apify converts that dataset for you on download, so pick whatever your tools
+already read: **JSON**, **CSV**, **Excel (XLSX)**, **XML**, or **RSS**, from
+the Console's Export button or the API (`?format=xml`, `?format=csv`, …). Feed
+the RSS export straight into a content-calendar tool, or the CSV into a
+spreadsheet — no script needed either way.
+
 ## Quick start
 
 ```json
