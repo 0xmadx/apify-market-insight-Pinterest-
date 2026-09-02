@@ -121,10 +121,12 @@ GB+IE only.**
 
 ## Cost
 
-Requests are the currency, and batching keeps them low — 50 categories is
-usually **one** request. `enrichTopN` is the one to watch when scaling up: one
-request **per product**, no batch form exists — start small and raise it once
-you know which categories are worth the depth.
+**Free to run right now** — this actor has no per-run charge. Below that,
+what determines how much Apify compute a run uses: requests are the
+currency, and batching keeps them low — 50 categories is usually **one**
+request. `enrichTopN` is the one to watch when scaling up: one request **per
+product**, no batch form exists — start small and raise it once you know
+which categories are worth the depth.
 
 ## Limits worth knowing
 

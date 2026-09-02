@@ -126,9 +126,11 @@ This is where most Pinterest data goes wrong, so the actor is explicit about it:
 
 ## Cost
 
-Requests are the currency, and batching keeps them low — 20 keywords is
-usually **one** request. `includeRelated` is the exception: one request per
-keyword, because Pinterest has no batch form for it.
+**Free to run right now** — this actor has no per-run charge. Below that,
+what determines how much Apify compute a run uses: requests are the
+currency, and batching keeps them low — 20 keywords is usually **one**
+request. `includeRelated` is the exception: one request per keyword, because
+Pinterest has no batch form for it.
 
 ## Limits worth knowing
 

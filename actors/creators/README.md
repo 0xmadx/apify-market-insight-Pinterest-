@@ -127,8 +127,10 @@ This is where most Pinterest data goes wrong, so the actor is explicit about it:
 
 ## Cost
 
-Requests are the currency, and batching keeps them low — 20 keywords is
-usually **one** request.
+**Free to run right now** — this actor has no per-run charge. Below that,
+what determines how much Apify compute a run uses: requests are the
+currency, and batching keeps them low — 20 keywords is usually **one**
+request.
 
 ## Limits worth knowing
 

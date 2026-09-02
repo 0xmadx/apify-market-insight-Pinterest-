@@ -120,10 +120,12 @@ hit rather than returning a bare empty list:
 
 ## Cost
 
-Requests are the currency, and batching keeps them low — 50 categories or 20
-keywords is usually **one** request. Three things have no batch form and are
-billed per item: `enrichTopN` (one request per product), `includeRelated` (one
-per keyword), and each drilled category's product list.
+**Free to run right now** — this actor has no per-run charge. Below that,
+what determines how much Apify compute a run uses: requests are the
+currency, and batching keeps them low — 50 categories or 20 keywords is
+usually **one** request. Three things have no batch form and are billed per
+item: `enrichTopN` (one request per product), `includeRelated` (one per
+keyword), and each drilled category's product list.
 
 ## Limits worth knowing
 
