@@ -163,15 +163,85 @@ def build(dest, products):
     return written
 
 
+def stage_actor(product, dest):
+    """Assemble ONE product into a `.actor/`-rooted tree, for a DIRECT
+    `apify push --dir <dest>`.
+
+    WHY THIS EXISTS. `apify push`'s own help text is explicit: it deploys
+    "using settings from '.actor/actor.json'" -- a literal path, not something
+    `--dir` lets you rename. The `actors/<name>/actor.json` monorepo layout
+    `build()` produces above only works through Apify's Git-repo-source
+    console configuration (pointing an Actor at `<repo>#branch:actors/<name>`),
+    which needs a product repo to exist. None does yet -- `--repo` has never
+    actually been used. Until it is, direct `apify push` is the only PROVEN
+    mechanism (it is how the first Actor, general, was created), and that
+    mechanism needs a `.actor/` folder, so this builds one.
+    """
+    spec = PRODUCTS[product]
+    if dest.exists():
+        shutil.rmtree(dest)
+    dest.mkdir(parents=True)
+    (dest / ".actor").mkdir()
+
+    written = []
+    for name in ENGINE:
+        src = LAB / name
+        if src.is_dir():
+            shutil.copytree(src, dest / name,
+                            ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+        else:
+            shutil.copy2(src, dest / name)
+        written.append(name)
+
+    for fname in spec["files"]:
+        src = LAB / spec["source"] / fname
+        if not src.exists():
+            raise SystemExit(product + ": " + spec["source"] + "/" + fname
+                             + " is missing")
+        shutil.copy2(src, dest / ".actor" / fname)
+        written.append(".actor/" + fname)
+
+    # Same reasoning as build()'s .dockerignore: this tree lives outside the
+    # lab, so it needs its own, and without one `COPY . ./` would put every
+    # OTHER product's leftover ENGINE copy (none here, but future-proof) or
+    # dev cruft into the image.
+    (dest / ".dockerignore").write_text(
+        "**/__pycache__\n*.pyc\n.env\n.env.*\n!.env.example\n",
+        encoding="utf-8", newline="\n")
+    written.append(".dockerignore")
+    return written
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--repo", help="git URL of the PRODUCT repo")
     ap.add_argument("--dest", help="build into this directory instead of cloning")
+    ap.add_argument("--stage-actor",
+                    help="assemble ONE product into a .actor/-rooted tree at "
+                         "--dest, for `apify push --dir <dest>` -- the working "
+                         "mechanism until a product repo exists for --repo")
     ap.add_argument("--dry-run", action="store_true",
                     help="build and list, push nothing")
     ap.add_argument("--product", action="append",
                     help="publish only these (default: all)")
     args = ap.parse_args()
+
+    if args.stage_actor:
+        if not args.dest:
+            raise SystemExit("--stage-actor needs --dest")
+        if args.stage_actor not in PRODUCTS:
+            raise SystemExit("no such product. known: " + ", ".join(PRODUCTS))
+        if not lab_is_clean():
+            raise SystemExit(
+                "lab tree is dirty. Commit first -- same reason as any other "
+                "publish: what gets pushed should match a real commit.")
+        dest = pathlib.Path(args.dest).resolve()
+        written = stage_actor(args.stage_actor, dest)
+        print("  " + str(len(written)) + " files -> " + str(dest))
+        for f in written:
+            print("    " + f)
+        print("\n  next: apify push --dir \"" + str(dest) + "\"")
+        return 0
 
     if not args.repo and not args.dest:
         raise SystemExit("need --repo or --dest")

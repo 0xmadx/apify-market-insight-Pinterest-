@@ -8,7 +8,7 @@
   "meta": {
     "templateId": "python-start"
   },
-  "dockerfile": "../Dockerfile",
+  "dockerfile": "../../Dockerfile",
   "input": "./input_schema.json",
   "readme": "./README.md",
   "defaultMemoryMbytes": 256,
