@@ -52,7 +52,8 @@ echo "==> live wire (16 endpoints)"
 echo "==> offline suites"
 FAILED=0
 for suite in test_full_project test_shopping_api test_shopping_traversal \
-             test_dispatch test_incremental test_adspower test_vault; do
+             test_dispatch test_incremental test_adspower test_vault \
+             test_quick_start; do
   line=$("$PY" -m "tests.$suite" 2>&1 | grep -E '^[0-9]+/[0-9]+ checks passed' || true)
   passed="${line%%/*}"
   total=$(echo "$line" | cut -d/ -f2 | cut -d' ' -f1)

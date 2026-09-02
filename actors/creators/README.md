@@ -70,17 +70,25 @@ spreadsheet — no script needed either way.
 
 ## Quick start
 
+**In the Console, use the "Quick start — pick one" dropdown** — three
+one-click jobs, no other field required:
+
+| Pick this | You get |
+|---|---|
+| Build my content calendar | `moments` — every seasonal moment, takeoff and peak dates |
+| What search terms are trending right now | `keywords` (discover mode) |
+| Does my caption idea have real search demand? | `keywords` (exact match, with 5 related terms — add your idea in `queries`) |
+
+Leave it on **Custom** to set every field yourself — the same input this
+dropdown produces under the hood:
+
 ```json
 { "operation": "moments" }
 ```
 
-Then narrow to the keywords behind one moment:
-
 ```json
 { "operation": "keywords", "mode": "discover", "moments": ["thanksgiving"] }
 ```
-
-Or check a caption idea you already have:
 
 ```json
 { "operation": "keywords", "mode": "exact", "queries": ["your caption idea here"] }

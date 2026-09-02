@@ -3,6 +3,24 @@
   "type": "object",
   "schemaVersion": 1,
   "properties": {
+    "quickStart": {
+      "title": "Quick start — pick one",
+      "type": "string",
+      "description": "Skip everything below and run one of these three common jobs directly. Leave as Custom to set Operation and the other fields yourself.",
+      "enum": [
+        "custom",
+        "content_calendar",
+        "trending_search_terms",
+        "check_my_caption_idea"
+      ],
+      "enumTitles": [
+        "Custom — I'll set the fields myself",
+        "Build my content calendar (cheapest, no setup)",
+        "What search terms are trending right now",
+        "Does my caption idea have real search demand?"
+      ],
+      "default": "custom"
+    },
     "operation": {
       "title": "Operation",
       "type": "string",

@@ -3,6 +3,24 @@
   "type": "object",
   "schemaVersion": 1,
   "properties": {
+    "quickStart": {
+      "title": "Quick start — pick one",
+      "type": "string",
+      "description": "Skip everything below and run one of these three common jobs directly. Leave as Custom to set Operation and the other fields yourself.",
+      "enum": [
+        "custom",
+        "todays_trending_products",
+        "trending_with_prices",
+        "demand_behind_a_category"
+      ],
+      "enumTitles": [
+        "Custom — I'll set the fields myself",
+        "Today's trending product categories (cheapest, no setup)",
+        "Trending products with real prices & merchant links",
+        "What people are searching for behind a trending category"
+      ],
+      "default": "custom"
+    },
     "operation": {
       "title": "Operation",
       "type": "string",

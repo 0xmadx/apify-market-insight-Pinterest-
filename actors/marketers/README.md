@@ -68,11 +68,21 @@ media calendar or CRM that only takes CSV is not a reason to write a parser.
 
 ## Quick start
 
+**In the Console, use the "Quick start — pick one" dropdown** — three
+one-click jobs, no other field required:
+
+| Pick this | You get |
+|---|---|
+| What's trending right now | `radar` — Pinterest's own spotlight, cheapest option |
+| When does my next campaign season peak? | `moments` |
+| Does my campaign angle have real search demand? | `keywords` (exact match, with 5 related terms per query — add your angle in `queries`) |
+
+Leave it on **Custom** to set every field yourself — the same input this
+dropdown produces under the hood:
+
 ```json
 { "operation": "radar", "region": "US" }
 ```
-
-Then, once you have a season or an angle in mind:
 
 ```json
 { "operation": "moments" }

@@ -3,6 +3,24 @@
   "type": "object",
   "schemaVersion": 1,
   "properties": {
+    "quickStart": {
+      "title": "Quick start — pick one",
+      "type": "string",
+      "description": "Skip everything below and run one of these three common jobs directly. Leave as Custom to set Operation and the other fields yourself.",
+      "enum": [
+        "custom",
+        "whats_trending_now",
+        "campaign_timing",
+        "validate_my_angle"
+      ],
+      "enumTitles": [
+        "Custom — I'll set the fields myself",
+        "What's trending right now (cheapest, no setup)",
+        "When does my next campaign season peak?",
+        "Does my campaign angle have real search demand?"
+      ],
+      "default": "custom"
+    },
     "operation": {
       "title": "Operation",
       "type": "string",

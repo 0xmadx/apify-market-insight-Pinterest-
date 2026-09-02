@@ -31,10 +31,61 @@ from .vault import VaultEmpty
 # a run that dies at record 900 should still have 800.
 BATCH_SIZE = 100
 
+# One-click recipes for customers who don't want to learn 40+ input fields
+# first. Deliberately NAMED `quickStart`, not `preset` — Pinterest's own
+# keyword-discovery API already has an unrelated integer field called
+# `preset` (1-4, "top monthly/yearly/growing/seasonal"), and giving this the
+# same name silently shadowed it during development (JSON tolerates
+# duplicate keys, last one wins — caught only because the dropdown ended up
+# with the wrong type). Each persona actor's input_schema.json exposes only
+# ITS OWN subset of these names in the `quickStart` dropdown — the dict here
+# is shared across all four actors (one engine), but a marketers customer
+# never sees an ecommerce recipe, because their schema's enum never lists it.
+#
+# A recipe's fields WIN over whatever the customer's form submitted for that
+# same field — that is what makes picking one actually simplify the run
+# instead of silently doing nothing. Everything a recipe does NOT mention
+# (region, queries, maxRecords, endDate, …) passes through from the
+# customer's input completely untouched.
+QUICK_START_RECIPES = {
+    # marketers
+    "whats_trending_now": {"operation": "radar"},
+    "campaign_timing": {"operation": "moments"},
+    "validate_my_angle": {"operation": "keywords", "mode": "exact",
+                          "includeRelated": True},
+    # ecommerce
+    "todays_trending_products": {"operation": "shopping", "drillTopN": 3,
+                                 "enrichTopN": 0},
+    "trending_with_prices": {"operation": "shopping", "drillTopN": 3,
+                             "enrichTopN": 5},
+    "demand_behind_a_category": {"operation": "crawl", "crawlFrom": "shopping",
+                                 "crawlDepth": 1},
+    # creators
+    "content_calendar": {"operation": "moments"},
+    "trending_search_terms": {"operation": "keywords", "mode": "discover"},
+    "check_my_caption_idea": {"operation": "keywords", "mode": "exact",
+                              "includeRelated": True},
+}
+
+
+def _apply_quick_start(task):
+    """Expand `quickStart` into its recipe, then discard it — nothing
+    downstream of this function has ever heard of `quickStart`, only
+    `operation` and the rest of the real fields. Absent, empty, "custom", or
+    unrecognized all mean the same thing: use the fields the customer
+    actually set, unchanged. That default keeps this fully backward
+    compatible with a run that predates this feature entirely.
+    """
+    name = task.pop("quickStart", None)
+    recipe = QUICK_START_RECIPES.get(name)
+    if recipe:
+        task.update(recipe)
+    return task
+
 
 async def main():
     async with Actor:
-        task = await Actor.get_input() or {}
+        task = _apply_quick_start(await Actor.get_input() or {})
         config = Config()
         state = RunState(config)
         full_rescan = bool(task.get("fullRescan"))

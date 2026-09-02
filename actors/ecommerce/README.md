@@ -62,6 +62,18 @@ from "trending category" to a row your buyer can act on.
 
 ## Quick start
 
+**In the Console, use the "Quick start — pick one" dropdown** — three
+one-click jobs, no other field required:
+
+| Pick this | You get |
+|---|---|
+| Today's trending product categories | `shopping`, cheapest option, no prices |
+| Trending products with real prices & merchant links | `shopping` with prices/stock/outbound links attached |
+| What people are searching for behind a trending category | `crawl` — follows every category's search-query chips into full keyword records |
+
+Leave it on **Custom** to set every field yourself — the same input this
+dropdown produces under the hood:
+
 ```json
 { "operation": "shopping", "verticals": ["1042"], "drillTopN": 3, "enrichTopN": 5 }
 ```
@@ -69,8 +81,6 @@ from "trending category" to a row your buyer can act on.
 `verticals` is the department (`1042` = Beauty). Leave it empty for the three
 Pinterest's own UI shows (Fashion, Home decor, Beauty) — the cheap default —
 or pass all seven to see the four Pinterest tracks but never displays.
-
-Once you know a category, find the demand behind it:
 
 ```json
 { "operation": "crawl", "crawlFrom": "shopping", "crawlDepth": 1 }
