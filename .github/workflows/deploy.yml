@@ -39,7 +39,8 @@ jobs:
           sleep 3
           fail=0
           for t in test_incremental test_shopping_api test_shopping_traversal \
-                   test_full_project test_dispatch test_adspower test_vault; do
+                   test_full_project test_dispatch test_adspower test_vault \
+                   test_quick_start; do
             python -m tests.$t || fail=1
           done
           exit $fail
