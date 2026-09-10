@@ -292,8 +292,31 @@ def main():
 
     check("H1 an exact target is used when one exists",
           impersonate_for(UA["chrome146"], targets=T) == ("chrome146", "exact"))
-    check("H2 the live vault's Chrome 150 resolves to the newest below it",
-          impersonate_for(UA["chrome150"], targets=T) == ("chrome146", "nearest"))
+    # NOT a hardcoded target name. `chrome146` was the newest curl_cffi shipped
+    # the day this was written; CI installs whatever is newest TODAY — measured
+    # 2026-09-10, local 0.16.0 vs CI 0.16.3 — and `curl_cffi>=0.7` is
+    # deliberately loose so the handshake keeps tracking Chrome (this same file
+    # documents the 26-version drift that happens when it does not). Asserting
+    # the literal made the GitHub gate fail 17 runs in a row while passing
+    # locally, which is this project's own "a constant that was never probed is
+    # a guess wearing a number", applied to a dependency instead of Pinterest.
+    #
+    # The invariant is what this check's name always claimed: a Chrome newer
+    # than anything shipped resolves to the newest DESKTOP chrome target
+    # (mobile targets are a different DEVICE, never a version match), basis
+    # "nearest" rather than "exact" or "fallback".
+    desktop_chrome = [browser_major(n) for n in T
+                      if browser_family(n) == "chrome"
+                      and "android" not in n and "_ios" not in n
+                      and browser_major(n) is not None]
+    newest_chrome = max(desktop_chrome)
+    unshipped_ua = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                    f" (KHTML, like Gecko) Chrome/{newest_chrome + 5}.0.0.0"
+                    " Safari/537.36")
+    picked, basis = impersonate_for(unshipped_ua, targets=T)
+    check("H2 a Chrome newer than any shipped target resolves to the newest below it",
+          basis == "nearest" and browser_major(picked) == newest_chrome,
+          f"{picked}/{basis}, newest shipped chrome{newest_chrome}")
     check("H3 Firefox gets a Firefox handshake, never a Chrome one",
           impersonate_for(UA["firefox147"], targets=T)[0] == "firefox147")
 
@@ -330,8 +353,11 @@ def main():
 
     # The target list is read from the installed curl_cffi, so a newer release
     # is picked up without editing this file.
+    # Same trap as H2: naming a version here would re-break whenever curl_cffi
+    # retires it. G8 already proves the CONFIGURED default is one the library
+    # ships; this only needs to prove the list is the library's, not a copy.
     check("H10 targets come from the library, not a hardcoded copy",
-          len(T) > 20 and "chrome146" in T)
+          len(T) > 20 and any(browser_family(n) == "chrome" for n in T))
 
     # Every resolved target must be one curl_cffi can actually produce.
     resolved = {impersonate_for(ua, targets=T)[0] for ua in UA.values()}
