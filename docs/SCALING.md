@@ -102,11 +102,24 @@ or profiles start being evicted mid-cycle.
 budget), or lengthen the tick and raise `PROFILE_MAX_AGE` together — never one
 without the other.
 
-### 4. Proxies — **1 per profile, no sharing**
+### 4. Proxies — **up to 2 profiles per exit IP, never more**
 
-`assign_proxies.py` refuses to wrap around, deliberately: two profiles behind
-one exit IP defeats the separation the proxies are for. So proxy count is a
-hard floor on profile count. Currently **5**.
+⚠️ Corrected 2026-09-10 — this section used to say "1 per profile, no sharing…
+Currently 5", which stopped being true on 2026-08-20. `MAX_PROFILES_PER_PROXY
+= 2` in `assign_proxies.py`: one ACCOUNT seen from two IPs reads as a stolen
+session, two accounts from one IP reads as a household. Two is a hard ceiling
+(`--max-share` can only lower it), and profiles are spread one-per-proxy before
+any proxy is doubled. So the profile ceiling is **2 × proxy count** — 6 US
+proxies at the time of writing, ceiling 12. `docs/CAPACITY.md` has the full
+argument.
+
+The Webshare listing is **paginated** as of 2026-09-10. It used to read one page
+of 100 and stop, so a pool past 100 silently lost every proxy after row 100 —
+and because the valid/country filters run after the fetch, dead or non-US rows
+pushed real US proxies off the end. It now follows `next` to the end
+(`tests/test_adspower.py` C6e–h). The AdsPower *profile* listings are still one
+page of 100 (`assign_proxies.py`, `tools/adspower_profile.py`,
+`adspower/sync_cookies.py`) — irrelevant until the pool passes 100 profiles.
 
 ### 5. Redis — **fine locally, a real limit on hosted tiers**
 

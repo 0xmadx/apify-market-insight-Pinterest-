@@ -206,6 +206,30 @@ def main():
     check("...much shorter than the trends TTL it gates",
           base.cache_ttls["bootstrap"] < base.cache_ttls["trends"])
 
+    # Every cache kind the code USES must have a declared TTL. An undeclared
+    # one does not fail — it silently falls through to `default`, which is how
+    # the 383-row shopping taxonomy ended up refetched hourly. `kind=` is
+    # spelled two ways in src/: the cache's, and TrendsAPIError's (whose fault
+    # a failure was). The error kinds are subtracted by name, so a NEW error
+    # kind makes this fail loudly rather than being silently waved through.
+    import pathlib
+    import re
+    error_kinds = {"error", "malformed", "auth_expired", "rate_limited",
+                   "blocked"}
+    used = set()
+    for py in pathlib.Path("src").glob("*.py"):
+        used |= set(re.findall(r'kind="([a-z_]+)"',
+                               py.read_text(encoding="utf-8")))
+    undeclared = sorted(k for k in used - error_kinds if k not in base.cache_ttls)
+    # This suite's check() takes (name, condition) only — the offending kinds
+    # go in the NAME so a failure still says which ones.
+    check(f"every cache kind used in src/ has a declared TTL "
+          f"(undeclared: {undeclared or 'none'})", not undeclared)
+    check("...and the scan actually found the kinds it guards",
+          {"bootstrap", "trends", "taxonomy"} <= used)
+    check("the taxonomy outlives the trend data it labels",
+          base.cache_ttls.get("taxonomy", 0) > base.cache_ttls["trends"])
+
     print("\nPER-ITEM CACHE - overlapping customers share work")
     frag = ResponseCache(replace(base, PLATFORM="__frag_unit"))
     frag.clear()

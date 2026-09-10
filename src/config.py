@@ -180,10 +180,19 @@ class Config:
     # It must stay SHORT for a second reason: every other cache key contains
     # end_date, so this value is what makes the rest of the cache expire. Cache
     # it for hours and the whole cache goes stale together.
+    #
+    # `taxonomy` is the 383-row product-category tree (src/shopping.py). It was
+    # used but never declared here, so it fell through to `default` and every
+    # shopping run more than an hour apart refetched it — nothing errored, it
+    # just cost a request. Like typeahead, its key carries no end_date, so this
+    # TTL is its ONLY expiry. A day is conservative, not measured: the tree is
+    # structural and a day-stale label is benign next to data that already
+    # lags ~4 days. tests/test_incremental.py fails if any other kind used in
+    # src/ goes undeclared the same way.
     CACHE_TTLS: str = os.environ.get(
         "CACHE_TTLS",
         "default=3600,trends=21600,search=900,detail=43200,bootstrap=300,"
-        "typeahead=21600")
+        "typeahead=21600,taxonomy=86400")
 
     @property
     def cache_ttls(self) -> dict:

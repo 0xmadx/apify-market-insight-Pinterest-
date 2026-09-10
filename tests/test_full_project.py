@@ -205,13 +205,25 @@ def main():
     ed = load("3.5-*.json")
     if ed:
         items = parsers.parse_editorial(ed, "US")
-        check("B2 editorial parses 6 items", len(items) == 6)
+        # Editorial is hand-curated by Pinterest's editors, so the COUNT moves
+        # whenever they publish (6 the day this was written, 4 later) and the
+        # ORDER moves too. Assert the parser invariant — one record per raw
+        # item, none dropped or duplicated — not a Pinterest-owned number.
+        check("B2 editorial parses one record per raw item, none dropped",
+              len(items) == len(ed) and len(items) >= 1, f"{len(items)}/{len(ed)}")
         check("B6 the US keyword list was picked",
               isinstance(items[0]["keywords"], list) and len(items[0]["keywords"]) == 5)
         check("B6 a region not covered yields None, never another region's list",
               parsers.parse_editorial(ed, "DE+AT+CH")[0]["keywords"] is None)
-        check("F3 campaign_start emitted", items[0]["campaign_start"] == "2026-08-01")
-        check("F3 empty end_date is None, not ''", items[0]["campaign_end"] is None)
+        # F3's real invariant: a present start_date passes through verbatim and
+        # an empty one becomes None — for EVERY item, not just items[0] on the
+        # day one specific trend happened to sort first.
+        check("F3 campaign_start emitted verbatim when present, else None",
+              all(it["campaign_start"] == (parsers._get(n, "start_date") or None)
+                  for it, n in zip(items, ed)))
+        check("F3 empty end_date is None, not ''",
+              all(it["campaign_end"] == (parsers._get(n, "end_date") or None)
+                  for it, n in zip(items, ed)))
 
     print("\nGROUP E1 — keyword traversal (budget + crystal ball)")
     client = FakeClient()
@@ -304,7 +316,15 @@ def main():
     client3 = FakeClient()
     rscraper = RadarScraper(client3, region="US", log=lambda *a: None)
     rrecords = list(rscraper.run())
-    check("E4 5 spotlight + 6 editorial = 11 records", len(rrecords) == 11)
+    # Not "== 11": editorial is hand-curated and its count moves. The invariant
+    # is that radar emits exactly one record per spotlight trend PLUS one per
+    # editorial item — nothing dropped, nothing duplicated — whatever today's
+    # counts happen to be.
+    _sp_n = len(parsers.parse_spotlight(load("3.2-*.json")))
+    _ed_n = len(parsers.parse_editorial(load("3.5-*.json"), "US"))
+    check("E4 one record per spotlight + editorial item, none dropped",
+          len(rrecords) == _sp_n + _ed_n and _sp_n >= 1 and _ed_n >= 1,
+          f"{len(rrecords)} vs {_sp_n}+{_ed_n}")
     check("E4 exactly 2 requests for the whole radar",
           len(client3.calls) == 2, len(client3.calls))
     check("E4 every record says curated_by pinterest",

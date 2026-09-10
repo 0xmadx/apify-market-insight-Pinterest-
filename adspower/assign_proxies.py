@@ -58,6 +58,10 @@ except ImportError:      # run as a script, not imported as a package
 
 ADS = "http://127.0.0.1:50325"
 WEBSHARE = "https://proxy.webshare.io"
+# Runaway guard for the paginated listing, NOT a pool limit: 50 pages of 100 is
+# 5,000 proxies, far past any plan here. It exists so a `next` link that never
+# ends stops with a refusal instead of looping forever.
+WEBSHARE_MAX_PAGES = 50
 DEFAULT_GROUP = "pinterest"
 # The accounts are US — US region, US cookies, ip_country "us". The proxy
 # must agree, or the cookies and the exit IP disagree about where the user
@@ -124,12 +128,29 @@ def webshare_proxies(key, country=None):
     Only `valid` ones are returned as well: assigning a proxy Webshare has
     already marked dead hands a profile an exit IP that fails on first use, and
     that failure reads as a dead session rather than a dead proxy.
+
+    EVERY PAGE, NOT THE FIRST. This used to fetch page 1 of 100 and stop. A pool
+    past 100 lost everything after row 100 — and because the valid/country
+    filters run AFTER the fetch, dead or non-US rows on page 1 pushed real US
+    proxies off the end with no error. It follows Webshare's `next` link until
+    there is none, and refuses rather than returning a partial pool that would
+    read as complete if the chain never ends.
     """
-    req = urllib.request.Request(
-        f"{WEBSHARE}/api/v2/proxy/list/?mode=direct&page=1&page_size=100",
-        headers={"Authorization": "Token " + key})
-    with urllib.request.urlopen(req, timeout=40) as r:
-        rows = json.load(r).get("results") or []
+    url = f"{WEBSHARE}/api/v2/proxy/list/?mode=direct&page=1&page_size=100"
+    rows, pages = [], 0
+    while url:
+        if pages >= WEBSHARE_MAX_PAGES:
+            raise SystemExit(
+                f"Webshare listing still had a next page after "
+                f"{WEBSHARE_MAX_PAGES} pages ({len(rows)} proxies read). "
+                "Refusing to assign from a pool that may be incomplete.")
+        req = urllib.request.Request(
+            url, headers={"Authorization": "Token " + key})
+        with urllib.request.urlopen(req, timeout=40) as r:
+            body = json.load(r)
+        rows.extend(body.get("results") or [])
+        url = body.get("next")
+        pages += 1
     live = [p for p in rows if p.get("valid")]
     picked = live
     if country:

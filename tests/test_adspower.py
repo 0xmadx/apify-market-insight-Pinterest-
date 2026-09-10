@@ -429,6 +429,64 @@ def main():
     check("C6c ...so a US-filtered run can still tell a French host is French",
           ap.country_of("2.2.2.2", all_valid) == "FR")
     check("C6d invalid proxies are in neither list", total == 3)
+
+    # C6e-h: the listing PAGINATES. It used to fetch one page of 100 and stop,
+    # so the 101st proxy was invisible -- and because valid/country filtering
+    # runs AFTER the fetch, dead or non-US rows on page 1 pushed real US
+    # proxies off the end with no error at all. Page 1 here is 100 FRENCH
+    # proxies; the only US one is on page 2.
+    pages = [
+        {"count": 101,
+         "next": f"{ap.WEBSHARE}/api/v2/proxy/list/?mode=direct&page=2&page_size=100",
+         "results": [{"proxy_address": f"10.0.0.{i}", "port": i, "username": "u",
+                      "password": "p", "country_code": "FR", "valid": True}
+                     for i in range(1, 101)]},
+        {"count": 101, "next": None,
+         "results": [{"proxy_address": "10.0.1.7", "port": 7, "username": "u",
+                      "password": "p", "country_code": "US", "valid": True}]},
+    ]
+    fetched = []
+
+    def _paged(req, *a, **k):
+        fetched.append(req.full_url)
+        return _Resp(_json.dumps(pages[len(fetched) - 1]).encode())
+
+    _u.urlopen = _paged
+    try:
+        picked, total, all_valid = ap.webshare_proxies("k", "US")
+    finally:
+        _u.urlopen = real_open
+    check("C6e the fetch follows `next` instead of stopping at page 1",
+          len(fetched) == 2, fetched)
+    check("C6f a US proxy that only exists on page 2 is found",
+          [q["proxy_address"] for q in picked] == ["10.0.1.7"],
+          [q["proxy_address"] for q in picked])
+    check("C6g the total counts every page, not just the first",
+          total == 101, total)
+
+    # C6h: a `next` that never ends must not loop forever. Every page points
+    # at another; the fetch has to stop and SAY so rather than hang or quietly
+    # return a partial pool that reads as complete.
+    endless = {"count": 10**6, "next": f"{ap.WEBSHARE}/api/v2/proxy/list/?page=N",
+               "results": [{"proxy_address": "1.1.1.1", "port": 1, "username": "u",
+                            "password": "p", "country_code": "US", "valid": True}]}
+    calls = []
+
+    def _endless(req, *a, **k):
+        calls.append(1)
+        return _Resp(_json.dumps(endless).encode())
+
+    _u.urlopen = _endless
+    try:
+        ap.webshare_proxies("k", "US")
+        stopped_loudly = False
+    except SystemExit as e:
+        stopped_loudly = "page" in str(e).lower()
+    finally:
+        _u.urlopen = real_open
+    check("C6h an endless `next` chain stops and refuses, not hangs",
+          stopped_loudly and len(calls) <= ap.WEBSHARE_MAX_PAGES,
+          f"calls={len(calls)} loud={stopped_loudly}")
     check("C7 a cross-country move of a LIVE account is REFUSED, not warned",
           "allow_country_move" in asrc and "is a live account on a" in asrc)
     check("C8 ...and the refusal points at the safe alternative",
