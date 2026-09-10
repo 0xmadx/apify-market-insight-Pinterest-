@@ -1,6 +1,6 @@
 {
   "_client_context": "<stripped: account PII, see strip_pii()>",
-  "request_identifier": "1423697701378071",
+  "request_identifier": "8710703314172023",
   "resource": {
     "name": "ApiResource",
     "options": {
@@ -10,7 +10,7 @@
       "data": {
         "age_bucket": [],
         "days": 60,
-        "end_date": "2026-08-29",
+        "end_date": "2026-09-03",
         "event": "ENGAGEMENT",
         "gender": [],
         "predicted_days": 0,
@@ -28,56 +28,56 @@
         {
           "daily_values": [
             {
-              "count": 82,
-              "date": "2026-07-04",
+              "count": 80,
+              "date": "2026-07-09",
               "normalized_predicted_lower_bound": null,
               "normalized_predicted_upper_bound": null
             },
             {
-              "count": 84,
-              "date": "2026-07-11",
+              "count": 86,
+              "date": "2026-07-16",
               "normalized_predicted_lower_bound": null,
               "normalized_predicted_upper_bound": null
             },
             {
-              "count": 90,
-              "date": "2026-07-18",
+              "count": 87,
+              "date": "2026-07-23",
               "normalized_predicted_lower_bound": null,
               "normalized_predicted_upper_bound": null
             },
             {
-              "count": 90,
-              "date": "2026-07-25",
+              "count": 88,
+              "date": "2026-07-30",
               "normalized_predicted_lower_bound": null,
               "normalized_predicted_upper_bound": null
             },
             {
               "count": 91,
-              "date": "2026-08-01",
+              "date": "2026-08-06",
+              "normalized_predicted_lower_bound": null,
+              "normalized_predicted_upper_bound": null
+            },
+            {
+              "count": 96,
+              "date": "2026-08-13",
               "normalized_predicted_lower_bound": null,
               "normalized_predicted_upper_bound": null
             },
             {
               "count": 94,
-              "date": "2026-08-08",
+              "date": "2026-08-20",
+              "normalized_predicted_lower_bound": null,
+              "normalized_predicted_upper_bound": null
+            },
+            {
+              "count": 93,
+              "date": "2026-08-27",
               "normalized_predicted_lower_bound": null,
               "normalized_predicted_upper_bound": null
             },
             {
               "count": 100,
-              "date": "2026-08-15",
-              "normalized_predicted_lower_bound": null,
-              "normalized_predicted_upper_bound": null
-            },
-            {
-              "count": 95,
-              "date": "2026-08-22",
-              "normalized_predicted_lower_bound": null,
-              "normalized_predicted_upper_bound": null
-            },
-            {
-              "count": 95,
-              "date": "2026-08-29",
+              "date": "2026-09-03",
               "normalized_predicted_lower_bound": null,
               "normalized_predicted_upper_bound": null
             }

@@ -1,6 +1,6 @@
 {
   "_client_context": "<stripped: account PII, see strip_pii()>",
-  "request_identifier": "8261041074521863",
+  "request_identifier": "6459482268689129",
   "resource": {
     "name": "ApiResource",
     "options": {
@@ -30,7 +30,7 @@
         ],
         "is_published": true,
         "name": "Oversized Cardigan Patterns",
-        "pct_growth_mom": 15,
+        "pct_growth_mom": 20,
         "pins": [
           {
             "color": "#5a2517",
@@ -113,92 +113,92 @@
         ],
         "time_series": [
           {
-            "count": 6,
-            "date": "2026-06-06",
-            "normalized_count": null,
-            "normalized_predicted_lower_bound": null,
-            "normalized_predicted_upper_bound": null
-          },
-          {
             "count": 3,
-            "date": "2026-06-13",
+            "date": "2026-06-11",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
             "count": 4,
-            "date": "2026-06-20",
+            "date": "2026-06-18",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
             "count": 6,
-            "date": "2026-06-27",
+            "date": "2026-06-25",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 6,
-            "date": "2026-07-04",
+            "count": 7,
+            "date": "2026-07-02",
+            "normalized_count": null,
+            "normalized_predicted_lower_bound": null,
+            "normalized_predicted_upper_bound": null
+          },
+          {
+            "count": 4,
+            "date": "2026-07-09",
+            "normalized_count": null,
+            "normalized_predicted_lower_bound": null,
+            "normalized_predicted_upper_bound": null
+          },
+          {
+            "count": 5,
+            "date": "2026-07-16",
+            "normalized_count": null,
+            "normalized_predicted_lower_bound": null,
+            "normalized_predicted_upper_bound": null
+          },
+          {
+            "count": 4,
+            "date": "2026-07-23",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
             "count": 2,
-            "date": "2026-07-11",
+            "date": "2026-07-30",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 6,
-            "date": "2026-07-18",
+            "count": 2,
+            "date": "2026-08-06",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 5,
-            "date": "2026-07-25",
+            "count": 11,
+            "date": "2026-08-13",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 0,
-            "date": "2026-08-01",
+            "count": 51,
+            "date": "2026-08-20",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 5,
-            "date": "2026-08-08",
-            "normalized_count": null,
-            "normalized_predicted_lower_bound": null,
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "count": 16,
-            "date": "2026-08-15",
-            "normalized_count": null,
-            "normalized_predicted_lower_bound": null,
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "count": 67,
-            "date": "2026-08-22",
+            "count": 87,
+            "date": "2026-08-27",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
             "count": 100,
-            "date": "2026-08-29",
+            "date": "2026-09-03",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
@@ -213,7 +213,7 @@
         ],
         "is_published": true,
         "name": "DIY Fall Decorations",
-        "pct_growth_mom": 3,
+        "pct_growth_mom": 2,
         "pins": [
           {
             "color": "#d9d6d8",
@@ -297,91 +297,259 @@
         "time_series": [
           {
             "count": 5,
-            "date": "2026-06-06",
+            "date": "2026-06-11",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
             "count": 6,
-            "date": "2026-06-13",
+            "date": "2026-06-18",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
             "count": 7,
-            "date": "2026-06-20",
+            "date": "2026-06-25",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
             "count": 8,
-            "date": "2026-06-27",
+            "date": "2026-07-02",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 9,
-            "date": "2026-07-04",
+            "count": 10,
+            "date": "2026-07-09",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 13,
-            "date": "2026-07-11",
+            "count": 14,
+            "date": "2026-07-16",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 18,
-            "date": "2026-07-18",
+            "count": 19,
+            "date": "2026-07-23",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 22,
-            "date": "2026-07-25",
+            "count": 20,
+            "date": "2026-07-30",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 32,
-            "date": "2026-08-01",
+            "count": 51,
+            "date": "2026-08-06",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 63,
-            "date": "2026-08-08",
+            "count": 62,
+            "date": "2026-08-13",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
             "count": 74,
-            "date": "2026-08-15",
+            "date": "2026-08-20",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 91,
-            "date": "2026-08-22",
+            "count": 85,
+            "date": "2026-08-27",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
             "count": 100,
-            "date": "2026-08-29",
+            "date": "2026-09-03",
+            "normalized_count": null,
+            "normalized_predicted_lower_bound": null,
+            "normalized_predicted_upper_bound": null
+          }
+        ]
+      },
+      {
+        "description": "Coloring just got cuter with pages packed full of whimsy\u2014think playful animals, festive scenes, and bold lines begging for your brightest hues. The satisfying scratch of crayons and markers on paper invites creativity and calm in equal measure. Splash your brand into this colorful craze with fresh, printable designs that charm all ages.",
+        "id": "1731028767359181477",
+        "interests": [
+          "961238559656",
+          "934876475639"
+        ],
+        "is_published": true,
+        "name": "Cute Colouring Pages",
+        "pct_growth_mom": 1,
+        "pins": [
+          {
+            "color": "#fefefe",
+            "height": 354,
+            "id": "4606267749277791104",
+            "src": "https://i.pinimg.com/236x/bc/7b/90/bc7b90f4c791665735c2816703f1e1a9.jpg",
+            "vertical_offset": null,
+            "width": 236
+          },
+          {
+            "color": "#fefefe",
+            "height": 322,
+            "id": "1688918598029427",
+            "src": "https://i.pinimg.com/236x/3a/18/ab/3a18ab31ce7e65b2e85f484cef39e14f.jpg",
+            "vertical_offset": null,
+            "width": 236
+          },
+          {
+            "color": "#fbfafa",
+            "height": 354,
+            "id": "766104586659531366",
+            "src": "https://i.pinimg.com/236x/1f/19/8b/1f198b61c011391bca902783bb1bcbcc.jpg",
+            "vertical_offset": null,
+            "width": 236
+          },
+          {
+            "color": "#fbfbfb",
+            "height": 337,
+            "id": "488007309644132798",
+            "src": "https://i.pinimg.com/236x/91/8b/8e/918b8e052b7f334321842c7a4e96c59c.jpg",
+            "vertical_offset": null,
+            "width": 236
+          },
+          {
+            "color": "#ffffff",
+            "height": 344,
+            "id": "633529872628478897",
+            "src": "https://i.pinimg.com/236x/6b/f9/32/6bf932535c25d43e8e95299f8de858dc.jpg",
+            "vertical_offset": null,
+            "width": 236
+          },
+          {
+            "color": "#ffffff",
+            "height": 402,
+            "id": "1140395936925378324",
+            "src": "https://i.pinimg.com/236x/a1/39/2d/a1392d9d1522f0bd977dd7be7212e8a4.jpg",
+            "vertical_offset": null,
+            "width": 236
+          }
+        ],
+        "related_search_trends": [
+          "coloring pages aesthetic",
+          "coloring pages for kids",
+          "cute coloring pages aesthetic",
+          "unique adult coloring pages free printable",
+          "adult coloring pages free printable",
+          "kids' coloring",
+          "coloring pages to print",
+          "bold and easy coloring page",
+          "kids colouring printables",
+          "free coloring pages printables",
+          "whimsical coloring pages",
+          "coloring pages ideas"
+        ],
+        "time_series": [
+          {
+            "count": 22,
+            "date": "2026-06-11",
+            "normalized_count": null,
+            "normalized_predicted_lower_bound": null,
+            "normalized_predicted_upper_bound": null
+          },
+          {
+            "count": 36,
+            "date": "2026-06-18",
+            "normalized_count": null,
+            "normalized_predicted_lower_bound": null,
+            "normalized_predicted_upper_bound": null
+          },
+          {
+            "count": 20,
+            "date": "2026-06-25",
+            "normalized_count": null,
+            "normalized_predicted_lower_bound": null,
+            "normalized_predicted_upper_bound": null
+          },
+          {
+            "count": 37,
+            "date": "2026-07-02",
+            "normalized_count": null,
+            "normalized_predicted_lower_bound": null,
+            "normalized_predicted_upper_bound": null
+          },
+          {
+            "count": 27,
+            "date": "2026-07-09",
+            "normalized_count": null,
+            "normalized_predicted_lower_bound": null,
+            "normalized_predicted_upper_bound": null
+          },
+          {
+            "count": 52,
+            "date": "2026-07-16",
+            "normalized_count": null,
+            "normalized_predicted_lower_bound": null,
+            "normalized_predicted_upper_bound": null
+          },
+          {
+            "count": 31,
+            "date": "2026-07-23",
+            "normalized_count": null,
+            "normalized_predicted_lower_bound": null,
+            "normalized_predicted_upper_bound": null
+          },
+          {
+            "count": 3,
+            "date": "2026-07-30",
+            "normalized_count": null,
+            "normalized_predicted_lower_bound": null,
+            "normalized_predicted_upper_bound": null
+          },
+          {
+            "count": 4,
+            "date": "2026-08-06",
+            "normalized_count": null,
+            "normalized_predicted_lower_bound": null,
+            "normalized_predicted_upper_bound": null
+          },
+          {
+            "count": 8,
+            "date": "2026-08-13",
+            "normalized_count": null,
+            "normalized_predicted_lower_bound": null,
+            "normalized_predicted_upper_bound": null
+          },
+          {
+            "count": 31,
+            "date": "2026-08-20",
+            "normalized_count": null,
+            "normalized_predicted_lower_bound": null,
+            "normalized_predicted_upper_bound": null
+          },
+          {
+            "count": 100,
+            "date": "2026-08-27",
+            "normalized_count": null,
+            "normalized_predicted_lower_bound": null,
+            "normalized_predicted_upper_bound": null
+          },
+          {
+            "count": 78,
+            "date": "2026-09-03",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
@@ -396,7 +564,7 @@
         ],
         "is_published": true,
         "name": "Pumpkin Carving and Stencils",
-        "pct_growth_mom": 0.7,
+        "pct_growth_mom": 0.6,
         "pins": [
           {
             "color": "#78532f",
@@ -472,259 +640,91 @@
         "time_series": [
           {
             "count": 18,
-            "date": "2026-06-06",
+            "date": "2026-06-11",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
             "count": 22,
-            "date": "2026-06-13",
+            "date": "2026-06-18",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 27,
-            "date": "2026-06-20",
+            "count": 23,
+            "date": "2026-06-25",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 26,
-            "date": "2026-06-27",
+            "count": 24,
+            "date": "2026-07-02",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 27,
-            "date": "2026-07-04",
+            "count": 28,
+            "date": "2026-07-09",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 36,
-            "date": "2026-07-11",
+            "count": 33,
+            "date": "2026-07-16",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 39,
-            "date": "2026-07-18",
+            "count": 38,
+            "date": "2026-07-23",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 51,
-            "date": "2026-07-25",
+            "count": 66,
+            "date": "2026-07-30",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 73,
-            "date": "2026-08-01",
+            "count": 59,
+            "date": "2026-08-06",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 68,
-            "date": "2026-08-08",
+            "count": 65,
+            "date": "2026-08-13",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 78,
-            "date": "2026-08-15",
+            "count": 75,
+            "date": "2026-08-20",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 87,
-            "date": "2026-08-22",
-            "normalized_count": null,
-            "normalized_predicted_lower_bound": null,
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "count": 100,
-            "date": "2026-08-29",
-            "normalized_count": null,
-            "normalized_predicted_lower_bound": null,
-            "normalized_predicted_upper_bound": null
-          }
-        ]
-      },
-      {
-        "description": "Coloring just got cuter with pages packed full of whimsy\u2014think playful animals, festive scenes, and bold lines begging for your brightest hues. The satisfying scratch of crayons and markers on paper invites creativity and calm in equal measure. Splash your brand into this colorful craze with fresh, printable designs that charm all ages.",
-        "id": "1731028767359181477",
-        "interests": [
-          "961238559656",
-          "934876475639"
-        ],
-        "is_published": true,
-        "name": "Cute Colouring Pages",
-        "pct_growth_mom": 0.4,
-        "pins": [
-          {
-            "color": "#fefefe",
-            "height": 354,
-            "id": "4606267749277791104",
-            "src": "https://i.pinimg.com/236x/bc/7b/90/bc7b90f4c791665735c2816703f1e1a9.jpg",
-            "vertical_offset": null,
-            "width": 236
-          },
-          {
-            "color": "#fefefe",
-            "height": 322,
-            "id": "1688918598029427",
-            "src": "https://i.pinimg.com/236x/3a/18/ab/3a18ab31ce7e65b2e85f484cef39e14f.jpg",
-            "vertical_offset": null,
-            "width": 236
-          },
-          {
-            "color": "#fbfafa",
-            "height": 354,
-            "id": "766104586659531366",
-            "src": "https://i.pinimg.com/236x/1f/19/8b/1f198b61c011391bca902783bb1bcbcc.jpg",
-            "vertical_offset": null,
-            "width": 236
-          },
-          {
-            "color": "#fbfbfb",
-            "height": 337,
-            "id": "488007309644132798",
-            "src": "https://i.pinimg.com/236x/91/8b/8e/918b8e052b7f334321842c7a4e96c59c.jpg",
-            "vertical_offset": null,
-            "width": 236
-          },
-          {
-            "color": "#ffffff",
-            "height": 344,
-            "id": "633529872628478897",
-            "src": "https://i.pinimg.com/236x/6b/f9/32/6bf932535c25d43e8e95299f8de858dc.jpg",
-            "vertical_offset": null,
-            "width": 236
-          },
-          {
-            "color": "#ffffff",
-            "height": 402,
-            "id": "1140395936925378324",
-            "src": "https://i.pinimg.com/236x/a1/39/2d/a1392d9d1522f0bd977dd7be7212e8a4.jpg",
-            "vertical_offset": null,
-            "width": 236
-          }
-        ],
-        "related_search_trends": [
-          "coloring pages aesthetic",
-          "coloring pages for kids",
-          "cute coloring pages aesthetic",
-          "unique adult coloring pages free printable",
-          "adult coloring pages free printable",
-          "kids' coloring",
-          "coloring pages to print",
-          "bold and easy coloring page",
-          "kids colouring printables",
-          "free coloring pages printables",
-          "whimsical coloring pages",
-          "coloring pages ideas"
-        ],
-        "time_series": [
-          {
-            "count": 25,
-            "date": "2026-06-06",
-            "normalized_count": null,
-            "normalized_predicted_lower_bound": null,
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "count": 25,
-            "date": "2026-06-13",
-            "normalized_count": null,
-            "normalized_predicted_lower_bound": null,
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "count": 30,
-            "date": "2026-06-20",
-            "normalized_count": null,
-            "normalized_predicted_lower_bound": null,
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "count": 17,
-            "date": "2026-06-27",
-            "normalized_count": null,
-            "normalized_predicted_lower_bound": null,
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "count": 35,
-            "date": "2026-07-04",
-            "normalized_count": null,
-            "normalized_predicted_lower_bound": null,
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "count": 37,
-            "date": "2026-07-11",
-            "normalized_count": null,
-            "normalized_predicted_lower_bound": null,
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "count": 40,
-            "date": "2026-07-18",
-            "normalized_count": null,
-            "normalized_predicted_lower_bound": null,
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "count": 27,
-            "date": "2026-07-25",
-            "normalized_count": null,
-            "normalized_predicted_lower_bound": null,
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "count": 2,
-            "date": "2026-08-01",
-            "normalized_count": null,
-            "normalized_predicted_lower_bound": null,
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "count": 4,
-            "date": "2026-08-08",
-            "normalized_count": null,
-            "normalized_predicted_lower_bound": null,
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "count": 6,
-            "date": "2026-08-15",
-            "normalized_count": null,
-            "normalized_predicted_lower_bound": null,
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "count": 45,
-            "date": "2026-08-22",
+            "count": 84,
+            "date": "2026-08-27",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
             "count": 100,
-            "date": "2026-08-29",
+            "date": "2026-09-03",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
@@ -742,7 +742,7 @@
         ],
         "is_published": true,
         "name": "Sunflower Beaded Jewelry",
-        "pct_growth_mom": -0.1,
+        "pct_growth_mom": 0.3,
         "pins": [
           {
             "color": "#cbcacb",
@@ -814,92 +814,92 @@
         ],
         "time_series": [
           {
-            "count": 87,
-            "date": "2026-06-06",
-            "normalized_count": null,
-            "normalized_predicted_lower_bound": null,
-            "normalized_predicted_upper_bound": null
-          },
-          {
             "count": 100,
-            "date": "2026-06-13",
+            "date": "2026-06-11",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 85,
-            "date": "2026-06-20",
+            "count": 75,
+            "date": "2026-06-18",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 80,
-            "date": "2026-06-27",
+            "count": 76,
+            "date": "2026-06-25",
+            "normalized_count": null,
+            "normalized_predicted_lower_bound": null,
+            "normalized_predicted_upper_bound": null
+          },
+          {
+            "count": 79,
+            "date": "2026-07-02",
+            "normalized_count": null,
+            "normalized_predicted_lower_bound": null,
+            "normalized_predicted_upper_bound": null
+          },
+          {
+            "count": 58,
+            "date": "2026-07-09",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
             "count": 78,
-            "date": "2026-07-04",
+            "date": "2026-07-16",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 64,
-            "date": "2026-07-11",
+            "count": 77,
+            "date": "2026-07-23",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 82,
-            "date": "2026-07-18",
+            "count": 5,
+            "date": "2026-07-30",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 70,
-            "date": "2026-07-25",
+            "count": 5,
+            "date": "2026-08-06",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 4,
-            "date": "2026-08-01",
+            "count": 23,
+            "date": "2026-08-13",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 8,
-            "date": "2026-08-08",
+            "count": 52,
+            "date": "2026-08-20",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 36,
-            "date": "2026-08-15",
+            "count": 89,
+            "date": "2026-08-27",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
           },
           {
-            "count": 70,
-            "date": "2026-08-22",
-            "normalized_count": null,
-            "normalized_predicted_lower_bound": null,
-            "normalized_predicted_upper_bound": null
-          },
-          {
-            "count": 85,
-            "date": "2026-08-29",
+            "count": 45,
+            "date": "2026-09-03",
             "normalized_count": null,
             "normalized_predicted_lower_bound": null,
             "normalized_predicted_upper_bound": null
