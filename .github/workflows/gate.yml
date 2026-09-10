@@ -47,7 +47,7 @@ jobs:
           fail=0
           for t in test_incremental test_shopping_api test_shopping_traversal \
                    test_full_project test_dispatch test_adspower test_vault \
-                   test_quick_start test_main_messages; do
+                   test_quick_start test_main_messages test_status_healthcheck; do
             echo "== $t"
             python -m tests.$t || fail=1
           done

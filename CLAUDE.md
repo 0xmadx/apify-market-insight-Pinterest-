@@ -39,12 +39,13 @@ one-vertical-per-call, the double-spelled `has_prediction`). It is not advisory.
 .venv/Scripts/python.exe -m tests.test_vault              # 62 — the lease path + metrics (needs Redis)
 .venv/Scripts/python.exe -m tests.test_quick_start         # 23 — the persona actors' one-click preset dropdowns
 .venv/Scripts/python.exe -m tests.test_main_messages       # 20 — the clean customer message when the vault can't serve a run
+.venv/Scripts/python.exe -m tests.test_status_healthcheck    # 4 — the exit-code contract src.status's automated callers depend on
 ```
 
 Or all of it, in the order the release gate requires:
 
 ```bash
-./ship.sh check      # probes the live wire FIRST, then the 643 checks
+./ship.sh check      # probes the live wire FIRST, then the 647 checks
 ```
 
 Everything is a module run from the repo root. The venv is local to this repo.
@@ -186,7 +187,7 @@ reasoning in `docs/DEPLOY.md` §5.
 `shopping`, `keywords`, `moments`, `radar`, and `crawl`, which follows the
 links between them instead of stopping at one page. Both of Pinterest's time
 controls are wired: `endDate` (which date) and `dateRange` (how much history).
-643 checks, 0 unread response fields (`probes/coverage.py`).
+647 checks, 0 unread response fields (`probes/coverage.py`).
 
 **Both browser captures landed 2026-08-19:**
 - §3.18 moment Age/Gender via the persisted GraphQL query — audience is now

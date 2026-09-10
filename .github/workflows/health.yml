@@ -1,0 +1,159 @@
+# A third, independent watcher — never the actor, never GCP. It only READS
+# Upstash and the pool, never writes, so it cannot become a trigger surface
+# into private infrastructure (that idea was considered and rejected: see
+# the commit that added this file).
+#
+# WHY THIS EXISTS. Today, if GCP's keepalive.timer dies or Upstash itself
+# goes down, nothing tells the operator. The actor's own customer-facing
+# message got fixed (a clean "try again" instead of a raw crash), but that
+# only helps a CUSTOMER mid-run — it does not tell the OPERATOR anything
+# happened. This does: same schedule-based shape as everything else in this
+# project (keepalive.timer, the release gate), just aimed at "is the vault
+# alive" instead of "is the code right".
+#
+# WHY A GITHUB ISSUE, NOT A NEW SERVICE. Matches CLAUDE.md's own stated
+# choice — "deliberately no dashboard at six accounts" — extended to
+# alerting: an issue in the repo you already live in beats a new account on
+# a paging service for a project this size.
+#
+# EXIT CODES THIS DEPENDS ON (tests/test_status_healthcheck.py proves them):
+#   2 = Redis unreachable   -> "check Upstash's status", label vault-down
+#   1 = pool empty/stale    -> "buy/re-log accounts", label vault-empty
+#   0 = healthy             -> close whichever of the two is open, if any
+name: health
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  check-vault:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install
+        run: pip install -r requirements.txt
+
+      - name: Check vault health
+        id: check
+        env:
+          REDIS_URL: ${{ secrets.REDIS_URL }}
+        run: |
+          if [ -z "$REDIS_URL" ]; then
+            echo "code=3" >> "$GITHUB_OUTPUT"
+            echo "REDIS_URL secret is not set — see the setup step in the PR/commit that added this workflow" >&2
+            exit 0
+          fi
+          set +e
+          output=$(python -m src.status 2>&1)
+          code=$?
+          set -e
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          echo "$output"
+          {
+            echo "output<<VAULT_STATUS_EOF"
+            echo "$output"
+            echo "VAULT_STATUS_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Report — Upstash unreachable (exit 2)
+        if: steps.check.outputs.code == '2'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const label = 'vault-down';
+            const body = ${{ toJSON(steps.check.outputs.output) }};
+            const { data: open } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: label,
+            });
+            if (open.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo,
+                title: 'Vault unreachable — Upstash connection failing',
+                labels: [label],
+                body: 'The scheduled health check could not reach Redis at all '
+                    + '(exit code 2, not just an empty pool). This usually means '
+                    + "Upstash itself is down, or REDIS_URL is wrong.\n\n```\n"
+                    + body + '\n```',
+              });
+            }
+
+      - name: Report — pool empty or stale (exit 1)
+        if: steps.check.outputs.code == '1'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const label = 'vault-empty';
+            const body = ${{ toJSON(steps.check.outputs.output) }};
+            const { data: open } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: label,
+            });
+            if (open.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo,
+                title: 'Vault pool empty — no usable Pinterest accounts',
+                labels: [label],
+                body: 'Redis answered, but no profile is currently usable '
+                    + '(exit code 1). This usually means the GCP writer stopped, '
+                    + "or every account needs a fresh login.\n\n```\n"
+                    + body + '\n```',
+              });
+            }
+
+      - name: Report — secret missing (exit 3)
+        if: steps.check.outputs.code == '3'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const label = 'vault-check-broken';
+            const { data: open } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: label,
+            });
+            if (open.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo,
+                title: 'Vault health check cannot run — REDIS_URL secret missing',
+                labels: [label],
+                body: 'This workflow needs a repository secret named REDIS_URL '
+                    + '(the real Upstash rediss:// URL) to check anything. '
+                    + 'Settings -> Secrets and variables -> Actions -> New '
+                    + 'repository secret.',
+              });
+            }
+
+      - name: Close recovered issues (exit 0)
+        if: steps.check.outputs.code == '0'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            for (const label of ['vault-down', 'vault-empty']) {
+              const { data: open } = await github.rest.issues.listForRepo({
+                owner: context.repo.owner, repo: context.repo.repo,
+                state: 'open', labels: label,
+              });
+              for (const issue of open) {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner, repo: context.repo.repo,
+                  issue_number: issue.number,
+                  body: 'The vault is healthy again — closing automatically.',
+                });
+                await github.rest.issues.update({
+                  owner: context.repo.owner, repo: context.repo.repo,
+                  issue_number: issue.number, state: 'closed',
+                });
+              }
+            }

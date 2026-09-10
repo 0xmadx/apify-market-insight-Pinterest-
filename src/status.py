@@ -12,8 +12,15 @@ from .session import DRIFT_WARN_AT, fingerprint_drift, impersonate_for
 from .vault import SessionVault
 
 
-def main():
-    config = Config()
+def main(config=None):
+    # Injectable, not just `Config()` — REDIS_URL's default is
+    # `os.environ.get(...)` evaluated ONCE at class-definition time (a plain
+    # dataclass field default, not a default_factory), so it is fixed at
+    # first import and CANNOT be changed by setting os.environ later in the
+    # same process. Tests need `dataclasses.replace(Config(), REDIS_URL=...)`
+    # for exactly this reason (see tests/test_vault.py) — accepting `config`
+    # here lets this function join that pattern instead of being untestable.
+    config = config or Config()
     print(f"redis    : {_redact(config.REDIS_URL)}")
     print(f"platform : {config.PLATFORM}")
 
