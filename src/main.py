@@ -17,6 +17,7 @@ which is visible and recoverable. Silent loss is not.
 """
 import asyncio
 
+import redis
 from apify import Actor
 
 from .config import Config
@@ -83,6 +84,30 @@ def _apply_quick_start(task):
     return task
 
 
+def _customer_capacity_message(exc):
+    """What a customer sees when the vault can't serve this run — never the
+    raw exception, and never "vault"/"redis"/"upstash" (same reason the
+    VaultEmpty message was reworded earlier: those words tell a stranger
+    "this rides a real account that might get banned", which nothing else on
+    the listing answers).
+
+    `VaultEmpty` and a Redis connection failure are different problems for
+    the OPERATOR — one means "buy more accounts" (src/vault.py already says
+    so: "when this starts climbing the answer is more accounts"), the other
+    means "check Upstash's status page" — so they are recorded under
+    different RUN_METRICS keys and never conflated in the log. But they are
+    the SAME problem for a CUSTOMER: nothing to do but try again shortly.
+
+    A pure function, deliberately: testable without a live Actor or a
+    live/dead Redis, the way tests/test_main_messages.py does it.
+    """
+    if isinstance(exc, VaultEmpty):
+        return ("We're at capacity right now — every data source is in use. "
+                "Please try again in a few minutes.")
+    return ("We're temporarily unable to reach our data source. "
+            "Please try again in a few minutes.")
+
+
 async def main():
     async with Actor:
         task = _apply_quick_start(await Actor.get_input() or {})
@@ -97,9 +122,9 @@ async def main():
             Actor.log.warning("forceRefresh: ignoring cached responses for this run")
 
         pushed = skipped = 0
-        # Filled by the worker; `vault_empty` is set here because it is the one
-        # outcome the worker never reaches.
-        metrics = {"vault_empty": 0}
+        # Filled by the worker; both are set here because they are outcomes
+        # the worker itself never reaches (it raises past them instead).
+        metrics = {"vault_empty": 0, "vault_unreachable": 0}
         try:
             async for batch in _batches(task, config, metrics):
                 fresh, already_held = _split(batch, state, full_rescan)
@@ -111,21 +136,31 @@ async def main():
                     _mark(fresh, state)  # only now — see the ordering rule above
 
                 Actor.log.info(f"pushed {pushed} · skipped {skipped} already held")
-        except VaultEmpty as exc:
-            # Not a crash, and not a Pinterest problem: there is no session to
-            # use. Failing loudly is the point — a silent empty dataset would
-            # read as "Pinterest returned nothing". The full technical reason
-            # (str(exc)) goes to the operator-visible log only; the customer
-            # sees a plain capacity message, not "vault"/"session" internals —
-            # this already waited up to WAIT_TIMEOUT for a slot to free up, so
+        except (VaultEmpty, redis.exceptions.RedisError) as exc:
+            # Two different failures, handled the same shape on purpose.
+            # VaultEmpty: Redis answered, every account is in use — this
+            # already waited up to WAIT_TIMEOUT for a slot to free up, so
             # "try again shortly" is an honest instruction, not a brush-off.
-            Actor.log.error(str(exc))
-            metrics["vault_empty"] = 1
+            # RedisError: Upstash itself is unreachable — previously
+            # UNHANDLED, which meant a customer saw a raw traceback instead
+            # of a clean message. Both are "not a crash, and not a Pinterest
+            # problem" in the same sense VaultEmpty always was: failing
+            # loudly is the point, a silent empty dataset would read as
+            # "Pinterest returned nothing".
+            #
+            # The full technical reason (str(exc)) goes to the
+            # operator-visible log only; the customer sees a plain capacity
+            # message from _customer_capacity_message, never "vault"/
+            # "redis"/"upstash" — see that function for why. The two cases
+            # are recorded under DIFFERENT metrics keys so the operator can
+            # tell "buy more accounts" apart from "Upstash is down" —
+            # conflating them would be the same mistake as evicting a
+            # profile over a `malformed` classify() verdict.
+            key = "vault_empty" if isinstance(exc, VaultEmpty) else "vault_unreachable"
+            Actor.log.error(f"{type(exc).__name__}: {exc}")
+            metrics[key] = 1
             await _record(metrics, pushed, skipped)
-            await Actor.fail(status_message=(
-                "We're at capacity right now — every data source is in use. "
-                "Please try again in a few minutes."
-            ))
+            await Actor.fail(status_message=_customer_capacity_message(exc))
             return
 
         Actor.log.info(f"done: {pushed} new, {skipped} skipped as unchanged")
