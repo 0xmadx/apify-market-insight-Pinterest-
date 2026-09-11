@@ -1,6 +1,6 @@
 {
   "_client_context": "<stripped: account PII, see strip_pii()>",
-  "request_identifier": "1517877391766250",
+  "request_identifier": "1644361583682256",
   "resource": {
     "name": "ApiResource",
     "options": {
@@ -36,14 +36,24 @@
           "takeoff_timestamp_millis": "1773878400000"
         },
         {
-          "peak_length_in_days": 70,
-          "peak_timestamp_millis": "1775088000000",
-          "takeoff_timestamp_millis": "1771459200000"
+          "peak_length_in_days": 35,
+          "peak_timestamp_millis": "1782345600000",
+          "takeoff_timestamp_millis": "1780531200000"
+        },
+        {
+          "peak_length_in_days": 105,
+          "peak_timestamp_millis": "1764806400000",
+          "takeoff_timestamp_millis": "1761782400000"
         },
         {
           "peak_length_in_days": 42,
           "peak_timestamp_millis": "1767225600000",
           "takeoff_timestamp_millis": "1766016000000"
+        },
+        {
+          "peak_length_in_days": 70,
+          "peak_timestamp_millis": "1775088000000",
+          "takeoff_timestamp_millis": "1771459200000"
         },
         {
           "peak_length_in_days": 56,
@@ -54,16 +64,6 @@
           "peak_length_in_days": 210,
           "peak_timestamp_millis": "1780531200000",
           "takeoff_timestamp_millis": "1771459200000"
-        },
-        {
-          "peak_length_in_days": 35,
-          "peak_timestamp_millis": "1782345600000",
-          "takeoff_timestamp_millis": "1780531200000"
-        },
-        {
-          "peak_length_in_days": 105,
-          "peak_timestamp_millis": "1764806400000",
-          "takeoff_timestamp_millis": "1761782400000"
         },
         {
           "peak_length_in_days": 49,
@@ -86,12 +86,12 @@
         "1802563200000",
         "1814659200000",
         "1811721600000",
-        "1806192000000",
-        "1798675200000",
-        "1805241600000",
-        "1781913600000",
         "1813449600000",
         "1796342400000",
+        "1798675200000",
+        "1806192000000",
+        "1805241600000",
+        "1781913600000",
         "1798156800000",
         "1809820800000",
         "1793404800000"
@@ -101,12 +101,12 @@
         "valentines day",
         "independence day",
         "memorial day",
-        "easter",
-        "new years eve",
-        "st patricks day",
-        "summer",
         "fathers day",
         "hanukkah",
+        "new years eve",
+        "easter",
+        "st patricks day",
+        "summer",
         "christmas",
         "mothers day",
         "halloween"
@@ -133,14 +133,24 @@
           "takeoff_timestamp_millis": "1773878400000"
         },
         {
-          "peak_length_in_days": 70,
-          "peak_timestamp_millis": "1775088000000",
-          "takeoff_timestamp_millis": "1771459200000"
+          "peak_length_in_days": 35,
+          "peak_timestamp_millis": "1782345600000",
+          "takeoff_timestamp_millis": "1780531200000"
+        },
+        {
+          "peak_length_in_days": 105,
+          "peak_timestamp_millis": "1796342400000",
+          "takeoff_timestamp_millis": "1793318400000"
         },
         {
           "peak_length_in_days": 42,
           "peak_timestamp_millis": "1798761600000",
           "takeoff_timestamp_millis": "1797552000000"
+        },
+        {
+          "peak_length_in_days": 70,
+          "peak_timestamp_millis": "1775088000000",
+          "takeoff_timestamp_millis": "1771459200000"
         },
         {
           "peak_length_in_days": 56,
@@ -151,16 +161,6 @@
           "peak_length_in_days": 210,
           "peak_timestamp_millis": "1780531200000",
           "takeoff_timestamp_millis": "1771459200000"
-        },
-        {
-          "peak_length_in_days": 35,
-          "peak_timestamp_millis": "1782345600000",
-          "takeoff_timestamp_millis": "1780531200000"
-        },
-        {
-          "peak_length_in_days": 105,
-          "peak_timestamp_millis": "1796342400000",
-          "takeoff_timestamp_millis": "1793318400000"
         },
         {
           "peak_length_in_days": 49,
@@ -185,10 +185,10 @@
         "ended",
         "ended",
         "approaching",
+        "approaching",
+        "ended",
         "ended",
         "cooldown",
-        "ended",
-        "approaching",
         "approaching",
         "ended",
         "rising"
