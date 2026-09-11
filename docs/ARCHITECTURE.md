@@ -5,7 +5,7 @@
 > questions the endpoint docs cannot: **how the endpoints link**, **what a
 > customer actually buys**, and **how a run flows through the layers**. Written
 > 2026-08-19 as the design; **the design is now implemented** — all four layers
-> built (§3.2), five operations verified live, 593 checks. Where
+> built (§3.2), five operations verified live, 677 checks. Where
 > this doc and `src/` disagree, that is a bug in one of them: fix it in the
 > same commit, the same rule as wire-vs-doc.
 
@@ -303,9 +303,9 @@ so no actor requires another one to be useful.
 All operations are verified live (2026-08-19): shopping end-to-end with its
 shoppable pins; keywords with real forecasts; moments with the phase gate and
 measured audience; radar's 11 curated records in 2 requests; and `crawl`
-walking the edges (§2.2b) from any of four entry pages. 593 checks across
-seven suites. What remains is Phase 4: deployment (network-reachable
-Redis + `apify push`) — see [BUILD-PLAN.md](BUILD-PLAN.md).
+walking the edges (§2.2b) from any of four entry pages. 677 checks across
+12 suites. Phase 4 (deployment) is done — shipped 2026-08-27, actor
+`yMtXPlrwLkTb9Zzpx` — see [DEPLOY.md](../DEPLOY.md) for the release loop.
 
 One packaging note: §3.1 describes four separate Apify listings; what is built
 today is **one actor with an `operation` input** dispatching the same four

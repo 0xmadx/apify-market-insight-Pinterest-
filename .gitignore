@@ -29,3 +29,18 @@ browsers/profiles/
 # not code — and its "prompt_preview" field is a 60-char snippet of whatever
 # was drafted, which does not belong in a shared repo even in preview form.
 tools/.deepseek_usage.jsonl
+
+# Generic skill-pack boilerplate that gets extracted to the repo ROOT by
+# mistake (api-designer/, kubernetes-specialist/, python-pro/ and friends).
+# 652K of Kubernetes/Terraform/GitLab material with zero project content,
+# untracked and unignored, so it dirtied every `git status`. Removed
+# 2026-09-10; this rule stops it coming back unnoticed. The project's own
+# skills live in .claude/skills/, which stays tracked.
+/api-designer/
+/architecture-designer/
+/cloud-architect/
+/devops-engineer/
+/kubernetes-specialist/
+/microservices-architect/
+/python-pro/
+/test-master/

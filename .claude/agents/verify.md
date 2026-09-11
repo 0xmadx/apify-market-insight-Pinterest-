@@ -55,12 +55,23 @@ record count. If it says something was measured, find the measurement.
 | "deployed" | the push said SUCCEEDED | `apify actors info` — build number, and does it match the repo commit |
 | "the vault is healthy" | a low heartbeat | `src.status` — profiles IN `valid_profiles`, not every key |
 | "no lab content shipped" | `.actorignore` looks right | `apify pull` and count what is actually there |
-| "561 checks pass" | someone said so | run them |
+| "N checks pass" | someone said so | run them, and read the count off the run — never off a doc |
 | "the cost dropped" | the config changed | `computeUnits` on a real run, against the recorded baseline |
 
 **Prefer a test that can fail.** When a check has never failed, ask what would
 make it fail — and if nothing would, say so. A guard nobody has seen fail is a
 guard nobody has seen work.
+
+**Never quote a check count from memory or from a document.** Print it:
+
+```bash
+./ship.sh check 2>&1 | grep -E 'checks passed|FAIL'
+```
+
+This file used to assert "561 checks" as the number to expect. It was 647 by
+the time anyone looked — a stale number sitting inside the stale-number
+detector, which is exactly the failure this agent exists to catch. The count is
+an output, never an expectation.
 
 **Count the right set.** Freshness means the profiles the actor can lease, which
 is `valid_profiles`. Orphan keys are not in it. This exact confusion produced a

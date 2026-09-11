@@ -1,18 +1,25 @@
-# Deploy to Apify — on a TAG, never on a push to main.
+# Deploy to Apify — BREAK-GLASS ONLY. `./ship.sh apify` is the real path.
 #
-# WHY A TAG. `.actor/actor.json` carries `buildTag: latest`, so a push reaches
-# existing customers on their next run, minutes later, with no notice. Wiring
-# that to every commit on main would mean any typo fix is an unannounced
-# production release. A tag makes the release a decision someone made, and the
-# tag itself is the rollback point.
+# WHY THE TAG TRIGGER WAS REMOVED, 2026-09-10. This used to fire on
+# `push: tags: ["v*"]`. `.actor/actor.json` carries `buildTag: latest`, so that
+# made `git tag v1 && git push --tags` an immediate, unannounced release to
+# every existing customer — reached minutes later, from a workflow that does
+# NOT check the vault, does NOT run the 16 live probes, does NOT smoke the
+# deployed actor (it says so itself, below), and never asks the one question
+# that matters: could a customer's existing code break if this landed tonight?
 #
-# ROLLBACK: tag the previous good commit and push that tag.
+# A tag is also a label people add casually and can point at any commit. The
+# blast radius of a typo should not be "all customers, now".
+#
+# `./ship.sh apify` is the single path to customers: vault check, 16 live
+# probes, all 12 suites, a clean-tree refusal, and a human confirming the
+# compatibility answer at a real terminal. This file stays only as
+# `workflow_dispatch` — a deliberate button someone presses, having read the
+# above — for the case where the operator's machine is unavailable.
 name: deploy
 
 on:
-  push:
-    tags: ["v*"]
-  workflow_dispatch:          # so a human can also release deliberately
+  workflow_dispatch:
 
 jobs:
   push-to-apify:
@@ -40,7 +47,8 @@ jobs:
           fail=0
           for t in test_incremental test_shopping_api test_shopping_traversal \
                    test_full_project test_dispatch test_adspower test_vault \
-                   test_quick_start test_main_messages test_status_healthcheck; do
+                   test_quick_start test_main_messages test_status_healthcheck \
+                   test_ignore_parity test_ci_contract; do
             python -m tests.$t || fail=1
           done
           exit $fail

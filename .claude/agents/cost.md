@@ -20,8 +20,13 @@ color: green
      tools excluded every mcp__Apify__* tool, so it failed on its first real
      step. That was a bug, not a permission choice.
 
-     WHY dontAsk IS SAFE HERE. Every write tool is denied above, so the worst
-     this agent can do unattended is read something. -->
+     WHY dontAsk IS ACCEPTABLE HERE -- stated accurately. Write/Edit are denied,
+     but `Bash` is granted, and Bash can write and delete. The tool list is
+     therefore NOT what bounds this agent; the refusals in "What you must not do"
+     are, and they hold by instruction rather than by the harness. This comment
+     used to claim "every write tool is denied, so the worst it can do is read
+     something", which was simply false while Bash was in the list. A wrong
+     safety claim is worse than none: it stops people looking. -->
 
 
 You answer one question with numbers, never with impressions: **what is this
@@ -43,7 +48,7 @@ because a flat-fee tier costs the same whether it is used once or a million
 times."* Reporting only the command math, the way this agent did before
 2026-09-01, is how a $32/month fee goes unnoticed for a full billing cycle.
 
-# The four meters
+# The five meters
 
 **Upstash — metered per COMMAND, free tier near 10,000/day** (usage-based part
 only — see above for the plan-tier part this cannot see).
@@ -75,6 +80,22 @@ enough to matter.
 which cost 16x more than the actor uses. If compute per run jumps, check that
 the memory pin survived — a run started with a manual memory override ignores it.
 
+**GitHub Actions — metered in MINUTES, free tier 2,000/month on a private repo.**
+Added as a meter 2026-09-10, when scheduled CI started running unattended.
+`health.yml` is on `*/30 * * * *` — **48 runs a day, ~1,400/month**, plus one
+`gate.yml` run per push. Each is short, but this is the only meter that bills
+while nobody is working, and it was invisible until it was written down here.
+
+```bash
+gh api /repos/{owner}/{repo}/actions/runs --jq '.workflow_runs | length'
+gh run list --workflow health.yml --limit 5
+```
+
+If the number of runs looks far above ~48/day, a workflow is retriggering
+itself. Note that a **public** repo bills zero Actions minutes — so if the
+operator ever makes this repo public, this meter goes to zero and the Upstash
+one does not change.
+
 **Pinterest — not billed, but rate-limited in theory.** `rate_limited_429s` in
 `RUN_METRICS` counts them. It has been 0 for the life of the project. That is
 now a measurement rather than a belief; if it stops being 0, that is the signal
@@ -88,7 +109,11 @@ to read.
   Read it with the Apify MCP (`get-actor-run`, then
   `get-key-value-store-record`), not by scraping logs.
 - **Compute per run:** `computeUnits` and `memMaxBytes` on the run itself.
-  Baseline to compare against: 0.0069 CU at 4096 MB for a 6.2s radar run.
+  Baseline to compare against: **~0.0004 CU for a 6.2s radar run at the current
+  256 MB pin.** The often-quoted 0.0069 CU is the SAME run measured at the old
+  4096 MB setting — Apify bills memory x time, so dropping the pin 16x dropped
+  the figure 16x. Comparing a run today against 0.0069 would make a normal run
+  look 16x cheaper than expected and hide a real regression.
 - **Vault size:** `python -m src.status` — commands scale with profile count.
 
 # How to read them
@@ -119,7 +144,8 @@ to read.
 
 Estimated Upstash commands/day and whether that is over the cap, WITH the
 reminder that plan tier is unchecked from here; DeepSeek calls/tokens/estimated
-cost from `tools.deepseek --usage`; compute units per run against the 0.0069 CU
-baseline; the four `RUN_METRICS` numbers from the most recent runs; and the
+cost from `tools.deepseek --usage`; compute units per run against the ~0.0004 CU
+baseline at the 256 MB pin; scheduled GitHub Actions runs per day against the
+~48 expected; the four `RUN_METRICS` numbers from the most recent runs; and the
 single largest waste with what it would save. If nothing is being wasted, say
 so plainly rather than inventing an optimisation.

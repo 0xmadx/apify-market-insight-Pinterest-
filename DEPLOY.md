@@ -74,7 +74,7 @@ takes two seconds and is the entire discipline.
 | Step 3 Apify | ✅ **done 2026-08-27** — actor `yMtXPlrwLkTb9Zzpx`, build 1.0.4 on `latest`, `REDIS_URL` set as a secret. Smoke passed: 11 live records |
 | Step 4 GCP | ✅ **done** — `keepalive.timer` live on `pinterest-keepalive`, confirmed writing to Upstash |
 | Step 5 retire AdsPower writer | ✅ **done 2026-08-27** — `adspower-sync.timer` disabled; GCP verified as sole writer |
-| The gate | **593 checks** across seven suites, 16/16 endpoints — last green 2026-08-27 |
+| The gate | **677 checks** across 12 suites, 16/16 endpoints — last green 2026-09-10 |
 | The vault | Upstash, **6/6 usable**, written by GCP alone on a 5-minute timer |
 
 **✅ THE DEPLOY IS COMPLETE.** All five steps are done. What follows is the
@@ -179,18 +179,42 @@ Each answers a different question, and none substitutes for another:
 | | Proves | Fails when |
 |---|---|---|
 | `preflight.sh` | tooling, auth, `.env` hygiene, and that a **live writer** is filling the vault | credentials missing, `REDIS_URL` local, pool stale |
-| `ship.sh check` | 16/16 live endpoints, then 593 offline checks | Pinterest moved, or you broke something |
+| `ship.sh check` | 16/16 live endpoints, then 677 offline checks across 12 suites | Pinterest moved, or you broke something |
 | `ship.sh apify` | the push itself — asks the `buildTag` question first | dirty tree, red gate |
 | `smoke.sh` | the **deployed** actor returns real records; a zero-record success is a FAILURE | vault unreachable from Apify, secret unset |
+| `git push origin main` | that the farm can ever receive this code, and that the work exists off this laptop | nothing fails — that is the problem |
 
 Only `smoke.sh` touches the deployed thing. Nothing local can tell you the
 cloud actor works, and the most common cause of "passed everything, still
 broke" is `REDIS_URL` not set as an Actor secret.
 
 **Order is load-bearing.** `ship.sh check` runs `probe_endpoints` *before* the
-suites, because probing rewrites the fixtures the suites then read. Run the
-tests first and you test today's code against yesterday's wire. `ship.sh`
-already sequences this; do not hand-run the pieces out of order.
+suites, because under `check` probing rewrites the fixtures the suites then
+read. Run the tests first and you test today's code against yesterday's wire.
+`ship.sh` already sequences this; do not hand-run the pieces out of order.
+
+**Only `check` rewrites fixtures.** `apify` and `gcp` still probe all 16
+endpoints and still fail on drift, but leave tracked files alone. Before
+2026-09-10 every target rewrote them, which put a guaranteed tree-dirtying step
+in front of the gate's own clean-tree refusal — so the order below could not
+complete without a hand-worked-around extra commit, and rollback deployed the
+old commit with today's fixtures written over it.
+
+**⚠️ `git push origin main` is a required step, not housekeeping.** It is the
+one step with no automation and nothing that fails when you skip it.
+`ship.sh gcp` updates the VM by `git fetch` + `git pull --ff-only` **on the
+VM**, so the farm can only ever run what GitHub has. Measured 2026-09-10: local
+`main` was 11 commits ahead of `origin/main` and the VM sat at a 2026-08-27
+commit — **41 commits and two weeks stale**, missing three `browsers/` fixes.
+Nothing failed; nothing warned; the farm just quietly ran old code. Pushing is
+also the only backup: eleven commits existed on one laptop and nowhere else.
+
+The full order is therefore: **gate → commit → push → deploy → smoke.**
+
+**Run `./ship.sh apify` yourself, at a real terminal.** It stops to ask the
+`buildTag` compatibility question with `read` under `set -euo pipefail`; with no
+tty that read hits EOF and the script aborts — *after* spending the vault check,
+16 live probes and all 12 suites. That question is the operator's to answer.
 
 **Rollback:** `git checkout <last-good-sha> && ./ship.sh apify`. There is no
 undo — see the model above.

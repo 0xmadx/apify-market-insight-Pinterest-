@@ -18,6 +18,7 @@ Design notes, all of them lessons the parent repo paid for:
   * One profile is leased for the whole sweep, so all 18 calls come from one identity
     rather than looking like 18 sessions.
 """
+import argparse
 import json
 import pathlib
 import sys
@@ -33,6 +34,32 @@ HANDLER = {"X-Pinterest-PWS-Handler": "trends/index.js"}
 
 OUT = pathlib.Path("probes/results")
 DELAY = 1.5  # no rate-limit headers exist on this API — back off blindly
+
+# Set by --refresh. Default False: PROBE, do not REWRITE.
+#
+# WHY WRITING IS OPT-IN, added 2026-09-10. This module rewrites 56 tracked
+# fixtures, and `ship.sh` ran it on every target — including `apify`. That put a
+# guaranteed tree-dirtying step in front of `ship.sh`'s own clean-tree refusal,
+# so the documented order (commit -> push -> ./ship.sh apify) could not
+# complete: the gate dirtied the tree the deploy then refused. It was hit twice
+# in one session and hand-worked-around both times. It also broke rollback,
+# where `git checkout <sha> && ./ship.sh apify` is the whole point and rewriting
+# that commit's fixtures is precisely wrong.
+#
+# The probing itself is unchanged and still runs on every target — all 16
+# endpoints are still called, drift is still reported, a FAIL still fails the
+# gate. Only the writing is gated. Refreshing fixtures is a deliberate act with
+# its own commit (`chore(probes): refresh live wire fixtures`), not a side
+# effect of deploying.
+REFRESH = False
+
+
+def _write_fixture(path, text):
+    """Persist a captured response — only when this run was asked to refresh."""
+    if not REFRESH:
+        return
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
 
 
 # ---------------------------------------------------------------- transport
@@ -258,8 +285,18 @@ def run_probe(session, probe_id, name, style, call, claim):
     return row, parsed
 
 
-def main():
-    OUT.mkdir(parents=True, exist_ok=True)
+def main(argv=None):
+    global REFRESH
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument(
+        "--refresh", action="store_true",
+        help="also rewrite probes/results/*.json and probes/RESULTS.md from "
+             "this run. Without it the wire is probed and drift reported, but "
+             "no tracked file changes.")
+    REFRESH = ap.parse_args(argv).refresh
+
+    if REFRESH:
+        OUT.mkdir(parents=True, exist_ok=True)
     rows = []
 
     with leased_session() as (session, identity):
@@ -280,9 +317,9 @@ def main():
             "detail": f"date={date}",
         })
         print(f"  3.1  {'OK' if date else 'FAIL'}  latest_available_date -> {date}")
-        (OUT / "3.1-latest_available_date.json").write_text(
-            json.dumps(strip_pii(_safe_json(r)), indent=2, sort_keys=True),
-            encoding="utf-8")
+        _write_fixture(
+            OUT / "3.1-latest_available_date.json",
+            json.dumps(strip_pii(_safe_json(r)), indent=2, sort_keys=True))
 
         if not date:
             print("\nNo date — every other call needs it. Stopping.")
@@ -311,9 +348,10 @@ def main():
                 # moving -- was invisible inside that noise, which defeats the
                 # one check this project relies on most: diffing what the wire
                 # returns against what the code reads.
-                (OUT / f"{probe_id}-{slug}.json").write_text(
+                _write_fixture(
+                    OUT / f"{probe_id}-{slug}.json",
                     json.dumps(strip_pii(raw), indent=2,
-                               sort_keys=True)[:400000], encoding="utf-8")
+                               sort_keys=True)[:400000])
             time.sleep(DELAY)
 
     _write_summary(rows, identity)
@@ -366,8 +404,9 @@ def _write_summary(rows, identity):
         "life.",
         "",
     ]
-    pathlib.Path("probes/RESULTS.md").write_text("\n".join(lines), encoding="utf-8")
-    print("\nwrote probes/RESULTS.md and probes/results/*.json")
+    _write_fixture(pathlib.Path("probes/RESULTS.md"), "\n".join(lines))
+    print("\nwrote probes/RESULTS.md and probes/results/*.json" if REFRESH else
+          "\nprobed only — fixtures left untouched (pass --refresh to rewrite them)")
 
 
 if __name__ == "__main__":

@@ -303,7 +303,9 @@ wrong thing, with `task={}` as the only clue. Check that line in the log.
 .venv/Scripts/python.exe -m tests.test_vault        # the lease path — needs Redis
 ```
 
-593 checks total. All but `test_vault` are pure offline; that one runs against
+677 checks total across 12 suites (the five above are the ones worth running by
+hand; `ship.sh check` runs all 12 — see `CLAUDE.md` for the full list). All but
+`test_vault` are pure offline; that one runs against
 the real Redis under a throwaway `__test_vault` namespace, because a fake would
 not exercise the `SET NX` that is the whole of the lease. `test_dispatch` also guards the docs: it fails if
 `.actor/input_schema.json` and `docs/API.md` disagree in either direction, or

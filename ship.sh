@@ -23,10 +23,17 @@
 # what EXISTING customers get on their next run — possibly minutes later, with
 # no notice. The gate is the only thing between a local edit and that.
 #
-# `probe_endpoints` runs BEFORE the suites on purpose: it rewrites the fixtures
-# in probes/results/ that the suites then read, so the tests run against today's
-# wire rather than a snapshot of a wire that may have changed. Reordering these
-# would turn the release gate into a test of last week's Pinterest.
+# `probe_endpoints` runs BEFORE the suites on purpose: under `check` it rewrites
+# the fixtures in probes/results/ that the suites then read, so the tests run
+# against today's wire rather than a snapshot of a wire that may have changed.
+# Reordering these would turn the release gate into a test of last week's
+# Pinterest.
+#
+# It only rewrites under `check`. On `apify`/`gcp` the same 16 endpoints are
+# probed and drift still fails the gate, but nothing tracked changes — because
+# rewriting there would dirty the tree that the clean-tree refusal below then
+# rejects, which made the documented deploy order impossible to complete and
+# broke `git checkout <sha> && ./ship.sh apify` rollback. See probe_endpoints.py.
 set -euo pipefail
 
 PY="${PY:-.venv/Scripts/python.exe}"
@@ -47,13 +54,18 @@ echo "==> vault"
 }
 
 echo "==> live wire (16 endpoints)"
-"$PY" -m probes.probe_endpoints
+if [ "$TARGET" = "check" ] || [ "$TARGET" = "all" ]; then
+  "$PY" -m probes.probe_endpoints --refresh
+else
+  "$PY" -m probes.probe_endpoints
+fi
 
 echo "==> offline suites"
 FAILED=0
 for suite in test_full_project test_shopping_api test_shopping_traversal \
              test_dispatch test_incremental test_adspower test_vault \
-             test_quick_start test_main_messages test_status_healthcheck; do
+             test_quick_start test_main_messages test_status_healthcheck \
+             test_ignore_parity test_ci_contract; do
   line=$("$PY" -m "tests.$suite" 2>&1 | grep -E '^[0-9]+/[0-9]+ checks passed' || true)
   passed="${line%%/*}"
   total=$(echo "$line" | cut -d/ -f2 | cut -d' ' -f1)

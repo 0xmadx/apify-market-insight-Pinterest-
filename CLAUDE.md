@@ -20,6 +20,33 @@ inherited from this project's parent: **a plausible wrong number, not a crash**.
 | Real response shapes | `probes/results/*.json` + `probes/RESULTS.md` |
 | Which spec drafts are superseded and why | `docs/README.md` |
 
+## Who owns what — one domain, one owner
+
+Rebuilt 2026-09-10. Before that, releases had two owners that contradicted each
+other and git/CI/security had none, which is how CI stayed red for 17 runs and
+the farm ran two-week-old code with nothing reporting either.
+
+| Domain | Owner | Kind |
+|---|---|---|
+| Writing code anywhere in the repo | `pinterest-trends-coder` | skill |
+| Docs staying true to the code, in the same commit | `pinterest-trends-coder` | skill |
+| The gate, and what "done" means | `ship.sh` | script |
+| git · GitHub · CI · triaging `health.yml` issues · security | `repo` | agent |
+| Apify deploy · GCP farm deploy | `ship-it` | skill |
+| Vault, accounts, proxies, fingerprints | `farm` | agent |
+| Cost across all five meters | `cost` | agent |
+| Store copy, positioning, growth | `marketer` | agent |
+| Auditing claims at gates | `verify` | agent |
+| **Pinterest logins · going public · the breaking-change answer · buying proxies** | **the operator** | human |
+
+The bottom row is not a default — it is a refusal every agent here carries. No
+agent logs into Pinterest, makes an Actor public, answers the `buildTag`
+compatibility question, or spends money.
+
+`repo` reports that a push is owed; it never pushes, tags or commits. Growing
+the pool is the one workflow with two owners, and it has a hard stop: `cost`
+computes the new Upstash volume **before** `farm` buys anything (see `farm.md`).
+
 **Before writing any code, invoke the `pinterest-trends-coder` skill** — it
 carries the enforced rules (parser discipline, normalisation scopes,
 one-vertical-per-call, the double-spelled `has_prediction`). It is not advisory.
@@ -40,12 +67,14 @@ one-vertical-per-call, the double-spelled `has_prediction`). It is not advisory.
 .venv/Scripts/python.exe -m tests.test_quick_start         # 23 — the persona actors' one-click preset dropdowns
 .venv/Scripts/python.exe -m tests.test_main_messages       # 20 — the clean customer message when the vault can't serve a run
 .venv/Scripts/python.exe -m tests.test_status_healthcheck    # 4 — the exit-code contract src.status's automated callers depend on
+.venv/Scripts/python.exe -m tests.test_ignore_parity        # 21 — .actorignore and .dockerignore both hide the product
+.venv/Scripts/python.exe -m tests.test_ci_contract           # 9 — ship.sh, gate.yml and deploy.yml run the SAME suites
 ```
 
 Or all of it, in the order the release gate requires:
 
 ```bash
-./ship.sh check      # probes the live wire FIRST, then the 647 checks
+./ship.sh check      # probes the live wire FIRST, then the 677 checks
 ```
 
 Everything is a module run from the repo root. The venv is local to this repo.
@@ -68,10 +97,18 @@ reviews before publishing — never wired into `src/`, and `tests/test_adspower.
   `fingerprint_json`, and `build_script` replays it. Absent → synthetic, never
   refused. **Canvas is deliberately NOT carried**: AdsPower perturbs it with a
   seeded function we can read but not regenerate.
-- Cookies come from a **Redis vault**. Three writers can fill it — the Chrome
-  extension, AdsPower, or `browsers/keepalive.py` — and the read side does not
-  care which. `docs/OPERATING_MODEL.md` says which is live; `src/vault.py`,
-  `src/session.py`: use, never extend, without the operator saying so.
+- Cookies come from a **Redis vault**. **Two** writers can fill OUR vault —
+  `browsers/keepalive.py` on GCP (the live one since 2026-08-27) and
+  `adspower/sync_cookies.py` (disabled, kept as the rollback path) — and the
+  read side does not care which. `docs/OPERATING_MODEL.md` says which is live;
+  `src/vault.py`, `src/session.py`: use, never extend, without the operator
+  saying so.
+
+  This used to say "three writers", counting the Etsy project's Chrome
+  extension. That is a real writer but **not into our vault**: it beacons
+  `cookie:pinterest:*` into the Etsy container on 6379, while we read 6380 /
+  Upstash. Counting it here made an outside leak look like one of our supply
+  lines — see the separation note further down, which is where it belongs.
 - **The ACTOR never runs a browser.** Transport is `curl_cffi` impersonating
   Chrome (TLS/JA3). The real browser earns the session; the actor replays it.
   `.dockerignore` keeps `browsers/` and `adspower/` out of the image, which is
@@ -187,7 +224,7 @@ reasoning in `docs/DEPLOY.md` §5.
 `shopping`, `keywords`, `moments`, `radar`, and `crawl`, which follows the
 links between them instead of stopping at one page. Both of Pinterest's time
 controls are wired: `endDate` (which date) and `dateRange` (how much history).
-647 checks, 0 unread response fields (`probes/coverage.py`).
+677 checks, 0 unread response fields (`probes/coverage.py`).
 
 **Both browser captures landed 2026-08-19:**
 - §3.18 moment Age/Gender via the persisted GraphQL query — audience is now

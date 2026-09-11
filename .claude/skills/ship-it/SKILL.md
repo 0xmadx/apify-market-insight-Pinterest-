@@ -26,11 +26,20 @@ It answers what no test can: tooling installed, accounts authenticated, and
 reads as healthy and is not.
 
 **2. Is the code right?** `./ship.sh check` — vault, then 16 live endpoints,
-then every offline suite. The probes run BEFORE the suites deliberately: they
-rewrite the fixtures the suites read, so the tests run against today's wire.
+then all 12 offline suites. The probes run BEFORE the suites deliberately: under
+`check` they rewrite the fixtures the suites read, so the tests run against
+today's wire.
+
+**Only `check` rewrites them.** On `apify` and `gcp` the same 16 endpoints are
+still probed and drift still fails the gate, but no tracked file changes. This
+was fixed 2026-09-10: rewriting fixtures on every target put a guaranteed
+tree-dirtying step in front of the gate's own clean-tree refusal, so the order
+below could not complete — it was hand-worked-around twice in one session — and
+it broke rollback, where `git checkout <sha> && ./ship.sh apify` must deploy
+that commit, not that commit with today's fixtures written over it.
 
 **3. Commit.** The gate refuses a dirty tree for any target but `check` —
-production must match a commit you can point at. If the probes rewrote
+production must match a commit you can point at. If `check` rewrote
 `probes/results/`, commit that separately as a `chore(probes)`.
 
 **4. `git push origin main` — DO NOT SKIP THIS.**
@@ -54,6 +63,18 @@ production must match a commit you can point at. If the probes rewrote
      operation → answer yes, bump `version` in `.actor/actor.json` first.
      Additive → safe on `latest`. It then pushes and **smokes the deployed
      actor**, printing rollback instructions if that fails.
+
+     ⚠️ **`./ship.sh apify` is run by the OPERATOR, at a real terminal — never
+     through an agent's Bash.** Line 105 is `read -r -p "... [y/N] " risky`
+     under `set -euo pipefail`: with no tty the read hits EOF, the script
+     aborts on the spot, and it does so *after* the vault check, the 16 live
+     probes and all 12 suites have already run. The visible result is a gate
+     that appears to stop for no reason, having spent several minutes and a
+     leased account to get there. That prompt is also the compatibility
+     question itself, which is the operator's call and not an agent's.
+
+     An agent's job ends one step earlier: **gate green, here is my written
+     answer to the breaking-change question and why, now you run it.**
    - `browsers/` changed → `./ship.sh gcp` (needs `GCP_VM`, optionally
      `GCP_ZONE`).
 
