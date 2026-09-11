@@ -68,7 +68,7 @@ production must match a commit you can point at. If `check` rewrote
      through an agent's Bash.** Line 105 is `read -r -p "... [y/N] " risky`
      under `set -euo pipefail`: with no tty the read hits EOF, the script
      aborts on the spot, and it does so *after* the vault check, the 16 live
-     probes and all 12 suites have already run. The visible result is a gate
+     probes and all 14 suites have already run. The visible result is a gate
      that appears to stop for no reason, having spent several minutes and a
      leased account to get there. That prompt is also the compatibility
      question itself, which is the operator's call and not an agent's.

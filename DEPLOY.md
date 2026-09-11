@@ -74,7 +74,7 @@ takes two seconds and is the entire discipline.
 | Step 3 Apify | ✅ **done 2026-08-27** — actor `yMtXPlrwLkTb9Zzpx`, build 1.0.4 on `latest`, `REDIS_URL` set as a secret. Smoke passed: 11 live records |
 | Step 4 GCP | ✅ **done** — `keepalive.timer` live on `pinterest-keepalive`, confirmed writing to Upstash |
 | Step 5 retire AdsPower writer | ✅ **done 2026-08-27** — `adspower-sync.timer` disabled; GCP verified as sole writer |
-| The gate | **677 checks** across 12 suites, 16/16 endpoints — last green 2026-09-10 |
+| The gate | **763 checks** across 14 suites, 16/16 endpoints — last green 2026-09-10 |
 | The vault | Upstash, **6/6 usable**, written by GCP alone on a 5-minute timer |
 
 **✅ THE DEPLOY IS COMPLETE.** All five steps are done. What follows is the
@@ -179,7 +179,7 @@ Each answers a different question, and none substitutes for another:
 | | Proves | Fails when |
 |---|---|---|
 | `preflight.sh` | tooling, auth, `.env` hygiene, and that a **live writer** is filling the vault | credentials missing, `REDIS_URL` local, pool stale |
-| `ship.sh check` | 16/16 live endpoints, then 677 offline checks across 12 suites | Pinterest moved, or you broke something |
+| `ship.sh check` | 16/16 live endpoints, then 763 offline checks across 14 suites | Pinterest moved, or you broke something |
 | `ship.sh apify` | the push itself — asks the `buildTag` question first | dirty tree, red gate |
 | `smoke.sh` | the **deployed** actor returns real records; a zero-record success is a FAILURE | vault unreachable from Apify, secret unset |
 | `git push origin main` | that the farm can ever receive this code, and that the work exists off this laptop | nothing fails — that is the problem |
@@ -214,7 +214,7 @@ The full order is therefore: **gate → commit → push → deploy → smoke.**
 **Run `./ship.sh apify` yourself, at a real terminal.** It stops to ask the
 `buildTag` compatibility question with `read` under `set -euo pipefail`; with no
 tty that read hits EOF and the script aborts — *after* spending the vault check,
-16 live probes and all 12 suites. That question is the operator's to answer.
+16 live probes and all 14 suites. That question is the operator's to answer.
 
 **Rollback:** `git checkout <last-good-sha> && ./ship.sh apify`. There is no
 undo — see the model above.

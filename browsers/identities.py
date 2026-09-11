@@ -159,6 +159,11 @@ def main():
         print(f"  cookies      {len(json.loads(data.get('cookies_json') or '{}'))}")
         print(f"  last error   {err or '(none recorded)'}")
         vault.r.srem(f"valid_profiles:{platform}", profile_id)
+        # The roster too, or the refresher keeps working a profile that no
+        # longer exists. `remove` is the ONLY thing that should empty this set:
+        # an eviction means "out of service, keep trying", a removal means
+        # "gone". See src/vault.py:_evict for why those are different.
+        vault.r.srem(f"known_profiles:{platform}", profile_id)
         vault.r.delete(key)
         vault.r.delete(f"lease:{platform}:{profile_id}")
         print(f"  removed. Create a replacement in AdsPower, log in BY HAND, "

@@ -67,14 +67,16 @@ one-vertical-per-call, the double-spelled `has_prediction`). It is not advisory.
 .venv/Scripts/python.exe -m tests.test_quick_start         # 23 — the persona actors' one-click preset dropdowns
 .venv/Scripts/python.exe -m tests.test_main_messages       # 20 — the clean customer message when the vault can't serve a run
 .venv/Scripts/python.exe -m tests.test_status_healthcheck    # 4 — the exit-code contract src.status's automated callers depend on
-.venv/Scripts/python.exe -m tests.test_ignore_parity        # 21 — .actorignore and .dockerignore both hide the product
+.venv/Scripts/python.exe -m tests.test_ignore_parity        # 29 — .actorignore and .dockerignore both hide the product, and all four READMEs survive
 .venv/Scripts/python.exe -m tests.test_ci_contract           # 9 — ship.sh, gate.yml and deploy.yml run the SAME suites
+.venv/Scripts/python.exe -m tests.test_actor_manifests      # 53 — the four actor.json files: 63-char title cap, memory pin, paths resolve
+.venv/Scripts/python.exe -m tests.test_session_recovery     # 25 — a dead session removes, reports and heals itself (needs Redis)
 ```
 
 Or all of it, in the order the release gate requires:
 
 ```bash
-./ship.sh check      # probes the live wire FIRST, then the 677 checks
+./ship.sh check      # probes the live wire FIRST, then the 763 checks
 ```
 
 Everything is a module run from the repo root. The venv is local to this repo.
@@ -127,6 +129,36 @@ reviews before publishing — never wired into `src/`, and `tests/test_adspower.
   PWS-handler header — never evict a profile over it) · `auth_expired` = fix is
   in Chrome · `rate_limited` = back off blindly (this API has NO rate-limit
   headers) · `blocked` = bot check fired.
+- **A dead session removes, reports and heals itself** — wired 2026-09-10, and
+  before that date not one link of it existed. `SessionVault.mark_blocked` had
+  **zero callers in the whole repo**, so `transport.py` classified a dead
+  session correctly and told nobody which profile: the corpse stayed in the pool
+  until it aged out, and with a shuffled pool of five roughly one run in five
+  drew it and failed. The loop now:
+
+  1. `transport.py` sees `auth_expired`/`blocked` → `LazySession.rotate()`
+     swaps onto another identity and **retries that one request**, so the
+     customer never sees it. Rotation is capped at 2 and counted in
+     `RUN_METRICS` as `rotations`.
+  2. `report_rejection()` counts a strike and retires at **2** — not 1, because
+     one 403 can be a blip and instant retirement costs a fifth of the pool.
+  3. Retirement moves the profile from `valid_profiles` (the SERVING pool) to
+     `known_profiles` (the FARM ROSTER). **These must never be one set.**
+     Eviction is `SREM valid_profiles`, and `keepalive.load_from_vault()` built
+     its work list from that same set — so evicting hid a profile from the only
+     service that could repair it, and a re-login in AdsPower healed nothing.
+  4. `keepalive` refreshes the union, so a profile that answers a real browser
+     again is returned to service by `write()` on the next 5-minute pass,
+     automatically. Its strike count resets for free inside the HSET already
+     being sent.
+  5. Failures only a human can fix (`signed OUT`) back off for an hour rather
+     than burning ~8s of Chromium every 5 minutes to re-learn one fact. A proxy
+     failure is retried immediately — a machine fixes that one.
+
+  **There is no trigger from Apify to GCP, deliberately.** Redis is the message
+  bus: the actor records a fact, the writer reads it on its next pass. An
+  inbound path from a public actor into private infrastructure was considered
+  and rejected (see `.github/workflows/health.yml`'s own comment).
 - One leased profile per run (SET NX + TTL). Operator sessions serve every
   customer → concurrency = number of live profiles; an empty vault must fail
   loudly within `WAIT_TIMEOUT`, never hang, never emit an empty "successful"
@@ -224,7 +256,7 @@ reasoning in `docs/DEPLOY.md` §5.
 `shopping`, `keywords`, `moments`, `radar`, and `crawl`, which follows the
 links between them instead of stopping at one page. Both of Pinterest's time
 controls are wired: `endDate` (which date) and `dateRange` (how much history).
-677 checks, 0 unread response fields (`probes/coverage.py`).
+763 checks, 0 unread response fields (`probes/coverage.py`).
 
 **Both browser captures landed 2026-08-19:**
 - §3.18 moment Age/Gender via the persisted GraphQL query — audience is now

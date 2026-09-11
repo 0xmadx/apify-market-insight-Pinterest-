@@ -48,7 +48,8 @@ jobs:
           for t in test_incremental test_shopping_api test_shopping_traversal \
                    test_full_project test_dispatch test_adspower test_vault \
                    test_quick_start test_main_messages test_status_healthcheck \
-                   test_ignore_parity test_ci_contract test_actor_manifests; do
+                   test_ignore_parity test_ci_contract test_actor_manifests \
+                   test_session_recovery; do
             echo "== $t"
             python -m tests.$t || fail=1
           done

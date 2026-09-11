@@ -279,6 +279,12 @@ async def _batches(task, config, metrics=None):
                         "lease_wait_seconds": session.lease_wait_seconds,
                         "profile": (session.identity.profile_id
                                     if session.acquired else None),
+                        # How many times this run had to swap accounts because
+                        # Pinterest refused one. Nonzero means a dead profile
+                        # was in the pool and a customer paid for the discovery
+                        # — invisible before this, because the rotation itself
+                        # is silent by design.
+                        "rotations": getattr(session, "rotations", 0),
                         "rate_limited_429s": getattr(ctx.client, "rate_limited", 0),
                         "truncated": bool(ctx.truncated),
                     })

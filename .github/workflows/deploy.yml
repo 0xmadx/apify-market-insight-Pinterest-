@@ -12,7 +12,7 @@
 # blast radius of a typo should not be "all customers, now".
 #
 # `./ship.sh apify` is the single path to customers: vault check, 16 live
-# probes, all 12 suites, a clean-tree refusal, and a human confirming the
+# probes, all 14 suites, a clean-tree refusal, and a human confirming the
 # compatibility answer at a real terminal. This file stays only as
 # `workflow_dispatch` — a deliberate button someone presses, having read the
 # above — for the case where the operator's machine is unavailable.
@@ -48,7 +48,8 @@ jobs:
           for t in test_incremental test_shopping_api test_shopping_traversal \
                    test_full_project test_dispatch test_adspower test_vault \
                    test_quick_start test_main_messages test_status_healthcheck \
-                   test_ignore_parity test_ci_contract test_actor_manifests; do
+                   test_ignore_parity test_ci_contract test_actor_manifests \
+                   test_session_recovery; do
             python -m tests.$t || fail=1
           done
           exit $fail

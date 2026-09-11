@@ -427,6 +427,18 @@ class TrendsClient:
                     status=response.status_code, kind="malformed", endpoint=endpoint)
 
             if verdict in ("auth_expired", "blocked"):
+                # THE SESSION IS DEAD, AND SOMEBODY HAS TO BE TOLD. Until
+                # 2026-09-10 this just raised: the profile stayed in the serving
+                # pool, the next customer drew it, and `mark_blocked` sat with
+                # zero callers in the whole repo. One corpse in a pool of five
+                # failed roughly one run in five, indefinitely.
+                #
+                # Duck-typed on purpose. The actor passes a LazySession, which
+                # can rotate; probes and tests pass a plain curl_cffi session,
+                # which cannot and must keep raising exactly as before.
+                rotate = getattr(self.session, "rotate", None)
+                if rotate and attempt < MAX_RETRIES - 1 and rotate(verdict):
+                    continue
                 raise TrendsAPIError(f"session rejected ({verdict})",
                                      status=response.status_code, kind=verdict,
                                      endpoint=endpoint)

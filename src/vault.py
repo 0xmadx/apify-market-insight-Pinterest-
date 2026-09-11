@@ -15,7 +15,15 @@ Key schema (unchanged, so both projects can share one vault):
         proxy          str          per-profile exit IP, written by
                                     adspower/sync_cookies.py. Absent means
                                     the profile exits from the HOST.
-    valid_profiles:{platform}        SET of profile_id
+    valid_profiles:{platform}        SET of profile_id — the SERVING pool.
+                                     What `acquire` may hand a customer now.
+    known_profiles:{platform}        SET of profile_id — the FARM ROSTER.
+                                     Every profile the refresher should keep
+                                     trying, including ones currently out of
+                                     service. A profile enters when it is
+                                     evicted and leaves only when a human
+                                     retires it. See `_evict` for why these
+                                     must not be the same set.
 
 Added here, and absent from the parent repo: a LEASE. Two concurrent Apify runs
 drawing the same profile would drive one Pinterest session from two IPs at once,
@@ -230,14 +238,62 @@ class SessionVault:
         """Hand the identity back. Safe to call twice."""
         self.r.delete(f"lease:{platform}:{profile_id}")
 
-    def mark_blocked(self, platform: str, profile_id: str):
+    # Consecutive rejections that retire a profile.
+    #
+    # NOT ONE. A single 403 can be a blip, and with five profiles an instant
+    # retirement throws away a fifth of capacity on one bad response. NOT HIGH
+    # either: every strike is a real customer run that already failed. Two means
+    # "it happened twice in a row", which no longer reads as noise.
+    #
+    # Reset is FREE and lives in browsers/keepalive.py:write(), which already
+    # sends an HSET on every successful refresh -- `auth_failures: 0` rides
+    # along in that existing mapping. Clearing it from the actor instead would
+    # cost one Redis command per successful request, on a plan metered per
+    # command, to record the ordinary case.
+    REJECTION_STRIKES = 2
+
+    def report_rejection(self, platform: str, profile_id: str, kind: str) -> bool:
+        """Pinterest refused this identity. Count it. Retire at the threshold.
+
+        WHY THIS EXISTS. `classify()` has always been able to tell `auth_expired`
+        and `blocked` from a merely malformed request, and `transport.py` has
+        always raised on them -- but it told NOBODY WHICH PROFILE. `mark_blocked`
+        below sat with zero callers in the entire repo, so a dead session stayed
+        in the serving pool until it happened to age out, and every run that drew
+        it failed. Found 2026-09-10.
+
+        Returns True when the profile was retired by this call.
+        """
+        key = f"cookie:{platform}:{profile_id}"
+        strikes = self.r.hincrby(key, "auth_failures", 1)
+        # The reason travels with the profile so `src.status` can say what to DO
+        # -- "auth_expired" means a human logs in again, "blocked" means that
+        # account tripped bot detection. Different jobs, same as keepalive's
+        # signed-out vs wrong-exit-IP distinction.
+        self.r.hset(key, mapping={"last_error": f"Pinterest rejected it ({kind})",
+                                  "last_error_at": str(time.time())})
+        if strikes >= self.REJECTION_STRIKES:
+            self.mark_blocked(platform, profile_id, kind, strikes)
+            return True
+        print(f"[vault] {platform}/{profile_id}: {kind}, strike "
+              f"{strikes}/{self.REJECTION_STRIKES} — still in the pool")
+        return False
+
+    def mark_blocked(self, platform: str, profile_id: str,
+                     kind: str = "blocked", strikes: int = None):
         """Pinterest rejected this session — take it out of rotation.
 
         With one profile in the pool this empties the vault, which is correct: the
-        fix is in Chrome (re-login), and a run that keeps hammering a burned
-        session only makes that worse.
+        fix is a human re-login, and a run that keeps hammering a burned session
+        only makes that worse.
+
+        Reached through `report_rejection` rather than directly, so one unlucky
+        response cannot cost a profile. It stays on the `known_profiles` roster,
+        so the refresher keeps watching it and returns it to service by itself
+        once someone logs back in.
         """
-        self._evict(platform, profile_id, "blocked by the target")
+        count = f" x{strikes}" if strikes else ""
+        self._evict(platform, profile_id, f"{kind}{count}")
         self.release(platform, profile_id)
 
     def _note_once(self, platform, profile_id, reason):
@@ -254,6 +310,32 @@ class SessionVault:
         print(f"[vault] skipping {platform}/{profile_id}: {reason}")
 
     def _evict(self, platform, profile_id, reason):
+        """Take a profile OUT OF SERVICE without losing it.
+
+        THE BUG THIS FIXES, found 2026-09-10. Eviction is `SREM valid_profiles`,
+        and `browsers/keepalive.py:load_from_vault()` builds its work list from
+        that same set. So evicting a profile hid it from the ONLY writer that
+        could ever repair it: the operator re-logged in inside AdsPower and
+        nothing happened, because the refresher no longer knew the profile
+        existed. Recovery needed a manual `sync_cookies.py` run, every time.
+
+        Two sets, two different questions, and conflating them was the defect:
+
+            valid_profiles   may `acquire` hand this to a customer RIGHT NOW?
+            known_profiles   is this profile part of the farm at all?
+
+        A profile leaves the first the moment it misbehaves and stays in the
+        second until a human retires it with `browsers.identities remove`. The
+        keepalive pass reads the union, so a re-login heals the profile back
+        into service on the next 5-minute cycle with nothing copied and nothing
+        triggered. That is also the answer to "how does Apify tell GCP it needs
+        a fresh session": it does not send anything. It records a fact in Redis
+        and the writer reads it — no inbound path into private infrastructure.
+
+        One extra command, and only on an eviction. Evictions are meant to be
+        rare; if this shows up on the Upstash bill, that is the alarm working.
+        """
+        self.r.sadd(f"known_profiles:{platform}", profile_id)
         self.r.hset(f"cookie:{platform}:{profile_id}", "is_valid", "0")
         self.r.srem(f"valid_profiles:{platform}", profile_id)
         print(f"[vault] evicted {platform}/{profile_id}: {reason}")
@@ -263,8 +345,17 @@ class SessionVault:
     def describe(self, platform: str = None) -> list:
         """Every profile with why it is or is not usable. Diagnostics only."""
         platform = platform or self.config.PLATFORM
+        # THE ROSTER, not just the serving pool. This used to walk
+        # `_candidates()`, which reads `valid_profiles` alone — so the moment a
+        # profile was evicted it disappeared from `src.status` too, taking its
+        # `last_error` with it. The operator lost sight of a profile at exactly
+        # the moment it needed attention, and the pool silently looked smaller
+        # rather than damaged. Same root cause as the keepalive blindness; see
+        # `_evict`.
+        serving = set(self.r.smembers(f"valid_profiles:{platform}") or [])
+        roster = set(self.r.smembers(f"known_profiles:{platform}") or [])
         out = []
-        for profile_id in self._candidates(platform):
+        for profile_id in sorted(serving | roster):
             data = self.r.hgetall(f"cookie:{platform}:{profile_id}") or {}
             age = self._age(data)
             cookies_raw = data.get("cookies_json")
@@ -286,5 +377,9 @@ class SessionVault:
                 # in the VM's journal. Empty once a later pass succeeds.
                 "last_error": (data.get("last_error") or "").strip(),
                 "leased": bool(self.r.exists(f"lease:{platform}:{profile_id}")),
+                # False = on the roster but NOT servable right now. It is being
+                # refreshed and will return by itself if it starts answering.
+                "serving": profile_id in serving,
+                "strikes": int(data.get("auth_failures") or 0),
             })
         return out

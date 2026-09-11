@@ -292,7 +292,7 @@ shipped:
 
 ## COVERAGE LEDGER (updated 2026-08-19 — the build is done)
 
-**677 checks across 12 suites** as of 2026-09-10. The table below is the
+**763 checks across 14 suites** as of 2026-09-10. The table below is the
 2026-08-19 snapshot and covers only the original five — its per-suite counts
 have drifted since (`test_incremental` is 58, not 55). Read it for what each
 suite *covers*, never for a number; `./ship.sh check` prints the real counts.

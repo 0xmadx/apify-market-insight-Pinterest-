@@ -198,9 +198,20 @@ def load_from_vault(vault, platform):
     Profiles with no cookies or no user agent are skipped rather than attempted:
     a half-written profile is a real state (someone is mid-setup), not an error,
     and launching a browser for it would waste ~8s to discover that.
+
+    THE ROSTER IS NOT THE SERVING POOL. This used to read `valid_profiles`
+    alone, which meant a profile the actor evicted vanished from this list --
+    so the one service that could have brought it back never looked at it
+    again, and a re-login in AdsPower healed nothing until someone ran
+    `sync_cookies.py` by hand. `known_profiles` holds the roster; the union is
+    what this refreshes. A profile that starts answering again is re-added to
+    the serving pool by `write()` on the very next pass, automatically.
     """
+    serving = set(vault.r.smembers(f"valid_profiles:{platform}") or [])
+    roster = set(vault.r.smembers(f"known_profiles:{platform}") or [])
+
     records = []
-    for profile_id in sorted(vault.r.smembers(f"valid_profiles:{platform}") or []):
+    for profile_id in sorted(serving | roster):
         data = vault.r.hgetall(f"cookie:{platform}:{profile_id}")
         if not data:
             continue
@@ -222,12 +233,24 @@ def load_from_vault(vault, platform):
                         "cookies": cookies,
                         "user_agent": data.get("user_agent"),
                         "proxy": data.get("proxy"),
-                        # This id CAME FROM valid_profiles, so re-adding it after
-                        # every pass buys nothing and costs one command per
-                        # profile per pass -- 1,728/day at 6 profiles on a
-                        # 5-minute timer, against a 10,000/day free tier.
-                        # `--file` records carry no such guarantee and still SADD.
-                        "in_set": True,
+                        # Is this profile ALREADY in the serving pool? When it
+                        # is, re-adding after every pass buys nothing and costs
+                        # one command per profile per pass -- 1,728/day at 6
+                        # profiles on a 5-minute timer, against a 10,000/day
+                        # free tier. When it is NOT (an evicted profile that
+                        # just refreshed successfully), the SADD in `write()` is
+                        # exactly what returns it to service. Computed per
+                        # profile rather than hardcoded True, which is what it
+                        # was when this list could only contain serving
+                        # profiles. `--file` records carry no guarantee and
+                        # still SADD.
+                        "in_set": profile_id in serving,
+                        # Carried so a pass can decide NOT to launch a browser
+                        # -- see `_backoff_remaining`. Without these the only
+                        # way to learn a profile is signed out is to spend ~8s
+                        # launching Chromium to be told again.
+                        "last_error": (data.get("last_error") or "").strip(),
+                        "last_error_at": data.get("last_error_at"),
                         "fingerprint": measured if isinstance(measured, dict)
                                        else None})
     return records
@@ -245,6 +268,14 @@ def write(vault, platform, record, cookies):
         # Cleared here, inside the HSET we are already sending, so a fixed
         # profile stops reporting yesterday's failure at no extra cost.
         "last_error": "",
+        # Same free ride, and it is what closes the recovery loop. The ACTOR
+        # counts rejections into `auth_failures` and retires a profile at the
+        # threshold (src/vault.py:report_rejection). A profile that answers a
+        # real browser again has proven the session is alive, so the count goes
+        # back to zero HERE -- riding along in an HSET already being sent,
+        # rather than costing the actor one Redis command per good request just
+        # to record the ordinary case.
+        "auth_failures": "0",
     }
     if record.get("proxy"):
         fields["proxy"] = record["proxy"]
@@ -280,10 +311,51 @@ def note_failure(vault, platform, profile_id, reason):
         pass
 
 
+# How long to leave a profile alone once only a human can fix it.
+#
+# A signed-out account does not become signed in because we relaunched a
+# browser. At the 5-minute cadence a single dead profile costs ~8s of Chromium
+# every pass -- 288 launches a day to re-learn one unchanged fact, on a VM that
+# also has live profiles to refresh. An hour still finds the fix promptly: the
+# operator logs in, and the profile is back in service within one cycle of that.
+HUMAN_RETRY_SECONDS = 3600
+
+
+def _backoff_remaining(record, now=None):
+    """Seconds to wait before retrying a profile only a person can fix.
+
+    0 means try it now. Deliberately keyed on the SHAPE of the failure, the
+    same distinction `refresh()` already draws and `src.status` already prints:
+
+        "signed OUT — missing _auth"        a human logs in      -> back off
+        "exit IP ... is not the proxy"      a machine fixes it   -> retry now
+
+    Backing off the second kind would leave a fixable profile cold for an hour.
+    """
+    if "signed OUT" not in (record.get("last_error") or ""):
+        return 0
+    try:
+        failed_at = float(record.get("last_error_at") or 0)
+    except (TypeError, ValueError):
+        return 0
+    if not failed_at:
+        return 0
+    elapsed = (now if now is not None else time.time()) - failed_at
+    return max(0, HUMAN_RETRY_SECONDS - elapsed)
+
+
 def one_pass(records, vault, platform, headless=True, log=print):
     """Every profile, in sequence. Returns (written, skipped)."""
     written = skipped = 0
     for record in records:
+        waiting = _backoff_remaining(record)
+        if waiting:
+            # Not an error and not silence: the profile is known-dead, the
+            # reason is already recorded, and a human is the fix.
+            log(f"  {record['profile_id']:<24} WAIT needs a human login "
+                f"— next attempt in {int(waiting // 60)}m")
+            skipped += 1
+            continue
         result = refresh(record, headless=headless)
         if result.ok:
             write(vault, platform, record, result.cookies)
