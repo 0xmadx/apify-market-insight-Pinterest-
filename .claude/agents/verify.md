@@ -6,7 +6,7 @@ disallowedTools: Write, Edit, NotebookEdit
 model: sonnet
 effort: high
 permissionMode: dontAsk
-maxTurns: 30
+maxTurns: 50
 color: purple
 ---
 

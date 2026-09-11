@@ -132,15 +132,21 @@ def main():
     check("no directory excluded from the image is missing from the upload list",
           not missing, f"missing from .actorignore: {missing}")
 
-    # The inverse guard, and the one that actually bit. Everything above asks
-    # "is this hidden?". This asks "is this still THERE?" -- because on the
-    # Apify Store a missing README is a blank listing page, and a blank listing
-    # fails nothing, warns nobody, and is seen first by a paying customer.
+    # The inverse guard. Everything above asks "is this hidden?". This asks
+    # "is this still THERE?" -- because on the Apify Store a missing README is
+    # a blank listing page, and a blank listing fails nothing, warns nobody,
+    # and is seen first by a paying customer.
     #
-    # `*.md` excludes every README in the repo. `!.actor/README.md` rescues the
-    # general actor's. Nothing rescued the three persona READMEs from the day
-    # they landed (2026-09-02) until this test was written (2026-09-10), even
-    # though each persona's actor.json names its README explicitly.
+    # WHAT THIS IS AND IS NOT, stated carefully because the first version of
+    # this comment got it wrong. `*.md` excludes every README in the repo and
+    # `!.actor/README.md` rescued only the general actor's, so on paper the
+    # three persona READMEs were excluded. Checked against the live platform on
+    # 2026-09-10: all four listings serve their full README. The CLI uploads
+    # the file a manifest's `readme` field names regardless of the ignore rules.
+    #
+    # This is therefore a guard against undocumented behaviour changing, not a
+    # fix for a live outage. Worth keeping at 4 assertions; not worth claiming
+    # as a bug that was caught in production.
     print("\nthe Store listing page survives the upload (all four actors)")
     for readme in ["\N{FULL STOP}actor/README.md".replace("\N{FULL STOP}", "."),
                    "actors/marketers/README.md",

@@ -44,12 +44,21 @@ browsers/
 # file lives in .actor/, so it needs its own path.
 !.actor/README.md
 
-# ...and the SAME trap, one directory deeper, live since the persona actors
-# landed on 2026-09-02 and found on 2026-09-10. Each persona actor's actor.json
-# sets `"readme": "./README.md"` pointing at actors/<persona>/README.md -- and
-# every one of those matched `*.md` above with nothing un-ignoring it. The rule
-# that was written to stop a blank listing was shipping three of them.
-# Verified by tests/test_ignore_parity.py, which now checks all four by path.
+# ...and the same shape one directory deeper, for the three persona actors.
+#
+# HONEST STATUS, because the first version of this comment overclaimed and was
+# corrected the same day (2026-09-10). Each persona's actor.json sets
+# `"readme": "./README.md"` -> actors/<persona>/README.md, and those paths match
+# `*.md` above with nothing un-ignoring them. That looked like three blank Store
+# listings. IT IS NOT: checked against the live platform, all three personas AND
+# the general actor serve their full README today. The CLI uploads whatever file
+# the manifest's `readme` field names, whether or not the ignore rules cover it.
+#
+# So this rule is belt-and-braces, not a repair. It is kept because relying on
+# the CLI to override an explicit exclusion is relying on undocumented behaviour
+# that a CLI upgrade could change silently -- and the failure mode, if it ever
+# did change, is a listing with an empty body that fails nothing and is seen
+# first by a paying customer. tests/test_ignore_parity.py checks all four.
 !actors/*/README.md
 
 # Never, under any circumstance.
