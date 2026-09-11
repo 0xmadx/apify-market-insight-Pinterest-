@@ -28,6 +28,7 @@ the farm ran two-week-old code with nothing reporting either.
 
 | Domain | Owner | Kind |
 |---|---|---|
+| Explaining anything to the operator | `explain-plain` | skill |
 | Writing code anywhere in the repo | `pinterest-trends-coder` | skill |
 | Docs staying true to the code, in the same commit | `pinterest-trends-coder` | skill |
 | The gate, and what "done" means | `ship.sh` | script |
