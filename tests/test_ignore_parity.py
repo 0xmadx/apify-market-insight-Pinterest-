@@ -24,6 +24,7 @@ for reasons that are not defects, and a test that cries wolf gets deleted.
 So this asserts the INVARIANT instead: every path whose leak would hand over
 the research — the thing being sold — is excluded by BOTH.
 """
+import fnmatch
 import pathlib
 import sys
 
@@ -66,6 +67,31 @@ def rules(path):
     return out
 
 
+def ignored(path, ignorefile=".actorignore"):
+    """Would `apify push` strip this path? gitignore-style: the LAST matching
+    rule wins, and a leading `!` un-ignores.
+
+    Deliberately a simulation rather than a call to the CLI — the question is
+    what the rules say, and that must be answerable offline, in CI, without a
+    token or a network.
+    """
+    text = pathlib.Path(ignorefile).read_text(encoding="utf-8")
+    verdict = False
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        negate = line.startswith("!")
+        pat = line[1:] if negate else line
+        pat = pat.lstrip("/")
+        hit = (fnmatch.fnmatch(path, pat)
+               or fnmatch.fnmatch(pathlib.PurePosixPath(path).name, pat)
+               or path.startswith(pat.rstrip("/") + "/"))
+        if hit:
+            verdict = not negate
+    return verdict
+
+
 def covers(ruleset, path):
     """Is `path` excluded by this ruleset? Tolerates the trailing-slash and
     leading-slash spellings the two formats use interchangeably."""
@@ -105,6 +131,26 @@ def main():
     missing = sorted(d for d in docker_dirs if not covers(actor, d))
     check("no directory excluded from the image is missing from the upload list",
           not missing, f"missing from .actorignore: {missing}")
+
+    # The inverse guard, and the one that actually bit. Everything above asks
+    # "is this hidden?". This asks "is this still THERE?" -- because on the
+    # Apify Store a missing README is a blank listing page, and a blank listing
+    # fails nothing, warns nobody, and is seen first by a paying customer.
+    #
+    # `*.md` excludes every README in the repo. `!.actor/README.md` rescues the
+    # general actor's. Nothing rescued the three persona READMEs from the day
+    # they landed (2026-09-02) until this test was written (2026-09-10), even
+    # though each persona's actor.json names its README explicitly.
+    print("\nthe Store listing page survives the upload (all four actors)")
+    for readme in ["\N{FULL STOP}actor/README.md".replace("\N{FULL STOP}", "."),
+                   "actors/marketers/README.md",
+                   "actors/ecommerce/README.md",
+                   "actors/creators/README.md"]:
+        check(f"{readme} is uploaded, not stripped",
+              not ignored(readme),
+              "matched *.md with no un-ignore rule — this actor would publish "
+              "with an empty description")
+        check(f"{readme} exists on disk", pathlib.Path(readme).is_file())
 
     failed = [n for n, ok in checks if not ok]
     print(f"\n{len(checks) - len(failed)}/{len(checks)} checks passed")

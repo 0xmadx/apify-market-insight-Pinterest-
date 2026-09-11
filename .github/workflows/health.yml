@@ -20,6 +20,22 @@
 #   2 = Redis unreachable   -> "check Upstash's status", label vault-down
 #   1 = pool empty/stale    -> "buy/re-log accounts", label vault-empty
 #   0 = healthy             -> close whichever of the two is open, if any
+#
+# ⚠️ THE CRON IS A REQUEST, NOT A GUARANTEE — measured 2026-09-10.
+# This asks for every 30 minutes. In the first day it actually ran at 23:16Z
+# and 01:14Z: TWO HOURS apart, not thirty minutes. GitHub runs scheduled
+# workflows on a best-effort basis, delays them under load, and disables them
+# entirely after 60 days of repository inactivity. Raising the frequency does
+# not fix this; the scheduler is the constraint, not the number.
+#
+# What that means for how you read this watcher:
+#   * the detection window is HOURS, not minutes — treat it as "something is
+#     wrong and has been for a while", never as a live status light
+#   * "no open issue" is NOT proof the vault is healthy right now. It may mean
+#     the check has not run since the problem started. For a live answer run
+#     `python -m src.status` yourself; that is the only current one.
+#   * a customer mid-run is already protected by the actor's own clean
+#     capacity message — this watcher exists to tell the OPERATOR, later.
 name: health
 
 on:

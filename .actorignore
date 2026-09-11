@@ -37,12 +37,20 @@ browsers/
 *.sh
 *.md
 
-# ...except the one piece of prose that IS the product page. On the Apify Store
-# the README is what a customer reads before deciding to run anything, and
-# `*.md` above would have stripped it silently -- the actor would have shipped
-# with a blank listing and nothing would have failed. Root-anchored `!/` is not
-# enough here: this file lives in .actor/, so it needs its own path.
+# ...except the prose that IS the product page. On the Apify Store the README is
+# what a customer reads before deciding to run anything, and `*.md` above would
+# have stripped it silently -- the actor would have shipped with a blank listing
+# and nothing would have failed. Root-anchored `!/` is not enough here: this
+# file lives in .actor/, so it needs its own path.
 !.actor/README.md
+
+# ...and the SAME trap, one directory deeper, live since the persona actors
+# landed on 2026-09-02 and found on 2026-09-10. Each persona actor's actor.json
+# sets `"readme": "./README.md"` pointing at actors/<persona>/README.md -- and
+# every one of those matched `*.md` above with nothing un-ignoring it. The rule
+# that was written to stop a blank listing was shipping three of them.
+# Verified by tests/test_ignore_parity.py, which now checks all four by path.
+!actors/*/README.md
 
 # Never, under any circumstance.
 .env
