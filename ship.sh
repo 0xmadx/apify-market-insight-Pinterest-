@@ -97,6 +97,23 @@ echo "==> gate passed ($(git rev-parse --short HEAD))"
 if [ "$TARGET" = "apify" ] || [ "$TARGET" = "all" ]; then
   echo
   echo "==> apify"
+  # SCOPE, and it is narrower than it looks. `apify push` reads .actor/actor.json
+  # and nothing else, so this deploys ONE actor: the general
+  # `pinterest-vault-scraper`. The three persona listings
+  # (actors/marketers, actors/ecommerce, actors/creators) are separate Store
+  # Actors that run this SAME src/, and this command does not touch them.
+  #
+  # Measured 2026-09-10. The danger is not the gap, it is that the gap is
+  # invisible: the push succeeds, the smoke below passes against the general
+  # actor, and the run reads as "shipped" while three of the four listings keep
+  # serving whatever was last pushed to them by hand. Saying so out loud is the
+  # minimum; automating the other three is tracked but not yet done, because the
+  # persona dirs have no .actor/ subdirectory and the correct CLI invocation has
+  # not been confirmed — guessing it here would deploy to customers.
+  echo "    SCOPE: pushes the GENERAL actor only (pinterest-vault-scraper)."
+  echo "           The 3 persona actors are NOT deployed by this command."
+  echo "           They run the same src/ and will stay on their last push."
+  echo
   # The one question the gate cannot answer, because it is about MEANING, not
   # correctness: additive changes are safe on `latest`, breaking ones need a
   # version bump first or every existing customer breaks tonight.
